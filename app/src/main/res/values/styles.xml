@@ -23,4 +23,7 @@
         <item name="android:paddingLeft">5dp</item>
 
     </style>
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/welcome_drawable</item>
+    </style>
 </resources>
