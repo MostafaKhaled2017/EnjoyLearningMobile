@@ -10,7 +10,7 @@
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        tools:replace="andr"
+        tools:replace="android:supportsRtl"
         android:theme="@style/AppTheme">
         <activity
             android:name="com.mk.playAndLearn.activity.MainActivity"
@@ -26,7 +26,8 @@
         <activity
             android:name="com.mk.playAndLearn.activity.SignInActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.WelcomeActivity"
+        <activity
+            android:name="com.mk.playAndLearn.activity.WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
