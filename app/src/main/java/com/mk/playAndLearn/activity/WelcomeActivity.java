@@ -10,7 +10,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        //setContentView(R.layout.activity_welcome);
         final Intent i = new Intent(this, GeneralSignActivity.class);
         Thread timer = new Thread() {
             @Override
@@ -25,6 +25,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         };
+        setContentView(R.layout.activity_welcome);
         timer.start();
     }
 }

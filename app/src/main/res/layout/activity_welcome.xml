@@ -7,9 +7,8 @@
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@mipmap/app_icon" />
+        android:layout_width="240dp"
+        android:layout_height="240dp"/>
 
     <com.dragankrstic.autotypetextview.AutoTypeTextView
         android:id="@+id/welcomeScreenText"
