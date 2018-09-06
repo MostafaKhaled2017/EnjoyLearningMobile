@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mk.playAndLearn.fragment.HomeFragment"
+    android:background="@color/color2">
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        card_view:cardCornerRadius="10dp"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:elevation="4dp"
+        android:id="@+id/our_team_card_view">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <!-- TODO -->
+
+            </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

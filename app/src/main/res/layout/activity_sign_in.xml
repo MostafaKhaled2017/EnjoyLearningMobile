@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <EditText
+            android:id="@+id/etEmailSignIn"
+            style="@style/editTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="البريد الالكترونى"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/etPasswordSignIn"
+            style="@style/editTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="كلمة المرور"
+            android:inputType="textPassword" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/new_button"
+            android:onClick="signIn"
+            android:text="تسجيل الدخول"
+            android:textColor="@color/white"
+            android:textDirection="anyRtl"
+            android:textSize="@dimen/textSizeOfButton" />
+        <TextView
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvForgotPassword"
+            android:textSize="16sp"
+            android:text="نسيت كلمة السر؟"/>
+    </LinearLayout>
