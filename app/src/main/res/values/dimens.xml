@@ -2,4 +2,5 @@
 <resources>
     <dimen name="textSizeOfButton">16sp</dimen>
     <dimen name="generalTextSize">16sp</dimen>
+    <dimen name="text_size_in_toolbar">20sp</dimen>
 </resources>

@@ -15,29 +15,41 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
-            android:scaleType="fitXY"
             android:layout_marginBottom="20dp"
-            android:src="@drawable/student"/>
+            android:scaleType="fitXY"
+            android:src="@drawable/student" />
 
         <Button
             android:id="@+id/btnSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/new_button"
             android:text="إنشاء حساب"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSizeOfButton"
-            android:background="@drawable/new_button"
-            android:layout_marginBottom="15dp"/>
+            android:textSize="@dimen/textSizeOfButton" />
 
         <Button
             android:id="@+id/btnSignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/new_button"
             android:text="تسجيل الدخول"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSizeOfButton"
-            android:background="@drawable/new_button"
-            android:layout_marginBottom="5dp"/>
+            android:textSize="@dimen/textSizeOfButton" />
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebookBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp" />
     </LinearLayout>
 </RelativeLayout>

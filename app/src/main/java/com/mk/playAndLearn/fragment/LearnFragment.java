@@ -7,8 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.MainActivity;
+
+import butterknife.OnClick;
+
+import static com.mk.playAndLearn.activity.MainActivity.testClick;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,10 +32,12 @@ public class LearnFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    View myView;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    Button btn;
     private OnFragmentInteractionListener mListener;
 
     public LearnFragment() {
@@ -64,8 +74,10 @@ public class LearnFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_learn, container, false);
+        myView = inflater.inflate(R.layout.fragment_learn, container, false);
+
+        //testClick(myView);
+        return myView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -92,6 +104,8 @@ public class LearnFragment extends Fragment {
         mListener = null;
     }
 
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -106,4 +120,5 @@ public class LearnFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

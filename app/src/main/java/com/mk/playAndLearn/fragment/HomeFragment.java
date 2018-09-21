@@ -7,8 +7,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
+
+import butterknife.OnClick;
+
+import static com.mk.playAndLearn.activity.MainActivity.addPostBtn;
 
 
 /**
@@ -30,6 +40,12 @@ public class HomeFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    EditText etAddPost;
+    Button addPostButton;
+
+    FirebaseDatabase database;
+    DatabaseReference myRef;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -60,13 +76,25 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("posts");
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        final View myView = inflater.inflate(R.layout.fragment_home, container, false);
+        etAddPost = myView.findViewById(R.id.etAddPost);
+        addPostButton = myView.findViewById(R.id.addPostBtn);
+        addPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addPostBtn(myView);
+            }
+        });
+        return myView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -86,6 +114,7 @@ public class HomeFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
 
     @Override
     public void onDetach() {

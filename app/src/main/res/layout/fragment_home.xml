@@ -1,26 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mk.playAndLearn.fragment.HomeFragment"
-    android:background="@color/color2">
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/color3"
+    tools:context="com.mk.playAndLearn.fragment.HomeFragment">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        card_view:cardCornerRadius="10dp"
-        android:layout_margin="10dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:elevation="4dp"
-        android:id="@+id/our_team_card_view">
+        android:background="@color/white"
+        android:orientation="horizontal">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-                <!-- TODO -->
+        <Button
+            android:id="@+id/addPostBtn"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="@drawable/send"
+            android:layout_marginRight="5dp"/>
 
-            </RelativeLayout>
-    </android.support.v7.widget.CardView>
+        <EditText
+            android:layout_margin="5dp"
+            android:id="@+id/etAddPost"
+            android:layout_width="0dp"
+            android:gravity="right"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:hint="ماذا يخطر في بالك؟"
+            android:paddingRight="10dp"/>
 
-</FrameLayout>
+
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
