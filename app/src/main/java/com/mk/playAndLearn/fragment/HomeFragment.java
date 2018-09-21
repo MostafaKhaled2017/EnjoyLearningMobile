@@ -4,19 +4,28 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.adapters.PostsAdapter;
+import com.mk.playAndLearn.model.Post;
 
-import butterknife.OnClick;
+import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.addPostBtn;
 
@@ -35,6 +44,8 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    ProgressBar progressBar;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -46,7 +57,9 @@ public class HomeFragment extends Fragment {
 
     FirebaseDatabase database;
     DatabaseReference myRef;
+    ArrayList list = new ArrayList();
 
+    RecyclerView recyclerView;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -86,6 +99,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View myView = inflater.inflate(R.layout.fragment_home, container, false);
+        recyclerView = myView.findViewById(R.id.postsRecyclerView);
+        progressBar = myView.findViewById(R.id.postsProgressBar);
         etAddPost = myView.findViewById(R.id.etAddPost);
         addPostButton = myView.findViewById(R.id.addPostBtn);
         addPostButton.setOnClickListener(new View.OnClickListener() {
@@ -94,46 +109,78 @@ public class HomeFragment extends Fragment {
                 addPostBtn(myView);
             }
         });
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+
+                    Post value = dataSnapshot1.getValue(Post.class);
+                    Post post = new Post();
+                    String postContent = value.getPostContent();
+                    String postDate = value.getPostDate();//TODO : solve the date problem
+                    Toast.makeText(getActivity(), "postDate is : " + postDate,Toast.LENGTH_SHORT).show();
+                    post.setPostContent(postContent);
+                    post.setDate(postDate);
+                    list.add(post);
+                }
+                progressBar.setVisibility(View.GONE);
+                PostsAdapter recyclerAdapter = new PostsAdapter(list, getActivity());
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(recyclerAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Hello", "Failed to read value.", error.toException());
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
         return myView;
-    }
+         }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+// TODO: Rename method, update argument and hook method into UI event
+public void onButtonPressed(Uri uri){
+        if(mListener!=null){
+        mListener.onFragmentInteraction(uri);
         }
-    }
+        }
 
-    @Override
-    public void onAttach(Context context) {
+@Override
+public void onAttach(Context context){
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        if(context instanceof OnFragmentInteractionListener){
+        mListener=(OnFragmentInteractionListener)context;
+        }else{
+        throw new RuntimeException(context.toString()
+        +" must implement OnFragmentInteractionListener");
         }
-    }
+        }
 
 
-    @Override
-    public void onDetach() {
+@Override
+public void onDetach(){
         super.onDetach();
-        mListener = null;
-    }
+        mListener=null;
+        }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+/**
+ * This interface must be implemented by activities that contain this
+ * fragment to allow an interaction in this fragment to be communicated
+ * to the activity and potentially other fragments contained in that
+ * activity.
+ * <p>
+ * See the Android Training lesson <a href=
+ * "http://developer.android.com/training/basics/fragments/communicating.html"
+ * >Communicating with Other Fragments</a> for more information.
+ */
+public interface OnFragmentInteractionListener {
+    // TODO: Update argument type and name
+    void onFragmentInteraction(Uri uri);
+}
 }

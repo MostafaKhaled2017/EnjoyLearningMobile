@@ -11,15 +11,15 @@ public class Post {
         this.userName = userName;
     }
 
-    public String getMessage() {
+    public String getPostContent() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setPostContent(String message) {
         this.message = message;
     }
 
-    public String getDate() {
+    public String getPostDate() {
         return date;
     }
 

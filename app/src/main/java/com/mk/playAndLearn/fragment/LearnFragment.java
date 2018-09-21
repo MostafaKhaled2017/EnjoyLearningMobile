@@ -15,7 +15,6 @@ import com.mk.playAndLearn.activity.MainActivity;
 
 import butterknife.OnClick;
 
-import static com.mk.playAndLearn.activity.MainActivity.testClick;
 
 
 /**

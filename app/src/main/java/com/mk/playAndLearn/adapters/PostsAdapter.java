@@ -6,35 +6,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Post;
 
-public class PostsAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHoder>{
+import java.util.ArrayList;
 
-    List<FireModel> list;
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
+
+    ArrayList<Post> list;
     Context context;
 
-    public RecyclerAdapter(List<FireModel> list, Context context) {
+    public PostsAdapter(ArrayList<Post> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
     @Override
-    public MyHoder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.card,parent,false);
-        MyHoder myHoder = new MyHoder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.post_item,parent,false);
+        MyHolder myHolder = new MyHolder(view);
 
-
-        return myHoder;
+        return myHolder;
     }
 
     @Override
-    public void onBindViewHolder(MyHoder holder, int position) {
-        FireModel mylist = list.get(position);
-        holder.name.setText(mylist.getName());
-        holder.email.setText(mylist.getEmail());
-        holder.address.setText(mylist.getAddress());
+    public void onBindViewHolder(MyHolder holder, int position) {
+        Post mylist = list.get(position);
+        if(mylist.getPostContent() != null)
+            holder.name.setText(mylist.getPostContent());
+        Toast.makeText(context, "date is : " + mylist.getPostDate(),Toast.LENGTH_SHORT).show();
+        if(mylist.getPostDate() != null)
+            holder.date.setText(mylist.getPostDate());
     }
 
     @Override
@@ -43,38 +48,26 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHoder>{
         int arr = 0;
 
         try{
-            if(list.size()==0){
-
+            if(list.size()==0) {
                 arr = 0;
-
             }
             else{
-
                 arr=list.size();
             }
-
-
-
-        }catch (Exception e){
-
-
-
-        }
+        }catch (Exception e){}
 
         return arr;
 
     }
 
-    class MyHoder extends RecyclerView.ViewHolder{
-        TextView name,email,address;
+    class MyHolder extends RecyclerView.ViewHolder{
+        TextView name, date;
 
 
-        public MyHoder(View itemView) {
+        public MyHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.vname);
-            email= (TextView) itemView.findViewById(R.id.vemail);
-            address= (TextView) itemView.findViewById(R.id.vaddress);
-
+            name =  itemView.findViewById(R.id.postContent);
+            date = itemView.findViewById(R.id.postDate);
         }
     }
 

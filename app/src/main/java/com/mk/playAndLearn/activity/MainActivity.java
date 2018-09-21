@@ -29,7 +29,10 @@ import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LearnFragment;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener{
@@ -159,11 +162,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     }
 
 
-    //Learn fragment button
-    public static void testClick(View view){
-        Toast.makeText(view.getContext(), "test button clicked successfully", Toast.LENGTH_SHORT).show();
-    }
-    //end of learn fragment buttons
 
 
 
@@ -171,12 +169,16 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
    public static void addPostBtn(View view){
         EditText etAddPost = view.findViewById(R.id.etAddPost);
         String postText = etAddPost.getText().toString();
+       Date today = new Date();
+       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+       String date = format.format(today);
         if(TextUtils.isEmpty(postText)){
             etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
         }
         else {
             Map<String, String> map = new HashMap<>();
             map.put("postContent", postText);//Todo : Add post date and post witer
+            map.put("postDate", date);//Todo : Add post image and post writer
             myRef.push().setValue(map);
             etAddPost.setText("");
             Toast.makeText(view.getContext(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();
