@@ -9,16 +9,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Post;
 
 import java.util.ArrayList;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
+public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder>{
 
-    ArrayList<Post> list;
+    ArrayList<Lesson> list;
     Context context;
 
-    public PostsAdapter(ArrayList<Post> list, Context context) {
+    public LessonsAdapter(ArrayList<Lesson> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -26,7 +27,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.post_item,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.lesson_title_item,parent,false);
         MyHolder myHolder = new MyHolder(view);
 
         return myHolder;
@@ -34,11 +35,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        Post mylist = list.get(position);
-        if(mylist.getPostContent() != null)
-            holder.name.setText(mylist.getPostContent());
-        if(mylist.getPostDate() != null)
-            holder.date.setText(mylist.getPostDate());
+        Lesson mylist = list.get(position);
+        if(mylist.getArabicPosition() != null)
+            holder.arabicPosition.setText(mylist.getArabicPosition());
+
     }
 
     @Override
@@ -60,13 +60,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
     }
 
     class MyHolder extends RecyclerView.ViewHolder{
-        TextView name, date;
+        TextView arabicPosition;
 
 
         public MyHolder(View itemView) {
             super(itemView);
-            name =  itemView.findViewById(R.id.postContent);
-            date = itemView.findViewById(R.id.postDate);
+            arabicPosition =  itemView.findViewById(R.id.lessonArabicPosition);
         }
     }
 

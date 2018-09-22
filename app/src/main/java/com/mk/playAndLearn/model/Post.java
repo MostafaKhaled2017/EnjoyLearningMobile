@@ -23,7 +23,7 @@ public class Post {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setPostDate(String date) {
         this.date = date;
     }
 

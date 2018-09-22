@@ -120,9 +120,8 @@ public class HomeFragment extends Fragment {
                     Post post = new Post();
                     String postContent = value.getPostContent();
                     String postDate = value.getPostDate();//TODO : solve the date problem
-                    Toast.makeText(getActivity(), "postDate is : " + postDate,Toast.LENGTH_SHORT).show();
                     post.setPostContent(postContent);
-                    post.setDate(postDate);
+                    post.setPostDate(postDate);
                     list.add(post);
                 }
                 progressBar.setVisibility(View.GONE);

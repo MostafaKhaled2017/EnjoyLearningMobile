@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
         TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThree.setText("التحديات");
+        tabThree.setText("العب");
         tabThree.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.challenges, 0, 0);
         tabLayout.getTabAt(2).setCustomView(tabThree);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         EditText etAddPost = view.findViewById(R.id.etAddPost);
         String postText = etAddPost.getText().toString();
        Date today = new Date();
-       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
        String date = format.format(today);
         if(TextUtils.isEmpty(postText)){
             etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");

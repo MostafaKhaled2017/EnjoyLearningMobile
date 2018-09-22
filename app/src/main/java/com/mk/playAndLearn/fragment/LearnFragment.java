@@ -4,17 +4,30 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.MainActivity;
+import com.mk.playAndLearn.adapters.LessonsAdapter;
+import com.mk.playAndLearn.adapters.PostsAdapter;
+import com.mk.playAndLearn.model.Lesson;
 
-import butterknife.OnClick;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -26,6 +39,9 @@ import butterknife.OnClick;
  * create an instance of this fragment.
  */
 public class LearnFragment extends Fragment {
+    // TODO : add spinner of subjects and used it to make quires on lessons
+    // TODO : make all fonts of the app the same color and adjust colors of the app
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,6 +49,12 @@ public class LearnFragment extends Fragment {
 
     View myView;
 
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    ArrayList list = new ArrayList();
+
+    ProgressBar progressBar;
+    RecyclerView recyclerView;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -68,14 +90,51 @@ public class LearnFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("lessons");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+
+                    Lesson value = dataSnapshot1.getValue(Lesson.class);
+                    Lesson lesson = new Lesson();
+
+                    String title = value.getTitle();
+                    String content = value.getContent();
+                    String arabicPosition = value.getArabicPosition();
+                    lesson.setTitle(title);
+                    lesson.setContent(content);
+                    lesson.setArabicPosition(arabicPosition);
+                    list.add(lesson);
+                }
+                progressBar.setVisibility(View.GONE);
+                LessonsAdapter recyclerAdapter = new LessonsAdapter(list, getActivity());
+                RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(recyclerAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Hello", "Failed to read value.", error.toException());
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.fragment_learn, container, false);
+        recyclerView = myView.findViewById(R.id.lessonsRecyclerView);
+        progressBar = myView.findViewById(R.id.lessonsProgressBar);
 
-        //testClick(myView);
         return myView;
     }
 
