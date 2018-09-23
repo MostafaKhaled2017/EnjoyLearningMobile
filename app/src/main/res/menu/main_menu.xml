@@ -10,6 +10,9 @@
     <item android:id="@+id/bestStudents"
         android:title="أفضل الطلاب"
         app:showAsAction="never" />
+    <item android:id="@+id/addLesson"
+        android:title="إضافة درس"
+        app:showAsAction="never" />
     <item android:id="@+id/myAccount"
         android:icon="@drawable/account"
         android:title="حسابي"

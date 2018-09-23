@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/arabicPositionInAddLesson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:hint="مكان الدرس(عربي)" />
+
+    <EditText
+        android:id="@+id/englishPositionInAddLesson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:hint="مكان الدرس(انجليزي)" />
+
+    <!-- TODO : think about to change to list of options-->
+    <EditText
+        android:id="@+id/subjectInAddLesson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:hint="المادة" />
+
+    <EditText
+        android:id="@+id/titleInAddLesson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:hint="عنوان الدرس" />
+
+    <EditText
+        android:id="@+id/contentInAddLesson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:hint="الدرس"
+        android:gravity="top|right"/>
+
+    <Button
+        android:id="@+id/addLessonButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="رفع الدرس"/>
+</LinearLayout>

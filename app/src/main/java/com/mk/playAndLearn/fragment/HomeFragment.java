@@ -59,6 +59,8 @@ public class HomeFragment extends Fragment {
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
 
+    boolean connected;
+
     RecyclerView recyclerView;
     public HomeFragment() {
         // Required empty public constructor
@@ -109,27 +111,51 @@ public class HomeFragment extends Fragment {
                 addPostBtn(myView);
             }
         });
+
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                } else {//TODO : handle this problem or find an alternative solution
+                   // Toast.makeText(getActivity(), "أنت غير متصل بالانترنت", Toast.LENGTH_SHORT).show();
+                   // progressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
+        });
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                if(connected) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
 
-                    Post value = dataSnapshot1.getValue(Post.class);
-                    Post post = new Post();
-                    String postContent = value.getPostContent();
-                    String postDate = value.getPostDate();//TODO : solve the date problem
-                    post.setPostContent(postContent);
-                    post.setPostDate(postDate);
-                    list.add(post);
+                        Post value = dataSnapshot1.getValue(Post.class);
+                        Post post = new Post();
+                        String postContent = value.getPostContent();
+                        String postDate = value.getPostDate();//TODO : solve the date problem
+                        post.setPostContent(postContent);
+                        post.setPostDate(postDate);
+                        list.add(post);
+                    }
+                    progressBar.setVisibility(View.GONE);
+                    PostsAdapter recyclerAdapter = new PostsAdapter(list, getActivity());
+                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.setAdapter(recyclerAdapter);
                 }
-                progressBar.setVisibility(View.GONE);
-                PostsAdapter recyclerAdapter = new PostsAdapter(list, getActivity());
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setItemAnimator(new DefaultItemAnimator());
-                recyclerView.setAdapter(recyclerAdapter);
+                else{
+                    Toast.makeText(getActivity(), "أنت غير متصل بالانترنت", Toast.LENGTH_SHORT).show();
+                    //TODO : add more actions
+                }
             }
 
             @Override
@@ -138,6 +164,7 @@ public class HomeFragment extends Fragment {
                 Log.w("Hello", "Failed to read value.", error.toException());
                 progressBar.setVisibility(View.GONE);
             }
+
         });
 
         return myView;
