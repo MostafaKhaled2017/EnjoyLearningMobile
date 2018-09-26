@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : test the app well
     //TODO : Test in multiple devices
     //TODO : revise errors
+    //TODO : think about decrease the size of icon in splash screen
+    //TODO : think about add external sources to lessons from wikipidea and youtube for example
     //TODO : add back arrow to all activities except the main activity
     //TODO : increase learn icon size
     //TODO : upload the project to github or gitlab

@@ -4,4 +4,5 @@
     <dimen name="generalTextSize">16sp</dimen>
     <dimen name="text_size_in_toolbar">20sp</dimen>
     <dimen name="large_text_size">25sp</dimen>
+    <dimen name="margin_between_radiobuttons">15dp</dimen>
 </resources>
