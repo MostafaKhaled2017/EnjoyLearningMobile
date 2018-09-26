@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.fragment.LessonContent;
 import com.mk.playAndLearn.model.Lesson;
-import com.mk.playAndLearn.model.Post;
 
 import java.util.ArrayList;
 
@@ -40,12 +39,11 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         final Lesson mylist = list.get(position);
-        if (mylist.getArabicPosition() != null)
-            holder.arabicPosition.setText(mylist.getArabicPosition());
+        if (mylist.getTitle() != null)
+            holder.arabicPosition.setText(mylist.getTitle());
         holder.lessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show();
                 Bundle lessonData = new Bundle();
                 LessonContent lessonContent = new LessonContent();
                 lessonData.putString("lessonTitle", mylist.getTitle());
@@ -84,7 +82,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
 
         public MyHolder(View itemView) {
             super(itemView);
-            arabicPosition = itemView.findViewById(R.id.lessonArabicPosition);
+            arabicPosition = itemView.findViewById(R.id.lessonTitle);
             lessonButton = itemView.findViewById(R.id.lessonButton);
         }
     }

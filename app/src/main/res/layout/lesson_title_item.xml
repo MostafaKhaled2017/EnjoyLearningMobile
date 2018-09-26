@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="150dp"
-    android:layout_height="150dp"
+    android:layout_width="165dp"
+    android:layout_height="165dp"
     android:orientation="vertical"
     android:layout_marginBottom="5dp"
     android:background="@color/white"
     android:layout_marginRight="8dp"
     android:layout_marginLeft="8dp">
     <TextView
-        android:id="@+id/lessonArabicPosition"
+        android:id="@+id/lessonTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
+        android:textSize="23sp"
         android:layout_alignParentRight="true"
         android:layout_margin="5dp"
         android:text="الوحدة الاولي الدرس الاول"/>
@@ -21,6 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:background="@drawable/lesson_button"
+        android:background="@drawable/rectangle_button"
         android:text="تعلم"/>
 </RelativeLayout>

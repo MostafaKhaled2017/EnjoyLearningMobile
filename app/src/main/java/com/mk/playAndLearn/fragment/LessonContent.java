@@ -17,7 +17,6 @@ import com.mk.enjoylearning.R;
 public class LessonContent extends Fragment {
     View view;
 
-    TextView tvTitle;
     TextView tvContent;
 
     //TODO : think about removing the menu from the par in the inner learn fragment
@@ -32,14 +31,7 @@ public class LessonContent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_lesson_content, container, false);
-        tvTitle = view.findViewById(R.id.lessonTitle);
         tvContent = view.findViewById(R.id.lessonContent);
-
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayShowTitleEnabled(false);
 
         TextView title = view.findViewById(R.id.toolbar_title_in_lesson);
 
@@ -47,7 +39,6 @@ public class LessonContent extends Fragment {
         if (lessonData != null) {
             String lessonTitle = lessonData.getString("lessonTitle");
             String lessonContent = lessonData.getString("lessonContent");
-            tvTitle.setText(lessonTitle);
             tvContent.setText(lessonContent);//TODO think about changing the font to the custom font in tahrir lounge app
             title.setText(lessonTitle);
 

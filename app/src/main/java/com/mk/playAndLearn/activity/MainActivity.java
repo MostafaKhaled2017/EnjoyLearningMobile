@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.myQuestions:
-                //newGame();
+            case R.id.addQuestion:
+                startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
                 return true;
             case R.id.aboutApp:
                 //showHelp();
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.bestStudents:
                 //showHelp();
                 return true;
-                case R.id.addLesson:startActivity(new Intent(MainActivity.this, AddQuestionActivity.class)                  );
+                case R.id.addLesson:startActivity(new Intent(MainActivity.this, AddLessonActivity.class)                  );
                 return true;
             case R.id.myAccount:
                 //showHelp();
@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             Map<String, String> map = new HashMap<>();
             map.put("postContent", postText);//Todo : Add post date and post witer
             map.put("postDate", date);//Todo : Add post image and post writer
+            map.put("postWriter", "Mostafa Khaled");
             myRef.push().setValue(map);
             etAddPost.setText("");
             Toast.makeText(view.getContext(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();

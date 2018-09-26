@@ -5,5 +5,31 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="facebook_app_id">260719771249980</string>
     <string name="fb_login_protocol_scheme">fb260719771249980</string>
-
+    <string-array name="subjects_array">
+        <item>لغة عربية</item>
+        <item>لغة انجليزية</item>
+        <item>جغرافيا</item>
+        <item>تاريخ</item>
+        <item>فلسفة</item>
+        <item>فيزياء (لغة إنجليزية)</item>
+        <item>كيمياء (لغة إنجليزية)</item>
+        <item>احياء (لغة إنجليزية)</item>
+        <item>جبر (لغة إنجليزية)</item>
+        <item>هندسة (لغة إنجليزية)</item>
+        <item>علم المثلثات (لغة إنجليزية)</item>
+        <item>حاسب الي (لغة إنجليزية)</item>
+    </string-array>
+    <string-array name="units_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="lessons_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>
