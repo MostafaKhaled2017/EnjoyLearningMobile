@@ -61,7 +61,8 @@
         <activity
             android:name="com.mk.playAndLearn.activity.AddLessonActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.AddQuestionActivity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.AddQuestionActivity"/>
+        <activity android:name="com.mk.playAndLearn.activity.LessonContent"/>
     </application>
 
 </manifest>

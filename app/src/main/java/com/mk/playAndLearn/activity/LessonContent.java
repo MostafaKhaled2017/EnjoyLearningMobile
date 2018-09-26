@@ -3,23 +3,29 @@ package com.mk.playAndLearn.activity;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
 
-public class AddQuestionActivity extends AppCompatActivity {
-    Spinner subjectsSpinner;
+public class LessonContent extends AppCompatActivity {
+    View view;
+
+    TextView tvContent;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_question);
-        Toolbar toolbar = findViewById(R.id.toolbarInAddQuestion);
+        setContentView(R.layout.fragment_lesson_content);
+        Toolbar toolbar = findViewById(R.id.toolbarInLesson);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
@@ -28,17 +34,23 @@ public class AddQuestionActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+        tvContent = findViewById(R.id.lessonContent);
 
-        subjectsSpinner = findViewById(R.id.subjectsSpinner);
+        TextView title = findViewById(R.id.toolbar_title_in_lesson);
 
-        ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.subjects_array, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subjectsSpinner.setAdapter(subjectsAdapter);
+        Intent intent = getIntent();
+        if (intent != null) {
+            String lessonTitle = intent.getStringExtra("lessonTitle");
+            String lessonContent = intent.getStringExtra("lessonContent");
+            tvContent.setText(lessonContent);//TODO think about changing the font to the custom font in tahrir lounge app
+            title.setText(lessonTitle);
+
+        } else {
+            Toast.makeText(this, "رجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent myIntent = new Intent(this, MainActivity.class);

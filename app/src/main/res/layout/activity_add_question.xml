@@ -1,9 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.AddQuestionActivity">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".activity.AddQuestionActivity"
+    android:background="@color/color3">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarInAddQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/color1">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="إضافة سؤال"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_in_toolbar" />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+    <TextView
+        android:id="@+id/subjectsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="المادة : "
+        android:layout_below="@id/appBar"
+        android:layout_alignParentRight="true"
+        android:layout_margin="8dp"
+        android:textSize="@dimen/generalTextSize"
+        />
+    <Spinner
+        android:layout_below="@id/appBar"
+        android:id="@+id/subjectsSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@id/subjectsTextView" />
+
+    <EditText
+        android:id="@+id/addQuestionEditText"
+        android:layout_below="@id/subjectsSpinner"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="السؤال"/>
+
+</RelativeLayout>

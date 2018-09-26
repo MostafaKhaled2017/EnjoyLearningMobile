@@ -32,7 +32,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
     static DatabaseReference myRef;
     FirebaseDatabase database;
     Button addLessonButton;
-    Spinner subjectSpinner, unitOrderSpinner, lessonOrderSpinner;
+    Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner;
 
     String currentSubject = "", currentUnitOrder = "", currentLessonOrder = "";
 
@@ -52,18 +52,18 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
 
         etContent = findViewById(R.id.contentInAddLesson);
         etTitle = findViewById(R.id.titleInAddLesson);
-        subjectSpinner = findViewById(R.id.subjectsSpinner);
+        subjectsSpinner = findViewById(R.id.subjectsSpinner);
         unitOrderSpinner = findViewById(R.id.unitOrderSpinner);
         lessonOrderSpinner = findViewById(R.id.lessonOrderSpinner);
 
-        subjectSpinner.setOnItemSelectedListener(this);
+        subjectsSpinner.setOnItemSelectedListener(this);
         lessonOrderSpinner.setOnItemSelectedListener(this);
         unitOrderSpinner.setOnItemSelectedListener(this);
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.subjects_array, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subjectSpinner.setAdapter(subjectsAdapter);
+        subjectsSpinner.setAdapter(subjectsAdapter);
 
         ArrayAdapter<CharSequence> unitsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.units_array, android.R.layout.simple_spinner_item);

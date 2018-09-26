@@ -2,17 +2,16 @@ package com.mk.playAndLearn.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.fragment.LessonContent;
+import com.mk.playAndLearn.activity.LessonContent;
 import com.mk.playAndLearn.model.Lesson;
 
 import java.util.ArrayList;
@@ -44,15 +43,10 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
         holder.lessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle lessonData = new Bundle();
-                LessonContent lessonContent = new LessonContent();
-                lessonData.putString("lessonTitle", mylist.getTitle());
-                lessonData.putString("lessonContent", mylist.getContent());
-                lessonContent.setArguments(lessonData);
-                ((Activity) context).getFragmentManager().beginTransaction()
-                        .replace(android.R.id.content, lessonContent)
-                        .addToBackStack(null)
-                        .commit();
+                Intent lessonIntent = new Intent(context, LessonContent.class);
+                lessonIntent.putExtra("lessonTitle", mylist.getTitle());
+                lessonIntent.putExtra("lessonContent", mylist.getContent());
+                ((Activity) context).startActivity(lessonIntent);
             }
         });
 
