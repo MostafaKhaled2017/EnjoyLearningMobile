@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +48,9 @@ public class HomeFragment extends Fragment {
 
     ProgressBar progressBar;
 
+    String userName = "", userImage = "", userEmail = "";
+    SharedPreferences sharedPreferences;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -58,6 +63,7 @@ public class HomeFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
+    PostsAdapter recyclerAdapter;
 
     boolean connected;
 
@@ -108,11 +114,28 @@ public class HomeFragment extends Fragment {
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addPostBtn(myView);
+                if(sharedPreferences != null) {
+                    sharedPreferences = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                    if (sharedPreferences.contains("userName")){
+                        userName = sharedPreferences.getString("userName", "");
+                    }
+                    if (sharedPreferences.contains("userImage")){
+                        userImage = sharedPreferences.getString("userImage", "");
+                    }
+                    if (sharedPreferences.contains("userEmail")){
+                        userEmail = sharedPreferences.getString("userEmail", "");
+                    }
+                }
+                addPostBtn(myView, userName, userEmail, userImage);
             }
         });
+        recyclerAdapter = new PostsAdapter(list, getActivity());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerAdapter);
 
-        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+      /*  DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -127,46 +150,46 @@ public class HomeFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError error) {
             }
-        });
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        });*/
+        myRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                if(connected) {
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-
-                        Post value = dataSnapshot1.getValue(Post.class);
-                        Post post = new Post();
-                        String postContent = value.getPostContent();
-                        String postDate = value.getPostDate();//TODO : solve the date problem
-                        post.setPostContent(postContent);
-                        post.setPostDate(postDate);
-                        list.add(post);
-                    }
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post post = new Post();
+                String postContent = dataSnapshot.child("content").getValue().toString();
+                String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
+                String postWriter = dataSnapshot.child("writer").getValue().toString();
+                String postImage = dataSnapshot.child("image").getValue().toString();
+                post.setContent(postContent);
+                post.setDate(postDate);
+                post.setWriter(postWriter);
+                post.setImage(postImage);
+                list.add(0,post);
+                recyclerAdapter.notifyDataSetChanged();
+                if(progressBar.getVisibility() != View.GONE)
                     progressBar.setVisibility(View.GONE);
-                    PostsAdapter recyclerAdapter = new PostsAdapter(list, getActivity());
-                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setItemAnimator(new DefaultItemAnimator());
-                    recyclerView.setAdapter(recyclerAdapter);
-                }
-                else{
-                    Toast.makeText(getActivity(), "أنت غير متصل بالانترنت", Toast.LENGTH_SHORT).show();
-                    //TODO : add more actions
-                }
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("Hello", "Failed to read value.", error.toException());
-                progressBar.setVisibility(View.GONE);
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
             }
 
-        });
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                Log.v("Logging", "error loading data : " + databaseError);
+            }
+        });
         return myView;
          }
 

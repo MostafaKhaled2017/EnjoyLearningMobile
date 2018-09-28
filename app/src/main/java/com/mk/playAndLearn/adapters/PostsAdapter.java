@@ -5,11 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Post;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -35,10 +36,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         Post mylist = list.get(position);
-        if(mylist.getPostContent() != null)
-            holder.name.setText(mylist.getPostContent());
-        if(mylist.getPostDate() != null)
-            holder.date.setText(mylist.getPostDate());
+        if(mylist.getContent() != null)
+            holder.content.setText(mylist.getContent());
+        if(mylist.getDate() != null)
+            holder.date.setText(mylist.getDate());
+        if(mylist.getWriter() != null && !mylist.getWriter().equals(""))
+            holder.name.setText(mylist.getWriter());
+        if(mylist.getImage() != null && !mylist.getImage().equals(""))
+            Picasso.with(context).load(mylist.getImage()).into(holder.imageView);
     }
 
     @Override
@@ -60,13 +65,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
     }
 
     class MyHolder extends RecyclerView.ViewHolder{
-        TextView name, date;
+        TextView content, date, name;
+        ImageView imageView;
 
 
         public MyHolder(View itemView) {
             super(itemView);
-            name =  itemView.findViewById(R.id.postContent);
+            content =  itemView.findViewById(R.id.postContent);
             date = itemView.findViewById(R.id.postDate);
+            name = (TextView)itemView.findViewById(R.id.postUserName);
+            imageView = itemView.findViewById(R.id.postImage);
         }
     }
 

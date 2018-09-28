@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -56,6 +57,7 @@ public class GeneralSignActivity extends AppCompatActivity {
     GoogleApiClient mGoogleApiClient;
     GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
+    String userName = "", userImage = "", userEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,6 +191,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+
                 Toast.makeText(this, "نجح تسجيل الدخول",Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(GeneralSignActivity.this,MainActivity.class));
             } catch (ApiException e) {
@@ -209,6 +212,24 @@ public class GeneralSignActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
+                            userName = mAuth.getCurrentUser().getDisplayName();
+                            userImage = mAuth.getCurrentUser().getPhotoUrl().toString();
+                            userEmail = mAuth.getCurrentUser().getEmail();
+
+                            Log.v("Logging", "user name is : " + userName
+                                    + " user image is : " + userImage
+                                    + " user email is : " + userEmail);
+
+                            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.clear();
+                            editor.apply();
+
+                            editor.putString("userName", userName);
+                            editor.putString("userImage", userImage);
+                            editor.putString("userEmail", userEmail);
+
+                            editor.apply();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

@@ -1,6 +1,8 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 
 import com.ToxicBakery.viewpager.transforms.TabletTransformer;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
@@ -35,15 +39,19 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
     private ViewPager mViewPager;
+    private FirebaseAuth mAuth;
     TabLayout tabLayout;
     int tabPosition = 1;
-    FirebaseAuth mAuth;
     static DatabaseReference myRef;
     FirebaseDatabase database;
-    ///////////////TODO : think about removing facebook login from the app because if I will need to pay to use google adsens when using it but I don't think so
+
+    String userName = "", userImage = "", userEmail = "";
+
+
+    //TODO : think about removing facebook login from the app because if I will need to pay to use google adsens when using it but I don't think so
     //TODO : think about adding icons for sign in and sign up
     //TODO : think about adding signUp and sign in using facebook and google
     //TODO : use android arsenal and other libraries to add designs to the app
@@ -74,13 +82,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         assert actionBar != null;
         actionBar.setDisplayShowTitleEnabled(false);
 
-
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("posts");
 
         mViewPager = findViewById(R.id.viewpager);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(),this);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
         tabLayout = findViewById(R.id.tablayout);
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
@@ -119,6 +126,28 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             }
         });
 
+        if(mAuth.getCurrentUser() != null) {
+            userName = mAuth.getCurrentUser().getDisplayName();
+            userImage = mAuth.getCurrentUser().getPhotoUrl().toString();
+            userEmail = mAuth.getCurrentUser().getEmail();
+
+            Log.v("Logging", "user name is : " + userName
+                    + " user image is : " + userImage
+                    + " user email is : " + userEmail);
+
+            /*try {
+                for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
+                    if (user.getProviderId().equals("google.com")) {
+                        Toast.makeText(this, "User is signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(this, "User is not signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }*/
+        }
     }
 
     @Override
@@ -140,7 +169,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.bestStudents:
                 //showHelp();
                 return true;
-                case R.id.addLesson:startActivity(new Intent(MainActivity.this, AddLessonActivity.class)                  );
+            case R.id.addLesson:
+                startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
                 return true;
             case R.id.myAccount:
                 //showHelp();
@@ -169,24 +199,22 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     }
 
 
-
-
-
     // home fragment button
-   public static void addPostBtn(View view){
+    public static void addPostBtn(View view, String userName, String userEmail, String userImage) {
         EditText etAddPost = view.findViewById(R.id.etAddPost);
         String postText = etAddPost.getText().toString();
-       Date today = new Date();
-       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
-       String date = format.format(today);
-        if(TextUtils.isEmpty(postText)){
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+        String date = format.format(today);
+        if (TextUtils.isEmpty(postText)) {
             etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
-        }
-        else {
+        } else {
             Map<String, String> map = new HashMap<>();
-            map.put("postContent", postText);//Todo : Add post date and post witer
-            map.put("postDate", date);//Todo : Add post image and post writer
-            map.put("postWriter", "Mostafa Khaled");
+            map.put("content", postText);//Todo : Add post date and post witer
+            map.put("date", date);//Todo : Add post image and post writer
+            map.put("writer", userName);
+            map.put("image", userImage);
+            map.put("email", userEmail);
             myRef.push().setValue(map);
             etAddPost.setText("");
             Toast.makeText(view.getContext(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();

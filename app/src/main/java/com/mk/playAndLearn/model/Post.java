@@ -1,37 +1,51 @@
 package com.mk.playAndLearn.model;
 
 public class Post {
-    private String userName, message, date, imageUrl;
+    private String writerName;
+    private String content;
+    private String date;
+    private String imageUrl;
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPostContent() {
-        return message;
-    }
-
-    public void setPostContent(String message) {
-        this.message = message;
-    }
-
-    public String getPostDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setPostDate(String date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public String getImageUrl() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    private String email;
+
+    public String getWriter() {
+        return writerName;
+    }
+
+    public void setWriter(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String message) {
+        this.content = message;
+    }
+
+
+    public String getImage() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
+    public void setImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 }

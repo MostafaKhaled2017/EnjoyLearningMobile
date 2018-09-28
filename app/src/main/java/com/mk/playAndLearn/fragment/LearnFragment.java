@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,6 +54,7 @@ public class LearnFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
+    LessonsAdapter recyclerAdapter;
 
     ProgressBar progressBar;
     RecyclerView recyclerView;
@@ -93,49 +95,6 @@ public class LearnFragment extends Fragment {
         }
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("lessons");
-        if (list.size() == 0) {
-            myRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-
-                        Lesson value = dataSnapshot1.getValue(Lesson.class);
-                        Lesson lesson = new Lesson();
-
-                        String title = value.getTitle();
-                        String content = value.getContent();
-                        String arabicPosition = value.getArabicPosition();
-                        lesson.setTitle(title);
-                        lesson.setContent(content);
-                        lesson.setArabicPosition(arabicPosition);
-                        list.add(lesson);
-                    }
-                    progressBar.setVisibility(View.GONE);
-                    LessonsAdapter recyclerAdapter = new LessonsAdapter(list, getActivity());
-                    RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setItemAnimator(new DefaultItemAnimator());
-                    recyclerView.setAdapter(recyclerAdapter);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Toast.makeText(getActivity(), "فشل تحميل الدروس", Toast.LENGTH_SHORT).show();
-                    // TODO : add action when the data fails to load here and in very place
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
-        } else {
-            progressBar.setVisibility(View.GONE);
-            LessonsAdapter recyclerAdapter = new LessonsAdapter(list, getActivity());
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(recyclerAdapter);
-        }
     }
 
     @Override
@@ -144,7 +103,49 @@ public class LearnFragment extends Fragment {
         myView = inflater.inflate(R.layout.fragment_learn, container, false);
         recyclerView = myView.findViewById(R.id.lessonsRecyclerView);
         progressBar = myView.findViewById(R.id.lessonsProgressBar);
+        recyclerAdapter = new LessonsAdapter(list, getActivity());
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerAdapter);
+        myRef.orderByChild("reviewed").equalTo(true).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Lesson value = dataSnapshot.getValue(Lesson.class);
+                Lesson lesson = new Lesson();
 
+                String title = value.getTitle();
+                String content = value.getContent();
+                String arabicPosition = value.getArabicPosition();
+                lesson.setTitle(title);
+                lesson.setContent(content);
+                lesson.setArabicPosition(arabicPosition);
+                list.add(lesson);
+                if(progressBar.getVisibility() != View.GONE)
+                    progressBar.setVisibility(View.GONE);
+                recyclerAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return myView;
     }
 

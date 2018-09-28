@@ -29,6 +29,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
     //TODO : push to the database who is the user who writes the lesson or the post and push it by a primary data
     //TODO : make a page where the student can see his note on every lesson and think about changing the idea for that the student writes his notes on the lesson but I on't prefer that I prefer make adding lesson adds a lot of XPs
+    // TODO : think about replacing toasts with snackbar
     static DatabaseReference myRef;
     FirebaseDatabase database;
     Button addLessonButton;
@@ -87,17 +88,18 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                 if (TextUtils.isEmpty(content) || TextUtils.isEmpty(title)) {
                     Toast.makeText(AddLessonActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
                 } else {
-                    Map<String, String> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("title", title);
                     map.put("content", content);
-                    map.put("unit", currentUnitOrder);
-                    map.put("lesson", currentLessonOrder);
+                    map.put("unit", Integer.parseInt(currentUnitOrder));
+                    map.put("lesson", Integer.parseInt(currentLessonOrder));
                     map.put("subject", currentSubject);
                     map.put("lessonWriter", "Mostafa Khaled");
+                    map.put("reviewed", false);
                     myRef.push().setValue(map);
                     etTitle.setText("");
                     etContent.setText("");
-                    Toast.makeText(AddLessonActivity.this, "تم إضافة الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddLessonActivity.this, "تم إضافة الدرس بنجاح و سيتم مراجعته", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -126,9 +128,6 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent myIntent = new Intent(this, MainActivity.class);
-        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivityForResult(myIntent, 0);
         finish();
         return true;
     }
