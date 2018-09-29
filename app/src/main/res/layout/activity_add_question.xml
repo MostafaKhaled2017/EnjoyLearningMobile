@@ -58,7 +58,8 @@
         android:layout_below="@id/subjectsSpinner"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
-        android:hint="السؤال" />
+        android:hint="السؤال"
+        android:inputType="textCapSentences"/>
     <TextView
         android:id="@+id/answerText"
         android:layout_width="wrap_content"

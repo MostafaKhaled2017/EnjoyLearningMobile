@@ -73,7 +73,10 @@
         <activity
             android:name="com.mk.playAndLearn.activity.BestStudentsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.PostInDetailsActivity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.PostInDetailsActivity" />
+        <activity android:name="com.mk.playAndLearn.activity.QuestionActivity" />
+        <activity android:name="com.mk.playAndLearn.activity.QuestionResultActivity" />
+        <activity android:name="com.mk.playAndLearn.activity.ChallengeResultActivity"></activity>
     </application>
 
 </manifest>

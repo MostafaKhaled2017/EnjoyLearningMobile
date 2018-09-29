@@ -38,6 +38,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
     //TODO : push to the database who is the user who writes the lesson or the post and push it by a primary data
     //TODO : make a page where the student can see his note on every lesson and think about changing the idea for that the student writes his notes on the lesson but I on't prefer that I prefer make adding lesson adds a lot of XPs
     // TODO : think about replacing toasts with snackbar
+    //TODO : determine the points of every thing
     static DatabaseReference myRef;
     FirebaseDatabase database;
     private FirebaseAuth mAuth;

@@ -1,14 +1,29 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.MainActivity;
+import com.mk.playAndLearn.activity.QuestionActivity;
+import com.mk.playAndLearn.model.Question;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +34,9 @@ import com.mk.enjoylearning.R;
  * create an instance of this fragment.
  */
 public class ChallengesFragment extends Fragment {
+
+    //TODO : handle when firebase failed to get data
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,6 +45,13 @@ public class ChallengesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    View view;
+    Button startChallengeButton;
+
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    ArrayList list = new ArrayList();
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,8 +89,64 @@ public class ChallengesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_challenges, container, false);
+        view = inflater.inflate(R.layout.fragment_challenges, container, false);
+
+        startChallengeButton = view.findViewById(R.id.startChallengeButton);
+        startChallengeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), QuestionActivity.class);
+                i.putParcelableArrayListExtra("list", list);
+                i.putExtra("position", 0);
+                i.putExtra("score", 0);
+                //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
+                startActivity(i);
+            }
+        });
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("questions");
+        //TODO : add query to get specific subject
+        myRef.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!list.isEmpty()) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        Question question = new Question();
+                        String questionText = dataSnapshot1.child("al question").getValue().toString();
+                        String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
+                        String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
+                        String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
+                        String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
+                        String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
+                        String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                        boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
+                        if (reviewed) {
+                            question.setAns1(answer1);
+                            question.setAns2(answer2);
+                            question.setAns3(answer3);
+                            question.setAns4(answer4);
+                            question.setCorrectAnswer(correctAnswer);
+                            question.setWriterName(writerName);
+                            question.setQuestion(questionText);
+
+                            list.add(question);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return  view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
