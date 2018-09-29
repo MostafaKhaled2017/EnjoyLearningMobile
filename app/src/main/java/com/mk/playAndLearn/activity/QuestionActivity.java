@@ -1,6 +1,5 @@
 package com.mk.playAndLearn.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -16,20 +15,13 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class QuestionActivity extends AppCompatActivity {
     FirebaseDatabase database;
@@ -41,7 +33,7 @@ public class QuestionActivity extends AppCompatActivity {
     String selection, correctAnswer;
     RadioButton r1, r2, r3, r4;
     Intent i;
-    int position, score;
+    int questionNo, score;
     //TODO : change the xml tags to support
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +61,10 @@ public class QuestionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null){
            list = intent.getParcelableArrayListExtra("list");
-           position = intent.getIntExtra("position",-1);
+           questionNo = intent.getIntExtra("questionNo",-1);
            score = intent.getIntExtra("score", -1);
         }
-        Question question = (Question) list.get(position);
+        Question question = (Question) list.get(questionNo);
         correctAnswer = question.getCorrectAnswer();
 
         tvQuestion.setText(question.getQuestion());
@@ -98,7 +90,7 @@ public class QuestionActivity extends AppCompatActivity {
                    i.putExtra("answer", false);
                 }
                 i.putParcelableArrayListExtra("list", list);
-                i.putExtra("position", position);
+                i.putExtra("questionNo", questionNo);
                 i.putExtra("score", score);
                 //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);

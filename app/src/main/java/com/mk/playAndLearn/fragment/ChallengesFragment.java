@@ -30,6 +30,7 @@ import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,7 +58,9 @@ public class ChallengesFragment extends Fragment {
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    ArrayList list = new ArrayList();
+    ArrayList list = new ArrayList(), list2 = new ArrayList();
+    private Random randomGenerator;
+
 
     Spinner spinner;
     ProgressBar progressBar;
@@ -106,9 +109,20 @@ public class ChallengesFragment extends Fragment {
         startChallengeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!list2.isEmpty())
+                    list2.clear();
+
+                for(int i = 0; i < 5; i++) {
+                    randomGenerator = new Random();
+                    int index = randomGenerator.nextInt(list.size());
+                    Question question = (Question) list.get(index);
+                    list2.add(question);
+                }
+
                 Intent i = new Intent(getActivity(), QuestionActivity.class);
-                i.putParcelableArrayListExtra("list", list);
-                i.putExtra("position", 0);
+
+                i.putParcelableArrayListExtra("list", list2);
+                i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);
                 //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
                 startActivity(i);

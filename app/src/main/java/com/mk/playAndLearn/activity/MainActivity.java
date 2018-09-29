@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : make sure that the app runs on tablets well and try on different screen sizes
     //TODO : handle the app rotation or make it using landscape mode only
     //TODO : handle that the app is working well when the phone is arabic and english
-    //TODO : think about adding to subject "other lessons" and if selected hide the position things
+    //TODO : think about adding to subject "other lessons" and if selected hide the questionNo things
     //TODO : add alert dialog before open add question or add lesson warning that any bas thing added will lead to deleting the account
     //TODO : test the app well
     //TODO : Test in multiple devices

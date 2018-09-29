@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.provider.CalendarContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +12,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
 
@@ -25,7 +21,7 @@ public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
     boolean correct;
     ArrayList list = new ArrayList();
-    int position, score;
+    int questionNo, score;
     Intent i;
 
     @Override
@@ -48,7 +44,7 @@ public class QuestionResultActivity extends AppCompatActivity {
         if (intent != null) {
             correct = intent.getBooleanExtra("answer", false);
             list = intent.getParcelableArrayListExtra("list");
-            position = intent.getIntExtra("position", -1);
+            questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
         }
         i = new Intent(this, QuestionActivity.class);
@@ -60,7 +56,7 @@ public class QuestionResultActivity extends AppCompatActivity {
             resultText.setText("إجابة خاطئة");
             resultText.setTextColor(Color.RED);
         }
-        if (position + 1 < list.size()) {
+        if (questionNo + 1 < 5) {
         Thread timer = new Thread() {
             @Override
             public void run() {
@@ -70,7 +66,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } finally {
                     i.putParcelableArrayListExtra("list", list);
-                    i.putExtra("position", position + 1);
+                    i.putExtra("questionNo", questionNo + 1);
                     i.putExtra("score", score);
                     startActivity(i);
                     finish();
