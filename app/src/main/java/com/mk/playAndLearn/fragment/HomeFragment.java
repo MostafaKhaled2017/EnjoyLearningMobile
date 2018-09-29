@@ -159,10 +159,12 @@ public class HomeFragment extends Fragment {
                 String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
                 String postWriter = dataSnapshot.child("writer").getValue().toString();
                 String postImage = dataSnapshot.child("image").getValue().toString();
+                String postId = dataSnapshot.getKey();
                 post.setContent(postContent);
                 post.setDate(postDate);
                 post.setWriter(postWriter);
                 post.setImage(postImage);
+                post.setId(postId);
                 list.add(0,post);
                 recyclerAdapter.notifyDataSetChanged();
                 if(progressBar.getVisibility() != View.GONE)

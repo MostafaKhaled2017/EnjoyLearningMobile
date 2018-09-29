@@ -38,7 +38,7 @@ public class BestStudentsAdapter extends RecyclerView.Adapter<BestStudentsAdapte
     @Override
     public void onBindViewHolder(BestStudentsAdapter.MyHolder holder, int position) {
         final User mylist = list.get(position);
-        holder.position.setText(position + 1 + "");
+        holder.position.setText(position + 1 + "");//TODO : find a better  way to get positions with tie
         holder.points.setText( mylist.getPoints() + " XP");
         if (mylist.getName() != null)
             holder.name.setText(mylist.getName());

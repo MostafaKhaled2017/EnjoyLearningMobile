@@ -12,4 +12,9 @@
     <dimen name="height_and_width_of_contact_us_icon">30dp</dimen>
     <dimen name="text_size_of_contact_us_xlarge">45sp</dimen>
     <dimen name="margin_left_and_start_of_icons_of_contact_us">25dp</dimen>
+    <dimen name="activity_margin">16dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
+    <dimen name="dialogTitleTextSize">20sp</dimen>
+    <dimen name="input_new_note">20sp</dimen>
+
 </resources>

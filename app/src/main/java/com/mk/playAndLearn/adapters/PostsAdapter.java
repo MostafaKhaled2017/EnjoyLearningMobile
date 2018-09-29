@@ -1,6 +1,8 @@
 package com.mk.playAndLearn.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.model.Post;
 import com.squareup.picasso.Picasso;
 
@@ -35,7 +38,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        Post mylist = list.get(position);
+        final Post mylist = list.get(position);
         if(mylist.getContent() != null)
             holder.content.setText(mylist.getContent());
         if(mylist.getDate() != null)
@@ -44,6 +47,20 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
             holder.name.setText(mylist.getWriter());
         if(mylist.getImage() != null && !mylist.getImage().equals(""))
             Picasso.with(context).load(mylist.getImage()).into(holder.imageView);
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, PostInDetailsActivity.class);
+                intent.putExtra("content", mylist.getContent());
+                intent.putExtra("date", mylist.getDate());
+                intent.putExtra("name", mylist.getWriter());
+                intent.putExtra("image", mylist.getImage());
+                if(mylist.getId() != null)
+                    intent.putExtra("id", mylist.getId());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -67,14 +84,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
     class MyHolder extends RecyclerView.ViewHolder{
         TextView content, date, name;
         ImageView imageView;
+        CardView cardView;
 
 
         public MyHolder(View itemView) {
             super(itemView);
-            content =  itemView.findViewById(R.id.postContent);
-            date = itemView.findViewById(R.id.postDate);
-            name = (TextView)itemView.findViewById(R.id.postUserName);
-            imageView = itemView.findViewById(R.id.postImage);
+            content =  itemView.findViewById(R.id.postContentInDetails);
+            date = itemView.findViewById(R.id.postDateInDetails);
+            name = itemView.findViewById(R.id.postUserNameInDetails);
+            imageView = itemView.findViewById(R.id.postImageInDetails);
+            cardView = itemView.findViewById(R.id.card_view_of_posts);
         }
     }
 

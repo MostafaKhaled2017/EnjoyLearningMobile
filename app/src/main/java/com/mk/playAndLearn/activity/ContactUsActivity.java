@@ -19,6 +19,7 @@ import java.net.URI;
 public class ContactUsActivity extends AppCompatActivity {
     TextView phoneNumer, email;
     Intent i;
+    //TODO : add facebook page to the activity but I prefer to wait for some time
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
