@@ -186,12 +186,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if (tabPosition != 1) {
             mViewPager.setCurrentItem(1);
         } else {
+            //super.onBackPressed();
             this.finishAffinity();
-            System.exit(0);
+           // System.exit(0);
         }
     }
 
