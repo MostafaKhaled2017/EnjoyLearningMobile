@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.questionActivity">
+    tools:context=".activity.questionActivity"
+    android:background="@color/color3">
+
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -27,58 +30,81 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
+
     <TextView
         android:id="@+id/questionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/appBar"
         android:layout_gravity="right"
-        android:text="السؤال"
         android:layout_margin="5dp"
-        android:textStyle="bold"
-        android:textSize="22sp"/>
+        android:text="ما هي أقسام الأدب؟"
+        android:textColor="@color/writingColor"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radioGroup"
-        android:layout_gravity="right"
-        android:layout_marginTop="7dp"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/instuctionsText"
-        android:orientation="vertical">
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:layout_marginTop="7dp"
+        android:orientation="vertical"
+        android:background="@color/white">
 
         <RadioButton
             android:id="@+id/radio1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/addQuestionEditText"
+            android:text="الإجابة الاولي"
+            android:textColor="@color/writingColor"
+            android:textSize="22sp"
             android:layout_margin="@dimen/margin_between_radiobuttons" />
 
         <RadioButton
             android:id="@+id/radio2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="الإجابة الثانية"
             android:layout_below="@id/radio1"
+            android:textColor="@color/writingColor"
+            android:textSize="22sp"
             android:layout_margin="@dimen/margin_between_radiobuttons" />
 
         <RadioButton
             android:id="@+id/radio3"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio2"
+            android:text="الإجابة الثالثة"
+            android:textSize="22sp"
+            android:textColor="@color/writingColor"
             android:layout_margin="@dimen/margin_between_radiobuttons" />
 
         <RadioButton
             android:id="@+id/radio4"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio3"
-            android:layout_margin="@dimen/margin_between_radiobuttons"/>
+            android:text="الإجابة الرابعة"
+            android:textSize="22sp"
+            android:textColor="@color/writingColor"
+            android:layout_margin="@dimen/margin_between_radiobuttons" />
 
     </RadioGroup>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/nextButton"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="التالي"/>
-</android.support.v7.widget.LinearLayoutCompat>
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@drawable/rectangle_button"
+        android:text="التالي"
+        android:textSize="22sp"
+        android:textColor="@color/white" />
+</RelativeLayout>

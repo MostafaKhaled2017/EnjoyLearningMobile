@@ -7,10 +7,15 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.activity.QuestionActivity;
+import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
@@ -52,6 +58,9 @@ public class ChallengesFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
+
+    Spinner spinner;
+    ProgressBar progressBar;
 
     private OnFragmentInteractionListener mListener;
 
@@ -108,45 +117,64 @@ public class ChallengesFragment extends Fragment {
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("questions");
-        //TODO : add query to get specific subject
-        myRef.addValueEventListener(new ValueEventListener() {
+        progressBar = view.findViewById(R.id.challengesProgressBar);
 
+        spinner = view.findViewById(R.id.subjectsSpinnerInChallengesFragment);
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.subjects_array, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(subjectsAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!list.isEmpty()) {
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        Question question = new Question();
-                        String questionText = dataSnapshot1.child("al question").getValue().toString();
-                        String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
-                        String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
-                        String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
-                        String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
-                        String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
-                        String writerName = dataSnapshot1.child("writerName").getValue().toString();
-                        boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
-                        if (reviewed) {
-                            question.setAns1(answer1);
-                            question.setAns2(answer2);
-                            question.setAns3(answer3);
-                            question.setAns4(answer4);
-                            question.setCorrectAnswer(correctAnswer);
-                            question.setWriterName(writerName);
-                            question.setQuestion(questionText);
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String currentSubject = adapterView.getItemAtPosition(i).toString();
+                if (!list.isEmpty())
+                    list.clear();
+                myRef.orderByChild("subject").equalTo(currentSubject).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (list.isEmpty()) {
+                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                Question question = new Question();
+                                String questionText = dataSnapshot1.child("al question").getValue().toString();
+                                String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
+                                String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
+                                String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
+                                String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
+                                String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
+                                String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                                boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
+                                if (reviewed) {
+                                    question.setAns1(answer1);
+                                    question.setAns2(answer2);
+                                    question.setAns3(answer3);
+                                    question.setAns4(answer4);
+                                    question.setCorrectAnswer(correctAnswer);
+                                    question.setWriterName(writerName);
+                                    question.setQuestion(questionText);
 
-                            list.add(question);
+                                    list.add(question);
+                                }
+                            }
                         }
                     }
-                }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
 
 
-        return  view;
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -156,7 +184,7 @@ public class ChallengesFragment extends Fragment {
         }
     }
 
- @Override
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {

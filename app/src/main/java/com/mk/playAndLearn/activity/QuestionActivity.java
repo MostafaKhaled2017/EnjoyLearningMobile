@@ -91,7 +91,7 @@ public class QuestionActivity extends AppCompatActivity {
                     RadioButton btn = (RadioButton) rg1.getChildAt(radioId);
                     selection = (String) btn.getText();
                 }
-                if(selection.equals(correctAnswer)){
+                if(selection != null && selection.equals(correctAnswer)){
                     i.putExtra("answer", true);
                 }
                 else {
