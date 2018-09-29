@@ -13,11 +13,12 @@
         android:id="@+id/addQuestion"
         android:title="إضافة سؤال"
         app:showAsAction="never" />
-    <item
+    <!-- TODO : add this item if possible -->
+   <!-- <item
         android:id="@+id/myAccount"
         android:icon="@drawable/account"
         android:title="حسابي"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
     <item
         android:id="@+id/bestStudents"
         android:title="أفضل الطلاب"

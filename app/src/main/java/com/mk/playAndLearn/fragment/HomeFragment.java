@@ -114,8 +114,8 @@ public class HomeFragment extends Fragment {
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sharedPreferences = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 if(sharedPreferences != null) {
-                    sharedPreferences = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                     if (sharedPreferences.contains("userName")){
                         userName = sharedPreferences.getString("userName", "");
                     }
@@ -186,7 +186,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
                 Log.v("Logging", "error loading data : " + databaseError);
             }
         });

@@ -68,7 +68,7 @@
             android:layout_marginLeft="2dp"
             android:layout_marginRight="35dp"
             android:layout_toLeftOf="@id/unitOrderSpinner"
-            android:text="محتوى الدرس : "
+            android:text="الدرس : "
             android:textSize="@dimen/generalTextSize" />
 
         <Spinner

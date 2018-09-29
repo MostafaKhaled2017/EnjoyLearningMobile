@@ -6,14 +6,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -21,15 +23,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
-import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.model.Lesson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -49,7 +47,7 @@ public class LearnFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    View myView;
+    View view;
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -61,8 +59,10 @@ public class LearnFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    Button btn;
+
     private OnFragmentInteractionListener mListener;
+
+    Spinner subjectsSpinner;
 
     public LearnFragment() {
         // Required empty public constructor
@@ -100,53 +100,79 @@ public class LearnFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.fragment_learn, container, false);
-        recyclerView = myView.findViewById(R.id.lessonsRecyclerView);
-        progressBar = myView.findViewById(R.id.lessonsProgressBar);
+        view = inflater.inflate(R.layout.fragment_learn, container, false);
+        subjectsSpinner = view.findViewById(R.id.subjectsSpinnerInLearnFragment);
+        recyclerView = view.findViewById(R.id.lessonsRecyclerView);
+        progressBar = view.findViewById(R.id.lessonsProgressBar);
         recyclerAdapter = new LessonsAdapter(list, getActivity());
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
-        myRef.orderByChild("reviewed").equalTo(true).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Lesson value = dataSnapshot.getValue(Lesson.class);
-                Lesson lesson = new Lesson();
 
-                String title = value.getTitle();
-                String content = value.getContent();
-                String arabicPosition = value.getArabicPosition();
-                lesson.setTitle(title);
-                lesson.setContent(content);
-                lesson.setArabicPosition(arabicPosition);
-                list.add(lesson);
-                if(progressBar.getVisibility() != View.GONE)
-                    progressBar.setVisibility(View.GONE);
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.subjects_array, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectsSpinner.setAdapter(subjectsAdapter);
+
+        subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String currentSubject = adapterView.getItemAtPosition(i).toString();
+                if(!list.isEmpty())
+                    list.clear();
                 recyclerAdapter.notifyDataSetChanged();
+                myRef.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Lesson value = dataSnapshot.getValue(Lesson.class);
+                        Lesson lesson = new Lesson();
+                        boolean reviewed =(boolean) dataSnapshot.child("reviewed").getValue();
+                        if(reviewed) {
+                            String title = value.getTitle();
+                            String content = value.getContent();
+                            String arabicPosition = value.getArabicPosition();
+                            lesson.setTitle(title);
+                            lesson.setContent(content);
+                            lesson.setArabicPosition(arabicPosition);
+                            list.add(lesson);
+                        }
+                        if(progressBar.getVisibility() != View.GONE)
+                            progressBar.setVisibility(View.GONE);
+                        recyclerAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                       // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
+                        Log.v("Logging", "database error : " + databaseError);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
-        return myView;
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -188,5 +214,4 @@ public class LearnFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 }

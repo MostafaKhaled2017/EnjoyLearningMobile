@@ -1,11 +1,15 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -18,8 +22,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
 import java.util.HashMap;
@@ -32,10 +40,14 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
     // TODO : think about replacing toasts with snackbar
     static DatabaseReference myRef;
     FirebaseDatabase database;
+    private FirebaseAuth mAuth;
+
     Button addLessonButton;
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner;
 
-    String currentSubject = "", currentUnitOrder = "", currentLessonOrder = "";
+    String currentSubject = "", currentUnitOrder = "", currentLessonOrder = "", userName = "", userEmail = "";
+    SharedPreferences sharedPreferences;
+    Map<String, Object> map;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +62,17 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+        mAuth = FirebaseAuth.getInstance();
 
+        sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        if (sharedPreferences != null) {
+            if (sharedPreferences.contains("userName")) {
+                userName = sharedPreferences.getString("userName", "");
+            }
+            if (sharedPreferences.contains("userEmail")) {
+                userEmail = sharedPreferences.getString("userEmail", "");
+            }
+        }
         etContent = findViewById(R.id.contentInAddLesson);
         etTitle = findViewById(R.id.titleInAddLesson);
         subjectsSpinner = findViewById(R.id.subjectsSpinner);
@@ -88,19 +110,43 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                 if (TextUtils.isEmpty(content) || TextUtils.isEmpty(title)) {
                     Toast.makeText(AddLessonActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
                 } else {
-                    Map<String, Object> map = new HashMap<>();
+                    map = new HashMap<>();
                     map.put("title", title);
                     map.put("content", content);
                     map.put("unit", Integer.parseInt(currentUnitOrder));
                     map.put("lesson", Integer.parseInt(currentLessonOrder));
                     map.put("subject", currentSubject);
-                    map.put("lessonWriter", "Mostafa Khaled");
+                    map.put("writerName", userName);
+                    map.put("writerEmail", userEmail);
                     map.put("reviewed", false);
-                    myRef.push().setValue(map);
-                    etTitle.setText("");
-                    etContent.setText("");
-                    Toast.makeText(AddLessonActivity.this, "تم إضافة الدرس بنجاح و سيتم مراجعته", Toast.LENGTH_SHORT).show();
-                    finish();
+                    final DatabaseReference usersRefrence = database.getReference("users");
+                    usersRefrence.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
+                            usersRefrence.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 10);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                    //TODO : add icon to the dialog
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddLessonActivity.this);
+                    alertDialog.setTitle("تنبيه هام!!");
+                    alertDialog.setMessage("بعد رفع الدرس سيتم مراجعته أولا قبل نشره وإذا كان في الدرس شئ خارج المنهج أو مختلف عن أهداف هذا البرنامج فسيتم حذف الحساب");
+                    alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            myRef.push().setValue(map);
+                            Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                    alertDialog.setCancelable(false);
+                    alertDialog.create();
+                    alertDialog.show();
                 }
             }
         });

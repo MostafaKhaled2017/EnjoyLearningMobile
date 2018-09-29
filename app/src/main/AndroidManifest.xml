@@ -17,7 +17,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.GeneralSignActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.SignUpActivity"
             android:screenOrientation="portrait" />
@@ -61,8 +61,18 @@
         <activity
             android:name="com.mk.playAndLearn.activity.AddLessonActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.AddQuestionActivity"/>
-        <activity android:name="com.mk.playAndLearn.activity.LessonContent"/>
+        <activity
+            android:name="com.mk.playAndLearn.activity.AddQuestionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.LessonContentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.ContactUsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.BestStudentsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

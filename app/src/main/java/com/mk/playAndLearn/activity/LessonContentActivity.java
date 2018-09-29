@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
 
-public class LessonContent extends AppCompatActivity {
+public class LessonContentActivity extends AppCompatActivity {
     View view;
 
     TextView tvContent;

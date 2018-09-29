@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.LessonContent;
+import com.mk.playAndLearn.activity.LessonContentActivity;
 import com.mk.playAndLearn.model.Lesson;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
         holder.lessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent lessonIntent = new Intent(context, LessonContent.class);
+                Intent lessonIntent = new Intent(context, LessonContentActivity.class);
                 lessonIntent.putExtra("lessonTitle", mylist.getTitle());
                 lessonIntent.putExtra("lessonContent", mylist.getContent());
                 ((Activity) context).startActivity(lessonIntent);

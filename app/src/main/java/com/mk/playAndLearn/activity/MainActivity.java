@@ -1,8 +1,6 @@
 package com.mk.playAndLearn.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
@@ -24,7 +22,6 @@ import android.widget.Toast;
 
 import com.ToxicBakery.viewpager.transforms.TabletTransformer;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
@@ -51,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     String userName = "", userImage = "", userEmail = "";
 
 
-    //TODO : think about removing facebook login from the app because if I will need to pay to use google adsens when using it but I don't think so
+    //TODO : think about removing facebook login from the app because it will need alot of work from me and becauseif I will need to pay to use google adsens when using it but I don't think so
     //TODO : think about adding icons for sign in and sign up
     //TODO : think about adding signUp and sign in using facebook and google
     //TODO : use android arsenal and other libraries to add designs to the app
@@ -164,17 +161,17 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
                 return true;
             case R.id.aboutApp:
-                //showHelp();
+                startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
                 return true;
             case R.id.bestStudents:
-                //showHelp();
+                startActivity(new Intent(MainActivity.this, BestStudentsActivity.class));
                 return true;
             case R.id.addLesson:
                 startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
                 return true;
-            case R.id.myAccount:
+            /*case R.id.myAccount:
                 //showHelp();
-                return true;
+                return true;*/
             case R.id.signOut:
                 mAuth.signOut();
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
@@ -204,14 +201,14 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         EditText etAddPost = view.findViewById(R.id.etAddPost);
         String postText = etAddPost.getText().toString();
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
         String date = format.format(today);
         if (TextUtils.isEmpty(postText)) {
             etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
         } else {
             Map<String, String> map = new HashMap<>();
-            map.put("content", postText);//Todo : Add post date and post witer
-            map.put("date", date);//Todo : Add post image and post writer
+            map.put("content", postText);
+            map.put("date", date);
             map.put("writer", userName);
             map.put("image", userImage);
             map.put("email", userEmail);
