@@ -2,8 +2,10 @@ package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,14 +29,16 @@ public class QuestionActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
-    TextView tvQuestion;
+    TextView tvQuestion, currentSecondTv;
     RadioGroup rg1;
     Button nextButton;
     String selection, correctAnswer;
     RadioButton r1, r2, r3, r4;
     Intent i;
     int questionNo, score;
+    CountDownTimer timer;
     //TODO : change the xml tags to support
+    //TODO : handle what happens when internet connection problem occurs in a challenge
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,7 @@ public class QuestionActivity extends AppCompatActivity {
         r2 = findViewById(R.id.radio2);
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
+        currentSecondTv = findViewById(R.id.currentSecondTv);
 
         Intent intent = getIntent();
         if(intent != null){
@@ -76,44 +81,81 @@ public class QuestionActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(rg1.getCheckedRadioButtonId()!=-1){
-                    int id= rg1.getCheckedRadioButtonId();
-                    View radioButton = rg1.findViewById(id);
-                    int radioId = rg1.indexOfChild(radioButton);
-                    RadioButton btn = (RadioButton) rg1.getChildAt(radioId);
-                    selection = (String) btn.getText();
-                }
-                if(selection != null && selection.equals(correctAnswer)){
-                    i.putExtra("answer", true);
-                }
-                else {
-                   i.putExtra("answer", false);
-                }
-                i.putParcelableArrayListExtra("list", list);
-                i.putExtra("questionNo", questionNo);
-                i.putExtra("score", score);
-                //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-                finish();
+               navigate();
             }
         });
+        timer = new CountDownTimer(21000, 1000) {
 
+            public void onTick(long millisUntilFinished) {
+                long currentSecond = millisUntilFinished / 1000;
+                if(currentSecond == 10)
+                    currentSecondTv.setTextColor(Color.YELLOW);
+                if(currentSecond == 5)
+                    currentSecondTv.setTextColor(Color.RED);
+
+                currentSecondTv.setText(currentSecond + "");
+            }
+
+            public void onFinish() {
+                navigate();
+            }
+
+        };
+        timer.start();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        showDialog();
+        return  true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        showDialog();
+    }
+
+    public void showDialog(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("هل أنت متأكد أنك تريد الخروج وفقدان نقط هذا التحدي");
         dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
-                startActivity(new Intent(QuestionActivity.this, MainActivity.class));
+                finish();
+
             }
         });
         dialog.create();
         dialog.show();
 
-        return  true;
     }
 
+    public void navigate(){
+        if(rg1.getCheckedRadioButtonId()!=-1){
+            int id= rg1.getCheckedRadioButtonId();
+            View radioButton = rg1.findViewById(id);
+            int radioId = rg1.indexOfChild(radioButton);
+            RadioButton btn = (RadioButton) rg1.getChildAt(radioId);
+            selection = (String) btn.getText();
+        }
+        if(selection != null && selection.equals(correctAnswer)){
+            i.putExtra("answer", true);
+        }
+        else {
+            i.putExtra("answer", false);
+        }
+        i.putParcelableArrayListExtra("list", list);
+        i.putExtra("questionNo", questionNo);
+        i.putExtra("score", score);
+        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+        timer.cancel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
 }

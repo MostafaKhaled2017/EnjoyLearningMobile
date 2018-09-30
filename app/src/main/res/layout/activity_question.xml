@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color3"
     android:orientation="vertical"
-    tools:context=".activity.questionActivity"
-    android:background="@color/color3">
+    tools:context=".activity.questionActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
@@ -31,6 +31,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <!-- TODO : change the position of time textView-->
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/currentSecondTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBar"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="60dp"
+        android:text="20"
+        android:textColor="#00ff00"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/questionText"
         android:layout_width="wrap_content"
@@ -52,48 +65,48 @@
         android:layout_centerInParent="true"
         android:layout_margin="10dp"
         android:layout_marginTop="7dp"
-        android:orientation="vertical"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="vertical">
 
         <RadioButton
             android:id="@+id/radio1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/addQuestionEditText"
+            android:layout_margin="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الاولي"
             android:textColor="@color/writingColor"
-            android:textSize="22sp"
-            android:layout_margin="@dimen/margin_between_radiobuttons" />
+            android:textSize="22sp" />
 
         <RadioButton
             android:id="@+id/radio2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="الإجابة الثانية"
             android:layout_below="@id/radio1"
+            android:layout_margin="@dimen/margin_between_radiobuttons"
+            android:text="الإجابة الثانية"
             android:textColor="@color/writingColor"
-            android:textSize="22sp"
-            android:layout_margin="@dimen/margin_between_radiobuttons" />
+            android:textSize="22sp" />
 
         <RadioButton
             android:id="@+id/radio3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio2"
+            android:layout_margin="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الثالثة"
-            android:textSize="22sp"
             android:textColor="@color/writingColor"
-            android:layout_margin="@dimen/margin_between_radiobuttons" />
+            android:textSize="22sp" />
 
         <RadioButton
             android:id="@+id/radio4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio3"
+            android:layout_margin="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الرابعة"
-            android:textSize="22sp"
             android:textColor="@color/writingColor"
-            android:layout_margin="@dimen/margin_between_radiobuttons" />
+            android:textSize="22sp" />
 
     </RadioGroup>
 
@@ -103,9 +116,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
+        android:layout_margin="10dp"
         android:background="@drawable/rectangle_button"
         android:text="التالي"
-        android:textSize="22sp"
-        android:layout_margin="10dp"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="22sp" />
 </RelativeLayout>

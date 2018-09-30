@@ -56,34 +56,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/subjectsSpinner"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
         android:hint="السؤال"
-        android:inputType="textCapSentences"/>
+        android:inputType="textCapSentences" />
+
     <TextView
         android:id="@+id/answerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/addQuestionEditText"
         android:layout_margin="10dp"
         android:text="الإجابات"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/addQuestionEditText"/>
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/instuctionsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:layout_below="@id/answerText"
         android:layout_margin="5dp"
         android:text="قم بكتابة أربعة اختيارات للسؤال وعلم الإجابة الصحيحة منهم."
-        android:layout_below="@id/answerText"/>
+        android:textSize="18sp" />
+
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radioGroup"
-        android:layout_marginTop="7dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/instuctionsText"
+        android:layout_marginTop="15dp"
         android:orientation="vertical">
 
         <RadioButton
@@ -125,24 +127,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/instuctionsText"
-        android:layout_margin="8dp"
-        android:layout_toRightOf="@id/radioGroup"/>
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@id/radioGroup"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/et2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/et1"
-        android:layout_margin="8dp"
-        android:layout_toRightOf="@id/radioGroup" />
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@id/radioGroup"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/et3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/et2"
-        android:layout_margin="8dp"
-        android:layout_toRightOf="@id/radioGroup" />
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@id/radioGroup"
+        android:inputType="text" />
 
 
     <EditText
@@ -150,17 +155,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/et3"
-        android:layout_margin="8dp"
-        android:layout_toRightOf="@id/radioGroup" />
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@id/radioGroup"
+        android:inputType="text" />
 
     <Button
         android:id="@+id/addQuestionBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/radioGroup"
+        android:layout_margin="8dp"
         android:background="@drawable/rectangle_button"
         android:text="رفع السؤال"
-        android:layout_margin="8dp"
-        android:textColor="@color/white"
-        android:layout_below="@id/radioGroup"/>
+        android:textColor="@color/white" />
 
 </RelativeLayout>

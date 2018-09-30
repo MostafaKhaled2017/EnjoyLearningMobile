@@ -30,6 +30,7 @@ import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -59,8 +60,6 @@ public class ChallengesFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList(), list2 = new ArrayList();
-    private Random randomGenerator;
-
 
     Spinner spinner;
     ProgressBar progressBar;
@@ -111,11 +110,9 @@ public class ChallengesFragment extends Fragment {
             public void onClick(View view) {
                 if(!list2.isEmpty())
                     list2.clear();
-
+                Collections.shuffle(list);
                 for(int i = 0; i < 5; i++) {
-                    randomGenerator = new Random();
-                    int index = randomGenerator.nextInt(list.size());
-                    Question question = (Question) list.get(index);
+                    Question question = (Question) list.get(i);
                     list2.add(question);
                 }
 

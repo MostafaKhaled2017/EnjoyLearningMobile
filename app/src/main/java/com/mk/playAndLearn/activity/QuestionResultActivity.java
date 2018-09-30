@@ -85,6 +85,16 @@ public class QuestionResultActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        showDialog();
+        return  true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        showDialog();
+    }
+
+    public void showDialog(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("هل أنت متأكد أنك تريد الخروج وفقدان نقط هذا التحدي");
         dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
@@ -95,6 +105,5 @@ public class QuestionResultActivity extends AppCompatActivity {
         });
         dialog.create();
         dialog.show();
-        return  true;
     }
 }
