@@ -12,5 +12,6 @@
     <color name="black">#000</color>
     <color name="grey">#beb7b7</color>
     <color name="hint_enter_note">#89c3c3c3</color>
+    <color name="gray">#b6b5b5</color>
 
 </resources>

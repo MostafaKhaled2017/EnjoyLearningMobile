@@ -65,8 +65,6 @@ public class HomeFragment extends Fragment {
     ArrayList list = new ArrayList();
     PostsAdapter recyclerAdapter;
 
-    boolean connected;
-
     RecyclerView recyclerView;
     public HomeFragment() {
         // Required empty public constructor

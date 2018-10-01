@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +25,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.activity.QuestionActivity;
-import com.mk.playAndLearn.model.Lesson;
+import com.mk.playAndLearn.adapters.ChallengesAdapter;
+import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,11 +58,17 @@ public class ChallengesFragment extends Fragment {
     Button startChallengeButton;
 
     FirebaseDatabase database;
-    DatabaseReference myRef;
-    ArrayList list = new ArrayList(), list2 = new ArrayList();
+    DatabaseReference questionsRefrence;
+    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>();
+    ArrayList<Challenge> challengesList = new ArrayList<>();
+    String currentSubject;
 
     Spinner spinner;
     ProgressBar progressBar;
+
+    ChallengesAdapter recyclerAdapter;
+
+    RecyclerView recyclerView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -121,15 +127,22 @@ public class ChallengesFragment extends Fragment {
                 i.putParcelableArrayListExtra("list", list2);
                 i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);
+                i.putExtra("subject", currentSubject);
                 //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
                 startActivity(i);
             }
         });
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("questions");
+        questionsRefrence = database.getReference("questions");
         progressBar = view.findViewById(R.id.challengesProgressBar);
-
+        recyclerView = view.findViewById(R.id.challengesRecyclerView);
+        recyclerAdapter = new ChallengesAdapter(challengesList, getActivity());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerAdapter);
+        
         spinner = view.findViewById(R.id.subjectsSpinnerInChallengesFragment);
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.subjects_array, android.R.layout.simple_spinner_item);
@@ -139,10 +152,10 @@ public class ChallengesFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String currentSubject = adapterView.getItemAtPosition(i).toString();
+                currentSubject = adapterView.getItemAtPosition(i).toString();
                 if (!list.isEmpty())
                     list.clear();
-                myRef.orderByChild("subject").equalTo(currentSubject).addValueEventListener(new ValueEventListener() {
+                questionsRefrence.orderByChild("subject").equalTo(currentSubject).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (list.isEmpty()) {
@@ -183,8 +196,52 @@ public class ChallengesFragment extends Fragment {
 
             }
         });
+        DatabaseReference challengesRefrence = database.getReference("challenges");
+        challengesRefrence.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Challenge challenge = new Challenge();
+                String challengerName = dataSnapshot.child("player1Name").getValue().toString();
+                String challengeDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
+                String challengeImage = dataSnapshot.child("player1Image").getValue().toString();
+                String challengeSubject = dataSnapshot.child("subject").getValue().toString();
+                String challengeState = dataSnapshot.child("state").getValue().toString();
+                long challengeScore = (long)dataSnapshot.child("player1score").getValue();
+                challenge.setChallengerName(challengerName);
+                challenge.setDate(challengeDate);
+                challenge.setImage(challengeImage);
+                challenge.setScore(challengeScore);
+                challenge.setSubject(challengeSubject);
+                challenge.setState(challengeState);
+                challengesList.add(0,challenge);
+                recyclerAdapter.notifyDataSetChanged();
+                if(progressBar.getVisibility() != View.GONE)
+                    progressBar.setVisibility(View.GONE);
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                Log.v("Logging", "error loading data : " + databaseError);
+            }
+        });
+        
         return view;
     }
 

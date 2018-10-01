@@ -47,7 +47,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:layout_margin="5dp"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -56,11 +56,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:textSize="18sp"
         android:textColor="@color/writingColor"
-        android:text="+201010079193"
+        android:text="+201010079193  "
         android:id="@+id/phoneNumber"/>
 
     <TextView

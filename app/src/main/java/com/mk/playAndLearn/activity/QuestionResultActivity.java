@@ -22,6 +22,7 @@ public class QuestionResultActivity extends AppCompatActivity {
     boolean correct;
     ArrayList list = new ArrayList();
     int questionNo, score;
+    String subject;
     Intent i;
 
     @Override
@@ -46,6 +47,7 @@ public class QuestionResultActivity extends AppCompatActivity {
             list = intent.getParcelableArrayListExtra("list");
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
+            subject = intent.getStringExtra("subject");
         }
         i = new Intent(this, QuestionActivity.class);
         if (correct) {
@@ -68,6 +70,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                     i.putParcelableArrayListExtra("list", list);
                     i.putExtra("questionNo", questionNo + 1);
                     i.putExtra("score", score);
+                    i.putExtra("subject", subject);
                     startActivity(i);
                     finish();
                 }
@@ -76,10 +79,23 @@ public class QuestionResultActivity extends AppCompatActivity {
         timer.start();
     }
         else {
-            Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
-            intent1.putExtra("score", score);
-            startActivity(intent1);
-            finish();
+            Thread timer = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
+                        intent1.putExtra("score", score);
+                        intent1.putExtra("subject", subject);
+                        startActivity(intent1);
+                        finish();
+                    }
+                }
+            };
+            timer.start();
         }
     }
 

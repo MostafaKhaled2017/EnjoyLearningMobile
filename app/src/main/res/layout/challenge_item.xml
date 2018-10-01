@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:background="@color/white">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/app_icon"
+        android:layout_margin="5dp"
+        android:id="@+id/challengeImage"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/challengerName"
+        android:text="Mostafa Khaled"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/challengeImage"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/challengeDate"
+        android:text="10/1/2018"
+        android:layout_below="@id/challengerName"
+        android:layout_toRightOf="@id/challengeImage"
+        android:layout_marginLeft="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/challengeScore"
+        android:text="5"
+        android:textSize="18sp"
+        android:layout_margin="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/challengeState"
+        android:text="اكتمل"
+        android:padding="5dp"
+        android:gravity="center"
+        android:background="@color/gray"
+        android:textSize="14sp"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/challengeScore"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:padding="5dp"
+        android:id="@+id/challengeSubject"
+        android:background="@color/gray"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:text="لغة عربية"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/challengeState"/>
+
+
+</RelativeLayout>

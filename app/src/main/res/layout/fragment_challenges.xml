@@ -3,26 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color3"
     android:orientation="vertical"
-    tools:context="com.mk.playAndLearn.fragment.ChallengesFragment"
-    android:background="@color/color3">
+    tools:context="com.mk.playAndLearn.fragment.ChallengesFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:background="@color/white"
         android:orientation="horizontal"
-        android:background="@color/white">
+        android:id="@+id/newChallengeView">
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/startChallengeButton"
             android:layout_width="45dp"
-            android:layout_weight="1"
-            android:textColor="@color/white"
             android:layout_height="35dp"
-            android:background="@drawable/rectangle_button"
             android:layout_margin="3dp"
-            android:text="ابدأ" />
+            android:layout_weight="1"
+            android:background="@drawable/rectangle_button"
+            android:text="ابدأ"
+            android:textColor="@color/white" />
 
         <Spinner
             android:id="@+id/subjectsSpinnerInChallengesFragment"
@@ -34,16 +35,26 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="المادة : "
             android:layout_margin="3dp"
+            android:text="المادة : "
             android:textSize="18sp" />
     </LinearLayout>
 
-<ProgressBar
-    android:layout_centerInParent="true"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical|center_horizontal"
-    android:id="@+id/challengesProgressBar"
-    android:visibility="gone"/>
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/newChallengeView"
+        android:id="@+id/challengesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:overScrollMode="ifContentScrolls"/>
+
+    <ProgressBar
+        android:id="@+id/challengesProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:visibility="visible" />
+
+
 </RelativeLayout>
