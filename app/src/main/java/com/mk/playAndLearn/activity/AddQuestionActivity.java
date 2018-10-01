@@ -178,7 +178,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                     }
                 });
                 alertDialog.create();
-                alertDialog.setCancelable(false);
                 alertDialog.show();
                 //TODO : think about removing finish and clear the edit texts and radio buttons
             }
