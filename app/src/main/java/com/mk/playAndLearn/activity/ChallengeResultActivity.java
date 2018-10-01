@@ -16,7 +16,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class ChallengeResultActivity extends AppCompatActivity {
@@ -25,7 +28,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference ref;
     SharedPreferences sharedPreferences;
-    String userName = "", userImage = "", userEmail = "";
+    String userName = "", userImage = "", userEmail = "", subject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +65,22 @@ public class ChallengeResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null){
             score = intent.getIntExtra("score", -1);
+            subject = intent.getStringExtra("subject");
         }
         challengeResultTv.append(score +"");
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+        String date = format.format(today);
 
         Map<String, Object> map = new HashMap<>();
         map.put("player1Name", userName);
         map.put("player1Email", userEmail);
         map.put("player1Image", userImage);
         map.put("player1score", score);
+        map.put("date", date);
+        map.put("subject", subject);
+        map.put("state", "اكتمل"); // TODO : edit this
+
         ref.push().setValue(map);
     }
 
