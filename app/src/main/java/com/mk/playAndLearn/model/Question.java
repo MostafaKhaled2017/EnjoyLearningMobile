@@ -3,47 +3,47 @@ package com.mk.playAndLearn.model;
 import java.io.Serializable;
 
 public class Question implements Serializable{
-    String question, ans1, ans2, ans3, ans4, correctAnswer, subject, writerName;
+    String alQuestion, answer1, answer2, answer3, answer4, correctAnswer, subject, writerName;
     boolean reviewed;
 
-    public String getQuestion() {
-        return question;
+    public String getAlQuestion() {
+        return alQuestion;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setAlQuestion(String alQuestion) {
+        this.alQuestion = alQuestion;
     }
 
-    public String getAns1() {
-        return ans1;
+    public String getAnswer1() {
+        return answer1;
     }
 
-    public void setAns1(String ans1) {
-        this.ans1 = ans1;
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
     }
 
-    public String getAns2() {
-        return ans2;
+    public String getAnswer2() {
+        return answer2;
     }
 
-    public void setAns2(String ans2) {
-        this.ans2 = ans2;
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
     }
 
-    public String getAns3() {
-        return ans3;
+    public String getAnswer3() {
+        return answer3;
     }
 
-    public void setAns3(String ans3) {
-        this.ans3 = ans3;
+    public void setAnswer3(String answer3) {
+        this.answer3 = answer3;
     }
 
-    public String getAns4() {
-        return ans4;
+    public String getAnswer4() {
+        return answer4;
     }
 
-    public void setAns4(String ans4) {
-        this.ans4 = ans4;
+    public void setAnswer4(String answer4) {
+        this.answer4 = answer4;
     }
 
     public String getCorrectAnswer() {

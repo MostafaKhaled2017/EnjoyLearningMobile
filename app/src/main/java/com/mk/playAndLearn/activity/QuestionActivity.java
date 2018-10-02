@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -27,10 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class QuestionActivity extends AppCompatActivity {
-    FirebaseDatabase database;
-    DatabaseReference myRef;
-    ArrayList list = new ArrayList();
-    TextView tvQuestion, currentSecondTv;
+    ArrayList list = new ArrayList(), playerAnswersList = new ArrayList();
+    TextView tvQuestion;
     RadioGroup rg1;
     Button nextButton;
     String selection, correctAnswer;
@@ -39,7 +38,8 @@ public class QuestionActivity extends AppCompatActivity {
     int questionNo, score;
     CountDownTimer timer;
     String subject;
-
+    ProgressBar timerProgressBar;
+    int index = 0;
     //TODO : change the xml tags to support
     //TODO : handle what happens when internet connection problem occurs in a challenge
     @Override
@@ -64,7 +64,8 @@ public class QuestionActivity extends AppCompatActivity {
         r2 = findViewById(R.id.radio2);
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
-        currentSecondTv = findViewById(R.id.currentSecondTv);
+        timerProgressBar = findViewById(R.id.timerProgressbar);
+
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -72,16 +73,17 @@ public class QuestionActivity extends AppCompatActivity {
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
+            playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
         }
         Question question = (Question) list.get(questionNo);
         correctAnswer = question.getCorrectAnswer();
 
-        tvQuestion.setText(question.getQuestion());
+        tvQuestion.setText(question.getAlQuestion());
         ArrayList<String> answers = new ArrayList<>();
-        answers.add(question.getAns1());
-        answers.add(question.getAns2());
-        answers.add(question.getAns3());
-        answers.add(question.getAns4());
+        answers.add(question.getAnswer1());
+        answers.add(question.getAnswer2());
+        answers.add(question.getAnswer3());
+        answers.add(question.getAnswer4());
         Collections.shuffle(answers);
 
         r1.setText(answers.get(0));
@@ -95,21 +97,19 @@ public class QuestionActivity extends AppCompatActivity {
                 navigate();
             }
         });
-        timer = new CountDownTimer(21000, 1000) {
+        //TODO : think about making the timer works from the end to the begging
+        //TODO : solve timer running in the end problem
+        timerProgressBar.setProgress(0);
+        timer = new CountDownTimer(20000, 1) {
 
             public void onTick(long millisUntilFinished) {
-                long currentSecond = millisUntilFinished / 1000;
-                if (currentSecond == 10)
-                    currentSecondTv.setTextColor(Color.YELLOW);
-                if (currentSecond == 5)
-                    currentSecondTv.setTextColor(Color.RED);
-                if (currentSecond < 10)
-                    currentSecondTv.setText("0" + currentSecond);
-                else
-                    currentSecondTv.setText(currentSecond + "");
+                index++;
+                timerProgressBar.setProgress((int)index*100/(20000/1));
             }
 
             public void onFinish() {
+                index++;
+                timerProgressBar.setProgress(100);
                 navigate();
             }
 
@@ -160,6 +160,7 @@ public class QuestionActivity extends AppCompatActivity {
         i.putExtra("questionNo", questionNo);
         i.putExtra("score", score);
         i.putExtra("subject", subject);
+        i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
         //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         finish();

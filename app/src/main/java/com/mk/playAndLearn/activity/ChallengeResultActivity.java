@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,6 +30,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
     DatabaseReference ref;
     SharedPreferences sharedPreferences;
     String userName = "", userImage = "", userEmail = "", subject;
+    ArrayList questionsList = new ArrayList(), playerAnswersList = new ArrayList();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
         if(intent != null){
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
+            questionsList = intent.getParcelableArrayListExtra("questionsList");
+            playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
         }
         challengeResultTv.append(score +"");
         Date today = new Date();
@@ -79,6 +84,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
         map.put("player1score", score);
         map.put("date", date);
         map.put("subject", subject);
+        map.put("questionsList", questionsList);
+        map.put("player1Answers", playerAnswersList);//TODO
         map.put("state", "اكتمل"); // TODO : edit this
 
         ref.push().setValue(map);

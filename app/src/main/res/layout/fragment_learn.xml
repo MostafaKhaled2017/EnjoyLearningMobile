@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color3"
-    android:orientation="vertical"
     tools:context="com.mk.playAndLearn.fragment.LearnFragment">
 
     <LinearLayout
+        android:id="@+id/selectSubjectView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -28,6 +28,7 @@
             android:text="المادة : "/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/selectSubjectView"
         android:id="@+id/lessonsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,6 +39,6 @@
         android:id="@+id/lessonsProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_centerInParent="true"
         android:visibility="visible" />
-</LinearLayout>
+</RelativeLayout>

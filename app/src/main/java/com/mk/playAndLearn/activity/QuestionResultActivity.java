@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
     boolean correct;
-    ArrayList list = new ArrayList();
+    ArrayList list = new ArrayList(), playerAnswersList = new ArrayList();
     int questionNo, score;
     String subject;
     Intent i;
@@ -48,15 +48,18 @@ public class QuestionResultActivity extends AppCompatActivity {
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
+            playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
         }
         i = new Intent(this, QuestionActivity.class);
         if (correct) {
             resultText.setText("إجابة صحيحة");
             resultText.setTextColor(Color.GREEN);
+            playerAnswersList.add(true);
             score ++;
         } else {
             resultText.setText("إجابة خاطئة");
             resultText.setTextColor(Color.RED);
+            playerAnswersList.add(false);
         }
         if (questionNo + 1 < 5) {
         Thread timer = new Thread() {
@@ -67,7 +70,8 @@ public class QuestionResultActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    i.putParcelableArrayListExtra("list", list);
+                    i.putExtra("list", list);
+                    i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
                     i.putExtra("questionNo", questionNo + 1);
                     i.putExtra("score", score);
                     i.putExtra("subject", subject);
@@ -90,6 +94,8 @@ public class QuestionResultActivity extends AppCompatActivity {
                         Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
                         intent1.putExtra("score", score);
                         intent1.putExtra("subject", subject);
+                        intent1.putParcelableArrayListExtra("questionsList", list);
+                        intent1.putParcelableArrayListExtra("player1Answers", playerAnswersList);
                         startActivity(intent1);
                         finish();
                     }

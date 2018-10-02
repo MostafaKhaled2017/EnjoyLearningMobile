@@ -59,7 +59,7 @@ public class ChallengesFragment extends Fragment {
 
     FirebaseDatabase database;
     DatabaseReference questionsRefrence;
-    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>();
+    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>(), playerAnswersList = new ArrayList();
     ArrayList<Challenge> challengesList = new ArrayList<>();
     String currentSubject;
 
@@ -128,6 +128,7 @@ public class ChallengesFragment extends Fragment {
                 i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);
                 i.putExtra("subject", currentSubject);
+                i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
                 //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
                 startActivity(i);
             }
@@ -170,13 +171,13 @@ public class ChallengesFragment extends Fragment {
                                 String writerName = dataSnapshot1.child("writerName").getValue().toString();
                                 boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
                                 if (reviewed) {
-                                    question.setAns1(answer1);
-                                    question.setAns2(answer2);
-                                    question.setAns3(answer3);
-                                    question.setAns4(answer4);
+                                    question.setAnswer1(answer1);
+                                    question.setAnswer2(answer2);
+                                    question.setAnswer3(answer3);
+                                    question.setAnswer4(answer4);
                                     question.setCorrectAnswer(correctAnswer);
                                     question.setWriterName(writerName);
-                                    question.setQuestion(questionText);
+                                    question.setAlQuestion(questionText);
 
                                     list.add(question);
                                 }
