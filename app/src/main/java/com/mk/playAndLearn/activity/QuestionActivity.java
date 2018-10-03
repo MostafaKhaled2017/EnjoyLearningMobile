@@ -2,7 +2,6 @@ package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
@@ -19,8 +18,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
@@ -28,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class QuestionActivity extends AppCompatActivity {
-    ArrayList list = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList list = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
     TextView tvQuestion;
     RadioGroup rg1;
     Button nextButton;
@@ -73,6 +70,7 @@ public class QuestionActivity extends AppCompatActivity {
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
+            playerAnswersBooleansList = intent.getParcelableArrayListExtra("player1AnswersBooleans");
             playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
         }
         Question question = (Question) list.get(questionNo);
@@ -98,18 +96,18 @@ public class QuestionActivity extends AppCompatActivity {
             }
         });
         //TODO : think about making the timer works from the end to the begging
-        //TODO : solve timer running in the end problem
-        timerProgressBar.setProgress(0);
-        timer = new CountDownTimer(20000, 1) {
+        //
+        // TODO : solve timer running in the end problem
+        timer = new CountDownTimer(21000, 200) {
 
             public void onTick(long millisUntilFinished) {
                 index++;
-                timerProgressBar.setProgress((int)index*100/(20000/1));
+                timerProgressBar.setProgress((int)millisUntilFinished/1000);
             }
 
             public void onFinish() {
                 index++;
-                timerProgressBar.setProgress(100);
+                timerProgressBar.setProgress(0);
                 navigate();
             }
 
@@ -156,10 +154,12 @@ public class QuestionActivity extends AppCompatActivity {
         } else {
             i.putExtra("answer", false);
         }
+        playerAnswersList.add(selection);
         i.putParcelableArrayListExtra("list", list);
         i.putExtra("questionNo", questionNo);
         i.putExtra("score", score);
         i.putExtra("subject", subject);
+        i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
         i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
         //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);

@@ -71,11 +71,13 @@ public class BestStudentsActivity extends AppCompatActivity {
                         String name = dataSnapshot1.child("userName").getValue().toString();
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
-                        user.setName(name);
-                        user.setPoints(Integer.parseInt(points));
-                        user.setImageUrl(imageUrl);
-                        list.add(0, user);
-
+                        String userType =  dataSnapshot1.child("userType").getValue().toString();
+                        if(userType.equals("طالب")) {
+                            user.setName(name);
+                            user.setPoints(Integer.parseInt(points));
+                            user.setImageUrl(imageUrl);
+                            list.add(0, user);
+                        }
                         if (progressBar.getVisibility() != View.GONE)
                             progressBar.setVisibility(View.GONE);
                         recyclerAdapter.notifyDataSetChanged();

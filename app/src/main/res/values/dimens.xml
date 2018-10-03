@@ -5,7 +5,7 @@
     <dimen name="text_size_in_toolbar">20sp</dimen>
     <dimen name="large_text_size">25sp</dimen>
     <dimen name="margin_between_radiobuttons">15dp</dimen>
-    <dimen name="margin_between_radiobuttons_in_add_question">10dp</dimen>
+    <dimen name="margin_between_radiobuttons_in_add_question">22dp</dimen>
     <dimen name="margin_top_of_contact_us">17dp</dimen>
     <dimen name="text_size_of_contact_us">20sp</dimen>
     <dimen name="margin_left_of_contact_us">15dp</dimen>

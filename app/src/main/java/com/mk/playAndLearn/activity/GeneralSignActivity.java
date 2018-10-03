@@ -2,26 +2,19 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -35,7 +28,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -46,8 +38,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,9 +57,11 @@ public class GeneralSignActivity extends AppCompatActivity {
     GoogleSignInOptions gso;
     DatabaseReference myRef;
     FirebaseDatabase database;
+    Spinner userTypesSpinner;
+    TextView unStudentSignAlertText;
 
     private GoogleSignInClient mGoogleSignInClient;
-    String userName = "", userImage = "", userEmail = "";
+    String userName = "", userImage = "", userEmail = "", userType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +72,31 @@ public class GeneralSignActivity extends AppCompatActivity {
         button = findViewById(R.id.googleBtn);
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
+        userTypesSpinner = findViewById(R.id.userTypesSpinner);
+        unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
+
+        ArrayAdapter<CharSequence> userTypesAdapter = ArrayAdapter.createFromResource(this,
+                R.array.user_types_array, android.R.layout.simple_spinner_item);
+        userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        userTypesSpinner.setAdapter(userTypesAdapter);
+
+        userTypesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                userType = adapterView.getItemAtPosition(i).toString();
+                if (userType.equals("طالب")) {
+                    unStudentSignAlertText.setVisibility(View.GONE);
+                }
+                else{
+                    unStudentSignAlertText.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -106,6 +123,7 @@ public class GeneralSignActivity extends AppCompatActivity {
 
         mCallbackManager = CallbackManager.Factory.create();
     }
+
     @OnClick(R.id.btnSignUp)
     void click(View view) {
         Intent i = new Intent(this, SignUpActivity.class);
@@ -143,8 +161,8 @@ public class GeneralSignActivity extends AppCompatActivity {
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     assert user != null;
                                     userName = user.getDisplayName();
-                                    userImage =user.getPhotoUrl().toString();
-                                    userEmail =user.getEmail();
+                                    userImage = user.getPhotoUrl().toString();
+                                    userEmail = user.getEmail();
 
                                     Log.v("Logging", "user name is : " + userName
                                             + " user image is : " + userImage
@@ -152,8 +170,8 @@ public class GeneralSignActivity extends AppCompatActivity {
 
                                     SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                                     SharedPreferences.Editor editor = pref.edit();
-                                     editor.clear();
-                                     editor.apply();
+                                    editor.clear();
+                                    editor.apply();
 
                                     editor.putString("userName", userName);
                                     editor.putString("userImage", userImage);
@@ -163,12 +181,13 @@ public class GeneralSignActivity extends AppCompatActivity {
                                     myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
-                                            if(!dataSnapshot.child(mAuth.getUid()).exists()){
+                                            if (!dataSnapshot.child(mAuth.getUid()).exists()) {
                                                 Map<String, Object> map = new HashMap<>();
                                                 map.put("userName", userName);
                                                 map.put("userImage", userImage);
                                                 map.put("userEmail", userEmail);
                                                 map.put("points", 0);
+                                                map.put("userType", userType);
                                                 myRef.child(mAuth.getUid()).setValue(map);
                                             }
                                         }
@@ -179,7 +198,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                                         }
                                     });
                                     //Toast.makeText(GeneralSignActivity.this, "data in sharedPrefrences : user name : " , Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(GeneralSignActivity.this,MainActivity.class));
+                                    startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق", Toast.LENGTH_SHORT).show();

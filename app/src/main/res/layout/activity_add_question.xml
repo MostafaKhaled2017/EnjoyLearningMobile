@@ -85,7 +85,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/instuctionsText"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="vertical">
 
         <RadioButton
@@ -93,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/addQuestionEditText"
-            android:layout_margin="@dimen/margin_between_radiobuttons_in_add_question"
+            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
             android:onClick="onRadioButtonClicked" />
 
         <RadioButton
@@ -101,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio1"
-            android:layout_margin="@dimen/margin_between_radiobuttons_in_add_question"
+            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
             android:onClick="onRadioButtonClicked" />
 
         <RadioButton
@@ -109,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio2"
-            android:layout_margin="@dimen/margin_between_radiobuttons_in_add_question"
+            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
             android:onClick="onRadioButtonClicked" />
 
         <RadioButton
@@ -117,7 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio3"
-            android:layout_margin="@dimen/margin_between_radiobuttons_in_add_question"
+            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
             android:onClick="onRadioButtonClicked" />
 
     </RadioGroup>

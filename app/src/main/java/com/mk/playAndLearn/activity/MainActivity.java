@@ -206,12 +206,13 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         if (TextUtils.isEmpty(postText)) {
             etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
         } else {
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("content", postText);
             map.put("date", date);
             map.put("writer", userName);
             map.put("image", userImage);
             map.put("email", userEmail);
+            map.put("votes", 0);
             myRef.push().setValue(map);
             etAddPost.setText("");
             Toast.makeText(view.getContext(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();

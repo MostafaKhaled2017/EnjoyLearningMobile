@@ -30,4 +30,9 @@
         <item>4</item>
         <item>5</item>
     </string-array>
+    <string-array name="user_types_array">
+        <item>طالب</item>
+        <item>معلم</item>
+        <item>آخرون</item>
+    </string-array>
 </resources>

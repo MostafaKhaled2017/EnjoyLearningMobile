@@ -59,7 +59,8 @@ public class ChallengesFragment extends Fragment {
 
     FirebaseDatabase database;
     DatabaseReference questionsRefrence;
-    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>(), playerAnswersList = new ArrayList();
+    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>()
+            , playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
     ArrayList<Challenge> challengesList = new ArrayList<>();
     String currentSubject;
 
@@ -124,11 +125,12 @@ public class ChallengesFragment extends Fragment {
 
                 Intent i = new Intent(getActivity(), QuestionActivity.class);
 
-                i.putParcelableArrayListExtra("list", list2);
                 i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);
                 i.putExtra("subject", currentSubject);
+                i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
                 i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
+                i.putParcelableArrayListExtra("list", list2);
                 //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
                 startActivity(i);
             }

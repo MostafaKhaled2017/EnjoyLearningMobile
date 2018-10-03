@@ -216,6 +216,7 @@ public class PostInDetailsActivity extends AppCompatActivity {
                         map.put("userName", userName);
                         map.put("userEmail", userEmail);
                         map.put("userImage", userImage);
+                        map.put("votes", 0);
                         map.put("date", date);
                         map.put("postId", postId);
                         map.put("content", inputComment.getText().toString());

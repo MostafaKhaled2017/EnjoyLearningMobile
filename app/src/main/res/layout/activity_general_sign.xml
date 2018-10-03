@@ -1,55 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:orientation="vertical"
+    tools:context="com.mk.playAndLearn.activity.GeneralSignActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/student" />
+
+    <Button
+        android:id="@+id/btnSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        tools:context="com.mk.playAndLearn.activity.GeneralSignActivity">
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/new_button"
+        android:text="إنشاء حساب"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeOfButton" />
 
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/student" />
+    <Button
+        android:id="@+id/btnSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/new_button"
+        android:text="تسجيل الدخول"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeOfButton" />
 
-        <Button
-            android:id="@+id/btnSignUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/new_button"
-            android:text="إنشاء حساب"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textSizeOfButton" />
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/googleBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/btnSignIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/new_button"
-            android:text="تسجيل الدخول"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textSizeOfButton" />
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/userTypesSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!-- TODO : edit the text Below -->
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/unStudentSignAlertText"
+        android:textColor="#ff0000"
+        android:textSize="14sp"
+        android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق"
+        android:layout_gravity="right"/>
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/googleBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
-      <!--  <com.facebook.login.widget.LoginButton
-            android:id="@+id/facebookBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp" />-->
-    </LinearLayout>
-</RelativeLayout>
+    <!--  <com.facebook.login.widget.LoginButton
+          android:id="@+id/facebookBtn"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginTop="30dp"
+          android:layout_marginBottom="30dp" />-->
+</LinearLayout>

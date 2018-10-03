@@ -30,7 +30,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
     DatabaseReference ref;
     SharedPreferences sharedPreferences;
     String userName = "", userImage = "", userEmail = "", subject;
-    ArrayList questionsList = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList questionsList = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
 
 
     @Override
@@ -70,6 +70,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
             questionsList = intent.getParcelableArrayListExtra("questionsList");
+            playerAnswersBooleansList = intent.getParcelableArrayListExtra("player1AnswersBooleans");
             playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
         }
         challengeResultTv.append(score +"");
@@ -85,7 +86,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
         map.put("date", date);
         map.put("subject", subject);
         map.put("questionsList", questionsList);
-        map.put("player1Answers", playerAnswersList);//TODO
+        map.put("player1AnswersBooleans", playerAnswersBooleansList);
+        map.put("player1Answers", playerAnswersList);
         map.put("state", "اكتمل"); // TODO : edit this
 
         ref.push().setValue(map);
