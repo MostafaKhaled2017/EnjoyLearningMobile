@@ -59,9 +59,6 @@ public class ChallengesFragment extends Fragment {
     Button startChallengeButton;
 
     FirebaseDatabase database;
-    DatabaseReference questionsRefrence;
-    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>()
-            , playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
     ArrayList<Challenge> challengesList = new ArrayList<>();
     String currentSubject;
 
@@ -116,30 +113,13 @@ public class ChallengesFragment extends Fragment {
         startChallengeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!list2.isEmpty())
-                    list2.clear();
-                Collections.shuffle(list);
-                for(int i = 0; i < 5; i++) {
-                    Question question = (Question) list.get(i);
-                    list2.add(question);
-                }
-
-               // Intent i = new Intent(getActivity(), QuestionActivity.class);TODO
                 Intent i = new Intent(getActivity(), ChallengersActivity.class);
-
-                i.putExtra("questionNo", 0);
-                i.putExtra("score", 0);
                 i.putExtra("subject", currentSubject);
-                i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
-                i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
-                i.putParcelableArrayListExtra("list", list2);
-                //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
                 startActivity(i);
             }
         });
 
         database = FirebaseDatabase.getInstance();
-        questionsRefrence = database.getReference("questions");
         progressBar = view.findViewById(R.id.challengesProgressBar);
         recyclerView = view.findViewById(R.id.challengesRecyclerView);
         recyclerAdapter = new ChallengesAdapter(challengesList, getActivity());
@@ -158,42 +138,6 @@ public class ChallengesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
-                if (!list.isEmpty())
-                    list.clear();
-                questionsRefrence.orderByChild("subject").equalTo(currentSubject).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (list.isEmpty()) {
-                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                Question question = new Question();
-                                String questionText = dataSnapshot1.child("al question").getValue().toString();
-                                String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
-                                String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
-                                String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
-                                String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
-                                String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
-                                String writerName = dataSnapshot1.child("writerName").getValue().toString();
-                                boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
-                                if (reviewed) {
-                                    question.setAnswer1(answer1);
-                                    question.setAnswer2(answer2);
-                                    question.setAnswer3(answer3);
-                                    question.setAnswer4(answer4);
-                                    question.setCorrectAnswer(correctAnswer);
-                                    question.setWriterName(writerName);
-                                    question.setAlQuestion(questionText);
-
-                                    list.add(question);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
             }
 
             @Override

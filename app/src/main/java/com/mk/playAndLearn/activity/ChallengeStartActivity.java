@@ -8,8 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,7 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Question;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.OnClick;
 
@@ -27,14 +34,20 @@ public class ChallengeStartActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser currentUser;
     FirebaseDatabase database;
+    DatabaseReference questionsReference;
 
+
+    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>()
+            , playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
 
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
+    String subject;
     int firstPlayerPoints, secondPlayerPoints;
 
     ImageView player1Image, player2Image;
     TextView player1Name, player1Points, player2Name, player2Points;
+    Button startChallengeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +58,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
+        actionBar.setHomeAsUpIndicator(upArrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
@@ -56,6 +69,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
+        questionsReference = database.getReference("questions");
+
 
         player1Name = findViewById(R.id.firstPlayerName);
         player1Image = findViewById(R.id.firstPlayerImage);
@@ -63,6 +78,55 @@ public class ChallengeStartActivity extends AppCompatActivity {
         player2Name = findViewById(R.id.secondPlayerName);
         player2Image = findViewById(R.id.secondPlayerImage);
         player2Points = findViewById(R.id.secondPlayerPoints);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            secondPlayerName = intent.getStringExtra("name");
+            secondPlayerEmail = intent.getStringExtra("email");
+            secondPlayerImage = intent.getStringExtra("image");
+            secondPlayerPoints = intent.getIntExtra("points", -1);
+            secondPlayerUid = intent.getStringExtra("uid");
+            subject = intent.getStringExtra("subject");
+
+        }
+
+        if (!list.isEmpty())
+            list.clear();
+        questionsReference.orderByChild("subject").equalTo(subject).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (list.isEmpty()) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        Question question = new Question();
+                        String questionText = dataSnapshot1.child("al question").getValue().toString();
+                        String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
+                        String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
+                        String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
+                        String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
+                        String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
+                        String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                        boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
+                        if (reviewed) {
+                            question.setAnswer1(answer1);
+                            question.setAnswer2(answer2);
+                            question.setAnswer3(answer3);
+                            question.setAnswer4(answer4);
+                            question.setCorrectAnswer(correctAnswer);
+                            question.setWriterName(writerName);
+                            question.setAlQuestion(questionText);
+
+                            list.add(question);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         final DatabaseReference usersRefrence = database.getReference("users");
         usersRefrence.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -80,26 +144,55 @@ public class ChallengeStartActivity extends AppCompatActivity {
         firstPlayerEmail = currentUser.getEmail();
         firstPlayerUid = currentUser.getUid();
         firstPlayerImage = currentUser.getPhotoUrl().toString();
-
-        Intent intent = getIntent();
-        if(intent != null){
-            secondPlayerName = intent.getStringExtra("name");
-            secondPlayerEmail = intent.getStringExtra("email");
-            secondPlayerImage = intent.getStringExtra("image");
-            secondPlayerPoints = intent.getIntExtra("points", -1);
-            secondPlayerUid = intent.getStringExtra("uid");
-        }
+        startChallengeButton = findViewById(R.id.lastStartChallengeButton);
 
         player1Name.setText(firstPlayerName);
         Picasso.with(this).load(firstPlayerImage).into(player1Image);
-        player1Points.setText(firstPlayerPoints +"");
+        player1Points.setText(firstPlayerPoints + "");
 
         player2Name.setText(secondPlayerName);
         Picasso.with(this).load(secondPlayerImage).into(player2Image);
         player2Points.setText(secondPlayerPoints + "");
+
+        startChallengeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!list2.isEmpty())
+                    list2.clear();
+                Collections.shuffle(list);
+                for(int i = 0; i < 5; i++) {
+                    Question question = (Question) list.get(i);
+                    list2.add(question);
+                }
+
+                startChallengeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
+
+                //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
+                Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
+
+                i.putExtra("questionNo", 0);
+                i.putExtra("score", 0);
+                i.putExtra("player2Name", secondPlayerName);
+                i.putExtra("player2Email", secondPlayerEmail);
+                i.putExtra("player2Image", secondPlayerImage);
+                i.putExtra("player2Points", secondPlayerPoints);
+                i.putExtra("player2Uid", secondPlayerUid);
+                i.putExtra("subject", subject);
+                i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
+                i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
+                i.putParcelableArrayListExtra("list", list2);
+                //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
-   // @OnClick(R.id.) TODO
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();

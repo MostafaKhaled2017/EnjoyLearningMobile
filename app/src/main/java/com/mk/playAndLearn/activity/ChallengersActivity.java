@@ -1,5 +1,6 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +34,7 @@ public class ChallengersActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     RecyclerView recyclerView;
+    String subject;
 
     private final String TAG = "ChallengersActivity";
     @Override
@@ -51,9 +54,14 @@ public class ChallengersActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
 
+        Intent intent = getIntent();
+        if(intent != null){
+            subject = intent.getStringExtra("subject");
+        }
+
         recyclerView = findViewById(R.id.challengersRecyclerView);
         progressBar = findViewById(R.id.challengersProgressBar);
-        recyclerAdapter = new StudentsAdapter(list, this, TAG);
+        recyclerAdapter = new StudentsAdapter(list, this, TAG, subject);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -67,6 +75,8 @@ public class ChallengersActivity extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         User user = new User();
                         String name = dataSnapshot1.child("userName").getValue().toString();
+                        String email = dataSnapshot1.child("userEmail").getValue().toString();
+                        String uid = dataSnapshot1.getKey();
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                         String userType = dataSnapshot1.child("userType").getValue().toString();
@@ -74,6 +84,8 @@ public class ChallengersActivity extends AppCompatActivity {
                             user.setName(name);
                             user.setPoints(Integer.parseInt(points));
                             user.setImageUrl(imageUrl);
+                            user.setEmail(email);
+                            user.setUid(uid);
                             list.add(user);
                         }
                         if (progressBar.getVisibility() != View.GONE)

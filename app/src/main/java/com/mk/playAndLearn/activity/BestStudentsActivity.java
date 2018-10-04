@@ -54,7 +54,7 @@ public class BestStudentsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.bestStudentsRecyclerView);
         progressBar = findViewById(R.id.bestStudentsProgressBar);
-        recyclerAdapter = new StudentsAdapter(list, this, TAG);
+        recyclerAdapter = new StudentsAdapter(list, this, TAG, null);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

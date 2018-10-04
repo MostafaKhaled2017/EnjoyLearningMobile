@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
 
@@ -23,6 +24,8 @@ public class QuestionResultActivity extends AppCompatActivity {
     ArrayList list = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
     int questionNo, score;
     String subject;
+    String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
+    int secondPlayerPoints;
     Intent i;
 
     @Override
@@ -50,6 +53,12 @@ public class QuestionResultActivity extends AppCompatActivity {
             subject = intent.getStringExtra("subject");
             playerAnswersBooleansList = intent.getParcelableArrayListExtra("player1AnswersBooleans");
             playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
+            secondPlayerName = intent.getStringExtra("player2Name");
+            secondPlayerEmail= intent.getStringExtra("player2Email");
+            secondPlayerImage = intent.getStringExtra("player2Image");
+            secondPlayerUid = intent.getStringExtra("player2Uid");
+            secondPlayerPoints = intent.getIntExtra("player2Points", -1);
+
         }
         i = new Intent(this, QuestionActivity.class);
         if (correct) {
@@ -75,6 +84,11 @@ public class QuestionResultActivity extends AppCompatActivity {
                     i.putExtra("questionNo", questionNo + 1);
                     i.putExtra("score", score);
                     i.putExtra("subject", subject);
+                    i.putExtra("player2Name", secondPlayerName);
+                    i.putExtra("player2Email", secondPlayerEmail);
+                    i.putExtra("player2Image", secondPlayerImage);
+                    i.putExtra("player2Uid", secondPlayerUid);
+                    i.putExtra("player2Points", secondPlayerPoints);
                     i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
                     i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
                     startActivity(i);
@@ -96,6 +110,11 @@ public class QuestionResultActivity extends AppCompatActivity {
                         Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
                         intent1.putExtra("score", score);
                         intent1.putExtra("subject", subject);
+                        intent1.putExtra("player2Name", secondPlayerName);
+                        intent1.putExtra("player2Email", secondPlayerEmail);
+                        intent1.putExtra("player2Image", secondPlayerImage);
+                        intent1.putExtra("player2Uid", secondPlayerUid);
+                        intent1.putExtra("player2Points", secondPlayerPoints);
                         intent1.putParcelableArrayListExtra("questionsList", list);
                         intent1.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
                         intent1.putParcelableArrayListExtra("player1Answers", playerAnswersList);
@@ -121,7 +140,7 @@ public class QuestionResultActivity extends AppCompatActivity {
 
     public void showDialog(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("هل أنت متأكد أنك تريد الخروج وفقدان نقط هذا التحدي");
+        dialog.setMessage("هل أنت متأكد أنك تريد الخروج وإلغاء هذا التحدى");
         dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this

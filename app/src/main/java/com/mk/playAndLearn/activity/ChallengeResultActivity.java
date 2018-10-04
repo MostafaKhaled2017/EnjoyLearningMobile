@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
@@ -24,14 +26,20 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ChallengeResultActivity extends AppCompatActivity {
-    int score;
     TextView challengeResultTv;
+
     FirebaseDatabase database;
     DatabaseReference ref;
-    SharedPreferences sharedPreferences;
-    String userName = "", userImage = "", userEmail = "", subject;
-    ArrayList questionsList = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
+    FirebaseAuth auth;
 
+    SharedPreferences sharedPreferences;
+
+    String userName = "", userImage = "", userEmail = "", subject;
+    String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
+    int secondPlayerPoints;
+    int score;
+
+    ArrayList questionsList = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         
         challengeResultTv = findViewById(R.id.challengeResultText);
+        auth = FirebaseAuth.getInstance();
 
         sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         if(sharedPreferences != null) {
@@ -72,6 +81,11 @@ public class ChallengeResultActivity extends AppCompatActivity {
             questionsList = intent.getParcelableArrayListExtra("questionsList");
             playerAnswersBooleansList = intent.getParcelableArrayListExtra("player1AnswersBooleans");
             playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
+            secondPlayerName = intent.getStringExtra("player2Name");
+            secondPlayerEmail= intent.getStringExtra("player2Email");
+            secondPlayerImage = intent.getStringExtra("player2Image");
+            secondPlayerUid = intent.getStringExtra("player2Uid");
+            secondPlayerPoints = intent.getIntExtra("player2Points", -1);
         }
         challengeResultTv.append(score +"");
         Date today = new Date();
@@ -83,12 +97,18 @@ public class ChallengeResultActivity extends AppCompatActivity {
         map.put("player1Email", userEmail);
         map.put("player1Image", userImage);
         map.put("player1score", score);
+        map.put("player1Uid", auth.getCurrentUser().getUid());
+        map.put("player2Name", secondPlayerName);
+        map.put("player2Email", secondPlayerEmail);
+        map.put("player2Image", secondPlayerImage);
+        map.put("player2score", secondPlayerPoints);
+        map.put("player2Uid", secondPlayerUid);
         map.put("date", date);
         map.put("subject", subject);
         map.put("questionsList", questionsList);
         map.put("player1AnswersBooleans", playerAnswersBooleansList);
         map.put("player1Answers", playerAnswersList);
-        map.put("state", "اكتمل"); // TODO : edit this
+        map.put("state", "لم يكتمل"); // TODO : edit this
 
         ref.push().setValue(map);
     }

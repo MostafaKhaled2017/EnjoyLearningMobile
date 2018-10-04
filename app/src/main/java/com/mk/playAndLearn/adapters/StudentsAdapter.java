@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
+import com.mk.playAndLearn.activity.ChallengersActivity;
 import com.mk.playAndLearn.model.User;
 import com.squareup.picasso.Picasso;
 
@@ -21,13 +23,14 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     ArrayList<User> list;
     Context context;
 
-    private final String TAG;
+    private final String TAG, subject;
     int currentPosition = 0, lastPoints = (int)1e9;
 
-    public StudentsAdapter(ArrayList<User> list, Context context, String TAG) {
+    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject) {
         this.list = list;
         this.context = context;
         this.TAG = TAG;
+        this.subject = subject;
     }
 
     @Override
@@ -53,7 +56,9 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     intent.putExtra("points", mylist.getPoints());
                     intent.putExtra("email", mylist.getEmail());
                     intent.putExtra("uid", mylist.getUid());
+                    intent.putExtra("subject", subject);
                     context.startActivity(intent);
+                    ((ChallengersActivity)context).finish();
                 }
             });
         }
