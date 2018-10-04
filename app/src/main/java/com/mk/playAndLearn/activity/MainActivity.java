@@ -47,8 +47,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     String userName = "", userImage = "", userEmail = "";
 
-
-    //TODO : think about removing facebook login from the app because it will need alot of work from me and becauseif I will need to pay to use google adsens when using it but I don't think so
+    //TODO : read all the TODOs in all the app well
+    //TODO : adjust the app bars titles in all activities and fragments of the app.
+    //TODO : instead of using the app bar multiple times include it to all screens and update it using java
+    //TODO : think about add facebook login from the app because it will need alot of work from me and becauseif I will need to pay to use google adsens when using it but I don't think so
     //TODO : think about adding icons for sign in and sign up
     //TODO : think about adding signUp and sign in using facebook and google
     //TODO : use android arsenal and other libraries to add designs to the app
@@ -68,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : increase learn icon size
     //TODO : upload the project to github or gitlab
     //TODO : improve the style of the app after the design class in the course and before it to
-    //TODO : edit firebase permissions to write in the database
+    //TODO : edit fire base permissions to write in the database
+    //TODO : after uploading the app think about adding that people can follow other people.
+    //TODO : remove un used things from the app
+    //TODO : try the app on different screen sizes
+    //TODO : test all the app well after doing the TODOs and exactly before generating the signed apk
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

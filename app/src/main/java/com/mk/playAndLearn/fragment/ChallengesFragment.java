@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.ChallengersActivity;
 import com.mk.playAndLearn.activity.QuestionActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.model.Challenge;
@@ -123,7 +124,8 @@ public class ChallengesFragment extends Fragment {
                     list2.add(question);
                 }
 
-                Intent i = new Intent(getActivity(), QuestionActivity.class);
+               // Intent i = new Intent(getActivity(), QuestionActivity.class);TODO
+                Intent i = new Intent(getActivity(), ChallengersActivity.class);
 
                 i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);

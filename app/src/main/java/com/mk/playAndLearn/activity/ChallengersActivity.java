@@ -2,9 +2,9 @@ package com.mk.playAndLearn.activity;
 
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +24,7 @@ import com.mk.playAndLearn.model.User;
 
 import java.util.ArrayList;
 
-public class BestStudentsActivity extends AppCompatActivity {
+public class ChallengersActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
@@ -33,12 +33,11 @@ public class BestStudentsActivity extends AppCompatActivity {
     ProgressBar progressBar;
     RecyclerView recyclerView;
 
-    private final String TAG = "BestStudentsActivity";
-    //TODO : see what happens when the data changed rapidly and if there is a problem handle it by make data fixed and change it by refreshing
+    private final String TAG = "ChallengersActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_best_students);
+        setContentView(R.layout.activity_challengers);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -52,42 +51,43 @@ public class BestStudentsActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
 
-        recyclerView = findViewById(R.id.bestStudentsRecyclerView);
-        progressBar = findViewById(R.id.bestStudentsProgressBar);
+        recyclerView = findViewById(R.id.challengersRecyclerView);
+        progressBar = findViewById(R.id.challengersProgressBar);
         recyclerAdapter = new StudentsAdapter(list, this, TAG);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
         recyclerAdapter.notifyDataSetChanged();
-            myRef.orderByChild("points").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(!list.isEmpty())
-                        list.clear();
-                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+        myRef.orderByChild("userName").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //TODO : think about the conditions here
+                if(list.isEmpty()) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         User user = new User();
                         String name = dataSnapshot1.child("userName").getValue().toString();
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
-                        String userType =  dataSnapshot1.child("userType").getValue().toString();
-                        if(userType.equals("طالب")) {
+                        String userType = dataSnapshot1.child("userType").getValue().toString();
+                        if (userType.equals("طالب")) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                             user.setName(name);
                             user.setPoints(Integer.parseInt(points));
                             user.setImageUrl(imageUrl);
-                            list.add(0, user);
+                            list.add(user);
                         }
                         if (progressBar.getVisibility() != View.GONE)
                             progressBar.setVisibility(View.GONE);
                         recyclerAdapter.notifyDataSetChanged();
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

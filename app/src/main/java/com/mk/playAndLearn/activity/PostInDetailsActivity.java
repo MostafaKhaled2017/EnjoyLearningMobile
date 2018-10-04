@@ -16,7 +16,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,20 +24,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.adapters.BestStudentsAdapter;
 import com.mk.playAndLearn.adapters.CommentsAdapter;
 import com.mk.playAndLearn.model.Comment;
-import com.mk.playAndLearn.model.Lesson;
-import com.mk.playAndLearn.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;

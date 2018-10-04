@@ -51,7 +51,7 @@
         android:id="@+id/unStudentSignAlertText"
         android:textColor="#ff0000"
         android:textSize="14sp"
-        android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق"
+        android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق ولن تستطيع دخول تحديات ضد الطلبة الموجودين في البرنامج"
         android:layout_gravity="right"/>
 
 

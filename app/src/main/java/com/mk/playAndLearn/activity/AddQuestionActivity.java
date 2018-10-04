@@ -55,7 +55,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_question);
-        Toolbar toolbar = findViewById(R.id.toolbarInAddQuestion);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
