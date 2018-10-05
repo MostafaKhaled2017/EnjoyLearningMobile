@@ -2,7 +2,6 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -86,17 +85,17 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.subjects_array, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
         ArrayAdapter<CharSequence> unitsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.units_array, android.R.layout.simple_spinner_item);
-        unitsAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
+        unitsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         unitOrderSpinner.setAdapter(unitsAdapter);
 
         ArrayAdapter<CharSequence> lessonsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.lessons_array, android.R.layout.simple_spinner_item);
-        lessonsAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
+        lessonsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         lessonOrderSpinner.setAdapter(lessonsAdapter);
 
         database = FirebaseDatabase.getInstance();
@@ -120,12 +119,12 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map.put("writerName", userName);
                     map.put("writerEmail", userEmail);
                     map.put("reviewed", false);
-                    final DatabaseReference usersRefrence = database.getReference("users");
-                    usersRefrence.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    final DatabaseReference usersReference = database.getReference("users");
+                    usersReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                            usersRefrence.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 10);
+                            usersReference.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 10);
                         }
 
                         @Override

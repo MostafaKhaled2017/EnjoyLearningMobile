@@ -29,6 +29,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ChallengeResultActivity extends AppCompatActivity {
+    //TODO : think about removing challenge result activity but think well before determine what to do in this
+    //TODO : handle loosing internet connection before uploading data for example show a dialog when try to go out.
     TextView challengeResultTv;
 
     FirebaseDatabase database;
@@ -114,7 +116,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
             map.put("player2Email", secondPlayerEmail);
             map.put("player2Image", secondPlayerImage);
             map.put("player2Uid", secondPlayerUid);
-            map.put("player2score", -1);
+            map.put("player2score", 0);
+            map.put("player2score", 0);
             map.put("date", date);
             map.put("subject", subject);
             map.put("questionsList", questionsList);
@@ -130,8 +133,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     ref.child(challengeId).child("player2score").setValue(score);
-                    //ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);TODO : note that this will be null
-                    //ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);TODO : note that this will be null
+                    ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
+                    ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);
                     ref.child(challengeId).child("state").setValue("اكتمل");
                 }
 

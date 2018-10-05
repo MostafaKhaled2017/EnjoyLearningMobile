@@ -2,7 +2,6 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -87,7 +86,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
 
             ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                     R.array.subjects_array, android.R.layout.simple_spinner_item);
-            subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
             subjectsSpinner.setAdapter(subjectsAdapter);
 
             subjectsSpinner.setOnItemSelectedListener(this);

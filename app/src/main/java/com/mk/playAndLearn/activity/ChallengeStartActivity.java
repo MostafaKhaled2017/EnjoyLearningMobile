@@ -1,9 +1,11 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
 import com.squareup.picasso.Picasso;
 
@@ -35,13 +38,13 @@ public class ChallengeStartActivity extends AppCompatActivity {
     DatabaseReference questionsReference;
 
 
-    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList()
-            , playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
 
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     String subject, challengeId;
-    int firstPlayerPoints, secondPlayerPoints, currentChallenger = 1;
+    int firstPlayerPoints = -1, secondPlayerPoints, currentChallenger = 1;
+    boolean finished = false;
 
     ImageView player1Image, player2Image;
     TextView player1Name, player1Points, player2Name, player2Points;
@@ -80,66 +83,82 @@ public class ChallengeStartActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             currentChallenger = intent.getIntExtra("currentChallenger", 1);
-            if(currentChallenger == 2) {
+
+            secondPlayerUid = intent.getStringExtra("uid");
+
+            if (currentChallenger == 2) {
                 challengeId = intent.getStringExtra("challengeId");
                 challengeQuestionList = intent.getParcelableArrayListExtra("questionsList");
-                secondPlayerName = intent.getStringExtra("secondChallengerName");
-                secondPlayerImage = intent.getStringExtra("secondChallengerImage");
-                secondPlayerPoints = intent.getIntExtra("secondChallengerPoints", -1);
-            }
-            else {
+            } else {
                 secondPlayerName = intent.getStringExtra("name");
                 secondPlayerEmail = intent.getStringExtra("email");
                 secondPlayerImage = intent.getStringExtra("image");
                 secondPlayerPoints = intent.getIntExtra("points", -1);
-                secondPlayerUid = intent.getStringExtra("uid");
                 subject = intent.getStringExtra("subject");
             }
         }
+        DatabaseReference usersReference = database.getReference("users");
+        if(currentChallenger == 2) {
+            usersReference.child(secondPlayerUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    secondPlayerName = dataSnapshot.child("userName").getValue().toString();
+                    secondPlayerEmail = dataSnapshot.child("userImage").getValue().toString();
+                    secondPlayerPoints = (int) dataSnapshot.child("points").getValue();
+                    finished = true;
+                }
 
-        if (!list.isEmpty())
-            list.clear();
-        questionsReference.orderByChild("subject").equalTo(subject).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (list.isEmpty()) {
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        Question question = new Question();
-                        String questionText = dataSnapshot1.child("al question").getValue().toString();
-                        String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
-                        String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
-                        String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
-                        String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
-                        String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
-                        String writerName = dataSnapshot1.child("writerName").getValue().toString();
-                        boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
-                        if (reviewed) {
-                            question.setAnswer1(answer1);
-                            question.setAnswer2(answer2);
-                            question.setAnswer3(answer3);
-                            question.setAnswer4(answer4);
-                            question.setCorrectAnswer(correctAnswer);
-                            question.setWriterName(writerName);
-                            question.setAlQuestion(questionText);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                            list.add(question);
+                }
+            });
+        }
+        else if(currentChallenger == 1) {
+            if (!list.isEmpty())
+                list.clear();
+            questionsReference.orderByChild("subject").equalTo(subject).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (list.isEmpty()) {
+                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                            Question question = new Question();
+                            String questionText = dataSnapshot1.child("al question").getValue().toString();
+                            String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
+                            String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
+                            String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
+                            String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
+                            String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
+                            String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                            boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
+                            if (reviewed) {
+                                question.setAnswer1(answer1);
+                                question.setAnswer2(answer2);
+                                question.setAnswer3(answer3);
+                                question.setAnswer4(answer4);
+                                question.setCorrectAnswer(correctAnswer);
+                                question.setWriterName(writerName);
+                                question.setAlQuestion(questionText);
+
+                                list.add(question);
+                            }
                         }
                     }
+                    finished = true;
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
 
-
-        final DatabaseReference usersRefrence = database.getReference("users");
-        usersRefrence.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 firstPlayerPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
+                player1Points.setText(firstPlayerPoints + "");
             }
 
             @Override
@@ -147,6 +166,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
             }
         });
+
         firstPlayerName = currentUser.getDisplayName();
         firstPlayerEmail = currentUser.getEmail();
         firstPlayerUid = currentUser.getUid();
@@ -155,7 +175,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
         player1Name.setText(firstPlayerName);
         Picasso.with(this).load(firstPlayerImage).into(player1Image);
-        player1Points.setText(firstPlayerPoints + "");
 
         player2Name.setText(secondPlayerName);
         Picasso.with(this).load(secondPlayerImage).into(player2Image);
@@ -164,42 +183,53 @@ public class ChallengeStartActivity extends AppCompatActivity {
         startChallengeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(currentChallenger == 1) {
-                    if (!chosenQuestionsList.isEmpty())
-                        chosenQuestionsList.clear();
-                    Collections.shuffle(list);
-                    for (int i = 0; i < 5; i++) {
-                        Question question = (Question) list.get(i);
-                        chosenQuestionsList.add(question);
-                    }
-                }
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
-                Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
+                if (finished) {
+                    if (currentChallenger == 1) {
+                        if (!chosenQuestionsList.isEmpty())
+                            chosenQuestionsList.clear();
+                        Collections.shuffle(list);
+                        for (int i = 0; i < 5; i++) {
+                            Question question = (Question) list.get(i);
+                            chosenQuestionsList.add(question);
+                        }
+                    }
+                    Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
+                    i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                    i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+                    i.putExtra("questionNo", 0);
+                    i.putExtra("score", 0);
+                    i.putExtra("subject", subject);
+                    i.putExtra("currentChallenger", currentChallenger);
 
+                    if (currentChallenger == 1) {
+                        i.putExtra("player2Name", secondPlayerName);
+                        i.putExtra("player2Email", secondPlayerEmail);
+                        i.putExtra("player2Image", secondPlayerImage);
+                        i.putExtra("player2Points", secondPlayerPoints);
+                        i.putExtra("player2Uid", secondPlayerUid);
+                        i.putParcelableArrayListExtra("list", chosenQuestionsList);
+                    } else {
+                        i.putParcelableArrayListExtra("list", challengeQuestionList);
+                        i.putExtra("challengeId", challengeId);
+                    }
 
-                i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
-                i.putExtra("questionNo", 0);
-                i.putExtra("score", 0);
-                i.putExtra("subject", subject);
-                i.putExtra("currentChallenger", currentChallenger);
-
-                if(currentChallenger == 1) {
-                    i.putExtra("player2Name", secondPlayerName);
-                    i.putExtra("player2Email", secondPlayerEmail);
-                    i.putExtra("player2Image", secondPlayerImage);
-                    i.putExtra("player2Points", secondPlayerPoints);
-                    i.putExtra("player2Uid", secondPlayerUid);
-                    i.putParcelableArrayListExtra("list", chosenQuestionsList);
+                    //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
+                    startActivity(i);
+                    finish();
+                } else {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeStartActivity.this);
+                    dialog.setTitle("أنت غير جاهز للبدء");//TODO : think about changing these two texts
+                    dialog.setMessage("سرعة الانترنت لديك بطيئة حاول بدء التحدي مرة أخري");
+                    dialog.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    dialog.create();
+                    dialog.show();
                 }
-                else{
-                    i.putParcelableArrayListExtra("list", challengeQuestionList);
-                    i.putExtra("challengeId", challengeId);
-                }
-
-                //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
-                startActivity(i);
-                finish();
             }
         });
     }

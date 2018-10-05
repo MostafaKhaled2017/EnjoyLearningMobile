@@ -34,6 +34,7 @@ public class BestStudentsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     private final String TAG = "BestStudentsActivity";
+    //TODO : put the code that brings the data in a method and when the page refreshes run the method again and the mehod should ensure that lists are clear at its begging
     //TODO : see what happens when the data changed rapidly and if there is a problem handle it by make data fixed and change it by refreshing
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +50,7 @@ public class ChallengesFragment extends Fragment {
 
     //TODO : handle when fire base failed to get data
     //TODO : handle when the second player doesn't complete the challenge or connection problem happens to him
+    //TODO : ensure that the two users of the challenge solve the same questions
 
     // TODO : Rename parameter arguments, choose names that match
     // TODO : think about making when an image clicked it opens in a full activity like other programs
@@ -74,6 +77,7 @@ public class ChallengesFragment extends Fragment {
     ChallengesAdapter completedChallengeRecyclerAdapter, uncompletedChallengeRecyclerAdapter;
 
     RecyclerView completedChallengesRecyclerView, uncompletedChallengesRecyclerView;
+    TextView completeChallengesTv, uncompletedChallengesTv, loadingTv;
 
     private OnFragmentInteractionListener mListener;
 
@@ -130,6 +134,9 @@ public class ChallengesFragment extends Fragment {
         currentUserUid = auth.getCurrentUser().getUid();
 
         progressBar = view.findViewById(R.id.challengesProgressBar);
+        loadingTv = view.findViewById(R.id.loadingText);
+        completeChallengesTv = view.findViewById(R.id.completedChallengesText);
+        uncompletedChallengesTv = view.findViewById(R.id.uncompletedChallengesText);
         completedChallengesRecyclerView = view.findViewById(R.id.completedChallengesRecyclerView);
         uncompletedChallengesRecyclerView = view.findViewById(R.id.uncompletedChallengesRecyclerView);
         completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
@@ -146,7 +153,7 @@ public class ChallengesFragment extends Fragment {
         spinner = view.findViewById(R.id.subjectsSpinnerInChallengesFragment);
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.subjects_array, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -164,78 +171,96 @@ public class ChallengesFragment extends Fragment {
         challengesReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!completedChallengesList.isEmpty())
+                if (!completedChallengesList.isEmpty()) {
                     completedChallengesList.clear();
-                if (!uncompletedChallengesList.isEmpty())
+                    completedChallengeRecyclerAdapter.notifyDataSetChanged();
+                }
+                if (!uncompletedChallengesList.isEmpty()) {
                     uncompletedChallengesList.clear();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    GenericTypeIndicator<List<Question>> t = new GenericTypeIndicator<List<Question>>() {
-                    };
-                    Challenge challenge = new Challenge();
-                    String challengeDate = dataSnapshot1.child("date").getValue().toString();//TODO : solve the date problem
-                    String challengeSubject = dataSnapshot1.child("subject").getValue().toString();
-                    String challengeState = dataSnapshot1.child("state").getValue().toString();
-                    String challengeId = dataSnapshot1.getKey();
-                    ArrayList challengeQuestionsList = (ArrayList) dataSnapshot1.child("questionsList").getValue(t);
-                    long player1Score = (long) dataSnapshot1.child("player1score").getValue();
-                    long player2Score = (long) dataSnapshot1.child("player2score").getValue();
+                    uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
+                }
+                if(dataSnapshot.getChildrenCount() > 0) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        GenericTypeIndicator<List<Question>> t = new GenericTypeIndicator<List<Question>>() {
+                        };
+                        Challenge challenge = new Challenge();
+                        String challengeDate = dataSnapshot1.child("date").getValue().toString();//TODO : solve the date problem
+                        String challengeSubject = dataSnapshot1.child("subject").getValue().toString();
+                        String challengeState = dataSnapshot1.child("state").getValue().toString();
+                        String challengeId = dataSnapshot1.getKey();
+                        ArrayList challengeQuestionsList = (ArrayList) dataSnapshot1.child("questionsList").getValue(t);
+                        long player1Score = (long) dataSnapshot1.child("player1score").getValue();
+                        long player2Score = (long) dataSnapshot1.child("player2score").getValue();
 
-                    String player1Name = dataSnapshot1.child("player1Name").getValue().toString();
-                    String player1Image = dataSnapshot1.child("player1Image").getValue().toString();
-                    String player1Uid = dataSnapshot1.child("player1Uid").getValue().toString();
-                    String player2Name = dataSnapshot1.child("player2Name").getValue().toString();
-                    String player2Image = dataSnapshot1.child("player2Image").getValue().toString();
-                    String player2Uid = dataSnapshot1.child("player2Uid").getValue().toString();
+                        String player1Name = dataSnapshot1.child("player1Name").getValue().toString();
+                        String player1Image = dataSnapshot1.child("player1Image").getValue().toString();
+                        String player1Uid = dataSnapshot1.child("player1Uid").getValue().toString();
+                        String player2Name = dataSnapshot1.child("player2Name").getValue().toString();
+                        String player2Image = dataSnapshot1.child("player2Image").getValue().toString();
+                        String player2Uid = dataSnapshot1.child("player2Uid").getValue().toString();
 
-                    String challengerName, challengerImage;
+                        String challengerName, challengerImage;
 
-                    if (player1Uid.equals(currentUserUid)) {
-                        currentPlayer = 1;
-                        challengerName = player2Name;
-                        challengerImage = player2Image;
-                        challenge.setSecondChallengerUid(player2Uid);//second means that it is not the player who starts the challenge
+                        if (player1Uid.equals(currentUserUid)) {
+                            currentPlayer = 1;
+                            challengerName = player2Name;
+                            challengerImage = player2Image;
+                            challenge.setSecondChallengerUid(player2Uid);//second means that it is not the player who starts the challenge
 
-                    } else {
-                        currentPlayer = 2;
-                        challengerName = player1Name;
-                        challengerImage = player1Image;
-                        challenge.setSecondChallengerUid(player1Uid);//second means that it is not the player who starts the challenge
-                    }
-                    challenge.setCurrentPlayer(currentPlayer);
-                    challenge.setChallengerName(challengerName);
-                    challenge.setDate(challengeDate);
-                    challenge.setImage(challengerImage);
-                    challenge.setSubject(challengeSubject);
-                    challenge.setState(challengeState);
-                    challenge.setId(challengeId);
-                    challenge.setQuestionsList(challengeQuestionsList);
-                    //TODO : find a better way to do that as this will load all the data and this will take time
-                    if (player1Uid.equals(currentUserUid) || player2Uid.equals(currentUserUid)) {
-                        if (challenge.getState().equals("اكتمل")) {
+                        } else {
+                            currentPlayer = 2;
+                            challengerName = player1Name;
+                            challengerImage = player1Image;
+                            challenge.setSecondChallengerUid(player1Uid);//second means that it is not the player who starts the challenge
+                        }
+                        challenge.setCurrentPlayer(currentPlayer);
+                        challenge.setChallengerName(challengerName);
+                        challenge.setDate(challengeDate);
+                        challenge.setImage(challengerImage);
+                        challenge.setSubject(challengeSubject);
+                        challenge.setState(challengeState);
+                        challenge.setId(challengeId);
+                        challenge.setQuestionsList(challengeQuestionsList);
+                        //TODO : find a better way to do that as this will load all the data and this will take time
+                        if (player1Uid.equals(currentUserUid) || player2Uid.equals(currentUserUid)) {
                             String score;
-                            if(currentPlayer == 1){
+                            if (currentPlayer == 1) {
                                 score = player2Score + " : " + player1Score;
-                            }
-                            else{
+                            } else {
                                 score = player1Score + " : " + player2Score;
                             }
                             challenge.setScore(score);
-                            completedChallengesList.add(0, challenge);
-                            completedChallengeRecyclerAdapter.notifyDataSetChanged();
-                        }
-                        else if(challenge.getState().equals(refusedChallengeText)) {
-                            completedChallengesList.add(0, challenge);
-                            completedChallengeRecyclerAdapter.notifyDataSetChanged();
-                        }
-                        else
-                         {
-                            uncompletedChallengesList.add(0, challenge);
-                            uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
+                            if (challenge.getState().equals("اكتمل")) {
+                                completedChallengesList.add(0, challenge);
+                                completedChallengeRecyclerAdapter.notifyDataSetChanged();
+                            } else if (challenge.getState().equals(refusedChallengeText)) {
+                                completedChallengesList.add(0, challenge);
+                                completedChallengeRecyclerAdapter.notifyDataSetChanged();
+                            } else if (challenge.getState().equals(uncompletedChallengeText)) {
+                                uncompletedChallengesTv.setVisibility(View.VISIBLE);
+                                uncompletedChallengesList.add(0, challenge);
+                                uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 }
                 if (progressBar.getVisibility() != View.GONE)
                     progressBar.setVisibility(View.GONE);
+                if (completedChallengesList.size() > 0) {
+                    completeChallengesTv.setVisibility(View.VISIBLE);
+                }
+                else {
+                    completeChallengesTv.setVisibility(View.GONE);
+                }
+
+                if (uncompletedChallengesList.size() > 0) {
+                    uncompletedChallengesTv.setVisibility(View.VISIBLE);
+                }
+                else {
+                    uncompletedChallengesTv.setVisibility(View.GONE);
+                }
+                if(completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0)
+                    loadingTv.setVisibility(View.VISIBLE);
             }
 
             @Override

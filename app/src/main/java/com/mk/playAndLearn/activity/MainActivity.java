@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import com.ToxicBakery.viewpager.transforms.TabletTransformer;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     String userName = "", userImage = "", userEmail = "";
 
     //TODO : read all the TODOs in all the app well
+    //TODO : handle bad or no internet connection in all screens of the app specially challenge screens
     //TODO : adjust the app bars titles in all activities and fragments of the app.
     //TODO : instead of using the app bar multiple times include it to all screens and update it using java
     //TODO : think about add facebook login from the app because it will need alot of work from me and becauseif I will need to pay to use google adsens when using it but I don't think so
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : make users able to delete (their) posts and comments(this won't need long time)
     //TODO : in an update think about making users able to edit their posts and comment
     //TODO : in an update make a user profile page that contains his activity(challenges) and his posts in a view pager
+    //TODO : push new attributes contains 2 users UIDs with each challenge and make a loop to get only 5 random question from the database
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +102,61 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         tabLayout = findViewById(R.id.tablayout);
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
+
+        /*//TODO : comment this part
+        //start editing in database
+        final DatabaseReference reference = database.getReference("lessons");
+        reference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                DataSnapshot subjectSnapshot = dataSnapshot.child("subject");
+                String subject = subjectSnapshot.getValue().toString();
+                String id = dataSnapshot.getKey();
+                if (subject.equals("فيزياء (لغة إنجليزية)")) {
+                    reference.child(id).child("subject").setValue("Physics");
+                }
+                if (subject.equals("كيمياء (لغة إنجليزية)")) {
+                    reference.child(id).child("subject").setValue("Chemistry");
+                }
+                if (subject.equals("احياء (لغة إنجليزية)")) {
+                    reference.child(id).child("subject").setValue("Biology");
+                }
+                if (subject.equals("جبر (لغة إنجليزية)")) {
+                    reference.child(id).child("subject").setValue("Algebra");
+                }
+                if (subject.equals("هندسة (لغة إنجليزية)")) {
+                    reference.child(id).child("subject").setValue("Geometry");
+                }
+                if (subject.equals("علم المثلثات (لغة إنجليزية)")) {
+                    reference.child(id).child("subject").setValue("Trigonometry");
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        //end editing in database*/
+
 
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
         mViewPager.setPageTransformer(false, new TabletTransformer());

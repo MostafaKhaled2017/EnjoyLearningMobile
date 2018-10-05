@@ -78,21 +78,6 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
             Picasso.with(context).load(challenge.getImage()).into(holder.imageView);
 
         if (challenge.getState().equals("لم يكتمل") && challenge.getCurrentPlayer() == 2) {
-            //TODO : ensure that the button can't be pressed before loading
-            DatabaseReference usersReference = database.getReference("users");
-            usersReference.child(challenge.getSecondChallengerUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    secondChallengerName = dataSnapshot.child("userName").getValue().toString();
-                    secondChallengerImage = dataSnapshot.child("userImage").getValue().toString();
-                    secondChallengerPoints = (long) dataSnapshot.child("points").getValue();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
             //TODO : edit this if needed
             holder.challengeView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -108,9 +93,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             Intent intent = new Intent(context, ChallengeStartActivity.class);
                             intent.putExtra("challengeId", challenge.getId());
                             intent.putExtra("currentChallenger", 2);
-                            intent.putExtra("secondChallengerName", secondChallengerName);
-                            intent.putExtra("secondChallengerImage", secondChallengerImage);
-                            intent.putExtra("secondChallengerPoints", (int) secondChallengerPoints);
+                            intent.putExtra("uid", challenge.getSecondChallengerUid());//second means that he isn't the current user
                             intent.putParcelableArrayListExtra("questionsList", challenge.getQuestionsList());
                             context.startActivity(intent);
                         }
