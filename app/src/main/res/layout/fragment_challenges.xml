@@ -1,60 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/color3"
-    android:orientation="vertical"
-    tools:context="com.mk.playAndLearn.fragment.ChallengesFragment">
+<!-- TODO : adjust the scrolling way and handle the view shape when the content is smaller than the screen size -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:id="@+id/newChallengeView">
+        android:background="@color/color3"
+        android:orientation="vertical"
+        tools:context="com.mk.playAndLearn.fragment.ChallengesFragment">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/startChallengeButton"
-            android:layout_width="45dp"
-            android:layout_height="35dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/rectangle_button"
-            android:text="ابدأ"
-            android:textColor="@color/white" />
+        <LinearLayout
+            android:id="@+id/newChallengeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@color/white"
+            android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/subjectsSpinnerInChallengesFragment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:gravity="right" />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/startChallengeButton"
+                android:layout_width="45dp"
+                android:layout_height="35dp"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/rectangle_button"
+                android:text="ابدأ"
+                android:textColor="@color/white" />
+
+            <Spinner
+                android:id="@+id/subjectsSpinnerInChallengesFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:gravity="right" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="المادة : "
+                android:textSize="18sp" />
+        </LinearLayout>
+
 
         <TextView
+            android:id="@+id/uncompletedChallengesText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:text="المادة : "
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/newChallengeView"
+            android:layout_margin="5dp"
+            android:text="تحديات غير مكتملة"
+            android:textColor="@color/writingColor"
+            android:textSize="@dimen/generalTextSize"
+            android:textStyle="bold"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_below="@id/newChallengeView"
-        android:id="@+id/challengesRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:overScrollMode="ifContentScrolls"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/uncompletedChallengesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/uncompletedChallengesText"
+            android:layout_marginTop="5dp"
+            android:overScrollMode="ifContentScrolls" />
 
-    <ProgressBar
-        android:id="@+id/challengesProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:visibility="visible" />
+        <TextView
+            android:id="@+id/completedChallengesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/uncompletedChallengesRecyclerView"
+            android:layout_margin="5dp"
+            android:text="تحديات مكتملة"
+            android:textColor="@color/writingColor"
+            android:textSize="@dimen/generalTextSize"
+            android:textStyle="bold"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/completedChallengesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/completedChallengesText"
+            android:layout_marginTop="5dp"
+            android:overScrollMode="ifContentScrolls" />
+
+        <ProgressBar
+            android:id="@+id/challengesProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:visibility="visible" />
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

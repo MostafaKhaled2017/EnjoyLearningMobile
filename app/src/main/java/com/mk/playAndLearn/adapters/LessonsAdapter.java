@@ -37,15 +37,15 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        final Lesson mylist = list.get(position);
-        if (mylist.getTitle() != null)
-            holder.arabicPosition.setText(mylist.getTitle());
+        final Lesson lesson = list.get(position);
+        if (lesson.getTitle() != null)
+            holder.arabicPosition.setText(lesson.getTitle());
         holder.lessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent lessonIntent = new Intent(context, LessonContentActivity.class);
-                lessonIntent.putExtra("lessonTitle", mylist.getTitle());
-                lessonIntent.putExtra("lessonContent", mylist.getContent());
+                lessonIntent.putExtra("lessonTitle", lesson.getTitle());
+                lessonIntent.putExtra("lessonContent", lesson.getContent());
                 ((Activity) context).startActivity(lessonIntent);
             }
         });

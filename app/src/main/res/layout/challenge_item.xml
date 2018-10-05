@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--TODO: make the subject and state and score below the name -->
+<!--TODO: think about editing the item shape when challenge state is refused-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:id="@+id/challengeView">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="50dp"
@@ -31,8 +34,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/challengeScore"
-        android:text="5"
-        android:textSize="18sp"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:layout_margin="5dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"/>
@@ -41,6 +44,8 @@
         android:layout_height="30dp"
         android:id="@+id/challengeState"
         android:text="اكتمل"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         android:padding="5dp"
         android:gravity="center"
         android:background="@color/gray"
@@ -58,6 +63,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:text="لغة عربية"
+        android:textColor="@color/white"
         android:gravity="center"
         android:layout_centerVertical="true"
         android:layout_margin="5dp"

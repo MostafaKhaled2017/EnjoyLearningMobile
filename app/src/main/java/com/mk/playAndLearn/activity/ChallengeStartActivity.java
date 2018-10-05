@@ -28,8 +28,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import butterknife.OnClick;
-
 public class ChallengeStartActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser currentUser;
@@ -37,13 +35,13 @@ public class ChallengeStartActivity extends AppCompatActivity {
     DatabaseReference questionsReference;
 
 
-    ArrayList list = new ArrayList<>(), list2 = new ArrayList<>()
+    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList()
             , playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
 
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
-    String subject;
-    int firstPlayerPoints, secondPlayerPoints;
+    String subject, challengeId;
+    int firstPlayerPoints, secondPlayerPoints, currentChallenger = 1;
 
     ImageView player1Image, player2Image;
     TextView player1Name, player1Points, player2Name, player2Points;
@@ -80,14 +78,23 @@ public class ChallengeStartActivity extends AppCompatActivity {
         player2Points = findViewById(R.id.secondPlayerPoints);
 
         Intent intent = getIntent();
-        if (intent != null) {
-            secondPlayerName = intent.getStringExtra("name");
-            secondPlayerEmail = intent.getStringExtra("email");
-            secondPlayerImage = intent.getStringExtra("image");
-            secondPlayerPoints = intent.getIntExtra("points", -1);
-            secondPlayerUid = intent.getStringExtra("uid");
-            subject = intent.getStringExtra("subject");
-
+        if (intent.getExtras() != null) {
+            currentChallenger = intent.getIntExtra("currentChallenger", 1);
+            if(currentChallenger == 2) {
+                challengeId = intent.getStringExtra("challengeId");
+                challengeQuestionList = intent.getParcelableArrayListExtra("questionsList");
+                secondPlayerName = intent.getStringExtra("secondChallengerName");
+                secondPlayerImage = intent.getStringExtra("secondChallengerImage");
+                secondPlayerPoints = intent.getIntExtra("secondChallengerPoints", -1);
+            }
+            else {
+                secondPlayerName = intent.getStringExtra("name");
+                secondPlayerEmail = intent.getStringExtra("email");
+                secondPlayerImage = intent.getStringExtra("image");
+                secondPlayerPoints = intent.getIntExtra("points", -1);
+                secondPlayerUid = intent.getStringExtra("uid");
+                subject = intent.getStringExtra("subject");
+            }
         }
 
         if (!list.isEmpty())
@@ -157,35 +164,39 @@ public class ChallengeStartActivity extends AppCompatActivity {
         startChallengeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!list2.isEmpty())
-                    list2.clear();
-                Collections.shuffle(list);
-                for(int i = 0; i < 5; i++) {
-                    Question question = (Question) list.get(i);
-                    list2.add(question);
-                }
-
-                startChallengeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
+                if(currentChallenger == 1) {
+                    if (!chosenQuestionsList.isEmpty())
+                        chosenQuestionsList.clear();
+                    Collections.shuffle(list);
+                    for (int i = 0; i < 5; i++) {
+                        Question question = (Question) list.get(i);
+                        chosenQuestionsList.add(question);
                     }
-                });
-
+                }
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
                 Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
 
+
+                i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
                 i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);
-                i.putExtra("player2Name", secondPlayerName);
-                i.putExtra("player2Email", secondPlayerEmail);
-                i.putExtra("player2Image", secondPlayerImage);
-                i.putExtra("player2Points", secondPlayerPoints);
-                i.putExtra("player2Uid", secondPlayerUid);
                 i.putExtra("subject", subject);
-                i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
-                i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
-                i.putParcelableArrayListExtra("list", list2);
+                i.putExtra("currentChallenger", currentChallenger);
+
+                if(currentChallenger == 1) {
+                    i.putExtra("player2Name", secondPlayerName);
+                    i.putExtra("player2Email", secondPlayerEmail);
+                    i.putExtra("player2Image", secondPlayerImage);
+                    i.putExtra("player2Points", secondPlayerPoints);
+                    i.putExtra("player2Uid", secondPlayerUid);
+                    i.putParcelableArrayListExtra("list", chosenQuestionsList);
+                }
+                else{
+                    i.putParcelableArrayListExtra("list", challengeQuestionList);
+                    i.putExtra("challengeId", challengeId);
+                }
+
                 //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
                 startActivity(i);
                 finish();

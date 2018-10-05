@@ -35,15 +35,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
     @Override
     public void onBindViewHolder(CommentsAdapter.MyHolder holder, int position) {
-        final Comment mylist = list.get(position);
-        if (mylist.getUserName() != null)
-            holder.name.setText(mylist.getUserName());
-        if (mylist.getContent() != null)
-            holder.content.setText(mylist.getContent());
-        if (mylist.getDate() != null)
-            holder.date.setText(mylist.getDate());
-        if (mylist.getUserImage() != null)
-            Picasso.with(context).load(mylist.getUserImage()).into(holder.imageView);
+        final Comment comment = list.get(position);
+        if (comment.getUserName() != null)
+            holder.name.setText(comment.getUserName());
+        if (comment.getContent() != null)
+            holder.content.setText(comment.getContent());
+        if (comment.getDate() != null)
+            holder.date.setText(comment.getDate());
+        if (comment.getUserImage() != null)
+            Picasso.with(context).load(comment.getUserImage()).into(holder.imageView);
     }
 
     @Override

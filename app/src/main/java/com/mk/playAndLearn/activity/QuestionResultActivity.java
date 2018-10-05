@@ -23,9 +23,9 @@ public class QuestionResultActivity extends AppCompatActivity {
     boolean correct;
     ArrayList list = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
     int questionNo, score;
-    String subject;
+    String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
-    int secondPlayerPoints;
+    int secondPlayerPoints, currentChallenger;
     Intent i;
 
     @Override
@@ -35,70 +35,79 @@ public class QuestionResultActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
         resultText = findViewById(R.id.resultText);
 
         Intent intent = getIntent();
-        if (intent != null) {
+        if (intent.getExtras() != null) {
+            currentChallenger = intent.getIntExtra("currentChallenger", -1);
             correct = intent.getBooleanExtra("answer", false);
             list = intent.getParcelableArrayListExtra("list");
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
-            playerAnswersBooleansList = intent.getParcelableArrayListExtra("player1AnswersBooleans");
-            playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
-            secondPlayerName = intent.getStringExtra("player2Name");
-            secondPlayerEmail= intent.getStringExtra("player2Email");
-            secondPlayerImage = intent.getStringExtra("player2Image");
-            secondPlayerUid = intent.getStringExtra("player2Uid");
-            secondPlayerPoints = intent.getIntExtra("player2Points", -1);
-
+            playerAnswersBooleansList = intent.getParcelableArrayListExtra("currentPlayerAnswersBooleans");
+            playerAnswersList = intent.getParcelableArrayListExtra("currentPlayerAnswers");
+            if (currentChallenger == 1) {
+                secondPlayerName = intent.getStringExtra("player2Name");
+                secondPlayerEmail = intent.getStringExtra("player2Email");
+                secondPlayerImage = intent.getStringExtra("player2Image");
+                secondPlayerUid = intent.getStringExtra("player2Uid");
+                secondPlayerPoints = intent.getIntExtra("player2Points", -1);
+            } else if (currentChallenger == 2) {
+                challengeId = intent.getStringExtra("challengeId");
+            }
         }
-        i = new Intent(this, QuestionActivity.class);
         if (correct) {
             resultText.setText("إجابة صحيحة");
             resultText.setTextColor(Color.GREEN);
             playerAnswersBooleansList.add(true);
-            score ++;
+            score++;
         } else {
             resultText.setText("إجابة خاطئة");
             resultText.setTextColor(Color.RED);
             playerAnswersBooleansList.add(false);
         }
+
+        i = new Intent(this, QuestionActivity.class);
+
+
         if (questionNo + 1 < 5) {
-        Thread timer = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    i.putExtra("list", list);
-                    i.putExtra("questionNo", questionNo + 1);
-                    i.putExtra("score", score);
-                    i.putExtra("subject", subject);
-                    i.putExtra("player2Name", secondPlayerName);
-                    i.putExtra("player2Email", secondPlayerEmail);
-                    i.putExtra("player2Image", secondPlayerImage);
-                    i.putExtra("player2Uid", secondPlayerUid);
-                    i.putExtra("player2Points", secondPlayerPoints);
-                    i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
-                    i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
-                    startActivity(i);
-                    finish();
+            Thread timer = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        i.putExtra("list", list);
+                        i.putExtra("questionNo", questionNo + 1);
+                        i.putExtra("score", score);
+                        i.putExtra("subject", subject);
+                        i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                        i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+                        i.putExtra("currentChallenger", currentChallenger);
+
+                        if (currentChallenger == 1) {
+                            i.putExtra("player2Name", secondPlayerName);
+                            i.putExtra("player2Email", secondPlayerEmail);
+                            i.putExtra("player2Image", secondPlayerImage);
+                            i.putExtra("player2Uid", secondPlayerUid);
+                            i.putExtra("player2Points", secondPlayerPoints);
+                        } else if (currentChallenger == 2) {
+                            i.putExtra("challengeId", challengeId);
+                        }
+
+                        startActivity(i);
+                        finish();
+                    }
                 }
-            }
-        };
-        timer.start();
-    }
-        else {
+            };
+            timer.start();
+        } else {
             Thread timer = new Thread() {
                 @Override
                 public void run() {
@@ -108,16 +117,23 @@ public class QuestionResultActivity extends AppCompatActivity {
                         e.printStackTrace();
                     } finally {
                         Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
+                        intent1.putExtra("currentChallenger", currentChallenger);
+                        intent1.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                        intent1.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
                         intent1.putExtra("score", score);
                         intent1.putExtra("subject", subject);
-                        intent1.putExtra("player2Name", secondPlayerName);
-                        intent1.putExtra("player2Email", secondPlayerEmail);
-                        intent1.putExtra("player2Image", secondPlayerImage);
-                        intent1.putExtra("player2Uid", secondPlayerUid);
-                        intent1.putExtra("player2Points", secondPlayerPoints);
-                        intent1.putParcelableArrayListExtra("questionsList", list);
-                        intent1.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
-                        intent1.putParcelableArrayListExtra("player1Answers", playerAnswersList);
+
+                        if (currentChallenger == 1) {
+                            intent1.putExtra("player2Name", secondPlayerName);
+                            intent1.putExtra("player2Email", secondPlayerEmail);
+                            intent1.putExtra("player2Image", secondPlayerImage);
+                            intent1.putExtra("player2Uid", secondPlayerUid);
+                            intent1.putExtra("player2Points", secondPlayerPoints);
+                            intent1.putParcelableArrayListExtra("questionsList", list);
+                        } else if (currentChallenger == 2) {
+                            intent1.putExtra("challengeId", challengeId);
+                        }
+
                         startActivity(intent1);
                         finish();
                     }
@@ -128,26 +144,7 @@ public class QuestionResultActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        showDialog();
-        return  true;
-    }
-
-    @Override
     public void onBackPressed() {
-        showDialog();
-    }
 
-    public void showDialog(){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("هل أنت متأكد أنك تريد الخروج وإلغاء هذا التحدى");
-        dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
-                finish();
-            }
-        });
-        dialog.create();
-        dialog.show();
     }
 }

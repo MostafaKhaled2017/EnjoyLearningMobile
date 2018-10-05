@@ -1,14 +1,85 @@
 package com.mk.playAndLearn.model;
 
-public class Challenge {
-    String image, challengerName, date, state, subject;
-    long score = -1;
+import java.util.ArrayList;
 
-    public long getScore() {
+public class Challenge {
+    String image, secondChallengerImage;
+    String challengerName, secondChallengerName;
+    String date;
+    String state;
+    String subject;
+    String id;
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    int currentPlayer;
+
+    public String getSecondChallengerImage() {
+        return secondChallengerImage;
+    }
+
+    public void setSecondChallengerImage(String secondChallengerImage) {
+        this.secondChallengerImage = secondChallengerImage;
+    }
+
+    public String getSecondChallengerName() {
+        return secondChallengerName;
+    }
+
+    public void setSecondChallengerName(String secondChallengerName) {
+        this.secondChallengerName = secondChallengerName;
+    }
+
+    public String getSecondChallengerUid() {
+
+        return secondChallengerUid;
+    }
+
+    public void setSecondChallengerUid(String secondChallengerUid) {
+        this.secondChallengerUid = secondChallengerUid;
+    }
+
+    String secondChallengerUid;
+    String score;
+
+    public long getSecondChallengerScore() {
+        return secondChallengerScore;
+    }
+
+    public void setSecondChallengerScore(long secondChallengerScore) {
+        this.secondChallengerScore = secondChallengerScore;
+    }
+
+    long secondChallengerScore;
+    ArrayList questionsList = new ArrayList();
+
+    public ArrayList getQuestionsList() {
+        return questionsList;
+    }
+
+    public void setQuestionsList(ArrayList questionsList) {
+        this.questionsList = questionsList;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getScore() {
         return score;
     }
 
-    public void setScore(long score) {
+    public void setScore(String score) {
         this.score = score;
     }
 

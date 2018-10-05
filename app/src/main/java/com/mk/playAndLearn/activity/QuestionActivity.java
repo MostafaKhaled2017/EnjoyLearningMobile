@@ -19,6 +19,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
@@ -33,13 +38,17 @@ public class QuestionActivity extends AppCompatActivity {
     String selection, correctAnswer;
     RadioButton r1, r2, r3, r4;
     Intent i;
-    int questionNo, score;
+    int questionNo, score, currentChallenger;
     CountDownTimer timer;
-    String subject;
+    String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     int secondPlayerPoints;
     ProgressBar timerProgressBar;
     int index = 0;
+
+    FirebaseDatabase database;
+    DatabaseReference ref;
+
     //TODO : change the xml tags to support
     //TODO : handle what happens when internet connection problem occurs in a challenge
     @Override
@@ -65,21 +74,29 @@ public class QuestionActivity extends AppCompatActivity {
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
         timerProgressBar = findViewById(R.id.timerProgressbar);
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("challenges");
 
 
         Intent intent = getIntent();
-        if (intent != null) {
-            list = intent.getParcelableArrayListExtra("list");
+        if (intent.getExtras() != null) {
+            currentChallenger = intent.getIntExtra("currentChallenger", -1);
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
-            playerAnswersBooleansList = intent.getParcelableArrayListExtra("player1AnswersBooleans");
-            playerAnswersList = intent.getParcelableArrayListExtra("player1Answers");
-            secondPlayerName = intent.getStringExtra("player2Name");
-            secondPlayerEmail= intent.getStringExtra("player2Email");
-            secondPlayerImage = intent.getStringExtra("player2Image");
-            secondPlayerUid = intent.getStringExtra("player2Uid");
-            secondPlayerPoints = intent.getIntExtra("player2Points", -1);
+            list = intent.getParcelableArrayListExtra("list");
+            playerAnswersBooleansList = intent.getParcelableArrayListExtra("currentPlayerAnswersBooleans");
+            playerAnswersList = intent.getParcelableArrayListExtra("currentPlayerAnswers");
+
+            if (currentChallenger == 1) {
+                secondPlayerName = intent.getStringExtra("player2Name");
+                secondPlayerEmail = intent.getStringExtra("player2Email");
+                secondPlayerImage = intent.getStringExtra("player2Image");
+                secondPlayerUid = intent.getStringExtra("player2Uid");
+                secondPlayerPoints = intent.getIntExtra("player2Points", -1);
+            } else {
+                challengeId = intent.getStringExtra("challengeId");
+            }
         }
         Question question = (Question) list.get(questionNo);
         correctAnswer = question.getCorrectAnswer();
@@ -110,7 +127,7 @@ public class QuestionActivity extends AppCompatActivity {
 
             public void onTick(long millisUntilFinished) {
                 index++;
-                timerProgressBar.setProgress((int)millisUntilFinished/1000);
+                timerProgressBar.setProgress((int) millisUntilFinished / 1000);
             }
 
             public void onFinish() {
@@ -136,17 +153,41 @@ public class QuestionActivity extends AppCompatActivity {
 
     public void showDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("هل أنت متأكد أنك تريد الخروج وإلغاء هذا التحدى");
-        dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
-                finish();
+        if (currentChallenger == 2) {
+            dialog.setMessage("هل أنت متأكد أنك تريد الخروج و خسارة نقط الاسئلة الباقية");
+            dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
+                    ref.child(challengeId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ref.child(challengeId).child("player2score").setValue(score);
+                            ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
+                            ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);
+                            ref.child(challengeId).child("state").setValue("اكتمل");//TODO : think about changing this
+                        }
 
-            }
-        });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                    finish();
+
+
+                }
+            });
+        } else {
+            dialog.setMessage("هل أنت متأكد أنك تريد الخروج و إلغاء هذا التحدى");
+            dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+        }
         dialog.create();
         dialog.show();
-
     }
 
     public void navigate() {
@@ -162,22 +203,26 @@ public class QuestionActivity extends AppCompatActivity {
         } else {
             i.putExtra("answer", false);
         }
-        playerAnswersList.add(selection);
         i.putParcelableArrayListExtra("list", list);
         i.putExtra("questionNo", questionNo);
         i.putExtra("score", score);
         i.putExtra("subject", subject);
-        i.putExtra("player2Name", secondPlayerName);
-        i.putExtra("player2Email", secondPlayerEmail);
-        i.putExtra("player2Image", secondPlayerImage);
-        i.putExtra("player2Uid", secondPlayerUid);
-        i.putExtra("player2Points", secondPlayerPoints);
-        i.putParcelableArrayListExtra("player1AnswersBooleans", playerAnswersBooleansList);
-        i.putParcelableArrayListExtra("player1Answers", playerAnswersList);
-        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+        i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+        i.putExtra("currentChallenger", currentChallenger);
+        playerAnswersList.add(selection);
+        if (currentChallenger == 1) {
+            i.putExtra("player2Name", secondPlayerName);
+            i.putExtra("player2Email", secondPlayerEmail);
+            i.putExtra("player2Image", secondPlayerImage);
+            i.putExtra("player2Uid", secondPlayerUid);
+            i.putExtra("player2Points", secondPlayerPoints);
+        } else if (currentChallenger == 2) {
+            i.putExtra("challengeId", challengeId);
+        }
+        timer.cancel();
         startActivity(i);
         finish();
-        timer.cancel();
     }
 
     @Override

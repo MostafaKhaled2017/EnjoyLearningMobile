@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class ChallengersActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference myRef;
+    FirebaseAuth auth;
     ArrayList list = new ArrayList();
     StudentsAdapter recyclerAdapter;
 
@@ -53,12 +55,12 @@ public class ChallengersActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
+        auth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
         if(intent != null){
             subject = intent.getStringExtra("subject");
         }
-
         recyclerView = findViewById(R.id.challengersRecyclerView);
         progressBar = findViewById(R.id.challengersProgressBar);
         recyclerAdapter = new StudentsAdapter(list, this, TAG, subject);
@@ -80,7 +82,7 @@ public class ChallengersActivity extends AppCompatActivity {
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                         String userType = dataSnapshot1.child("userType").getValue().toString();
-                        if (userType.equals("طالب")) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                        if (userType.equals("طالب") && !uid.equals(auth.getCurrentUser().getUid())) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                             user.setName(name);
                             user.setPoints(Integer.parseInt(points));
                             user.setImageUrl(imageUrl);

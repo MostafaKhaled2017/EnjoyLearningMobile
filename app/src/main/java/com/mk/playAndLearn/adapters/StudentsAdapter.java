@@ -44,18 +44,18 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     @Override
     public void onBindViewHolder(StudentsAdapter.MyHolder holder, int position) {
-        final User mylist = list.get(position);
+        final User user = list.get(position);
         if (TAG.equals("ChallengersActivity")) {
             holder.position.setVisibility(View.GONE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, ChallengeStartActivity.class);
-                    intent.putExtra("name", mylist.getName());
-                    intent.putExtra("image", mylist.getImageUrl());
-                    intent.putExtra("points", mylist.getPoints());
-                    intent.putExtra("email", mylist.getEmail());
-                    intent.putExtra("uid", mylist.getUid());
+                    intent.putExtra("name", user.getName());
+                    intent.putExtra("image", user.getImageUrl());
+                    intent.putExtra("points", user.getPoints());
+                    intent.putExtra("email", user.getEmail());
+                    intent.putExtra("uid", user.getUid());
                     intent.putExtra("subject", subject);
                     context.startActivity(intent);
                     ((ChallengersActivity)context).finish();
@@ -63,17 +63,17 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             });
         }
         else {
-            if(mylist.getPoints() < lastPoints){
+            if(user.getPoints() < lastPoints){
                 currentPosition ++;
             }
             holder.position.setText(currentPosition + "");
-            lastPoints = mylist.getPoints();
+            lastPoints = user.getPoints();
         }
-        holder.points.setText(mylist.getPoints() + " XP");
-        if (mylist.getName() != null)
-            holder.name.setText(mylist.getName());
-        if (mylist.getImageUrl() != null)
-            Picasso.with(context).load(mylist.getImageUrl()).into(holder.imageView);
+        holder.points.setText(user.getPoints() + " XP");
+        if (user.getName() != null)
+            holder.name.setText(user.getName());
+        if (user.getImageUrl() != null)
+            Picasso.with(context).load(user.getImageUrl()).into(holder.imageView);
     }
 
     @Override

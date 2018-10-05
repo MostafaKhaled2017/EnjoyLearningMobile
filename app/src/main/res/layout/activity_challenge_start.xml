@@ -7,7 +7,7 @@
     tools:context=".activity.ChallengeStartActivity">
 
     <include layout="@layout/appbar" />
-
+    <!-- TODO : ensure that the data appears here is correct-->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

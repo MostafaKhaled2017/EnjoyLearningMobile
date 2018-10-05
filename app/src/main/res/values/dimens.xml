@@ -17,5 +17,6 @@
     <dimen name="dimen_10">10dp</dimen>
     <dimen name="dialogTitleTextSize">20sp</dimen>
     <dimen name="input_new_note">20sp</dimen>
+    <dimen name="medium_text_size">22sp</dimen>
 
 </resources>

@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : remove un used things from the app
     //TODO : try the app on different screen sizes
     //TODO : test all the app well after doing the TODOs and exactly before generating the signed apk
+    //TODO : make users able to delete (their) posts and comments(this won't need long time)
+    //TODO : in an update think about making users able to edit their posts and comment
+    //TODO : in an update make a user profile page that contains his activity(challenges) and his posts in a view pager
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

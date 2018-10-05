@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="المنافسون"
+                android:text="اختر المنافس"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_in_toolbar" />
         </android.support.v7.widget.Toolbar>

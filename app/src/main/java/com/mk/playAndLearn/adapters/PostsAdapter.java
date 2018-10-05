@@ -38,26 +38,26 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        final Post mylist = list.get(position);
-        if(mylist.getContent() != null)
-            holder.content.setText(mylist.getContent());
-        if(mylist.getDate() != null)
-            holder.date.setText(mylist.getDate());
-        if(mylist.getWriter() != null && !mylist.getWriter().equals(""))
-            holder.name.setText(mylist.getWriter());
-        if(mylist.getImage() != null && !mylist.getImage().equals(""))
-            Picasso.with(context).load(mylist.getImage()).into(holder.imageView);
+        final Post post = list.get(position);
+        if(post.getContent() != null)
+            holder.content.setText(post.getContent());
+        if(post.getDate() != null)
+            holder.date.setText(post.getDate());
+        if(post.getWriter() != null && !post.getWriter().equals(""))
+            holder.name.setText(post.getWriter());
+        if(post.getImage() != null && !post.getImage().equals(""))
+            Picasso.with(context).load(post.getImage()).into(holder.imageView);
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, PostInDetailsActivity.class);
-                intent.putExtra("content", mylist.getContent());
-                intent.putExtra("date", mylist.getDate());
-                intent.putExtra("name", mylist.getWriter());
-                intent.putExtra("image", mylist.getImage());
-                if(mylist.getId() != null)
-                    intent.putExtra("id", mylist.getId());
+                intent.putExtra("content", post.getContent());
+                intent.putExtra("date", post.getDate());
+                intent.putExtra("name", post.getWriter());
+                intent.putExtra("image", post.getImage());
+                if(post.getId() != null)
+                    intent.putExtra("id", post.getId());
                 context.startActivity(intent);
             }
         });
