@@ -184,6 +184,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 firstPlayerPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
                 player1Points.setText(firstPlayerPoints + "");
+                finished = true;
             }
 
             @Override
