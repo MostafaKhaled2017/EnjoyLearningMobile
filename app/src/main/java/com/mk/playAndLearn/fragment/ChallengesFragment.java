@@ -1,10 +1,14 @@
 package com.mk.playAndLearn.fragment;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +22,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +33,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengersActivity;
+import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
@@ -65,11 +71,12 @@ public class ChallengesFragment extends Fragment {
     View view;
     Button startChallengeButton;
     FirebaseAuth auth;
+    MainActivity mainActivity;
 
     FirebaseDatabase database;
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
     String currentSubject, currentUserUid;
-    int currentPlayer;
+    int currentPlayer, previousCompetedChallengeListSize = -1, previousUnCompetedChallengeListSize = -1;
 
     Spinner spinner;
     ProgressBar progressBar;
@@ -132,6 +139,7 @@ public class ChallengesFragment extends Fragment {
 
         database = FirebaseDatabase.getInstance();
         currentUserUid = auth.getCurrentUser().getUid();
+        mainActivity = new MainActivity();
 
         progressBar = view.findViewById(R.id.challengesProgressBar);
         loadingTv = view.findViewById(R.id.loadingText);
@@ -179,7 +187,7 @@ public class ChallengesFragment extends Fragment {
                     uncompletedChallengesList.clear();
                     uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
                 }
-                if(dataSnapshot.getChildrenCount() > 0) {
+                if (dataSnapshot.getChildrenCount() > 0) {
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         GenericTypeIndicator<List<Question>> t = new GenericTypeIndicator<List<Question>>() {
                         };
@@ -248,19 +256,32 @@ public class ChallengesFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                 if (completedChallengesList.size() > 0) {
                     completeChallengesTv.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     completeChallengesTv.setVisibility(View.GONE);
                 }
 
                 if (uncompletedChallengesList.size() > 0) {
                     uncompletedChallengesTv.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     uncompletedChallengesTv.setVisibility(View.GONE);
                 }
-                if(completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0)
+                if (completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0)
                     loadingTv.setVisibility(View.VISIBLE);
+                else
+                    loadingTv.setVisibility(View.GONE);
+
+                if (previousCompetedChallengeListSize != -1 && previousCompetedChallengeListSize < completedChallengesList.size() && currentPlayer == 1) {
+                    //TODO : think about changing the text
+                    ((MainActivity) getActivity()).showNotification("اكتمل التحدى", "لديك تحدي مكتمل جديد");
+                }
+
+                if (previousUnCompetedChallengeListSize != -1 && previousUnCompetedChallengeListSize < uncompletedChallengesList.size() && currentPlayer == 2) {
+                    //TODO : think about changing the text
+                    ((MainActivity) getActivity()).showNotification("لديك تحدى", "لديك تحدي جديد");
+                }
+
+                previousCompetedChallengeListSize = completedChallengesList.size();
+                previousUnCompetedChallengeListSize = uncompletedChallengesList.size();
             }
 
             @Override
@@ -312,4 +333,5 @@ public class ChallengesFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

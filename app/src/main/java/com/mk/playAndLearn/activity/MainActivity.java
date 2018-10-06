@@ -1,8 +1,14 @@
 package com.mk.playAndLearn.activity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,11 +57,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     String userName = "", userImage = "", userEmail = "";
     int tabPosition = 1;
-
     //TODO : read all the TODOs in all the app well
     //TODO : handle bad or no internet connection in all screens of the app specially challenge screens
     //TODO : adjust the app bars titles in all activities and fragments of the app.
     //TODO : instead of using the app bar multiple times include it to all screens and update it using java
+    //TODO : note : it is better to never makes the app works in landscape mode because changing the orientation during work will cause a lot of errors and if I decided to do that then try changing the orientation in all the activities
     //TODO : think about add facebook login from the app because it will need alot of work from me and becauseif I will need to pay to use google adsens when using it but I don't think so
     //TODO : think about adding icons for sign in and sign up
     //TODO : think about adding signUp and sign in using facebook and google
@@ -194,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             }
         });
 
-        if(mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null) {
             userName = mAuth.getCurrentUser().getDisplayName();
             userImage = mAuth.getCurrentUser().getPhotoUrl().toString();
             userEmail = mAuth.getCurrentUser().getEmail();
@@ -262,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         } else {
             //super.onBackPressed();
             this.finishAffinity();
-           // System.exit(0);
+            // System.exit(0);
         }
     }
 
@@ -296,5 +302,29 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void showNotification(String title, String content) {
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default",
+                    "YOUR_CHANNEL_NAME",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+            mNotificationManager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+                .setSmallIcon(R.mipmap.app_icon) // notification icon
+                .setContentTitle(title) // title for notification
+                .setContentText(content)// message for notification
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)) // set alarm sound for notification
+                .setAutoCancel(true); // clear notification after click
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pi);
+        mNotificationManager.notify(0, mBuilder.build());
+        //TODO : edit the id if needed
+        //TODO : think about making the notification opens the challenges fragment directly
     }
 }

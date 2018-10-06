@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ChallengeStartActivity">
+    tools:context=".activity.ChallengeStartActivity"
+    android:id="@+id/challengeStartMainView">
 
     <include layout="@layout/appbar" />
     <!-- TODO : ensure that the data appears here is correct-->
@@ -21,7 +22,7 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_gravity="center"
-            android:src="@mipmap/app_icon" />
+            android:src="@color/gray" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/firstPlayerName"
@@ -63,7 +64,7 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_gravity="center"
-            android:src="@mipmap/app_icon" />
+            android:src="@color/gray" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/secondPlayerName"

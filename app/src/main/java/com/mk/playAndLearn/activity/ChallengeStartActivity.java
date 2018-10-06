@@ -43,7 +43,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     String subject, challengeId;
-    int firstPlayerPoints = -1, secondPlayerPoints, currentChallenger = 1;
+    int firstPlayerPoints = -1, currentChallenger = 1;
+    long secondPlayerPoints;
     boolean finished = false;
 
     ImageView player1Image, player2Image;
@@ -98,13 +99,19 @@ public class ChallengeStartActivity extends AppCompatActivity {
             }
         }
         DatabaseReference usersReference = database.getReference("users");
-        if(currentChallenger == 2) {
+        if (currentChallenger == 2) {
             usersReference.child(secondPlayerUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                     secondPlayerName = dataSnapshot.child("userName").getValue().toString();
-                    secondPlayerEmail = dataSnapshot.child("userImage").getValue().toString();
-                    secondPlayerPoints = (int) dataSnapshot.child("points").getValue();
+                    secondPlayerImage = dataSnapshot.child("userImage").getValue().toString();
+                    secondPlayerPoints = (long) dataSnapshot.child("points").getValue();
+
+                    player2Name.setText(secondPlayerName);
+                    Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
+                    player2Points.setText(secondPlayerPoints + "");
+
                     finished = true;
                 }
 
@@ -113,8 +120,10 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
                 }
             });
-        }
-        else if(currentChallenger == 1) {
+        } else if (currentChallenger == 1) {
+            player2Name.setText(secondPlayerName);
+            Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
+            player2Points.setText(secondPlayerPoints + "");
             if (!list.isEmpty())
                 list.clear();
             questionsReference.orderByChild("subject").equalTo(subject).addValueEventListener(new ValueEventListener() {
@@ -175,10 +184,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
         player1Name.setText(firstPlayerName);
         Picasso.with(this).load(firstPlayerImage).into(player1Image);
-
-        player2Name.setText(secondPlayerName);
-        Picasso.with(this).load(secondPlayerImage).into(player2Image);
-        player2Points.setText(secondPlayerPoints + "");
 
         startChallengeButton.setOnClickListener(new View.OnClickListener() {
             @Override
