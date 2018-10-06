@@ -48,5 +48,15 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="visible" />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/noPostsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="لا يوجد منشورات"
+        android:textSize="@dimen/nothing_text_size"
+        android:textColor="@color/writingColor"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        />
 
 </RelativeLayout>

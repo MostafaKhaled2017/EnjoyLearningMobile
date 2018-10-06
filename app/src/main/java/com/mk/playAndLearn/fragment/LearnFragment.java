@@ -15,12 +15,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.model.Lesson;
@@ -60,6 +62,7 @@ public class LearnFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     Spinner subjectsSpinner;
+    TextView noLessonsTextView;
 
     public LearnFragment() {
         // Required empty public constructor
@@ -101,6 +104,7 @@ public class LearnFragment extends Fragment {
         subjectsSpinner = view.findViewById(R.id.subjectsSpinnerInLearnFragment);
         recyclerView = view.findViewById(R.id.lessonsRecyclerView);
         progressBar = view.findViewById(R.id.lessonsProgressBar);
+        noLessonsTextView = view.findViewById(R.id.noLessonsText);
         recyclerAdapter = new LessonsAdapter(list, getActivity());
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(layoutManager);
@@ -115,13 +119,16 @@ public class LearnFragment extends Fragment {
         subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                noLessonsTextView.setVisibility(View.GONE);
                 String currentSubject = adapterView.getItemAtPosition(i).toString();
                 if(!list.isEmpty())
                     list.clear();
+                progressBar.setVisibility(View.VISIBLE);
                 recyclerAdapter.notifyDataSetChanged();
                 myRef.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        noLessonsTextView.setVisibility(View.GONE);
                         Lesson value = dataSnapshot.getValue(Lesson.class);
                         Lesson lesson = new Lesson();
                         boolean reviewed =(boolean) dataSnapshot.child("reviewed").getValue();
@@ -159,6 +166,19 @@ public class LearnFragment extends Fragment {
                        // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
                         Log.v("Logging", "database error : " + databaseError);
                         progressBar.setVisibility(View.GONE);
+                    }
+                });
+
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        progressBar.setVisibility(View.GONE);
+                        noLessonsTextView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
             }

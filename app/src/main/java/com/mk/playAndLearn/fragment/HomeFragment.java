@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -64,6 +65,7 @@ public class HomeFragment extends Fragment {
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
     PostsAdapter recyclerAdapter;
+    TextView noPostsText;
 
     RecyclerView recyclerView;
     public HomeFragment() {
@@ -108,6 +110,7 @@ public class HomeFragment extends Fragment {
         recyclerView = myView.findViewById(R.id.postsRecyclerView);
         progressBar = myView.findViewById(R.id.postsProgressBar);
         etAddPost = myView.findViewById(R.id.etAddPost);
+        noPostsText = myView.findViewById(R.id.noPostsText);
         addPostButton = myView.findViewById(R.id.addPostBtn);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,10 +155,11 @@ public class HomeFragment extends Fragment {
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                noPostsText.setVisibility(View.GONE);
                 Post post = new Post();
                 String postContent = dataSnapshot.child("content").getValue().toString();
                 String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
-                String postWriter = dataSnapshot.child("writer").getValue().toString();
+                String postWriter = dataSnapshot.child("writerName").getValue().toString();
                 String postImage = dataSnapshot.child("image").getValue().toString();
                 String postId = dataSnapshot.getKey();
                 post.setContent(postContent);
@@ -191,8 +195,25 @@ public class HomeFragment extends Fragment {
                 Log.v("Logging", "error loading data : " + databaseError);
             }
         });
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(list.size() == 0){
+                    progressBar.setVisibility(View.GONE);
+                    noPostsText.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         return myView;
-         }
+
+    }
 
 // TODO: Rename method, update argument and hook method into UI event
 public void onButtonPressed(Uri uri){

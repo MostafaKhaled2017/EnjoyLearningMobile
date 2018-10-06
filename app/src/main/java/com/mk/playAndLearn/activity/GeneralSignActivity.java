@@ -187,6 +187,10 @@ public class GeneralSignActivity extends AppCompatActivity {
                                                 map.put("userImage", userImage);
                                                 map.put("userEmail", userEmail);
                                                 map.put("points", 0);
+                                                map.put("acceptedQuestions", 0);
+                                                map.put("refusedQuestions", 0);
+                                                map.put("acceptedLessons", 0);
+                                                map.put("refusedLessons", 0);
                                                 map.put("userType", userType);
                                                 myRef.child(mAuth.getUid()).setValue(map);
                                             }

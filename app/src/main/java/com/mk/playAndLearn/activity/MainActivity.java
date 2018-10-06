@@ -42,13 +42,15 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
     private ViewPager mViewPager;
-    private FirebaseAuth mAuth;
     TabLayout tabLayout;
-    int tabPosition = 1;
+
     static DatabaseReference myRef;
     FirebaseDatabase database;
+    private static FirebaseAuth mAuth;
+
 
     String userName = "", userImage = "", userEmail = "";
+    int tabPosition = 1;
 
     //TODO : read all the TODOs in all the app well
     //TODO : handle bad or no internet connection in all screens of the app specially challenge screens
@@ -278,7 +280,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             Map<String, Object> map = new HashMap<>();
             map.put("content", postText);
             map.put("date", date);
-            map.put("writer", userName);
+            map.put("writerName", userName);
+            map.put("writerUid", mAuth.getCurrentUser().getUid());
             map.put("image", userImage);
             map.put("email", userEmail);
             map.put("votes", 0);

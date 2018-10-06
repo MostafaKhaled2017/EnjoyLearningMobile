@@ -110,8 +110,22 @@
 
     <ProgressBar
         android:id="@+id/commentsProgressBar"
+        android:layout_below="@id/commentsText"
+        android:layout_marginTop="75dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_centerHorizontal="true"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/commentsText"
+        android:layout_marginTop="75dp"
+        android:id="@+id/noCommentsText"
+        android:text="لا يوجد تعليقات"
+        android:textSize="@dimen/nothing_text_size"
+        android:textColor="@color/writingColor"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

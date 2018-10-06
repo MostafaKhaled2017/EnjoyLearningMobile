@@ -118,6 +118,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map.put("subject", currentSubject);
                     map.put("writerName", userName);
                     map.put("writerEmail", userEmail);
+                    map.put("writerUid", mAuth.getCurrentUser().getUid());
                     map.put("reviewed", false);
                     final DatabaseReference usersReference = database.getReference("users");
                     usersReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {

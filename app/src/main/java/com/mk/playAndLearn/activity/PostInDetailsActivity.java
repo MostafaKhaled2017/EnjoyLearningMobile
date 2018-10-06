@@ -25,11 +25,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.CommentsAdapter;
 import com.mk.playAndLearn.model.Comment;
@@ -50,6 +52,7 @@ public class PostInDetailsActivity extends AppCompatActivity {
 
     DatabaseReference myRef;
     FirebaseDatabase database;
+    FirebaseAuth auth;
 
     String userName = "", userImage = "", userEmail = "", postId = "";
     SharedPreferences sharedPreferences;
@@ -57,6 +60,7 @@ public class PostInDetailsActivity extends AppCompatActivity {
     CommentsAdapter recyclerAdapter;
     ProgressBar progressBar;
     RecyclerView recyclerView;
+    TextView noCommentsText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +79,12 @@ public class PostInDetailsActivity extends AppCompatActivity {
         contentTv = findViewById(R.id.postContentInDetails);
         nameTv = findViewById(R.id.postUserNameInDetails);
         dateTv = findViewById(R.id.postDateInDetails);
+        noCommentsText = findViewById(R.id.noCommentsText);
         imageView = findViewById(R.id.postImageInDetails);
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("comments");
+        auth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -95,14 +101,14 @@ public class PostInDetailsActivity extends AppCompatActivity {
         }
 
         sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        if(sharedPreferences != null) {
-            if (sharedPreferences.contains("userName")){
+        if (sharedPreferences != null) {
+            if (sharedPreferences.contains("userName")) {
                 userName = sharedPreferences.getString("userName", "");
             }
-            if (sharedPreferences.contains("userImage")){
+            if (sharedPreferences.contains("userImage")) {
                 userImage = sharedPreferences.getString("userImage", "");
             }
-            if (sharedPreferences.contains("userEmail")){
+            if (sharedPreferences.contains("userEmail")) {
                 userEmail = sharedPreferences.getString("userEmail", "");
             }
         }
@@ -120,17 +126,18 @@ public class PostInDetailsActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 //Lesson value = dataSnapshot.getValue(Lesson.class);
-                    Comment comment = new Comment();
-                    String userName = dataSnapshot.child("userName").getValue().toString();
-                    String content = dataSnapshot.child("content").getValue().toString();
-                    String userImage = dataSnapshot.child("userImage").getValue().toString();
-                    String date = dataSnapshot.child("date").getValue().toString();
-                    comment.setUserName(userName);
-                    comment.setContent(content);
-                    comment.setUserImage(userImage);
-                    comment.setDate(date);
-                    list.add(0,comment);
-                if(progressBar.getVisibility() != View.GONE)
+                noCommentsText.setVisibility(View.GONE);
+                Comment comment = new Comment();
+                String userName = dataSnapshot.child("userName").getValue().toString();
+                String content = dataSnapshot.child("content").getValue().toString();
+                String userImage = dataSnapshot.child("userImage").getValue().toString();
+                String date = dataSnapshot.child("date").getValue().toString();
+                comment.setUserName(userName);
+                comment.setContent(content);
+                comment.setUserImage(userImage);
+                comment.setDate(date);
+                list.add(0, comment);
+                if (progressBar.getVisibility() != View.GONE)
                     progressBar.setVisibility(View.GONE);
                 recyclerAdapter.notifyDataSetChanged();
             }
@@ -157,7 +164,18 @@ public class PostInDetailsActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
             }
         });
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                progressBar.setVisibility(View.GONE);
+                noCommentsText.setVisibility(View.VISIBLE);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         FloatingActionButton fab = findViewById(R.id.fab);
         Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
         //copy it in a new one
@@ -169,7 +187,7 @@ public class PostInDetailsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showCategoryDialog();
+                showCommentsDialog();
             }
         });
     }
@@ -180,7 +198,7 @@ public class PostInDetailsActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showCategoryDialog() {
+    private void showCommentsDialog() {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
         View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
@@ -213,8 +231,8 @@ public class PostInDetailsActivity extends AppCompatActivity {
                         map.put("votes", 0);
                         map.put("date", date);
                         map.put("postId", postId);
+                        map.put("userUid", auth.getCurrentUser().getUid());
                         map.put("content", inputComment.getText().toString());
-
                         myRef.push().setValue(map);
                     }
                 });

@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="right">
+        android:layout_alignParentRight="true">
 
         <Spinner
             android:layout_margin="10dp"
@@ -41,4 +41,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="visible" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noLessonsText"
+        android:textSize="@dimen/nothing_text_size"
+        android:textColor="@color/writingColor"
+        android:layout_centerInParent="true"
+        android:text="لا يوجد دروس لهذه المادة"
+        android:visibility="invisible"/>
 </RelativeLayout>
