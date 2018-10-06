@@ -13,11 +13,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,8 +33,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.zip.Inflater;
 
 public class ChallengeStartActivity extends AppCompatActivity {
+    //TODO : make this page loads until all data finished loading by hiding the 4 main views until the data loads
+
     FirebaseAuth auth;
     FirebaseUser currentUser;
     FirebaseDatabase database;
@@ -55,6 +61,11 @@ public class ChallengeStartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge_start);
+
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        questionsReference = database.getReference("questions");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -67,11 +78,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("ابدأ التحدي");//TODO : change this
-
-        auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
-        database = FirebaseDatabase.getInstance();
-        questionsReference = database.getReference("questions");
 
 
         player1Name = findViewById(R.id.firstPlayerName);
@@ -126,34 +132,44 @@ public class ChallengeStartActivity extends AppCompatActivity {
             player2Points.setText(secondPlayerPoints + "");
             if (!list.isEmpty())
                 list.clear();
-            questionsReference.orderByChild("subject").equalTo(subject).addValueEventListener(new ValueEventListener() {
+            questionsReference.orderByChild("subject").equalTo(subject).addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (list.isEmpty()) {
-                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                            Question question = new Question();
-                            String questionText = dataSnapshot1.child("al question").getValue().toString();
-                            String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
-                            String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
-                            String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
-                            String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
-                            String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
-                            String writerName = dataSnapshot1.child("writerName").getValue().toString();
-                            boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
-                            if (reviewed) {
-                                question.setAnswer1(answer1);
-                                question.setAnswer2(answer2);
-                                question.setAnswer3(answer3);
-                                question.setAnswer4(answer4);
-                                question.setCorrectAnswer(correctAnswer);
-                                question.setWriterName(writerName);
-                                question.setAlQuestion(questionText);
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Question question = new Question();
+                    String questionText = dataSnapshot.child("al question").getValue().toString();
+                    String answer1 = dataSnapshot.child("answer 1").getValue().toString();
+                    String answer2 = dataSnapshot.child("answer 2").getValue().toString();
+                    String answer3 = dataSnapshot.child("answer 3").getValue().toString();
+                    String answer4 = dataSnapshot.child("answer 4").getValue().toString();
+                    String correctAnswer = dataSnapshot.child("correctAnswer").getValue().toString();
+                    String writerName = dataSnapshot.child("writerName").getValue().toString();
+                    boolean reviewed = ((boolean) dataSnapshot.child("reviewed").getValue());
+                    if (reviewed) {
+                        question.setAnswer1(answer1);
+                        question.setAnswer2(answer2);
+                        question.setAnswer3(answer3);
+                        question.setAnswer4(answer4);
+                        question.setCorrectAnswer(correctAnswer);
+                        question.setWriterName(writerName);
+                        question.setAlQuestion(questionText);
 
-                                list.add(question);
-                            }
-                        }
+                        list.add(question);
                     }
-                    finished = true;
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
                 }
 
                 @Override
