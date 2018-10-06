@@ -94,6 +94,11 @@
         <activity
             android:name="com.mk.playAndLearn.activity.ChallengeStartActivity"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name="com.mk.playAndLearn.service.NotificationsService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>
