@@ -98,7 +98,24 @@
         <service
             android:name="com.mk.playAndLearn.service.NotificationsService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+
+        <activity
+            android:name="com.mk.playAndLearn.activity.AppManagementActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.AdminQuestionActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
+                <data android:scheme="mailto" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

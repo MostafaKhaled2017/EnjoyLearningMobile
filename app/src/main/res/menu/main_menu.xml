@@ -13,6 +13,13 @@
         android:id="@+id/addQuestion"
         android:title="إضافة سؤال"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/appManagement"
+        android:title="إدارة التطبيق"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/app_management"
+        android:visible="false"/>
+
     <!-- TODO : add this item if possible -->
    <!-- <item
         android:id="@+id/myAccount"

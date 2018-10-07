@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,7 +66,7 @@ public class QuestionActivity extends AppCompatActivity {
         i = new Intent(QuestionActivity.this, QuestionResultActivity.class);
 
         rg1 = findViewById(R.id.radioGroup);
-        nextButton = findViewById(R.id.nextButton);
+        nextButton = findViewById(R.id.skipQuestionButton);
         tvQuestion = findViewById(R.id.questionText);
         r1 = findViewById(R.id.radio1);
         r2 = findViewById(R.id.radio2);

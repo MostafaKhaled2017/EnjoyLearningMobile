@@ -3,7 +3,44 @@ package com.mk.playAndLearn.model;
 import java.io.Serializable;
 
 public class Question implements Serializable{
-    String alQuestion, answer1, answer2, answer3, answer4, correctAnswer, subject, writerName;
+    String alQuestion;
+    String answer1;
+    String answer2;
+    String answer3;
+    String answer4;
+    String correctAnswer;
+    String subject;
+    String writerName;
+
+    public String getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
+    }
+
+    String questionId;
+
+    public String getWriterUid() {
+        return writerUid;
+    }
+
+    public void setWriterUid(String writerUid) {
+        this.writerUid = writerUid;
+    }
+
+    String writerUid;
+
+    public String getWriterEmail() {
+        return writerEmail;
+    }
+
+    public void setWriterEmail(String writerEmail) {
+        this.writerEmail = writerEmail;
+    }
+
+    String writerEmail;
     boolean reviewed;
 
     public String getAlQuestion() {

@@ -77,7 +77,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("ابدأ التحدي");//TODO : change this
+        toolbarTitle.setText("ابدأ التحدي");
 
 
         player1Name = findViewById(R.id.firstPlayerName);
@@ -129,6 +129,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
             player2Name.setText(secondPlayerName);
             Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
             player2Points.setText(secondPlayerPoints + "");
+
             if (!list.isEmpty())
                 list.clear();
             questionsReference.orderByChild("subject").equalTo(subject).addChildEventListener(new ChildEventListener() {

@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     String userName = "", userImage = "", userEmail = "";
     int tabPosition = 1;
+
     //TODO : read all the TODOs in all the app well
     //TODO : handle bad or no internet connection in all screens of the app specially challenge screens
     //TODO : adjust the app bars titles in all activities and fragments of the app.
@@ -113,33 +114,15 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
 
-        /*//TODO : comment this part
+       /* //TODO : comment this part
         //start editing in database
-        final DatabaseReference reference = database.getReference("lessons");
+        final DatabaseReference reference = database.getReference("questions");
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                DataSnapshot subjectSnapshot = dataSnapshot.child("subject");
-                String subject = subjectSnapshot.getValue().toString();
+               // DataSnapshot subjectSnapshot = dataSnapshot.child("subject");
                 String id = dataSnapshot.getKey();
-                if (subject.equals("فيزياء (لغة إنجليزية)")) {
-                    reference.child(id).child("subject").setValue("Physics");
-                }
-                if (subject.equals("كيمياء (لغة إنجليزية)")) {
-                    reference.child(id).child("subject").setValue("Chemistry");
-                }
-                if (subject.equals("احياء (لغة إنجليزية)")) {
-                    reference.child(id).child("subject").setValue("Biology");
-                }
-                if (subject.equals("جبر (لغة إنجليزية)")) {
-                    reference.child(id).child("subject").setValue("Algebra");
-                }
-                if (subject.equals("هندسة (لغة إنجليزية)")) {
-                    reference.child(id).child("subject").setValue("Geometry");
-                }
-                if (subject.equals("علم المثلثات (لغة إنجليزية)")) {
-                    reference.child(id).child("subject").setValue("Trigonometry");
-                }
+                reference.child(id).child("writerUid").setValue(mAuth.getCurrentUser().getUid());
 
             }
 
@@ -251,6 +234,9 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             /*case R.id.myAccount:
                 //showHelp();
                 return true;*/
+            case R.id.appManagement:
+                startActivity(new Intent(this, AppManagementActivity.class));
+                return true;
             case R.id.signOut:
                 mAuth.signOut();
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
@@ -261,6 +247,17 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem appManagementItem = menu.findItem(R.id.appManagement);
+        if (mAuth.getCurrentUser().getEmail().equals("mostafakhaled835@gmail.com")) {
+            appManagementItem.setVisible(true);
+        } else {
+            appManagementItem.setVisible(false);
+        }
+        return true;
     }
 
     @Override

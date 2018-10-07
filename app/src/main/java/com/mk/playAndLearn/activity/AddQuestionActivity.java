@@ -143,6 +143,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 map = new HashMap<>();
                 map.put("writerName", userName);
                 map.put("writerEmail", userEmail);
+                map.put("writerUid", mAuth.getCurrentUser().getUid());
                 map.put("subject", currentSubject);
                 map.put("al question", question);
                 map.put("answer 1", et1);
