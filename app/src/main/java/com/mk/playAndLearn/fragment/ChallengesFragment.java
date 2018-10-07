@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -431,26 +432,38 @@ public class ChallengesFragment extends Fragment {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             initialDataLoaded = true;
-                            if (progressBar.getVisibility() != View.GONE)
-                                progressBar.setVisibility(View.GONE);
-                            if (completedChallengesList.size() > 0) {
-                                completeChallengesTv.setVisibility(View.VISIBLE);
-                            } else {
-                                completeChallengesTv.setVisibility(View.GONE);
-                            }
+                            CountDownTimer timer = new CountDownTimer(5000, 1000) {
+                                @Override
+                                public void onTick(long l) {
 
-                            if (uncompletedChallengesList.size() > 0) {
-                                uncompletedChallengesTv.setVisibility(View.VISIBLE);
-                            } else {
-                                uncompletedChallengesTv.setVisibility(View.GONE);
-                            }
-                            if (completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0)
-                                loadingTv.setVisibility(View.VISIBLE);
-                            else
-                                loadingTv.setVisibility(View.GONE);
+                                }
 
-                            previousCompetedChallengeListSize = completedChallengesList.size();
-                            previousUnCompetedChallengeListSize = uncompletedChallengesList.size();
+                                @Override
+                                public void onFinish() {
+                                    if (progressBar.getVisibility() != View.GONE)
+                                        progressBar.setVisibility(View.GONE);
+                                    if (completedChallengesList.size() > 0) {
+                                        completeChallengesTv.setVisibility(View.VISIBLE);
+                                    } else {
+                                        completeChallengesTv.setVisibility(View.GONE);
+                                    }
+
+                                    if (uncompletedChallengesList.size() > 0) {
+                                        uncompletedChallengesTv.setVisibility(View.VISIBLE);
+                                    } else {
+                                        uncompletedChallengesTv.setVisibility(View.GONE);
+                                    }
+                                    if (completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0)
+                                        loadingTv.setVisibility(View.VISIBLE);
+                                    else
+                                        loadingTv.setVisibility(View.GONE);
+
+                                    previousCompetedChallengeListSize = completedChallengesList.size();
+                                    previousUnCompetedChallengeListSize = uncompletedChallengesList.size();
+                                }
+                            };
+                            timer.start();
+
                         }
 
                         @Override

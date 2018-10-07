@@ -1,151 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/color3"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    tools:context=".activity.AddQuestionActivity">
-    <include layout="@layout/appbar"/>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
 
-    <TextView
-        android:id="@+id/subjectsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/appBar"
-        android:layout_margin="8dp"
-        android:text="المادة : "
-        android:textSize="18sp" />
-
-    <Spinner
-        android:id="@+id/subjectsSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appBar"
-        android:layout_marginTop="8dp"
-        android:layout_toLeftOf="@id/subjectsTextView" />
-
-    <EditText
-        android:id="@+id/addQuestionEditText"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/subjectsSpinner"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="15dp"
-        android:hint="السؤال"
-        android:inputType="textCapSentences" />
+        android:layout_height="match_parent"
+        android:background="@color/color3"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        tools:context=".activity.AddQuestionActivity">
 
-    <TextView
-        android:id="@+id/answerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/addQuestionEditText"
-        android:layout_margin="10dp"
-        android:text="الإجابات"
-        android:textSize="22sp" />
+        <include layout="@layout/appbar" />
 
-    <TextView
-        android:id="@+id/instuctionsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/answerText"
-        android:layout_margin="5dp"
-        android:text="قم بكتابة أربعة اختيارات للسؤال وعلم الإجابة الصحيحة منهم."
-        android:textSize="18sp" />
-
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/instuctionsText"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/radio1"
+        <TextView
+            android:id="@+id/subjectsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/appBar"
+            android:layout_margin="8dp"
+            android:text="المادة : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/subjectsSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@id/subjectsTextView" />
+
+        <EditText
+            android:id="@+id/addQuestionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subjectsSpinner"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:hint="السؤال"
+            android:inputType="textCapSentences" />
+
+        <TextView
+            android:id="@+id/answerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_below="@id/addQuestionEditText"
-            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
-            android:onClick="onRadioButtonClicked" />
+            android:layout_margin="10dp"
+            android:text="الإجابات"
+            android:textSize="22sp" />
 
-        <RadioButton
-            android:id="@+id/radio2"
+        <TextView
+            android:id="@+id/instuctionsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radio1"
-            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
-            android:onClick="onRadioButtonClicked" />
+            android:layout_below="@id/answerText"
+            android:layout_margin="5dp"
+            android:text="قم بكتابة أربعة اختيارات للسؤال وعلم الإجابة الصحيحة منهم."
+            android:textSize="18sp" />
 
-        <RadioButton
-            android:id="@+id/radio3"
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radio2"
-            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
-            android:onClick="onRadioButtonClicked" />
+            android:layout_below="@id/instuctionsText"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/radio4"
-            android:layout_width="wrap_content"
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/addQuestionEditText"
+                android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
+                android:onClick="onRadioButtonClicked" />
+
+            <RadioButton
+                android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/radio1"
+                android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
+                android:onClick="onRadioButtonClicked" />
+
+            <RadioButton
+                android:id="@+id/radio3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/radio2"
+                android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
+                android:onClick="onRadioButtonClicked" />
+
+            <RadioButton
+                android:id="@+id/radio4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/radio3"
+                android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
+                android:onClick="onRadioButtonClicked" />
+
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/et1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radio3"
-            android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
-            android:onClick="onRadioButtonClicked" />
+            android:layout_below="@id/instuctionsText"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/radioGroup"
+            android:inputType="text" />
 
-    </RadioGroup>
+        <EditText
+            android:id="@+id/et2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et1"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/radioGroup"
+            android:inputType="text" />
 
-    <EditText
-        android:id="@+id/et1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/instuctionsText"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/radioGroup"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/et2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/et1"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/radioGroup"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/et3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/et2"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/radioGroup"
-        android:inputType="text" />
+        <EditText
+            android:id="@+id/et3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et2"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/radioGroup"
+            android:inputType="text" />
 
 
-    <EditText
-        android:id="@+id/et4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/et3"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/radioGroup"
-        android:inputType="text" />
+        <EditText
+            android:id="@+id/et4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et3"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/radioGroup"
+            android:inputType="text" />
 
-    <Button
-        android:id="@+id/addQuestionBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/radioGroup"
-        android:layout_margin="8dp"
-        android:background="@drawable/rectangle_button"
-        android:text="رفع السؤال"
-        android:textColor="@color/white" />
+        <Button
+            android:id="@+id/addQuestionBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radioGroup"
+            android:layout_margin="8dp"
+            android:background="@drawable/rectangle_button"
+            android:text="رفع السؤال"
+            android:textColor="@color/white" />
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

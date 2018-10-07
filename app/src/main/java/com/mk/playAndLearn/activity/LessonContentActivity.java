@@ -28,7 +28,7 @@ public class LessonContentActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbarInLesson);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;

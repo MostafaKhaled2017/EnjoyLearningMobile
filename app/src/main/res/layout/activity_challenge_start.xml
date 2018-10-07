@@ -7,9 +7,11 @@
     tools:context=".activity.ChallengeStartActivity"
     android:id="@+id/challengeStartMainView">
 
-    <include layout="@layout/appbar" />
+    <include layout="@layout/appbar"
+        android:id="@+id/appBar"/>
     <!-- TODO : ensure that the data appears here is correct-->
     <LinearLayout
+        android:layout_below="@id/appBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/againstTextView"

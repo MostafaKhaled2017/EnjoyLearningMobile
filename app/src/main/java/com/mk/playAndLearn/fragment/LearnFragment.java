@@ -209,6 +209,7 @@ public class LearnFragment extends Fragment {
                 } else {
                     progressBar.setVisibility(View.GONE);
                     noInternetConnectionText.setVisibility(View.VISIBLE);
+                    noLessonsTextView.setVisibility(View.INVISIBLE);
                 }
             }
         };
@@ -220,6 +221,7 @@ public class LearnFragment extends Fragment {
         if(!list.isEmpty())
             list.clear();
         progressBar.setVisibility(View.VISIBLE);
+        noInternetConnectionText.setVisibility(View.GONE);
         recyclerAdapter.notifyDataSetChanged();
         myRef.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
             @Override
@@ -265,11 +267,11 @@ public class LearnFragment extends Fragment {
             }
         });
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.orderByChild("subject").equalTo(currentSubject).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 progressBar.setVisibility(View.GONE);
-                if(list.size() == 0) {
+                if(dataSnapshot.getChildrenCount() == 0) {
                     noLessonsTextView.setVisibility(View.VISIBLE);
                 }
             }

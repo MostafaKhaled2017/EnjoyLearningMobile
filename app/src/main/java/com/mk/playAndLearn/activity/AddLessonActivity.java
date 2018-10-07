@@ -56,7 +56,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         Toolbar toolbar = findViewById(R.id.toolbarInAddLesson);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
