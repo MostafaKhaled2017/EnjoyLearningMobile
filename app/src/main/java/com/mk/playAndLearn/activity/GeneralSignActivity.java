@@ -111,7 +111,7 @@ public class GeneralSignActivity extends AppCompatActivity {
             }
         });
 
-        mCallbackManager = CallbackManager.Factory.create();
+       /* mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.facebookBtn);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -137,7 +137,7 @@ public class GeneralSignActivity extends AppCompatActivity {
 
                 // ...
             }
-        });
+        });*/
 
 // ...
 

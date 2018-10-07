@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,14 +32,41 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 public class NotificationsService extends Service {
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
+    DatabaseReference challengesReference = FirebaseDatabase.getInstance().getReference("challenges");
     String currentSubject, currentUserUid;
     int currentPlayer, previousCompetedChallengeListSize = -1, previousUnCompetedChallengeListSize = -1;
+
     public NotificationsService() {
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //TODO
+        challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                Log.v("Logging", "error loading data : " + databaseError);
+            }
+        });
+
+        //this code gives data where current user is player 2
+        challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                Log.v("Logging", "error loading data : " + databaseError);
+            }
+        });
+
         return START_STICKY;
     }
 
