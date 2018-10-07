@@ -30,6 +30,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <include layout="@layout/no_internet_connection_text"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/bestStudentsRecyclerView"
         android:layout_width="match_parent"

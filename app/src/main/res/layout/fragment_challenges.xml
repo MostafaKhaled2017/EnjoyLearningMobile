@@ -38,12 +38,7 @@
             android:text="المادة : "
             android:textSize="18sp" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
-
+        <include layout="@layout/no_internet_connection_text"/>
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/loadingText"
             android:layout_width="wrap_content"
@@ -51,14 +46,15 @@
             android:text="لا يوجد تحديات"
             android:textColor="@color/writingColor"
             android:textSize="@dimen/nothing_text_size"
-            android:visibility="gone"/>
+            android:layout_centerInParent="true"
+            android:visibility="invisible"/>
 
         <ProgressBar
             android:id="@+id/challengesProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:visibility="visible" />
-    </LinearLayout>
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

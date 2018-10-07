@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -37,6 +38,9 @@ import com.mk.playAndLearn.adapters.CommentsAdapter;
 import com.mk.playAndLearn.model.Comment;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,7 +64,7 @@ public class PostInDetailsActivity extends AppCompatActivity {
     CommentsAdapter recyclerAdapter;
     ProgressBar progressBar;
     RecyclerView recyclerView;
-    TextView noCommentsText;
+    TextView noCommentsText, noInternetConnectionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,16 @@ public class PostInDetailsActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("comments");
         auth = FirebaseAuth.getInstance();
+
+        noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
+        noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noInternetConnectionText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                startAsynkTask();
+            }
+        });
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -122,6 +136,104 @@ public class PostInDetailsActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerAdapter);
         recyclerAdapter.notifyDataSetChanged();
 
+        FloatingActionButton fab = findViewById(R.id.fab);
+        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
+        //copy it in a new one
+        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
+        //set the color filter, you can use also Mode.SRC_ATOP
+        willBeWhite.mutate().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+        //set it to your fab button initialized before
+        fab.setImageDrawable(willBeWhite);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCommentsDialog();
+            }
+        });
+
+        startAsynkTask();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        return true;
+    }
+
+    private void showCommentsDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
+        View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
+        alertDialogBuilderUserInput.setView(view);
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        dialogTitle.setText("إضافة تعليق");
+
+        alertDialogBuilderUserInput.setCancelable(true);
+        alertDialogBuilderUserInput.setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        alertDialogBuilderUserInput.setNegativeButton("إضافة",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogBox, int id) {
+                        Date today = new Date();
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+                        String date = format.format(today);
+
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("userName", userName);
+                        map.put("userEmail", userEmail);
+                        map.put("userImage", userImage);
+                        map.put("votes", 0);
+                        map.put("date", date);
+                        map.put("postId", postId);
+                        map.put("userUid", auth.getCurrentUser().getUid());
+                        map.put("content", inputComment.getText().toString());
+                        myRef.push().setValue(map);
+                    }
+                });
+
+        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
+        alertDialog.show();
+
+    }
+
+    public void startAsynkTask() {
+        //TODO : search for a solution to this error
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Boolean doInBackground(Object[] objects) {
+                try {
+                    Socket sock = new Socket();
+                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                    sock.close();
+                    return true;
+                } catch (IOException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                if ((boolean) o) {
+                    getComments();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    noInternetConnectionText.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        asyncTask.execute();
+    }
+
+    public void getComments(){
         myRef.orderByChild("postId").equalTo(postId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -176,69 +288,5 @@ public class PostInDetailsActivity extends AppCompatActivity {
 
             }
         });
-        FloatingActionButton fab = findViewById(R.id.fab);
-        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
-        //copy it in a new one
-        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
-        //set the color filter, you can use also Mode.SRC_ATOP
-        willBeWhite.mutate().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
-        //set it to your fab button initialized before
-        fab.setImageDrawable(willBeWhite);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCommentsDialog();
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
-        return true;
-    }
-
-    private void showCommentsDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
-        View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
-
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
-        alertDialogBuilderUserInput.setView(view);
-
-        final EditText inputComment = view.findViewById(R.id.dialog_value);
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText("إضافة تعليق");
-
-        alertDialogBuilderUserInput.setCancelable(true);
-        alertDialogBuilderUserInput.setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        alertDialogBuilderUserInput.setNegativeButton("إضافة",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogBox, int id) {
-                        Date today = new Date();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
-                        String date = format.format(today);
-
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("userName", userName);
-                        map.put("userEmail", userEmail);
-                        map.put("userImage", userImage);
-                        map.put("votes", 0);
-                        map.put("date", date);
-                        map.put("postId", postId);
-                        map.put("userUid", auth.getCurrentUser().getUid());
-                        map.put("content", inputComment.getText().toString());
-                        myRef.push().setValue(map);
-                    }
-                });
-
-        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
-        alertDialog.show();
-
     }
 }

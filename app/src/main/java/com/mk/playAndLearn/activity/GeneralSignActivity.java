@@ -2,9 +2,13 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -28,6 +37,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -38,6 +48,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +68,7 @@ public class GeneralSignActivity extends AppCompatActivity {
     GoogleApiClient mGoogleApiClient;
     GoogleSignInOptions gso;
     DatabaseReference myRef;
+    DatabaseReference currentUserReference;
     FirebaseDatabase database;
     Spinner userTypesSpinner;
     TextView unStudentSignAlertText;
@@ -75,6 +88,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         userTypesSpinner = findViewById(R.id.userTypesSpinner);
         unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
 
+
         ArrayAdapter<CharSequence> userTypesAdapter = ArrayAdapter.createFromResource(this,
                 R.array.user_types_array, android.R.layout.simple_spinner_item);
         userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -86,8 +100,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                 userType = adapterView.getItemAtPosition(i).toString();
                 if (userType.equals("طالب")) {
                     unStudentSignAlertText.setVisibility(View.GONE);
-                }
-                else{
+                } else {
                     unStudentSignAlertText.setVisibility(View.VISIBLE);
                 }
             }
@@ -97,6 +110,37 @@ public class GeneralSignActivity extends AppCompatActivity {
 
             }
         });
+
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = findViewById(R.id.facebookBtn);
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                Toast.makeText(GeneralSignActivity.this, "onSuccess" + loginResult, Toast.LENGTH_SHORT).show();
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+                Toast.makeText(GeneralSignActivity.this, "onCancel" , Toast.LENGTH_SHORT).show();
+
+                // ...
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+                Toast.makeText(GeneralSignActivity.this, "onError : " + error, Toast.LENGTH_SHORT).show();
+
+                // ...
+            }
+        });
+
+// ...
+
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -124,18 +168,6 @@ public class GeneralSignActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
     }
 
-    @OnClick(R.id.btnSignUp)
-    void click(View view) {
-        Intent i = new Intent(this, SignUpActivity.class);
-        startActivity(i);
-    }
-
-    @OnClick(R.id.btnSignIn)
-    void click2(View view) {
-        Intent i = new Intent(this, SignInActivity.class);
-        startActivity(i);
-    }
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -158,54 +190,10 @@ public class GeneralSignActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    assert user != null;
-                                    userName = user.getDisplayName();
-                                    userImage = user.getPhotoUrl().toString();
-                                    userEmail = user.getEmail();
-
-                                    Log.v("Logging", "user name is : " + userName
-                                            + " user image is : " + userImage
-                                            + " user email is : " + userEmail);
-
-                                    SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-                                    SharedPreferences.Editor editor = pref.edit();
-                                    editor.clear();
-                                    editor.apply();
-
-                                    editor.putString("userName", userName);
-                                    editor.putString("userImage", userImage);
-                                    editor.putString("userEmail", userEmail);
-
-                                    editor.apply();
-                                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            if (!dataSnapshot.child(mAuth.getUid()).exists()) {
-                                                Map<String, Object> map = new HashMap<>();
-                                                map.put("userName", userName);
-                                                map.put("userImage", userImage);
-                                                map.put("userEmail", userEmail);
-                                                map.put("points", 0);
-                                                map.put("acceptedQuestions", 0);
-                                                map.put("refusedQuestions", 0);
-                                                map.put("acceptedLessons", 0);
-                                                map.put("refusedLessons", 0);
-                                                map.put("userType", userType);
-                                                myRef.child(mAuth.getUid()).setValue(map);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                    //Toast.makeText(GeneralSignActivity.this, "data in sharedPrefrences : user name : " , Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+                                    navigateAndSetSharedPrefrence();
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق قد يكون لديك مشكلة في الإتصال بالانترنت أو أن إدارة البرنامج قامت بإلغاء تفعيل حسابك", Toast.LENGTH_SHORT).show();
                                     //updateUI(null);
                                 }
 
@@ -219,46 +207,11 @@ public class GeneralSignActivity extends AppCompatActivity {
 
             }
         }//TODO
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
-        }
-    }
-      /* LoginButton loginButton = findViewById(R.id.facebookBtn);
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-                Toast.makeText(GeneralSignActivity.this, "نجح تسجيل الدخول", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-                printKeyHash();
-                Toast.makeText(GeneralSignActivity.this, "faceBook on cancel: + " , Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-                printKeyHash();
-                Toast.makeText(GeneralSignActivity.this, "faceBook on error:" + error, Toast.LENGTH_LONG).show();
-            }
-        });*/
-
-    /*private void handleFacebookAccessToken(AccessToken token) {
+    private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -270,23 +223,20 @@ public class GeneralSignActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent i = new Intent(GeneralSignActivity.this, MainActivity.class);
-                            startActivity(i);
-                            Toast.makeText(GeneralSignActivity.this, "handle facebook access token.",
-                                    Toast.LENGTH_SHORT).show();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(GeneralSignActivity.this, "فشل تسجيل الدخول إذا كنت قد استخدمت البريد الالكتروني الموجود في هذا الحساب من قبل قم بتسجيل الدخول من خلاله.",
+                            Toast.makeText(GeneralSignActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                           // updateUI(null);
+                            //updateUI(null);
                         }
 
                         // ...
                     }
                 });
     }
+
     private void printKeyHash() {
         // Add code to print out the key hash
         try {
@@ -301,5 +251,71 @@ public class GeneralSignActivity extends AppCompatActivity {
         } catch (NoSuchAlgorithmException e) {
             Log.e("KeyHash:", e.toString());
         }
-    }*/
+    }
+
+    public void navigateAndSetSharedPrefrence() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        assert user != null;
+        userName = user.getDisplayName();
+        userImage = user.getPhotoUrl().toString();
+        userEmail = user.getEmail();
+
+        Log.v("Logging", "user name is : " + userName
+                + " user image is : " + userImage
+                + " user email is : " + userEmail);
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.apply();
+
+        editor.putString("userName", userName);
+        editor.putString("userImage", userImage);
+        editor.putString("userEmail", userEmail);
+
+        editor.apply();
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.child(mAuth.getUid()).exists()) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("userName", userName);
+                    map.put("userImage", userImage);
+                    map.put("userEmail", userEmail);
+                    map.put("points", 0);
+                    map.put("acceptedQuestions", 0);
+                    map.put("refusedQuestions", 0);
+                    map.put("acceptedLessons", 0);
+                    map.put("refusedLessons", 0);
+                    map.put("userType", userType);
+                    myRef.child(mAuth.getUid()).setValue(map);
+                }
+                else {
+                    currentUserReference =  myRef.child(mAuth.getUid());
+                    currentUserReference.child("userName").setValue(userName);
+                    currentUserReference.child("userImage").setValue(userImage);
+                    currentUserReference.child("userType").setValue(userType);
+                    Toast.makeText(GeneralSignActivity.this, "user name is : " + userName, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //Toast.makeText(GeneralSignActivity.this, "data in sharedPrefrences : user name : " , Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+        //TODO : note : don't try to update the users data here again
+        if (currentUser != null) {
+            currentUserReference =  myRef.child(mAuth.getUid());
+            startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+        }
+    }
 }

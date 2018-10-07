@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,8 +64,10 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        mAuth = FirebaseAuth.getInstance();
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        toolbarTitle.setText("إضافة سؤال");
 
+        mAuth = FirebaseAuth.getInstance();
         sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         if (sharedPreferences != null) {
             if (sharedPreferences.contains("userName")) {

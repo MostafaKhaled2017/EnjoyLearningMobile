@@ -37,7 +37,7 @@ import java.util.zip.Inflater;
 
 public class ChallengeStartActivity extends AppCompatActivity {
     //TODO : make this page loads until all data finished loading by hiding the 4 main views until the data loads
-
+    //TODO : make the app loads only five questions from the database
     FirebaseAuth auth;
     FirebaseUser currentUser;
     FirebaseDatabase database;
@@ -118,7 +118,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
                     player2Points.setText(secondPlayerPoints + "");
 
-                    finished = true;
                 }
 
                 @Override
@@ -184,7 +183,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 firstPlayerPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
                 player1Points.setText(firstPlayerPoints + "");
-                finished = true;
             }
 
             @Override
@@ -206,8 +204,10 @@ public class ChallengeStartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
-                if (finished) {
-                    if (currentChallenger == 1) {
+                if(list.size() < 5){
+                    showDialog();
+                }
+                else if (currentChallenger == 1) {
                         if (!chosenQuestionsList.isEmpty())
                             chosenQuestionsList.clear();
                         Collections.shuffle(list);
@@ -237,20 +237,12 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     }
 
                     //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
+                if(chosenQuestionsList.size() >= 5) {
                     startActivity(i);
                     finish();
-                } else {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeStartActivity.this);
-                    dialog.setTitle("أنت غير جاهز للبدء");//TODO : think about changing these two texts
-                    dialog.setMessage("سرعة الانترنت لديك بطيئة حاول بدء التحدي مرة أخري");
-                    dialog.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    dialog.create();
-                    dialog.show();
+                }
+                 else {
+                    showDialog();
                 }
             }
         });
@@ -260,5 +252,18 @@ public class ChallengeStartActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
+    }
+    public void showDialog(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeStartActivity.this);
+        dialog.setTitle("أنت غير جاهز للبدء");//TODO : think about changing these two texts
+        dialog.setMessage("سرعة الانترنت لديك بطيئة حاول بدء التحدي مرة أخري");
+        dialog.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialog.create();
+        dialog.show();
     }
 }

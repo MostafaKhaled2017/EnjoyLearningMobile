@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.AppCompatTextView android:id="@+id/noInternetConnectionText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:textSize="@dimen/generalTextSize"
+    android:visibility="invisible"
+    android:text="لا يوجد اتصال بالانترنت اضغط لإعادة المحاولة"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

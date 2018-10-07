@@ -6,6 +6,8 @@
     android:background="@color/color3"
     tools:context="com.mk.playAndLearn.fragment.HomeFragment">
 
+    <include layout="@layout/no_internet_connection_text"/>
+
     <LinearLayout
         android:id="@+id/addPostView"
         android:layout_width="match_parent"

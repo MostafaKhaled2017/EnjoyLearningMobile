@@ -2,64 +2,84 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal|center_vertical"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:layout_centerInParent="true"
     android:orientation="vertical"
     tools:context="com.mk.playAndLearn.activity.GeneralSignActivity">
 
-    <ImageView
+
+
+    <android.support.v7.widget.AppCompatImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:src="@drawable/student"
         android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/student" />
+        android:layout_marginTop="85dp"
+        android:layout_marginBottom="30dp"/>
 
-    <Button
-        android:id="@+id/btnSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/new_button"
-        android:text="إنشاء حساب"
-        android:textColor="@color/white"
-        android:textSize="@dimen/textSizeOfButton" />
-
-    <Button
-        android:id="@+id/btnSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/new_button"
-        android:text="تسجيل الدخول"
-        android:textColor="@color/white"
-        android:textSize="@dimen/textSizeOfButton" />
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/googleBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/userTypesSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <!-- TODO : edit the text Below -->
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="@dimen/general_margin"
+        android:layout_marginRight="@dimen/general_margin"
+        android:text="قم بإنشاء حساب جديد أو تسجيل الدخول بضغطة زر واحدة."
+        android:textColor="@color/writingColor"
+        android:textSize="20sp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="@dimen/general_margin"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/userTypesSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="وظيفة المستخدم : "
+            android:textColor="@color/writingColor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/unStudentSignAlertText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="@dimen/general_margin"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="15dp"
+        android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق"
         android:textColor="#ff0000"
-        android:textSize="14sp"
-        android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق ولن تستطيع دخول تحديات ضد الطلبة الموجودين في البرنامج"
-        android:layout_gravity="right"/>
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/googleBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="10dp" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebookBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="30dp" />
 
 
-    <!--  <com.facebook.login.widget.LoginButton
-          android:id="@+id/facebookBtn"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_horizontal"
-          android:layout_marginTop="30dp"
-          android:layout_marginBottom="30dp" />-->
+
 </LinearLayout>

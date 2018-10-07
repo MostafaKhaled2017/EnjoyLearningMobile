@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/color3"
     tools:context="com.mk.playAndLearn.fragment.LearnFragment">
-
+    <include layout="@layout/no_internet_connection_text"/>
     <LinearLayout
         android:id="@+id/selectSubjectView"
         android:layout_width="wrap_content"

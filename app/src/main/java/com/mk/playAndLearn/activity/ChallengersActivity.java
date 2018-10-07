@@ -3,6 +3,7 @@ package com.mk.playAndLearn.activity;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +27,9 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
 import com.mk.playAndLearn.model.User;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class ChallengersActivity extends AppCompatActivity {
@@ -37,6 +42,7 @@ public class ChallengersActivity extends AppCompatActivity {
     ProgressBar progressBar;
     RecyclerView recyclerView;
     String subject;
+    TextView noInternetConnectionText;
 
     private final String TAG = "ChallengersActivity";
     @Override
@@ -69,6 +75,56 @@ public class ChallengersActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
         recyclerAdapter.notifyDataSetChanged();
+
+        noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
+        noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noInternetConnectionText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                startAsynkTask();
+            }
+        });
+
+        startAsynkTask();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        return true;
+    }
+
+    public void startAsynkTask() {
+        //TODO : search for a solution to this error
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Boolean doInBackground(Object[] objects) {
+                try {
+                    Socket sock = new Socket();
+                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                    sock.close();
+                    return true;
+                } catch (IOException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                if ((boolean) o) {
+                    getStudents();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    noInternetConnectionText.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        asyncTask.execute();
+    }
+
+    public void getStudents(){
         myRef.orderByChild("userName").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -102,11 +158,5 @@ public class ChallengersActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
-        return true;
     }
 }

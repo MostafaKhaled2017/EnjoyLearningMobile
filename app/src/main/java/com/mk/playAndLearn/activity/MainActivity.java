@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : add back arrow to all activities except the main activity
     //TODO : increase learn icon size
     //TODO : upload the project to github or gitlab
+    //TODO : think about revising all the code of the app and add it to methods
     //TODO : improve the style of the app after the design class in the course and before it to
     //TODO : edit fire base permissions to write in the database
     //TODO : after uploading the app think about adding that people can follow other people.
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //TODO : in an update think about making users able to edit their posts and comment
     //TODO : in an update make a user profile page that contains his activity(challenges) and his posts in a view pager
     //TODO : push new attributes contains 2 users UIDs with each challenge and make a loop to get only 5 random question from the database
+    //TODO : think about learn a specific design pattern and set the code to it step by step
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

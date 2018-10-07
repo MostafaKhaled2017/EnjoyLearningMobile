@@ -2,6 +2,7 @@ package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,6 +28,9 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.model.Lesson;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 
@@ -52,7 +56,7 @@ public class LearnFragment extends Fragment {
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
     LessonsAdapter recyclerAdapter;
-
+    String currentSubject;
     ProgressBar progressBar;
     RecyclerView recyclerView;
     // TODO: Rename and change types of parameters
@@ -62,7 +66,7 @@ public class LearnFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     Spinner subjectsSpinner;
-    TextView noLessonsTextView;
+    TextView noLessonsTextView, noInternetConnectionText;
 
     public LearnFragment() {
         // Required empty public constructor
@@ -106,6 +110,15 @@ public class LearnFragment extends Fragment {
         progressBar = view.findViewById(R.id.lessonsProgressBar);
         noLessonsTextView = view.findViewById(R.id.noLessonsText);
         recyclerAdapter = new LessonsAdapter(list, getActivity());
+        noInternetConnectionText = view.findViewById(R.id.noInternetConnectionText);
+        noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noInternetConnectionText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                startAsynkTask();
+            }
+        });
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -120,67 +133,8 @@ public class LearnFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 noLessonsTextView.setVisibility(View.GONE);
-                String currentSubject = adapterView.getItemAtPosition(i).toString();
-                if(!list.isEmpty())
-                    list.clear();
-                progressBar.setVisibility(View.VISIBLE);
-                recyclerAdapter.notifyDataSetChanged();
-                myRef.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        noLessonsTextView.setVisibility(View.GONE);
-                        Lesson value = dataSnapshot.getValue(Lesson.class);
-                        Lesson lesson = new Lesson();
-                        boolean reviewed =(boolean) dataSnapshot.child("reviewed").getValue();
-                        if(reviewed) {
-                            String title = value.getTitle();
-                            String content = value.getContent();
-                            String arabicPosition = value.getArabicPosition();
-                            lesson.setTitle(title);
-                            lesson.setContent(content);
-                            lesson.setArabicPosition(arabicPosition);
-                            list.add(lesson);
-                        }
-                        if(progressBar.getVisibility() != View.GONE)
-                            progressBar.setVisibility(View.GONE);
-                        recyclerAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                       // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
-                        Log.v("Logging", "database error : " + databaseError);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-
-                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        progressBar.setVisibility(View.GONE);
-                        noLessonsTextView.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+                startAsynkTask();
             }
 
             @Override
@@ -188,6 +142,7 @@ public class LearnFragment extends Fragment {
 
             }
         });
+        startAsynkTask();
 
         return view;
     }
@@ -230,5 +185,99 @@ public class LearnFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void startAsynkTask() {
+        //TODO : search for a solution to this error
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Boolean doInBackground(Object[] objects) {
+                try {
+                    Socket sock = new Socket();
+                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                    sock.close();
+                    return true;
+                } catch (IOException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                if ((boolean) o) {
+                    getLessons(currentSubject);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    noInternetConnectionText.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        asyncTask.execute();
+    }
+
+    public void getLessons(String currentSubject){
+        if(!list.isEmpty())
+            list.clear();
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerAdapter.notifyDataSetChanged();
+        myRef.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                noLessonsTextView.setVisibility(View.GONE);
+                Lesson value = dataSnapshot.getValue(Lesson.class);
+                Lesson lesson = new Lesson();
+                boolean reviewed =(boolean) dataSnapshot.child("reviewed").getValue();
+                if(reviewed) {
+                    String title = value.getTitle();
+                    String content = value.getContent();
+                    String arabicPosition = value.getArabicPosition();
+                    lesson.setTitle(title);
+                    lesson.setContent(content);
+                    lesson.setArabicPosition(arabicPosition);
+                    list.add(lesson);
+                }
+                if(progressBar.getVisibility() != View.GONE)
+                    progressBar.setVisibility(View.GONE);
+                recyclerAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
+                Log.v("Logging", "database error : " + databaseError);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                progressBar.setVisibility(View.GONE);
+                if(list.size() == 0) {
+                    noLessonsTextView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

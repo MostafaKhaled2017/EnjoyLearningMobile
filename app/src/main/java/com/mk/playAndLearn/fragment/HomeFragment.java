@@ -3,6 +3,7 @@ package com.mk.playAndLearn.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +28,9 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.model.Post;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.addPostBtn;
@@ -60,14 +63,16 @@ public class HomeFragment extends Fragment {
 
     EditText etAddPost;
     Button addPostButton;
+    boolean loaded = false;
 
     FirebaseDatabase database;
     DatabaseReference myRef;
     ArrayList list = new ArrayList();
     PostsAdapter recyclerAdapter;
-    TextView noPostsText;
+    TextView noPostsText, noInternetConnectionText;
 
     RecyclerView recyclerView;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -111,19 +116,30 @@ public class HomeFragment extends Fragment {
         progressBar = myView.findViewById(R.id.postsProgressBar);
         etAddPost = myView.findViewById(R.id.etAddPost);
         noPostsText = myView.findViewById(R.id.noPostsText);
+
+        noInternetConnectionText = myView.findViewById(R.id.noInternetConnectionText);
+        noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noInternetConnectionText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                startAsynkTask();
+            }
+        });
+
         addPostButton = myView.findViewById(R.id.addPostBtn);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sharedPreferences = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-                if(sharedPreferences != null) {
-                    if (sharedPreferences.contains("userName")){
+                if (sharedPreferences != null) {
+                    if (sharedPreferences.contains("userName")) {
                         userName = sharedPreferences.getString("userName", "");
                     }
-                    if (sharedPreferences.contains("userImage")){
+                    if (sharedPreferences.contains("userImage")) {
                         userImage = sharedPreferences.getString("userImage", "");
                     }
-                    if (sharedPreferences.contains("userEmail")){
+                    if (sharedPreferences.contains("userEmail")) {
                         userEmail = sharedPreferences.getString("userEmail", "");
                     }
                 }
@@ -136,22 +152,52 @@ public class HomeFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
 
-      /*  DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-        connectedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                connected = snapshot.getValue(Boolean.class);
-                if (connected) {
-                } else {//TODO : handle this problem or find an alternative solution
-                   // Toast.makeText(getActivity(), "أنت غير متصل بالانترنت", Toast.LENGTH_SHORT).show();
-                   // progressBar.setVisibility(View.GONE);
-                }
-            }
+        startAsynkTask();
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-            }
-        });*/
+        return myView;
+
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+    public void getPosts() {
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -167,9 +213,9 @@ public class HomeFragment extends Fragment {
                 post.setWriter(postWriter);
                 post.setImage(postImage);
                 post.setId(postId);
-                list.add(0,post);
+                list.add(0, post);
                 recyclerAdapter.notifyDataSetChanged();
-                if(progressBar.getVisibility() != View.GONE)
+                if (progressBar.getVisibility() != View.GONE)
                     progressBar.setVisibility(View.GONE);
             }
 
@@ -199,7 +245,7 @@ public class HomeFragment extends Fragment {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(list.size() == 0){
+                if (list.size() == 0) {
                     progressBar.setVisibility(View.GONE);
                     noPostsText.setVisibility(View.VISIBLE);
                 }
@@ -210,48 +256,34 @@ public class HomeFragment extends Fragment {
 
             }
         });
-
-        return myView;
-
     }
 
-// TODO: Rename method, update argument and hook method into UI event
-public void onButtonPressed(Uri uri){
-        if(mListener!=null){
-        mListener.onFragmentInteraction(uri);
-        }
-        }
+    public void startAsynkTask() {
+        //TODO : search for a solution to this error
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Boolean doInBackground(Object[] objects) {
+                try {
+                    Socket sock = new Socket();
+                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                    sock.close();
+                    return true;
+                } catch (IOException e) {
+                    return false;
+                }
+            }
 
-@Override
-public void onAttach(Context context){
-        super.onAttach(context);
-        if(context instanceof OnFragmentInteractionListener){
-        mListener=(OnFragmentInteractionListener)context;
-        }else{
-        throw new RuntimeException(context.toString()
-        +" must implement OnFragmentInteractionListener");
-        }
-        }
+            @Override
+            protected void onPostExecute(Object o) {
+                if ((boolean) o) {
+                    getPosts();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    noInternetConnectionText.setVisibility(View.VISIBLE);
+                }
+            }
+        };
 
-
-@Override
-public void onDetach(){
-        super.onDetach();
-        mListener=null;
-        }
-
-/**
- * This interface must be implemented by activities that contain this
- * fragment to allow an interaction in this fragment to be communicated
- * to the activity and potentially other fragments contained in that
- * activity.
- * <p>
- * See the Android Training lesson <a href=
- * "http://developer.android.com/training/basics/fragments/communicating.html"
- * >Communicating with Other Fragments</a> for more information.
- */
-public interface OnFragmentInteractionListener {
-    // TODO: Update argument type and name
-    void onFragmentInteraction(Uri uri);
-}
+        asyncTask.execute();
+    }
 }
