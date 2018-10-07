@@ -7,28 +7,29 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
 
 public class AppManagementActivity extends AppCompatActivity {
 
-    ArrayList list = new ArrayList();
+    ArrayList questionList = new ArrayList(), lessonsList = new ArrayList();
     FirebaseDatabase database;
-    DatabaseReference questionsReference;
+    DatabaseReference questionsReference, lessonsReference;
     boolean questionsReady = false, lessonsReady = false;
     Button suggestedQuestionsButton, suggestedLessonsButton;
 
@@ -51,8 +52,11 @@ public class AppManagementActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         questionsReference = database.getReference("questions");
+        lessonsReference = database.getReference("lessons");
 
         getSuggestedQuestions();
+
+        getSuggestedLessons();
     }
 
     @Override
@@ -62,8 +66,8 @@ public class AppManagementActivity extends AppCompatActivity {
     }
 
     public void getSuggestedQuestions() {
-        if (!list.isEmpty())
-            list.clear();
+        if (!questionList.isEmpty())
+            questionList.clear();
         questionsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -92,7 +96,7 @@ public class AppManagementActivity extends AppCompatActivity {
                     question.setSubject(subject);//extra than normal
                     question.setWriterEmail(writerEmail);//extra than normal
 
-                    list.add(question);
+                    questionList.add(question);
                 }
                 questionsReady = true;
             }
@@ -105,23 +109,77 @@ public class AppManagementActivity extends AppCompatActivity {
         });
     }
 
-    public void suggestedLessonsButton(View view) {
+    public void getSuggestedLessons() {
+        if (!lessonsList.isEmpty())
+            lessonsList.clear();
+        lessonsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    Lesson lesson = new Lesson();
+                    String title = dataSnapshot1.child("title").getValue().toString();
+                    String content = dataSnapshot1.child("content").getValue().toString();
+                    String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                    String writerEmail = dataSnapshot1.child("writerEmail").getValue().toString();
+                    String writerUid = dataSnapshot1.child("writerUid").getValue().toString();
+                    String subject = dataSnapshot1.child("subject").getValue().toString();
+                    String lessonId = dataSnapshot1.getKey();
+                    long unitNo = (long) dataSnapshot1.child("unit").getValue();
+                    long lessonNo = (long) dataSnapshot1.child("lesson").getValue();
+                    lesson.setSubject(subject);
+                    lesson.setWriterEmail(writerEmail);
+                    lesson.setWriterName(writerName);
+                    lesson.setWriterUid(writerUid);
+                    lesson.setUnitNo(unitNo);
+                    lesson.setLessonNo(lessonNo);
+                    lesson.setTitle(title);
+                    lesson.setContent(content);
+                    lesson.setLessonId(lessonId);
+                    lessonsList.add(lesson);
+                }
+                lessonsReady = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
+                Log.v("Logging", "database error : " + databaseError);
+            }
+        });
+
     }
 
-    public void suggestedQuestionsButton(View view) {
-        if(questionsReady && list.size() != 0){
-            Intent intent = new Intent(this, AdminQuestionActivity.class);
-            intent.putParcelableArrayListExtra("questionsList", list);
+    public void suggestedLessonsButton(View view) {
+        if (lessonsReady && lessonsList.size() != 0) {
+            Intent intent = new Intent(this, AdminLessonContentActivity.class);
+            intent.putParcelableArrayListExtra("lessonsList", lessonsList);
             intent.putExtra("index", 0);
             startActivity(intent);
+            finish();
+        } else if (!questionsReady) {
+            Toast.makeText(this, "الدروس لم تجهز بعد", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "لا يوجد دروس حاليا", Toast.LENGTH_SHORT).show();
         }
-        else if(!questionsReady){
+
+    }
+
+
+    public void suggestedQuestionsButton(View view) {
+        if (questionsReady && questionList.size() != 0) {
+            Intent intent = new Intent(this, AdminQuestionActivity.class);
+            intent.putParcelableArrayListExtra("questionsList", questionList);
+            intent.putExtra("index", 0);
+            startActivity(intent);
+            finish();
+        } else if (!questionsReady) {
             Toast.makeText(this, "الاسئلة لم تجهز بعد", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             Toast.makeText(this, "لا يوجد أسئلة حاليا", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }
 
 

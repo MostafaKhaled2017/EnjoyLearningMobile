@@ -136,7 +136,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     //TODO : add icon to the dialog
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddLessonActivity.this);
                     alertDialog.setTitle("تنبيه هام!!");
-                    alertDialog.setMessage("بعد رفع الدرس سيتم مراجعته أولا قبل نشره وإذا كان في الدرس شئ خارج المنهج أو مختلف عن أهداف هذا البرنامج فسيتم حذف الحساب");
+                    alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطالب برفع ملخصه عن الدرس أو يقوم المدرسون بكتابة ملخصاتهم عن الدرس ممنوع نقل الدروس من الكتب الخارجية أو استخدام ملخصات لأي مدرس إلا بعد أخذ موافقته");
                     alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

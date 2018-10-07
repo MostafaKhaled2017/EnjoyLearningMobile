@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AdminLessonContentActivity">
+
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/appbar" />
+
+    <TextView
+        android:id="@+id/writerNameTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/appBar"
+        android:layout_gravity="right"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="15dp"
+        android:text="الكاتب : "
+        android:textColor="@color/writingColor"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/subjectTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/writerNameTv"
+        android:layout_gravity="right"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:text="المادة : "
+        android:textColor="@color/writingColor"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/writerTypeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/subjectTv"
+        android:layout_gravity="right"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:text="وظيفة الكاتب : "
+        android:textColor="@color/writingColor"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/lessonPositionTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/writerTypeTv"
+        android:layout_gravity="right"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:text="ترتيب الدرس : "
+        android:textColor="@color/writingColor"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/lessonTitleEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lessonPositionTv"
+        android:layout_margin="5dp"
+        android:hint="عنوان الدرس"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/lessonContentEt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/approvePartBtn"
+        android:layout_below="@id/lessonTitleEt"
+        android:layout_margin="5dp"
+        android:gravity="top"
+        android:hint="الدرس" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/skipLessonButton"
+        style="@style/buttonStyle"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:text=">" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@id/approvePartBtn"
+        style="@style/buttonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/skipLessonButton"
+        android:onClick="approvePart"
+        android:text="قبول جزئى" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/approveAllBtn"
+        style="@style/buttonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/approvePartBtn"
+        android:onClick="acceptLesson"
+        android:text="قبول" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/refuseLessonBtn"
+        style="@style/buttonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/approveAllBtn"
+        android:onClick="refuseLesson"
+        android:text="رفض" />
+
+</RelativeLayout>

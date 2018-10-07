@@ -83,7 +83,7 @@ public class QuestionActivity extends AppCompatActivity {
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
-            list = intent.getParcelableArrayListExtra("list");
+            list = intent.getParcelableArrayListExtra("questionList");
             playerAnswersBooleansList = intent.getParcelableArrayListExtra("currentPlayerAnswersBooleans");
             playerAnswersList = intent.getParcelableArrayListExtra("currentPlayerAnswers");
 
@@ -202,7 +202,7 @@ public class QuestionActivity extends AppCompatActivity {
         } else {
             i.putExtra("answer", false);
         }
-        i.putParcelableArrayListExtra("list", list);
+        i.putParcelableArrayListExtra("questionList", list);
         i.putExtra("questionNo", questionNo);
         i.putExtra("score", score);
         i.putExtra("subject", subject);

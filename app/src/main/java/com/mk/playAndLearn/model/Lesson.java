@@ -1,7 +1,67 @@
 package com.mk.playAndLearn.model;
 
-public class Lesson {
-    String content, title, position, arabicPosition, subject;
+import java.io.Serializable;
+
+public class Lesson implements Serializable {
+    String content;
+    String title;
+    String position;
+    String arabicPosition;
+    String subject;
+    String writerName;
+    String writerEmail;
+    String writerUid;
+
+    public String getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(String lessonId) {
+        this.lessonId = lessonId;
+    }
+
+    String lessonId;
+    long unitNo, lessonNo;
+
+    public long getUnitNo() {
+        return unitNo;
+    }
+
+    public void setUnitNo(long unitNo) {
+        this.unitNo = unitNo;
+    }
+
+    public long getLessonNo() {
+        return lessonNo;
+    }
+
+    public void setLessonNo(long lessonNo) {
+        this.lessonNo = lessonNo;
+    }
+
+    public String getWriterName() {
+        return writerName;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public String getWriterEmail() {
+        return writerEmail;
+    }
+
+    public void setWriterEmail(String writerEmail) {
+        this.writerEmail = writerEmail;
+    }
+
+    public String getWriterUid() {
+        return writerUid;
+    }
+
+    public void setWriterUid(String writerUid) {
+        this.writerUid = writerUid;
+    }
 
     public String getPosition() {
         return position;

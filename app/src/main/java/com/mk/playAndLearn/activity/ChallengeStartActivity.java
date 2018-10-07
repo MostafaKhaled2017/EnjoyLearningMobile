@@ -231,9 +231,9 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         i.putExtra("player2Image", secondPlayerImage);
                         i.putExtra("player2Points", secondPlayerPoints);
                         i.putExtra("player2Uid", secondPlayerUid);
-                        i.putParcelableArrayListExtra("list", chosenQuestionsList);
+                        i.putParcelableArrayListExtra("questionList", chosenQuestionsList);
                     } else {
-                        i.putParcelableArrayListExtra("list", challengeQuestionList);
+                        i.putParcelableArrayListExtra("questionList", challengeQuestionList);
                         i.putExtra("challengeId", challengeId);
                     }
 

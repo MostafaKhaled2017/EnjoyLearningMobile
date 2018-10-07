@@ -153,12 +153,12 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 map.put("reviewed", false);
                 map.put("correctAnswer", correctAnswer);
 
-                final DatabaseReference usersRefrence = database.getReference("users");
-                usersRefrence.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                final DatabaseReference usersReference = database.getReference("users");
+                usersReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                        usersRefrence.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 5);
+                        usersReference.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 5);
                     }
 
                     @Override
@@ -171,7 +171,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 //TODO : add icon to the dialog
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("تنبيه هام!!");
-                alertDialog.setMessage("بعد رفع السؤال سيتم مراجعته أولا قبل نشره وإذا كان فيه شئ خارج المنهج أو مختلف عن أهداف هذا البرنامج فسيتم حذف الحساب");
+                alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطلبة بتأليف أسئلة خاصة بهم أو يقوم المدرسون برفع أسئلة من تأليفهم ممنوع نقل الأسئلة من الكتب الخارجية أو استخدام أسئلة خاصة بأى مدرس إلا بعد أخذ موافقته");
                 alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -181,7 +181,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                     }
                 });
                 alertDialog.create();
-                alertDialog.show();
                 alertDialog.show();
                 //TODO : think about removing finish and clear the edit texts and radio buttons
             }

@@ -35,7 +35,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
     Question question;
     TextView tvQuestion, subjectTv, writerTv, answerTv, writerTypeTv;
     RadioGroup rg1;
-    Button showAnswerButton;
+    Button skipQuestionButton;
     String correctAnswer, selection;
     String writerType;
     RadioButton r1, r2, r3, r4;
@@ -64,7 +64,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         i = new Intent(AdminQuestionActivity.this, QuestionResultActivity.class);
 
         rg1 = findViewById(R.id.radioGroup);
-        showAnswerButton = findViewById(R.id.skipQuestionButton);
+        skipQuestionButton = findViewById(R.id.skipQuestionButton);
         answerTv = findViewById(R.id.answerTv);
         writerTypeTv = findViewById(R.id.writerTypeTv);
         tvQuestion = findViewById(R.id.questionText);
@@ -85,7 +85,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             list = intent.getParcelableArrayListExtra("questionsList");
             index = intent.getIntExtra("index", -1);
         }
-        if(index < list.size()) {
+        if (index < list.size()) {
             question = (Question) list.get(index);
             correctAnswer = question.getCorrectAnswer();
 
@@ -101,27 +101,24 @@ public class AdminQuestionActivity extends AppCompatActivity {
             r2.setText(answers.get(1));
             r3.setText(answers.get(2));
             r4.setText(answers.get(3));
-            if(question.getSubject() != null) {
+            if (question.getSubject() != null) {
                 subjectTv.append(question.getSubject());
-            }
-            else {
+            } else {
                 subjectTv.append("غير مكتوبة");
             }
-            if(question.getSubject() != null) {
+            if (question.getSubject() != null) {
                 writerTv.append(question.getWriterName());
-            }
-            else {
+            } else {
                 writerTv.append("غير مكتوبة");
             }
-        }
-        else{
+        } else {
             Toast.makeText(this, "لا يوجد أسئلة أخري", Toast.LENGTH_SHORT).show();
         }
 
-        showAnswerButton.setOnClickListener(new View.OnClickListener() {
+        skipQuestionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nextQuestionDialogAndAction();
+                skipQuestion();
             }
         });
         usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -144,10 +141,10 @@ public class AdminQuestionActivity extends AppCompatActivity {
         return true;
     }
 
-    public void nextQuestionDialogAndAction() {
+    public void skipQuestion() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("تنبيه هام");
-        dialog.setMessage("هل تريد الذهاب للسؤال التالي");
+        dialog.setMessage("هل تريد تخطى هذا السؤال؟");
         dialog.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -159,16 +156,15 @@ public class AdminQuestionActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void nextQuestion(){
+    public void nextQuestion() {
         index++;
         Intent intent1 = new Intent(this, AdminQuestionActivity.class);
         intent1.putParcelableArrayListExtra("questionsList", list);
         intent1.putExtra("index", index);
-        if(index < list.size()) {
+        if (index < list.size()) {
             startActivity(intent1);
             finish();
-        }
-        else{
+        } else {
             Toast.makeText(this, "انتهت الاسئلة", Toast.LENGTH_SHORT).show();
         }
     }
@@ -182,7 +178,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             selection = (String) btn.getText();
         }
         if (selection != null && selection.equals(correctAnswer)) {
-                answerTv.setTextColor(Color.GREEN);
+            answerTv.setTextColor(Color.GREEN);
         } else {
             answerTv.setTextColor(Color.RED);
         }
@@ -190,12 +186,56 @@ public class AdminQuestionActivity extends AppCompatActivity {
 
     }
 
+    public void refuseQuestion(View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("تنبيه هام");
+        dialog.setMessage("هل أنت متأكد أنك تريد حذف هذا السؤال ؟");
+        dialog.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int userRefusedQuestions = Integer.parseInt(dataSnapshot.child("refusedQuestions").getValue().toString());
+                        usersReference.child(question.getWriterUid()).child("refusedQuestions").setValue(userRefusedQuestions + 1);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                questionsReference.child(question.getQuestionId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        questionsReference.child(question.getQuestionId()).removeValue();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                composeEmail("تم رفض سؤالك", "تم رفض سؤالك " + "\"" + question.getAlQuestion() + "\"");
+                Toast.makeText(AdminQuestionActivity.this, "تم رفض السؤال", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.create();
+        dialog.show();
+    }
+
     public void acceptQuestion(View view) {
+
         usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
                 usersReference.child(question.getWriterUid()).child("points").setValue(userPoints + 5);
+                int userAcceptedQuestions = Integer.parseInt(dataSnapshot.child("acceptedQuestions").getValue().toString());
+                usersReference.child(question.getWriterUid()).child("acceptedQuestions").setValue(userAcceptedQuestions + 1);
             }
 
             @Override
@@ -204,29 +244,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
             }
         });
 
-        questionsReference.child(question.getQuestionId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                questionsReference.child(question.getQuestionId()).removeValue();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        Toast.makeText(this, "تم قبول السؤال", Toast.LENGTH_SHORT).show();
-        if(writerType.equals("طالب")) {
-            composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
-        }
-        else {
-            composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"");
-        }
-    }
-
-    public void refuseQuestion(View view) {
         questionsReference.child(question.getQuestionId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -238,17 +255,21 @@ public class AdminQuestionActivity extends AppCompatActivity {
 
             }
         });
-        composeEmail( "تم رفض سؤالك","تم رفض سؤالك " +  "\"" + question.getAlQuestion() +  "\"");
-        Toast.makeText(this, "تم رفض السؤال", Toast.LENGTH_SHORT).show();
-        //nextQuestion();
+
+        Toast.makeText(this, "تم قبول السؤال", Toast.LENGTH_SHORT).show();
+        if (writerType.equals("طالب")) {
+            composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
+        } else {
+            composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"");
+        }
     }
 
     public void composeEmail(String subject, String body) {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
-        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{question.getWriterEmail()});
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{question.getWriterEmail()});
         i.putExtra(Intent.EXTRA_SUBJECT, subject);
-        i.putExtra(Intent.EXTRA_TEXT   , body);
+        i.putExtra(Intent.EXTRA_TEXT, body);
         try {
             startActivityForResult(Intent.createChooser(i, "Send mail..."), 0);
         } catch (android.content.ActivityNotFoundException ex) {
@@ -259,7 +280,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 0){
+        if (requestCode == 0) {
             nextQuestion();
         }
     }

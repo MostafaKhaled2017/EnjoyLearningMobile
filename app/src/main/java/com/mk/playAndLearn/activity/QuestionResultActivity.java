@@ -44,7 +44,7 @@ public class QuestionResultActivity extends AppCompatActivity {
         if (intent.getExtras() != null) {
             currentChallenger = intent.getIntExtra("currentChallenger", -1);
             correct = intent.getBooleanExtra("answer", false);
-            list = intent.getParcelableArrayListExtra("list");
+            list = intent.getParcelableArrayListExtra("questionList");
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
@@ -83,7 +83,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
-                        i.putExtra("list", list);
+                        i.putExtra("questionList", list);
                         i.putExtra("questionNo", questionNo + 1);
                         i.putExtra("score", score);
                         i.putExtra("subject", subject);
