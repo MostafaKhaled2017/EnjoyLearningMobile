@@ -35,6 +35,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -81,6 +82,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general_sign);
         ButterKnife.bind(this);
+        FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         button = findViewById(R.id.googleBtn);
         database = FirebaseDatabase.getInstance();
@@ -296,6 +298,8 @@ public class GeneralSignActivity extends AppCompatActivity {
                     currentUserReference.child("userImage").setValue(userImage);
                     currentUserReference.child("userType").setValue(userType);
                 }
+                startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+
             }
 
             @Override
@@ -304,7 +308,6 @@ public class GeneralSignActivity extends AppCompatActivity {
             }
         });
         //Toast.makeText(GeneralSignActivity.this, "data in sharedPrefrences : user name : " , Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
     }
 
     @Override
@@ -312,9 +315,10 @@ public class GeneralSignActivity extends AppCompatActivity {
         super.onStart();
         final FirebaseUser currentUser = mAuth.getCurrentUser();
         //TODO : note : don't try to update the users data here again
-        if (currentUser != null) {
-            currentUserReference =  myRef.child(mAuth.getUid());
+        if (mAuth.getCurrentUser() != null) {
+            //currentUserReference =  myRef.child(mAuth.getUid());
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+            //Toast.makeText(this, "mAuth : " + mAuth + " , current user : " + currentUser, Toast.LENGTH_SHORT).show();
         }
     }
 }
