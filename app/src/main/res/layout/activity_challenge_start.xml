@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/againstTextView"
         android:layout_centerHorizontal="true"
-        android:layout_margin="50dp"
+        android:layout_margin="30dp"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -57,9 +57,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/againstTextView"
-        android:layout_margin="50dp"
+        android:layout_margin="30dp"
         android:layout_centerHorizontal="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_above="@id/lastStartChallengeButton">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/secondPlayerImage"

@@ -5,5 +5,6 @@ public class Strings {
     public static String waitingChallengeText = "قيد الإنتظار";
     public static String yourTurnChallengeText = "دورك";
     public static String uncompletedChallengeText = "لم يكتمل";
+    public static String completedChallengeText = "اكتمل";
 
 }

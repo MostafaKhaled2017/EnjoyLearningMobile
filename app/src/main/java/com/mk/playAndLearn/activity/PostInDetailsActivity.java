@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
+
 public class PostInDetailsActivity extends AppCompatActivity {
     String content, name, date, image;
     TextView contentTv, nameTv, dateTv;
@@ -80,6 +82,8 @@ public class PostInDetailsActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+
+        deleteCache(this);
 
         contentTv = findViewById(R.id.postContentInDetails);
         nameTv = findViewById(R.id.postUserNameInDetails);
@@ -234,12 +238,14 @@ public class PostInDetailsActivity extends AppCompatActivity {
         asyncTask.execute();
     }
 
-    public void getComments(){
+    public void getComments() {
         myRef.orderByChild("postId").equalTo(postId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 //Lesson value = dataSnapshot.getValue(Lesson.class);
                 noCommentsText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                noInternetConnectionText.setVisibility(View.GONE);
                 Comment comment = new Comment();
                 String userName = dataSnapshot.child("userName").getValue().toString();
                 String content = dataSnapshot.child("content").getValue().toString();
@@ -280,8 +286,10 @@ public class PostInDetailsActivity extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                progressBar.setVisibility(View.GONE);
-                noCommentsText.setVisibility(View.VISIBLE);
+                if (list.size() == 0) {
+                    progressBar.setVisibility(View.GONE);
+                    noCommentsText.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -289,5 +297,11 @@ public class PostInDetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        deleteCache(this);
     }
 }

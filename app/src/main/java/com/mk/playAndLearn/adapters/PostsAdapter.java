@@ -46,7 +46,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
         if(post.getWriter() != null && !post.getWriter().equals(""))
             holder.name.setText(post.getWriter());
         if(post.getImage() != null && !post.getImage().equals(""))
-            Picasso.with(context).load(post.getImage()).into(holder.imageView);
+            Picasso.with(context).load(post.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

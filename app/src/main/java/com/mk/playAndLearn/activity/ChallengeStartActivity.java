@@ -127,7 +127,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
             });
         } else if (currentChallenger == 1) {
             player2Name.setText(secondPlayerName);
-            Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
+            Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).placeholder(R.drawable.picasso_placeholder).into(player2Image);
             player2Points.setText(secondPlayerPoints + "");
 
             if (!list.isEmpty())
@@ -199,13 +199,13 @@ public class ChallengeStartActivity extends AppCompatActivity {
         startChallengeButton = findViewById(R.id.lastStartChallengeButton);
 
         player1Name.setText(firstPlayerName);
-        Picasso.with(this).load(firstPlayerImage).into(player1Image);
+        Picasso.with(this).load(firstPlayerImage).placeholder(R.drawable.picasso_placeholder).into(player1Image);
 
         startChallengeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
-                if(list.size() < 5){
+                if(list.size() < 5 && challengeQuestionList.size() < 5){
                     showDialog();
                 }
                 else if (currentChallenger == 1) {
@@ -237,8 +237,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         i.putExtra("challengeId", challengeId);
                     }
 
-                    //TODO : ensuring that the intent doesn't work until the data loaded for example if not show a dialog asking to connect to the internet
-                if(chosenQuestionsList.size() >= 5) {
+                if(chosenQuestionsList.size() >= 5 || challengeQuestionList.size() >= 5) {
                     startActivity(i);
                     finish();
                 }

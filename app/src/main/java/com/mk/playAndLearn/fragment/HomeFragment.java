@@ -34,6 +34,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.addPostBtn;
+import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
 
 /**
@@ -98,6 +99,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        deleteCache(getActivity());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -198,10 +200,16 @@ public class HomeFragment extends Fragment {
     }
 
     public void getPosts() {
+        if(!list.isEmpty()){
+            list.clear();
+            recyclerAdapter.notifyDataSetChanged();
+        }
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 noPostsText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                noInternetConnectionText.setVisibility(View.GONE);
                 Post post = new Post();
                 String postContent = dataSnapshot.child("content").getValue().toString();
                 String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
@@ -285,5 +293,10 @@ public class HomeFragment extends Fragment {
         };
 
         asyncTask.execute();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        deleteCache(getActivity());
     }
 }

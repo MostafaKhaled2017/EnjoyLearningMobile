@@ -1,8 +1,5 @@
 package com.mk.playAndLearn.fragment;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +20,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -40,6 +35,7 @@ import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.service.NotificationsService;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -47,6 +43,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
@@ -84,6 +81,7 @@ public class ChallengesFragment extends Fragment {
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
     String currentSubject, currentUserUid;
     int currentPlayer, previousCompetedChallengeListSize = -1, previousUnCompetedChallengeListSize = -1;
+    int player1childrenCount = 0, player2childrenCount = 0;
     boolean initialDataLoaded = false;
 
     Spinner spinner;
@@ -93,7 +91,7 @@ public class ChallengesFragment extends Fragment {
     ChallengesAdapter completedChallengeRecyclerAdapter, uncompletedChallengeRecyclerAdapter;
 
     RecyclerView completedChallengesRecyclerView, uncompletedChallengesRecyclerView;
-    TextView completeChallengesTv, uncompletedChallengesTv, loadingTv, noInternetConnectionText;
+    TextView completeChallengesTv, uncompletedChallengesTv, noChallengesTv, noInternetConnectionText;
 
     private OnFragmentInteractionListener mListener;
 
@@ -122,6 +120,7 @@ public class ChallengesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        deleteCache(getActivity());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -153,7 +152,7 @@ public class ChallengesFragment extends Fragment {
         mainActivity = new MainActivity();
 
         progressBar = view.findViewById(R.id.challengesProgressBar);
-        loadingTv = view.findViewById(R.id.loadingText);
+        noChallengesTv = view.findViewById(R.id.loadingText);
 
         noInternetConnectionText = view.findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
@@ -304,18 +303,8 @@ public class ChallengesFragment extends Fragment {
                 uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
             }
         }
-
-
-        if (initialDataLoaded && previousCompetedChallengeListSize < completedChallengesList.size() && currentPlayer == 1) {
-            //TODO : think about changing the text
-            ((MainActivity) getActivity()).showNotification("اكتمل التحدى", "لديك تحدي مكتمل جديد");
-        }
-
-        if (initialDataLoaded && previousUnCompetedChallengeListSize < uncompletedChallengesList.size() && currentPlayer == 2) {
-            //TODO : think about changing the text
-            ((MainActivity) getActivity()).showNotification("لديك تحدى", "لديك تحدي جديد");
-        }
-
+        if(completedChallengesList.size() > 0 || uncompletedChallengesList.size() > 0)
+            noChallengesTv.setVisibility(View.GONE);
         previousCompetedChallengeListSize = completedChallengesList.size();
         previousUnCompetedChallengeListSize = uncompletedChallengesList.size();
     }
@@ -338,16 +327,30 @@ public class ChallengesFragment extends Fragment {
             @Override
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
+                    if(!completedChallengesList.isEmpty()){
+                        completedChallengesList.clear();
+                        completedChallengeRecyclerAdapter.notifyDataSetChanged();
+                    }
+                    if(!uncompletedChallengesList.isEmpty()){
+                        uncompletedChallengesList.clear();
+                        uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
+                    }
                     //this code gives data where current user is player 1
                     challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            player1childrenCount ++;
+                            progressBar.setVisibility(View.GONE);
+                            noChallengesTv.setVisibility(View.GONE);
+                            noInternetConnectionText.setVisibility(View.GONE);
                             getChallengeData(dataSnapshot);
                         }
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                             //TODO : note that the only changing handled is when challenge moves from uncompleted to completed state
+                            progressBar.setVisibility(View.GONE);
+                            noChallengesTv.setVisibility(View.GONE);
                             getChallengeData(dataSnapshot);
                             for (int i = 0; i < uncompletedChallengesList.size(); i++) {
                                 if (uncompletedChallengesList.get(i).getId().equals(dataSnapshot.getKey())) {
@@ -359,14 +362,22 @@ public class ChallengesFragment extends Fragment {
                             if(uncompletedChallengesList.size() == 0){
                                 uncompletedChallengesTv.setVisibility(View.GONE);
                             }
+                            else {
+                                uncompletedChallengesTv.setVisibility(View.VISIBLE);
+                            }
                             if(completedChallengesList.size() == 0){
                                 completeChallengesTv.setVisibility(View.GONE);
                             }
+                            else{
+                                completeChallengesTv.setVisibility(View.VISIBLE);
+                            }
+                            if(completedChallengesList.size() > 0 || uncompletedChallengesList.size() > 0)
+                                noChallengesTv.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                            //TODO
                         }
 
                         @Override
@@ -386,7 +397,10 @@ public class ChallengesFragment extends Fragment {
                     challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            player2childrenCount ++;
                             getChallengeData(dataSnapshot);
+                            progressBar.setVisibility(View.GONE);
+                            noInternetConnectionText.setVisibility(View.GONE);
                         }
 
                         @Override
@@ -404,14 +418,20 @@ public class ChallengesFragment extends Fragment {
                             if(uncompletedChallengesList.size() == 0){
                                 uncompletedChallengesTv.setVisibility(View.GONE);
                             }
+                            else {
+                                uncompletedChallengesTv.setVisibility(View.VISIBLE);
+                            }
                             if(completedChallengesList.size() == 0){
                                 completeChallengesTv.setVisibility(View.GONE);
+                            }
+                            else {
+                                completeChallengesTv.setVisibility(View.VISIBLE);
                             }
                         }
 
                         @Override
                         public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                            //TODO
                         }
 
                         @Override
@@ -431,40 +451,38 @@ public class ChallengesFragment extends Fragment {
                     challengesReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            //TODO : remove this toast
                             initialDataLoaded = true;
-                            CountDownTimer timer = new CountDownTimer(5000, 1000) {
-                                @Override
-                                public void onTick(long l) {
 
-                                }
+                            progressBar.setVisibility(View.GONE);
 
-                                @Override
-                                public void onFinish() {
-                                    if (progressBar.getVisibility() != View.GONE)
-                                        progressBar.setVisibility(View.GONE);
-                                    if (completedChallengesList.size() > 0) {
-                                        completeChallengesTv.setVisibility(View.VISIBLE);
-                                    } else {
-                                        completeChallengesTv.setVisibility(View.GONE);
-                                    }
+                            if (completedChallengesList.size() > 0) {
+                                completeChallengesTv.setVisibility(View.VISIBLE);
+                            } else {
+                                completeChallengesTv.setVisibility(View.GONE);
+                            }
 
-                                    if (uncompletedChallengesList.size() > 0) {
-                                        uncompletedChallengesTv.setVisibility(View.VISIBLE);
-                                    } else {
-                                        uncompletedChallengesTv.setVisibility(View.GONE);
-                                    }
-                                    if (completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0)
-                                        loadingTv.setVisibility(View.VISIBLE);
-                                    else
-                                        loadingTv.setVisibility(View.GONE);
+                            if (uncompletedChallengesList.size() > 0) {
+                                uncompletedChallengesTv.setVisibility(View.VISIBLE);
+                            } else {
+                                uncompletedChallengesTv.setVisibility(View.GONE);
+                            }
+                            if (completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0) {
+                                noChallengesTv.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                noChallengesTv.setVisibility(View.GONE);
+                            }
 
-                                    previousCompetedChallengeListSize = completedChallengesList.size();
-                                    previousUnCompetedChallengeListSize = uncompletedChallengesList.size();
-                                }
-                            };
-                            timer.start();
-
+                            previousCompetedChallengeListSize = completedChallengesList.size();
+                            previousUnCompetedChallengeListSize = uncompletedChallengesList.size();
+                            //TODO : add timer if needed
+                            Intent serviceIntent = new Intent(getActivity(), NotificationsService.class);
+                            serviceIntent.putExtra("player1childrenCount", player1childrenCount);
+                            serviceIntent.putExtra("player2childrenCount", player2childrenCount);
+                            getActivity().startService(serviceIntent);
                         }
+
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
@@ -481,4 +499,16 @@ public class ChallengesFragment extends Fragment {
         asyncTask.execute();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        deleteCache(getActivity());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        completedChallengesList.clear();
+        uncompletedChallengesList.clear();
+    }
 }

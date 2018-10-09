@@ -132,10 +132,15 @@ public class ChallengeResultActivity extends AppCompatActivity {
             ref.child(challengeId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    ref.child(challengeId).child("player2score").setValue(score);
-                    ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
-                    ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);
-                    ref.child(challengeId).child("state").setValue("اكتمل");
+                    if (dataSnapshot.exists()) {
+                        ref.child(challengeId).child("player2score").setValue(score);
+                        ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
+                        ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);
+                        ref.child(challengeId).child("state").setValue("اكتمل");
+                    }
+                    else {
+                        ref.child(challengeId).removeEventListener(this);
+                    }
                 }
 
                 @Override
@@ -151,4 +156,5 @@ public class ChallengeResultActivity extends AppCompatActivity {
         finish();
         return true;
     }
+
 }

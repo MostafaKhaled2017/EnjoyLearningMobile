@@ -30,10 +30,11 @@
     <android.support.v7.widget.RecyclerView
         android:layout_below="@id/selectSubjectView"
         android:id="@+id/lessonsRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never"
+        android:layout_centerHorizontal="true" />
 
     <ProgressBar
         android:id="@+id/lessonsProgressBar"

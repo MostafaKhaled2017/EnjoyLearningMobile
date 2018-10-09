@@ -166,6 +166,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             finish();
         } else {
             Toast.makeText(this, "انتهت الاسئلة", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 

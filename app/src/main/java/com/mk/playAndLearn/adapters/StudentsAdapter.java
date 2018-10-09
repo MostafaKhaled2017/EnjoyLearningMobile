@@ -73,7 +73,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
         if (user.getName() != null)
             holder.name.setText(user.getName());
         if (user.getImageUrl() != null)
-            Picasso.with(context).load(user.getImageUrl()).into(holder.imageView);
+            Picasso.with(context).load(user.getImageUrl()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
     }
 
     @Override

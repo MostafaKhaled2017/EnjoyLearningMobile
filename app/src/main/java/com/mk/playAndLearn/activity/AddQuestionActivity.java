@@ -152,21 +152,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 map.put("answer 4", et4);
                 map.put("reviewed", false);
                 map.put("correctAnswer", correctAnswer);
-
-                final DatabaseReference usersReference = database.getReference("users");
-                usersReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                        usersReference.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 5);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
                // Toast.makeText(this, "تم إضافة السؤال بنجاح وسيتم مراجعته", Toast.LENGTH_SHORT).show();
                 //TODO : add icon to the dialog
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);

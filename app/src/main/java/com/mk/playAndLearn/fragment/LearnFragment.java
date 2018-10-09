@@ -27,11 +27,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.model.Lesson;
+import com.mk.playAndLearn.utils.GridAutofitLayoutManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+
+import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
 
 /**
@@ -93,6 +96,7 @@ public class LearnFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        deleteCache(getActivity());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -142,7 +146,6 @@ public class LearnFragment extends Fragment {
 
             }
         });
-        startAsynkTask();
 
         return view;
     }
@@ -205,7 +208,9 @@ public class LearnFragment extends Fragment {
             @Override
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
-                    getLessons(currentSubject);
+                    if(list.size() == 0) {
+                        getLessons(currentSubject);
+                    }
                 } else {
                     progressBar.setVisibility(View.GONE);
                     noInternetConnectionText.setVisibility(View.VISIBLE);
@@ -218,15 +223,19 @@ public class LearnFragment extends Fragment {
     }
 
     public void getLessons(String currentSubject){
-        if(!list.isEmpty())
+        if(!list.isEmpty()) {
             list.clear();
+            recyclerAdapter.notifyDataSetChanged();
+        }
         progressBar.setVisibility(View.VISIBLE);
         noInternetConnectionText.setVisibility(View.GONE);
         recyclerAdapter.notifyDataSetChanged();
         myRef.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                progressBar.setVisibility(View.GONE);
                 noLessonsTextView.setVisibility(View.GONE);
+                noInternetConnectionText.setVisibility(View.GONE);
                 Lesson value = dataSnapshot.getValue(Lesson.class);
                 Lesson lesson = new Lesson();
                 boolean reviewed =(boolean) dataSnapshot.child("reviewed").getValue();
@@ -281,5 +290,10 @@ public class LearnFragment extends Fragment {
 
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        deleteCache(getActivity());
     }
 }

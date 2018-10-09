@@ -295,7 +295,6 @@ public class GeneralSignActivity extends AppCompatActivity {
                     currentUserReference.child("userName").setValue(userName);
                     currentUserReference.child("userImage").setValue(userImage);
                     currentUserReference.child("userType").setValue(userType);
-                    Toast.makeText(GeneralSignActivity.this, "user name is : " + userName, Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -75,7 +75,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
         if (challenge.getScore() != null)
             holder.score.setText(challenge.getScore());
         if (challenge.getImage() != null)
-            Picasso.with(context).load(challenge.getImage()).into(holder.imageView);
+            Picasso.with(context).load(challenge.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
         //TODO : add condition if the challenge completed shows the challenge result and right and wrong answers booleans .. by sending the id of challenge to the new activity and get the new data there
         if (challenge.getState().equals("لم يكتمل") && challenge.getCurrentPlayer() == 2) {
             //TODO : edit this if needed

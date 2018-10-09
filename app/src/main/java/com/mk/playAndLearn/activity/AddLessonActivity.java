@@ -120,19 +120,6 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map.put("writerEmail", userEmail);
                     map.put("writerUid", mAuth.getCurrentUser().getUid());
                     map.put("reviewed", false);
-                    final DatabaseReference usersReference = database.getReference("users");
-                    usersReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                            usersReference.child(mAuth.getCurrentUser().getUid()).child("points").setValue(userPoints + 10);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
                     //TODO : add icon to the dialog
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddLessonActivity.this);
                     alertDialog.setTitle("تنبيه هام!!");

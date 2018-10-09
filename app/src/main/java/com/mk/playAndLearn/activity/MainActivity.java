@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LearnFragment;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     int tabPosition = 1;
 
     //TODO : read all the TODOs in all the app well
+    //TODO : at a begging support mobiles support mobiles from 4 to 6 inches only but later support the rest
+    //TODO : think about testing the app on multiple screens again
     //TODO : handle bad or no internet connection in all screens of the app specially challenge screens
     //TODO : adjust the app bars titles in all activities and fragments of the app.
     //TODO : instead of using the app bar multiple times include it to all screens and update it using java
@@ -159,8 +163,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.learn, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
+        //TODO : make a custom tab style for small screens
+        //TODO : edit this to الصفحة الرئيسية and ask my friends is it better to remove text and let images only or it is better to keep text
+        //TODO : think about changing home page name to المنشورات and take my friends opinion
         TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabTwo.setText("الصفحة الرئيسية");
+        tabTwo.setText("الرئيسية");
         tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
@@ -303,27 +310,30 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     }
 
-    public void showNotification(String title, String content) {
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("default",
-                    "YOUR_CHANNEL_NAME",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
-            mNotificationManager.createNotificationChannel(channel);
+    //TODO : remove this method with all of its uses and find a better way to achieve the same thing
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
-                .setSmallIcon(R.mipmap.app_icon) // notification icon
-                .setContentTitle(title) // title for notification
-                .setContentText(content)// message for notification
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)) // set alarm sound for notification
-                .setAutoCancel(true); // clear notification after click
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(pi);
-        mNotificationManager.notify(0, mBuilder.build());
-        //TODO : edit the id if needed
-        //TODO : think about making the notification opens the challenges fragment directly
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if (dir != null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
     }
 }

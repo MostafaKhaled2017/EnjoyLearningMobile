@@ -115,6 +115,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
             finish();
         } else {
             Toast.makeText(this, "انتهت الدروس", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 

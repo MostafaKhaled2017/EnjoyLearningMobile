@@ -43,7 +43,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (comment.getDate() != null)
             holder.date.setText(comment.getDate());
         if (comment.getUserImage() != null)
-            Picasso.with(context).load(comment.getUserImage()).into(holder.imageView);
+            Picasso.with(context).load(comment.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
     }
 
     @Override
