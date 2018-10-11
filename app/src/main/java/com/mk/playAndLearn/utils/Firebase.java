@@ -12,6 +12,7 @@ public class Firebase {
     public static DatabaseReference usersReference = database.getReference("users");
     public static DatabaseReference lessonsReference = database.getReference("lessons");
     public static DatabaseReference  postsReference = database.getReference("posts");
+    public static DatabaseReference  challengesReference = database.getReference("challenges");
 
 
 }
