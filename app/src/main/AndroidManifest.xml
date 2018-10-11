@@ -119,8 +119,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.mk.playAndLearn.activity.AdminLessonContentActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.mk.playAndLearn.activity.AdminLessonContentActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
