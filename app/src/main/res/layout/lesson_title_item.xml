@@ -11,7 +11,7 @@
         android:id="@+id/lessonTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="23sp"
+        android:textSize="21sp"
         android:layout_alignParentRight="true"
         android:layout_margin="5dp"
         android:text="الوحدة الاولي الدرس الاول"/>
