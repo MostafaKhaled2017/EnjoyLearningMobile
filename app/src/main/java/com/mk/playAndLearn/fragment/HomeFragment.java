@@ -176,6 +176,12 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.removeListeners();
+    }
+
+    @Override
     public void retryConnection() {
         noInternetConnectionText.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);

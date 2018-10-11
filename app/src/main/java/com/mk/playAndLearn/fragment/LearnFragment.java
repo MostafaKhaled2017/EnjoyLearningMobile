@@ -127,6 +127,11 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
         mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.removeListeners();
+    }
 
     /**
      * This interface must be implemented by activities that contain this
