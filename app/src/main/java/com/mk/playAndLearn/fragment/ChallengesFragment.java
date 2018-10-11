@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
@@ -274,8 +275,11 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         Intent serviceIntent = new Intent(getActivity(), NotificationsService.class);
         serviceIntent.putExtra("player1childrenCount", player1childrenCount);
         serviceIntent.putExtra("player2childrenCount", player2childrenCount);
-        getActivity().startService(serviceIntent);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getActivity().startForegroundService(serviceIntent);
+        } else {
+            getActivity().startService(serviceIntent);
+        }
     }
 
     @Override

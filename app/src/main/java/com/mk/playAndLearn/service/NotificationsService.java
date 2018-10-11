@@ -28,6 +28,7 @@ import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,22 @@ public class NotificationsService extends Service {
             player1childrenCount = intent.getIntExtra("player1childrenCount", -1);
             player2childrenCount = intent.getIntExtra("player2childrenCount", -1);
         }
-        challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addChildEventListener(new ChildEventListener() {
+
+
+        /*MediaPlayer mediaPlayer = new MediaPlayer();
+
+        try {
+            mediaPlayer.setLooping(true);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setDataSource(getApplicationContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.start();*/
+
+
+        ChildEventListener generalListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 currentPlayer1childrenCount++;
@@ -112,52 +128,11 @@ public class NotificationsService extends Service {
                 //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
                 Log.v("Logging", "error loading data : " + databaseError);
             }
-        });
+        };
 
+        challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addChildEventListener(generalListener);
         //this code gives data where current user is player 2
-        challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                currentPlayer2childrenCount++;
-                String challengeState = dataSnapshot.child("state").getValue().toString();
-                String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
-                getCurrentPlayer(player1Uid);
-                if (player2childrenCount != -1 && currentPlayer2childrenCount > player2childrenCount && challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
-                    showNotification("لديك تحدى", "لديك تحدي جديد");
-                    currentPlayer2childrenCount = player2childrenCount;
-
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String challengeState = dataSnapshot.child("state").getValue().toString();
-                String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
-                getCurrentPlayer(player1Uid);
-                if (player2childrenCount != -1 &&currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))) {
-                    showNotification("اكتمل التحدى", "لديك تحدي مكتمل جديد");
-                    currentPlayer2childrenCount = player2childrenCount;
-                }
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "error loading data : " + databaseError);
-            }
-        });
+        challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(generalListener);
 
         return START_STICKY;
     }
