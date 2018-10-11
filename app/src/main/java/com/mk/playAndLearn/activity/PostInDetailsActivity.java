@@ -36,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.CommentsAdapter;
 import com.mk.playAndLearn.model.Comment;
+import com.mk.playAndLearn.presenter.PostsInDetailsActivityPresenter;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -49,19 +50,19 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
+import static com.mk.playAndLearn.utils.Firebase.commentsReference;
+import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
+import static com.mk.playAndLearn.utils.Strings.currentUserImage;
+import static com.mk.playAndLearn.utils.Strings.currentUserName;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
-public class PostInDetailsActivity extends AppCompatActivity {
+public class PostInDetailsActivity extends AppCompatActivity implements PostsInDetailsActivityPresenter.View{
     String content, name, date, image;
     TextView contentTv, nameTv, dateTv;
     ImageView imageView;
-    ArrayList list = new ArrayList();
-
-    DatabaseReference myRef;
-    FirebaseDatabase database;
-    FirebaseAuth auth;
-
-    String userName = "", userImage = "", userEmail = "", postId = "";
-    SharedPreferences sharedPreferences;
+    PostsInDetailsActivityPresenter presenter;
+    
+    String postId = "";
 
     CommentsAdapter recyclerAdapter;
     ProgressBar progressBar;
@@ -85,23 +86,19 @@ public class PostInDetailsActivity extends AppCompatActivity {
 
         deleteCache(this);
 
+        presenter = new PostsInDetailsActivityPresenter(this);
+
         contentTv = findViewById(R.id.postContentInDetails);
         nameTv = findViewById(R.id.postUserNameInDetails);
         dateTv = findViewById(R.id.postDateInDetails);
         noCommentsText = findViewById(R.id.noCommentsText);
         imageView = findViewById(R.id.postImageInDetails);
 
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("comments");
-        auth = FirebaseAuth.getInstance();
-
         noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                noInternetConnectionText.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-                startAsynkTask();
+                retryConnection();
             }
         });
 
@@ -119,34 +116,15 @@ public class PostInDetailsActivity extends AppCompatActivity {
             Picasso.with(this).load(image).into(imageView);
         }
 
-        sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        if (sharedPreferences != null) {
-            if (sharedPreferences.contains("userName")) {
-                userName = sharedPreferences.getString("userName", "");
-            }
-            if (sharedPreferences.contains("userImage")) {
-                userImage = sharedPreferences.getString("userImage", "");
-            }
-            if (sharedPreferences.contains("userEmail")) {
-                userEmail = sharedPreferences.getString("userEmail", "");
-            }
-        }
-
         recyclerView = findViewById(R.id.commentsRecyclerView);
         progressBar = findViewById(R.id.commentsProgressBar);
-        recyclerAdapter = new CommentsAdapter(list, this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerAdapter.notifyDataSetChanged();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
         //copy it in a new one
         Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
         //set the color filter, you can use also Mode.SRC_ATOP
-        willBeWhite.mutate().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         //set it to your fab button initialized before
         fab.setImageDrawable(willBeWhite);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -156,18 +134,12 @@ public class PostInDetailsActivity extends AppCompatActivity {
             }
         });
 
-        startAsynkTask();
+        presenter.startAsynkTask();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
-        return true;
-    }
-
-    private void showCommentsDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
-        View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
+    public void showCommentsDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
         alertDialogBuilderUserInput.setView(view);
@@ -187,20 +159,8 @@ public class PostInDetailsActivity extends AppCompatActivity {
         alertDialogBuilderUserInput.setNegativeButton("إضافة",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogBox, int id) {
-                        Date today = new Date();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
-                        String date = format.format(today);
-
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("userName", userName);
-                        map.put("userEmail", userEmail);
-                        map.put("userImage", userImage);
-                        map.put("votes", 0);
-                        map.put("date", date);
-                        map.put("postId", postId);
-                        map.put("userUid", auth.getCurrentUser().getUid());
-                        map.put("content", inputComment.getText().toString());
-                        myRef.push().setValue(map);
+                        String commentText = inputComment.getText().toString();
+                        presenter.addComment(commentText);
                     }
                 });
 
@@ -209,99 +169,73 @@ public class PostInDetailsActivity extends AppCompatActivity {
 
     }
 
-    public void startAsynkTask() {
-        //TODO : search for a solution to this error
-        AsyncTask asyncTask = new AsyncTask() {
-            @Override
-            protected Boolean doInBackground(Object[] objects) {
-                try {
-                    Socket sock = new Socket();
-                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
-                    sock.close();
-                    return true;
-                } catch (IOException e) {
-                    return false;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                if ((boolean) o) {
-                    getComments();
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    noInternetConnectionText.setVisibility(View.VISIBLE);
-                }
-            }
-        };
-
-        asyncTask.execute();
-    }
-
-    public void getComments() {
-        myRef.orderByChild("postId").equalTo(postId).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //Lesson value = dataSnapshot.getValue(Lesson.class);
-                noCommentsText.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                noInternetConnectionText.setVisibility(View.GONE);
-                Comment comment = new Comment();
-                String userName = dataSnapshot.child("userName").getValue().toString();
-                String content = dataSnapshot.child("content").getValue().toString();
-                String userImage = dataSnapshot.child("userImage").getValue().toString();
-                String date = dataSnapshot.child("date").getValue().toString();
-                comment.setUserName(userName);
-                comment.setContent(content);
-                comment.setUserImage(userImage);
-                comment.setDate(date);
-                list.add(0, comment);
-                if (progressBar.getVisibility() != View.GONE)
-                    progressBar.setVisibility(View.GONE);
-                recyclerAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "database error : " + databaseError);
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (list.size() == 0) {
-                    progressBar.setVisibility(View.GONE);
-                    noCommentsText.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        return true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         deleteCache(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.removeListeners();
+    }
+
+    @Override
+    public void retryConnection() {
+        noInternetConnectionText.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        presenter.startAsynkTask();
+    }
+
+    @Override
+    public void startRecyclerAdapter(ArrayList list) {
+        recyclerAdapter = new CommentsAdapter(list, this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerAdapter);
+    }
+
+    @Override
+    public void onNoInternetConnection() {
+        progressBar.setVisibility(android.view.View.GONE);
+        noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void onDataFound() {
+        noCommentsText.setVisibility(android.view.View.GONE);
+       hideProgressBar();
+        noInternetConnectionText.setVisibility(android.view.View.GONE);
+    }
+
+    @Override
+    public String getPostId() {
+        return postId;
+    }
+
+    @Override
+    public void hideProgressBar() {
+        if (progressBar.getVisibility() != android.view.View.GONE)
+            progressBar.setVisibility(android.view.View.GONE);
+    }
+
+    @Override
+    public void notifyAdapter() {
+        recyclerView.removeAllViews();
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onNoCommentsFound() {
+        progressBar.setVisibility(android.view.View.GONE);
+        noCommentsText.setVisibility(android.view.View.VISIBLE);
     }
 }

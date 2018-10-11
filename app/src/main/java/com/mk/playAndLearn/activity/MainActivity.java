@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     private static FirebaseAuth mAuth;
 
 
-    String userName = "", userImage = "", userEmail = "";
     int tabPosition = 1;
 
     //TODO : read all the TODOs in all the app well
@@ -198,14 +197,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             }
         });
 
-        if (mAuth.getCurrentUser() != null) {
-            userName = mAuth.getCurrentUser().getDisplayName();
-            userImage = mAuth.getCurrentUser().getPhotoUrl().toString();
-            userEmail = mAuth.getCurrentUser().getEmail();
-
-            Log.v("Logging", "user name is : " + userName
-                    + " user image is : " + userImage
-                    + " user email is : " + userEmail);
 
             /*try {
                 for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
@@ -220,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }*/
         }
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

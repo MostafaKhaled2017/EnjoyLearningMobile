@@ -32,10 +32,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
 public class ChallengersActivity extends AppCompatActivity {
-    FirebaseDatabase database;
-    DatabaseReference myRef;
-    FirebaseAuth auth;
     ArrayList list = new ArrayList();
     StudentsAdapter recyclerAdapter;
 
@@ -58,10 +59,6 @@ public class ChallengersActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("users");
-        auth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
         if(intent != null){
@@ -125,7 +122,7 @@ public class ChallengersActivity extends AppCompatActivity {
     }
 
     public void getStudents(){
-        myRef.orderByChild("userName").addValueEventListener(new ValueEventListener() {
+        usersReference.orderByChild("userName").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //TODO : think about the conditions here
@@ -138,7 +135,7 @@ public class ChallengersActivity extends AppCompatActivity {
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                         String userType = dataSnapshot1.child("userType").getValue().toString();
-                        if (userType.equals("طالب") && !uid.equals(auth.getCurrentUser().getUid())) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                        if (userType.equals("طالب") && !uid.equals(currentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                             user.setName(name);
                             user.setPoints(Integer.parseInt(points));
                             user.setImageUrl(imageUrl);

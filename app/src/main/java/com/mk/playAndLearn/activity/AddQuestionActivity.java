@@ -21,12 +21,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
 import java.util.HashMap;
@@ -35,18 +29,17 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
+import static com.mk.playAndLearn.utils.Strings.currentUserName;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+
 public class AddQuestionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Spinner subjectsSpinner;
     String correctAnswer = "";
     EditText editText1, editText2, editText3, editText4, questionEt;
-    String currentSubject = "", userName = "", userEmail = "";
-    SharedPreferences sharedPreferences;
+    String currentSubject = "";
     Map<String, Object> map;
-
-    DatabaseReference myRef;
-    FirebaseDatabase database;
-    FirebaseAuth mAuth;
-
 
     //TODO : fix the problems of signing in if exists
     //TODO : make push to github then revise the names to be used in the database well and change them when put and when get in all things then clear all the database before starting real use
@@ -67,25 +60,12 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("إضافة سؤال");
 
-        mAuth = FirebaseAuth.getInstance();
-        sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        if (sharedPreferences != null) {
-            if (sharedPreferences.contains("userName")) {
-                userName = sharedPreferences.getString("userName", "");
-            }
-            if (sharedPreferences.contains("userEmail")) {
-                userEmail = sharedPreferences.getString("userEmail", "");
-            }
-        }
             subjectsSpinner = findViewById(R.id.subjectsSpinner);
             editText1 = findViewById(R.id.et1);
             editText2 = findViewById(R.id.et2);
             editText3 = findViewById(R.id.et3);
             editText4 = findViewById(R.id.et4);
             questionEt = findViewById(R.id.addQuestionEditText);
-
-            database = FirebaseDatabase.getInstance();
-            myRef = database.getReference("questions");
 
             ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                     R.array.subjects_array, android.R.layout.simple_spinner_item);
@@ -141,9 +121,9 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 Toast.makeText(this, "من فضلك قم بتحديد الإجابة الصحيحة للسؤال", Toast.LENGTH_SHORT).show();
             } else {
                 map = new HashMap<>();
-                map.put("writerName", userName);
-                map.put("writerEmail", userEmail);
-                map.put("writerUid", mAuth.getCurrentUser().getUid());
+                map.put("writerName", currentUserName);
+                map.put("writerEmail", currentUserEmail);
+                map.put("writerUid", currentUserUid);
                 map.put("subject", currentSubject);
                 map.put("al question", question);
                 map.put("answer 1", et1);
@@ -160,7 +140,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        myRef.push().setValue(map);
+                        questionsReference.push().setValue(map);
                         Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
                         finish();
                     }

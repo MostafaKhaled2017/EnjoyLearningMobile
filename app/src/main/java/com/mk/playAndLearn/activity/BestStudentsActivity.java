@@ -94,6 +94,7 @@ public class BestStudentsActivity extends AppCompatActivity implements BestStude
 
     @Override
     public void notifyAdapter() {
+        recyclerView.removeAllViews();
         recyclerAdapter.notifyDataSetChanged();
     }
 

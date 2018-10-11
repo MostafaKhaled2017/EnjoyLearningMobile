@@ -175,6 +175,7 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
 
     @Override
     public void notifyAdapter() {
+        recyclerView.removeAllViews();
         recyclerAdapter.notifyDataSetChanged();
     }
 

@@ -11,6 +11,8 @@ public class Firebase {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference usersReference = database.getReference("users");
     public static DatabaseReference lessonsReference = database.getReference("lessons");
+    public static DatabaseReference questionsReference =database.getReference("questions");
+    public static DatabaseReference commentsReference =database.getReference("comments");
     public static DatabaseReference  postsReference = database.getReference("posts");
     public static DatabaseReference  challengesReference = database.getReference("challenges");
 

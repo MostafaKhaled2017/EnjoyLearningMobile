@@ -30,6 +30,9 @@ import com.mk.playAndLearn.model.Question;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
+
 public class AdminQuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
     Question question;
@@ -42,10 +45,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
     Intent i;
     ProgressBar timerProgressBar;
 
-    FirebaseDatabase database;
-    DatabaseReference ref;
-    DatabaseReference questionsReference;
-    DatabaseReference usersReference;
     int index;
 
     @Override
@@ -73,10 +72,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
         timerProgressBar = findViewById(R.id.timerProgressbar);
-        database = FirebaseDatabase.getInstance();
-        questionsReference = database.getReference("questions");
-        usersReference = database.getReference("users");
-        ref = database.getReference("challenges");
         subjectTv = findViewById(R.id.subjectTv);
         writerTv = findViewById(R.id.writerNameTv);
 

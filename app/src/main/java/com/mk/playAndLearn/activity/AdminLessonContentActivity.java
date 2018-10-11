@@ -28,10 +28,10 @@ import com.mk.playAndLearn.model.Lesson;
 
 import java.util.ArrayList;
 
-public class AdminLessonContentActivity extends AppCompatActivity {
+import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
-    DatabaseReference usersReference, lessonsReference;
-    FirebaseDatabase database;
+public class AdminLessonContentActivity extends AppCompatActivity {
 
     TextView writerNameTv, subjectTv, writerTypeTv, lessonPositionTv;
     EditText lessonTitleEt, lessonContentEt;
@@ -67,10 +67,6 @@ public class AdminLessonContentActivity extends AppCompatActivity {
         lessonTitleEt = findViewById(R.id.lessonTitleEt);
         lessonContentEt = findViewById(R.id.lessonContentEt);
         skipLessonButton = findViewById(R.id.skipLessonButton);
-
-        database = FirebaseDatabase.getInstance();
-        usersReference = database.getReference("users");
-        lessonsReference = database.getReference("lessons");
 
         if (index < list.size()) {
             lesson = (Lesson) list.get(index);

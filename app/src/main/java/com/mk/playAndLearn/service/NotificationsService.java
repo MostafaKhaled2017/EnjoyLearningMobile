@@ -85,7 +85,6 @@ public class NotificationsService extends Service {
         }
         mediaPlayer.start();*/
 
-
         ChildEventListener generalListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

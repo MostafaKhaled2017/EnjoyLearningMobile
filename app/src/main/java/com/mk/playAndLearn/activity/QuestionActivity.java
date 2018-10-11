@@ -29,6 +29,8 @@ import com.mk.playAndLearn.model.Question;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static com.mk.playAndLearn.utils.Firebase.challengesReference;
+
 public class QuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
     TextView tvQuestion;
@@ -44,9 +46,6 @@ public class QuestionActivity extends AppCompatActivity {
     int secondPlayerPoints;
     ProgressBar timerProgressBar;
     int index = 0;
-
-    FirebaseDatabase database;
-    DatabaseReference ref;
 
     //TODO : change the xml tags to support
     //TODO : handle what happens when internet connection problem occurs in a challenge
@@ -73,9 +72,6 @@ public class QuestionActivity extends AppCompatActivity {
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
         timerProgressBar = findViewById(R.id.timerProgressbar);
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("challenges");
-
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -157,13 +153,13 @@ public class QuestionActivity extends AppCompatActivity {
             dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
-                    ref.child(challengeId).addValueEventListener(new ValueEventListener() {
+                    challengesReference.child(challengeId).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            ref.child(challengeId).child("player2score").setValue(score);
-                            ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
-                            ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);
-                            ref.child(challengeId).child("state").setValue("اكتمل");//TODO : think about changing this
+                            challengesReference.child(challengeId).child("player2score").setValue(score);
+                            challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
+                            challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
+                            challengesReference.child(challengeId).child("state").setValue("اكتمل");//TODO : think about changing this
                         }
 
                         @Override

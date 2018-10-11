@@ -28,18 +28,20 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.mk.playAndLearn.utils.Firebase.auth;
+import static com.mk.playAndLearn.utils.Firebase.challengesReference;
+import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
+import static com.mk.playAndLearn.utils.Strings.currentUserImage;
+import static com.mk.playAndLearn.utils.Strings.currentUserName;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
 public class ChallengeResultActivity extends AppCompatActivity {
     //TODO : think about removing challenge result activity but think well before determine what to do in this
     //TODO : handle loosing internet connection before uploading data for example show a dialog when try to go out.
     TextView challengeResultTv;
 
-    FirebaseDatabase database;
-    DatabaseReference ref;
-    FirebaseAuth auth;
-
-    SharedPreferences sharedPreferences;
-
-    String userName = "", userImage = "", userEmail = "", subject, challengeId;
+    String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     int secondPlayerPoints;
     int score, currentChallenger;
@@ -61,23 +63,6 @@ public class ChallengeResultActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         
         challengeResultTv = findViewById(R.id.challengeResultText);
-        auth = FirebaseAuth.getInstance();
-
-        sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        if(sharedPreferences != null) {
-            if (sharedPreferences.contains("userName")){
-                userName = sharedPreferences.getString("userName", "");
-            }
-            if (sharedPreferences.contains("userImage")){
-                userImage = sharedPreferences.getString("userImage", "");
-            }
-            if (sharedPreferences.contains("userEmail")){
-                userEmail = sharedPreferences.getString("userEmail", "");
-            }
-        }
-
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("challenges");
 
         Intent intent = getIntent();
         if(intent.getExtras() != null){
@@ -107,16 +92,15 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
         Map<String, Object> map = new HashMap<>();
         if(currentChallenger == 1) {
-            map.put("player1Name", userName);
-            map.put("player1Email", userEmail);
-            map.put("player1Image", userImage);
+            map.put("player1Name", currentUserName);
+            map.put("player1Email", currentUserEmail);
+            map.put("player1Image", currentUserImage);
             map.put("player1score", score);
-            map.put("player1Uid", auth.getCurrentUser().getUid());
+            map.put("player1Uid", currentUserUid);
             map.put("player2Name", secondPlayerName);
             map.put("player2Email", secondPlayerEmail);
             map.put("player2Image", secondPlayerImage);
             map.put("player2Uid", secondPlayerUid);
-            map.put("player2score", 0);
             map.put("player2score", 0);
             map.put("date", date);
             map.put("subject", subject);
@@ -126,20 +110,20 @@ public class ChallengeResultActivity extends AppCompatActivity {
             map.put("player1Answers", playerAnswersList);
             map.put("state", "لم يكتمل"); // TODO : edit this
 
-            ref.push().setValue(map);
+            challengesReference.push().setValue(map);
         }
         else if(currentChallenger == 2){
-            ref.child(challengeId).addValueEventListener(new ValueEventListener() {
+            challengesReference.child(challengeId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        ref.child(challengeId).child("player2score").setValue(score);
-                        ref.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
-                        ref.child(challengeId).child("player2Answers").setValue(playerAnswersList);
-                        ref.child(challengeId).child("state").setValue("اكتمل");
+                        challengesReference.child(challengeId).child("player2score").setValue(score);
+                        challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
+                        challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
+                        challengesReference.child(challengeId).child("state").setValue("اكتمل");
                     }
                     else {
-                        ref.child(challengeId).removeEventListener(this);
+                        challengesReference.child(challengeId).removeEventListener(this);
                     }
                 }
 

@@ -25,13 +25,13 @@ import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+
 public class AppManagementActivity extends AppCompatActivity {
 
     ArrayList questionList = new ArrayList(), lessonsList = new ArrayList();
-    FirebaseDatabase database;
-    DatabaseReference questionsReference, lessonsReference;
     boolean questionsReady = false, lessonsReady = false;
-    Button suggestedQuestionsButton, suggestedLessonsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +49,6 @@ public class AppManagementActivity extends AppCompatActivity {
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         //toolbarTitle.setText("title");
-
-        database = FirebaseDatabase.getInstance();
-        questionsReference = database.getReference("questions");
-        lessonsReference = database.getReference("lessons");
 
         getSuggestedQuestions();
 

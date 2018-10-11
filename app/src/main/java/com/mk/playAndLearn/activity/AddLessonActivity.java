@@ -32,21 +32,20 @@ import com.mk.enjoylearning.R;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
 public class AddLessonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
     //TODO : push to the database who is the user who writes the lesson or the post and push it by a primary data
     //TODO : make a page where the student can see his note on every lesson and think about changing the idea for that the student writes his notes on the lesson but I on't prefer that I prefer make adding lesson adds a lot of XPs
     // TODO : think about replacing toasts with snackbar
     //TODO : determine the points of every thing
-    static DatabaseReference myRef;
-    FirebaseDatabase database;
-    private FirebaseAuth mAuth;
 
     Button addLessonButton;
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner;
 
     String currentSubject = "", currentUnitOrder = "", currentLessonOrder = "", userName = "", userEmail = "";
-    SharedPreferences sharedPreferences;
     Map<String, Object> map;
 
     @Override
@@ -62,17 +61,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        mAuth = FirebaseAuth.getInstance();
 
-        sharedPreferences = this.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        if (sharedPreferences != null) {
-            if (sharedPreferences.contains("userName")) {
-                userName = sharedPreferences.getString("userName", "");
-            }
-            if (sharedPreferences.contains("userEmail")) {
-                userEmail = sharedPreferences.getString("userEmail", "");
-            }
-        }
         etContent = findViewById(R.id.contentInAddLesson);
         etTitle = findViewById(R.id.titleInAddLesson);
         subjectsSpinner = findViewById(R.id.subjectsSpinner);
@@ -98,9 +87,6 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         lessonsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         lessonOrderSpinner.setAdapter(lessonsAdapter);
 
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("lessons");
-
         addLessonButton = findViewById(R.id.addLessonButton);
         addLessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +104,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map.put("subject", currentSubject);
                     map.put("writerName", userName);
                     map.put("writerEmail", userEmail);
-                    map.put("writerUid", mAuth.getCurrentUser().getUid());
+                    map.put("writerUid", currentUserUid);
                     map.put("reviewed", false);
                     //TODO : add icon to the dialog
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddLessonActivity.this);
@@ -127,7 +113,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            myRef.push().setValue(map);
+                            lessonsReference.push().setValue(map);
                             Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
                             finish();
                         }
