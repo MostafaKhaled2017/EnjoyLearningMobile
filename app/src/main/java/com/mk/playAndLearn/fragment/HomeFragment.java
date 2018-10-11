@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -27,14 +29,25 @@ import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.model.Post;
+import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static com.mk.playAndLearn.activity.MainActivity.addPostBtn;
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
+import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
+import static com.mk.playAndLearn.utils.Strings.currentUserImage;
+import static com.mk.playAndLearn.utils.Strings.currentUserName;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 
 /**
@@ -42,10 +55,9 @@ import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
  * Activities that contain this fragment must implement the
  * {@link HomeFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements HomeFragmentPresenter.View{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,22 +65,14 @@ public class HomeFragment extends Fragment {
 
     ProgressBar progressBar;
 
-    String userName = "", userImage = "", userEmail = "";
-    SharedPreferences sharedPreferences;
-
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     EditText etAddPost;
     Button addPostButton;
-    boolean loaded = false;
+    HomeFragmentPresenter presenter;
 
-    FirebaseDatabase database;
-    DatabaseReference myRef;
-    ArrayList list = new ArrayList();
     PostsAdapter recyclerAdapter;
     TextView noPostsText, noInternetConnectionText;
 
@@ -78,36 +82,11 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deleteCache(getActivity());
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("posts");
-
+        presenter = new HomeFragmentPresenter(this);
     }
 
     @Override
@@ -123,9 +102,7 @@ public class HomeFragment extends Fragment {
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                noInternetConnectionText.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-                startAsynkTask();
+                retryConnection();
             }
         });
 
@@ -133,28 +110,12 @@ public class HomeFragment extends Fragment {
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sharedPreferences = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-                if (sharedPreferences != null) {
-                    if (sharedPreferences.contains("userName")) {
-                        userName = sharedPreferences.getString("userName", "");
-                    }
-                    if (sharedPreferences.contains("userImage")) {
-                        userImage = sharedPreferences.getString("userImage", "");
-                    }
-                    if (sharedPreferences.contains("userEmail")) {
-                        userEmail = sharedPreferences.getString("userEmail", "");
-                    }
-                }
-                addPostBtn(myView, userName, userEmail, userImage);
+                String postText = etAddPost.getText().toString();
+                presenter.addPost(postText);
             }
         });
-        recyclerAdapter = new PostsAdapter(list, getActivity());
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(recyclerAdapter);
 
-        startAsynkTask();
+        presenter.startAsynkTask();
 
         return myView;
 
@@ -199,104 +160,71 @@ public class HomeFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void getPosts() {
-        if(!list.isEmpty()){
-            list.clear();
-            recyclerAdapter.notifyDataSetChanged();
+    @Override
+    public boolean validateInput(String postText) {
+        if (TextUtils.isEmpty(postText)) {
+            etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
+            return false;
         }
-        myRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                noPostsText.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                noInternetConnectionText.setVisibility(View.GONE);
-                Post post = new Post();
-                String postContent = dataSnapshot.child("content").getValue().toString();
-                String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
-                String postWriter = dataSnapshot.child("writerName").getValue().toString();
-                String postImage = dataSnapshot.child("image").getValue().toString();
-                String postId = dataSnapshot.getKey();
-                post.setContent(postContent);
-                post.setDate(postDate);
-                post.setWriter(postWriter);
-                post.setImage(postImage);
-                post.setId(postId);
-                list.add(0, post);
-                recyclerAdapter.notifyDataSetChanged();
-                if (progressBar.getVisibility() != View.GONE)
-                    progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-                Log.v("Logging", "error loading data : " + databaseError);
-            }
-        });
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (list.size() == 0) {
-                    progressBar.setVisibility(View.GONE);
-                    noPostsText.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        return true;
     }
 
-    public void startAsynkTask() {
-        //TODO : search for a solution to this error
-        AsyncTask asyncTask = new AsyncTask() {
-            @Override
-            protected Boolean doInBackground(Object[] objects) {
-                try {
-                    Socket sock = new Socket();
-                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
-                    sock.close();
-                    return true;
-                } catch (IOException e) {
-                    return false;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                if ((boolean) o) {
-                    getPosts();
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    noInternetConnectionText.setVisibility(View.VISIBLE);
-                }
-            }
-        };
-
-        asyncTask.execute();
-    }
     @Override
     public void onResume() {
         super.onResume();
         deleteCache(getActivity());
+    }
+
+    @Override
+    public void retryConnection() {
+        noInternetConnectionText.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        presenter.startAsynkTask();
+    }
+
+    @Override
+    public void startRecyclerAdapter(ArrayList list) {
+        recyclerAdapter = new PostsAdapter(list, getActivity());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerAdapter);
+    }
+
+    @Override
+    public void onNoInternetConnection() {
+        progressBar.setVisibility(android.view.View.GONE);
+        noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void onPostAddedSuccessfully() {
+        etAddPost.setText("");
+        Toast.makeText(getActivity(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notifyAdapter() {
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDataFound() {
+        hideProgressBar();
+        noPostsText.setVisibility(android.view.View.GONE);
+        noInternetConnectionText.setVisibility(android.view.View.GONE);
+
+    }
+
+    @Override
+    public void hideProgressBar() {
+        if (progressBar.getVisibility() != android.view.View.GONE)
+            progressBar.setVisibility(android.view.View.GONE);
+    }
+
+    @Override
+    public void onNoPostsExists() {
+        progressBar.setVisibility(android.view.View.GONE);
+        noPostsText.setVisibility(android.view.View.VISIBLE);
     }
 }

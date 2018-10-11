@@ -49,6 +49,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
+import static com.mk.playAndLearn.utils.Strings.currentUserImage;
+import static com.mk.playAndLearn.utils.Strings.currentUserName;
+
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
     private ViewPager mViewPager;
@@ -279,33 +283,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             // System.exit(0);
         }
     }
-
-
-    // home fragment button
-    public static void addPostBtn(View view, String userName, String userEmail, String userImage) {
-        EditText etAddPost = view.findViewById(R.id.etAddPost);
-        String postText = etAddPost.getText().toString();
-        Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
-        String date = format.format(today);
-        if (TextUtils.isEmpty(postText)) {
-            etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
-        } else {
-            Map<String, Object> map = new HashMap<>();
-            map.put("content", postText);
-            map.put("date", date);
-            map.put("writerName", userName);
-            map.put("writerUid", mAuth.getCurrentUser().getUid());
-            map.put("image", userImage);
-            map.put("email", userEmail);
-            map.put("votes", 0);
-            myRef.push().setValue(map);
-            etAddPost.setText("");
-            Toast.makeText(view.getContext(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();
-
-        }
-    }
-    //end of home fragment buttons
 
     @Override
     public void onFragmentInteraction(Uri uri) {
