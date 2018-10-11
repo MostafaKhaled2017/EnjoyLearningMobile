@@ -76,6 +76,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
             lesson = (Lesson) list.get(index);
             writerNameTv.append(lesson.getWriterName());
             subjectTv.append(lesson.getSubject());
+            Toast.makeText(this, "المادة : " + lesson.getSubject(), Toast.LENGTH_SHORT).show();
             lessonPositionTv.append("الوحدة : " + lesson.getUnitNo() + ", الدرس : " + lesson.getLessonNo());
             lessonTitleEt.setText(lesson.getTitle());
             lessonContentEt.setText(lesson.getContent());

@@ -103,6 +103,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             r4.setText(answers.get(3));
             if (question.getSubject() != null) {
                 subjectTv.append(question.getSubject());
+                Toast.makeText(this, "المادة : " + question.getSubject(), Toast.LENGTH_SHORT).show();
             } else {
                 subjectTv.append("غير مكتوبة");
             }
