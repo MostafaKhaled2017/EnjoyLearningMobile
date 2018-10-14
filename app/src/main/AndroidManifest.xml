@@ -5,24 +5,22 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- I am preventing backup to solve backing up authentication problem -->
     <application
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        tools:replace="android:supportsRtl">
+        tools:replace="android:supportsRtl,android:allowBackup">
         <activity
             android:name="com.mk.playAndLearn.activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.GeneralSignActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.mk.playAndLearn.activity.SignUpActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.mk.playAndLearn.activity.SignInActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.mk.playAndLearn.activity.WelcomeActivity"
             android:screenOrientation="portrait"

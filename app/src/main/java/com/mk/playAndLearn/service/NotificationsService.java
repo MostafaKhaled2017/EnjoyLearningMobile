@@ -81,7 +81,7 @@ public class NotificationsService extends Service {
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
                 String challengeId = dataSnapshot.getKey();
                 getCurrentPlayer(player1Uid);
-
+                Log.v("Logging2", "onChildAdded");
                 if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
                     showNotification("لديك التحدى", "لديك تحدي جديد");
                     challengesReference.child(challengeId).child("player2notified").setValue(true);
@@ -161,7 +161,6 @@ public class NotificationsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //TODO : remove the listeners if I should do that
     }
 
     public void getCurrentPlayer(String player1Uid) {

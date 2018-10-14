@@ -56,12 +56,16 @@ public class ChallengesFragmentPresenter {
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
                     clearLists();
-
                     ChildEventListener generalChallengesListener = new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            getChallengeData(dataSnapshot, "onChildAdded");
-                            view.onDataFound();
+
+                            String challengeState = dataSnapshot.child("state").getValue().toString();
+                            Log.v("Logging2", "onChildAdded");
+                            if (challengeState.equals(uncompletedChallengeText)) {
+                                getChallengeData(dataSnapshot, "onChildAdded");
+                                view.onDataFound();
+                            }
                         }
 
                         @Override
@@ -105,9 +109,8 @@ public class ChallengesFragmentPresenter {
                     challengesReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-
                             onInitialDataLoaded();
-                            Log.v("Logging", "completed list size :" + completedChallengesList + " , uncompleted list size : " + uncompletedChallengesList);
+                            Log.v("ChallengesFragPresenter", "completed list size :" + completedChallengesList + " , uncompleted list size : " + uncompletedChallengesList);
                             challengesReference.removeEventListener(this);
                         }
 
@@ -127,7 +130,8 @@ public class ChallengesFragmentPresenter {
     }
 
     public String getChallengeData(DataSnapshot dataSnapshot, String tag) {
-        Log.v("Logging", "completedChallengesList : " + completedChallengesList.size()
+        Log.v("ChallengesFragPresenter", "get challenge data called");
+        Log.v("ChallengesFragPresenter", "completedChallengesList : " + completedChallengesList.size()
                 + ", uncompletedChallengesList " + uncompletedChallengesList.size());
         view.startCompletedChallengesAdapter(completedChallengesList);
         view.startUnCompletedChallengesAdapter(uncompletedChallengesList);
@@ -186,15 +190,21 @@ public class ChallengesFragmentPresenter {
         challenge.setScore(score);
         if (challenge.getState().equals("اكتمل")) {
             view.showCompletedChallengesTv();
-            completedChallengesList.add(0, challenge);
+            if(!completedChallengesList.contains(challenge)) {
+                completedChallengesList.add(0, challenge);
+            }
             view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         } else if (challenge.getState().equals(refusedChallengeText)) {
             view.showCompletedChallengesTv();
-            completedChallengesList.add(0, challenge);
+            if(!completedChallengesList.contains(challenge)) {
+                completedChallengesList.add(0, challenge);
+            }
             view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         } else if (challenge.getState().equals(uncompletedChallengeText)) {
             view.showUncompletedChallengesTv();
-            uncompletedChallengesList.add(0, challenge);
+            if(!uncompletedChallengesList.contains(challenge)) {
+                uncompletedChallengesList.add(0, challenge);
+            }
             view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         }
 

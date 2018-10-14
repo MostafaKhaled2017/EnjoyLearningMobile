@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
 import static com.mk.playAndLearn.utils.Strings.currentUserName;
@@ -57,11 +58,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     ViewPagerAdapter adapter;
     private ViewPager mViewPager;
     TabLayout tabLayout;
-
-    static DatabaseReference myRef;
-    FirebaseDatabase database;
-    private static FirebaseAuth mAuth;
-
 
     int tabPosition = 1;
 
@@ -112,10 +108,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setDisplayShowTitleEnabled(false);
-
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("posts");
 
         mViewPager = findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
@@ -242,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 startActivity(new Intent(this, AppManagementActivity.class));
                 return true;
             case R.id.signOut:
-                mAuth.signOut();
+                auth.signOut();
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -256,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem appManagementItem = menu.findItem(R.id.appManagement);
-        if (mAuth.getCurrentUser().getEmail().equals("mostafakhaled835@gmail.com")) {
+        if (auth.getCurrentUser().getEmail().equals("mostafakhaled835@gmail.com")) {
             appManagementItem.setVisible(true);
         } else {
             appManagementItem.setVisible(false);

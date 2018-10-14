@@ -1,7 +1,6 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -20,10 +19,6 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -55,7 +50,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 //TODO : solve the shared prefrence tutorial
 //TODO : change the app in facebook for developers from in development to live
 //TODO : remove the tradition sign in and sign up and think about removing sign in with facebook
@@ -192,7 +186,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    navigateAndSetSharedPrefrence();
+                                    navigate();
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق قد يكون لديك مشكلة في الإتصال بالانترنت أو أن إدارة البرنامج قامت بإلغاء تفعيل حسابك", Toast.LENGTH_SHORT).show();
@@ -205,7 +199,7 @@ public class GeneralSignActivity extends AppCompatActivity {
 
                 //Toast.makeText(this, "نجح تسجيل الدخول",Toast.LENGTH_SHORT).show();
             } catch (ApiException e) {
-                Toast.makeText(GeneralSignActivity.this, "حدث خطأ أثناء محاولة التسجيل برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GeneralSignActivity.this, "حدثت مشكلة أثناء محاولة التسجيل برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
 
             }
         }//TODO
@@ -255,8 +249,8 @@ public class GeneralSignActivity extends AppCompatActivity {
         }
     }
 
-    public void navigateAndSetSharedPrefrence() {
-        FirebaseUser user = mAuth.getCurrentUser();
+    public void navigate() {
+        /*FirebaseUser user = mAuth.getCurrentUser();
         assert user != null;
         userName = user.getDisplayName();
         userImage = user.getPhotoUrl().toString();
@@ -275,7 +269,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         editor.putString("userImage", userImage);
         editor.putString("userEmail", userEmail);
 
-        editor.apply();
+        editor.apply();*/
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -314,8 +308,10 @@ public class GeneralSignActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         //TODO : note : don't try to update the users data here again
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            //currentUserReference =  myRef.child(mAuth.getUid());
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            Log.v("GeneralSignActivity", "current user value is : " + currentUser
+            +"current user Email is : " + currentUser.getEmail());
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
             //Toast.makeText(this, "mAuth : " + mAuth + " , current user : " + currentUser, Toast.LENGTH_SHORT).show();
         }
