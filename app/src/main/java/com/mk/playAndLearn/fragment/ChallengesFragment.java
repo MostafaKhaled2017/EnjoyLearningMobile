@@ -2,6 +2,7 @@ package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -281,8 +282,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         //TODO : remove this method and use firebase function instead
 
         Intent serviceIntent = new Intent(getActivity(), NotificationsService.class);
-        serviceIntent.putExtra("player1childrenCount", player1childrenCount);
-        serviceIntent.putExtra("player2childrenCount", player2childrenCount);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
             getActivity().startForegroundService(serviceIntent);
         } else {

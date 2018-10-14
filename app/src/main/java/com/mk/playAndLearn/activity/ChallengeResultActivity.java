@@ -104,10 +104,11 @@ public class ChallengeResultActivity extends AppCompatActivity {
             map.put("player2Image", secondPlayerImage);
             map.put("player2Uid", secondPlayerUid);
             map.put("player2score", 0);
+            map.put("player1notified", currentUserUid + "false");
+            map.put("player2notified", secondPlayerUid+"false");
             map.put("date", date);
             map.put("subject", subject);
             map.put("questionsList", questionsList);
-
             map.put("player1AnswersBooleans", playerAnswersBooleansList);
             map.put("player1Answers", playerAnswersList);
             map.put("state", "لم يكتمل"); // TODO : edit this

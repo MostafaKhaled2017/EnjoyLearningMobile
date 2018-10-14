@@ -299,7 +299,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                     currentUserReference.child("userType").setValue(userType);
                 }
                 startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
-
+                myRef.removeEventListener(this);
             }
 
             @Override
@@ -313,9 +313,8 @@ public class GeneralSignActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        final FirebaseUser currentUser = mAuth.getCurrentUser();
         //TODO : note : don't try to update the users data here again
-        if (mAuth.getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             //currentUserReference =  myRef.child(mAuth.getUid());
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
             //Toast.makeText(this, "mAuth : " + mAuth + " , current user : " + currentUser, Toast.LENGTH_SHORT).show();

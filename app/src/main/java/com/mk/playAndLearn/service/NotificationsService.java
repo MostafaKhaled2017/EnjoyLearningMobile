@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -42,9 +43,6 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 public class NotificationsService extends Service {
     int currentPlayer;
     //the full number which is coming from the challenges fragment
-    int player1childrenCount, player2childrenCount;
-
-    int currentPlayer1childrenCount = 0, currentPlayer2childrenCount = 0;
 
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
     //TODO : change the text of notification according to the written and unwritten states in the database like refused, win, lose, draw ...
@@ -55,18 +53,10 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        player1childrenCount = -1;
-        player2childrenCount = -1;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            player1childrenCount = intent.getIntExtra("player1childrenCount", 0);
-            player2childrenCount = intent.getIntExtra("player2childrenCount", 0);
-            Log.v("Logging", "in intent player1childrenCount : " + player1childrenCount
-            +" , player2childrenCount : " + player2childrenCount);
-        }
 
         /*//start of media player(used for debug)
 
@@ -89,28 +79,12 @@ public class NotificationsService extends Service {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String challengeState = dataSnapshot.child("state").getValue().toString();
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
+                String challengeId = dataSnapshot.getKey();
                 getCurrentPlayer(player1Uid);
 
-                if(currentPlayer == 1){
-                    currentPlayer1childrenCount++;
-                }
-                else if(currentPlayer == 2){
-                    currentPlayer2childrenCount++;
-                }
-
-                Log.v("LoggingOutsideCondition",
-                        "player2childrenCount : " + player2childrenCount
-                        + ", currentPlayer2childrenCount : " + currentPlayer2childrenCount
-                        + "player2childrenCount : " + player2childrenCount
-                        + ", currentPlayer2childrenCount : " + currentPlayer2childrenCount
-                        + ", currentPlayer : " + currentPlayer);
-                if (currentPlayer2childrenCount > player2childrenCount && currentPlayer1childrenCount > player1childrenCount && challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
-                    showNotification("لديك تحدى", "لديك تحدي جديد");
-                    Log.v("LoggingInCondition", "player2childrenCount : " + player2childrenCount
-                            + ", currentPlayer2childrenCount : " + currentPlayer2childrenCount
-                            + ", currentPlayer : " + currentPlayer);
-                    currentPlayer2childrenCount = player2childrenCount;
-                    currentPlayer1childrenCount = player1childrenCount;
+                if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
+                    showNotification("لديك التحدى", "لديك تحدي جديد");
+                    challengesReference.child(challengeId).child("player2notified").setValue(true);
                 }
             }
 
@@ -118,11 +92,13 @@ public class NotificationsService extends Service {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String challengeState = dataSnapshot.child("state").getValue().toString();
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
+                String challengeId = dataSnapshot.getKey();
                 getCurrentPlayer(player1Uid);
-                if (player1childrenCount != -1 && currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))) {
+                if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))) {
                     showNotification("اكتمل التحدى", "لديك تحدي مكتمل جديد");
-                    currentPlayer1childrenCount = player1childrenCount;
+                    challengesReference.child(challengeId).child("player1notified").setValue(true);
                 }
+
 
             }
 
@@ -145,9 +121,9 @@ public class NotificationsService extends Service {
         };
 
         //this gives the challenges that the current user has started
-        challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addChildEventListener(generalListener);
+        challengesReference.orderByChild("player1notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
         //this code gives data where current user is player 2
-        challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(generalListener);
+        challengesReference.orderByChild("player2notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
 
         return START_STICKY;
     }
