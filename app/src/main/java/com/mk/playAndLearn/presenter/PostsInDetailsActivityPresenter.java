@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
@@ -140,7 +141,8 @@ public class PostsInDetailsActivityPresenter {
 
     public void addComment(String commentText){
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         String date = format.format(today);
 
         Map<String, Object> map = new HashMap<>();

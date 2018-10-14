@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
@@ -69,8 +70,10 @@ public class HomeFragmentPresenter {
 
     public void addPost(String postText) {
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         String date = format.format(today);
+        Log.v("Logging2", date);
         if (view.validateInput(postText)) {
             Map<String, Object> map = new HashMap<>();
             map.put("content", postText);

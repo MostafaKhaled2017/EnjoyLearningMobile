@@ -2,6 +2,7 @@ package com.mk.playAndLearn.presenter;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -28,7 +29,7 @@ public class ChallengesFragmentPresenter {
     Challenge challenge;
     View view;
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
-    int player1childrenCount = -1, player2childrenCount = -1, currentPlayer;
+    int player1childrenCount = 0, player2childrenCount = 0, currentPlayer;
     ChildEventListener player1Listener, player2Listener;
 
 
@@ -59,19 +60,18 @@ public class ChallengesFragmentPresenter {
                     ChildEventListener generalChallengesListener = new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            player1childrenCount++;
+                            getChallengeData(dataSnapshot, "onChildAdded");
                             view.onDataFound();
-                            getChallengeData(dataSnapshot);
                         }
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                             //TODO : note that the only changing handled is when challenge moves from uncompleted to completed state
-                            getChallengeData(dataSnapshot);
+                            getChallengeData(dataSnapshot, "onChildChanged");
                             for (int i = 0; i < uncompletedChallengesList.size(); i++) {
                                 if (uncompletedChallengesList.get(i).getId().equals(dataSnapshot.getKey())) {
                                     uncompletedChallengesList.remove(i);
-                                    view.notifyAdapters();
+                                    view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
                                     break;
                                 }
                             }
@@ -102,10 +102,10 @@ public class ChallengesFragmentPresenter {
                     //this code gives data where current user is player 2
                     player2Listener = challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(generalChallengesListener);
 
-
                     challengesReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+
                             onInitialDataLoaded();
                             Log.v("Logging", "completed list size :" + completedChallengesList + " , uncompleted list size : " + uncompletedChallengesList);
                             challengesReference.removeEventListener(this);
@@ -126,7 +126,9 @@ public class ChallengesFragmentPresenter {
         asyncTask.execute();
     }
 
-    public void getChallengeData(DataSnapshot dataSnapshot) {
+    public String getChallengeData(DataSnapshot dataSnapshot, String tag) {
+        Log.v("Logging", "completedChallengesList : " + completedChallengesList.size()
+                + ", uncompletedChallengesList " + uncompletedChallengesList.size());
         view.startCompletedChallengesAdapter(completedChallengesList);
         view.startUnCompletedChallengesAdapter(uncompletedChallengesList);
 
@@ -155,12 +157,17 @@ public class ChallengesFragmentPresenter {
             challengerName = player2Name;
             challengerImage = player2Image;
             challenge.setSecondChallengerUid(player2Uid);//second means that it is not the player who starts the challenge
-
+            if (tag.equals("onChildAdded")) {
+                player1childrenCount++;
+            }
         } else {
             currentPlayer = 2;
             challengerName = player1Name;
             challengerImage = player1Image;
             challenge.setSecondChallengerUid(player1Uid);//second means that it is not the player who starts the challenge
+            if (tag.equals("onChildAdded")) {
+                player2childrenCount++;
+            }
         }
         challenge.setCurrentPlayer(currentPlayer);
         challenge.setChallengerName(challengerName);
@@ -180,16 +187,18 @@ public class ChallengesFragmentPresenter {
         if (challenge.getState().equals("اكتمل")) {
             view.showCompletedChallengesTv();
             completedChallengesList.add(0, challenge);
-            view.notifyAdapters();
+            view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         } else if (challenge.getState().equals(refusedChallengeText)) {
             view.showCompletedChallengesTv();
             completedChallengesList.add(0, challenge);
-            view.notifyAdapters();
+            view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         } else if (challenge.getState().equals(uncompletedChallengeText)) {
             view.showUncompletedChallengesTv();
             uncompletedChallengesList.add(0, challenge);
-            view.notifyAdapters();
+            view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         }
+
+        return player1Uid;
     }
 
     private void checkListsSizeAndAdjustViews() {
@@ -213,11 +222,11 @@ public class ChallengesFragmentPresenter {
     private void clearLists() {
         if (!completedChallengesList.isEmpty()) {
             completedChallengesList.clear();
-            view.notifyAdapters();
+            view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         }
         if (!uncompletedChallengesList.isEmpty()) {
             uncompletedChallengesList.clear();
-            view.notifyAdapters();
+            view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size());
         }
     }
 
@@ -241,7 +250,7 @@ public class ChallengesFragmentPresenter {
 
         void startCompletedChallengesAdapter(ArrayList completedChallengesList);
 
-        void notifyAdapters();
+        void notifyAdapters(int completedListSize, int uncompletedListSize);
 
         void onDataFound();
 

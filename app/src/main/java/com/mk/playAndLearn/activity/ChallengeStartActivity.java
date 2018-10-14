@@ -241,9 +241,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     startActivity(i);
                     finish();
                 }
-                 else {
-                    showDialog();
-                }
             }
         });
     }

@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
@@ -87,7 +88,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
         }
         challengeResultTv.append(score +"");
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());//TODO : check that the date changes at 12 p.m exactly
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         String date = format.format(today);
 
         Map<String, Object> map = new HashMap<>();

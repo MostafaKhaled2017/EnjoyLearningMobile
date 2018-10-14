@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
 public class Firebase {
     public static FirebaseAuth auth = FirebaseAuth.getInstance();
     public static FirebaseUser currentUser = auth.getCurrentUser();
@@ -15,6 +17,4 @@ public class Firebase {
     public static DatabaseReference commentsReference =database.getReference("comments");
     public static DatabaseReference  postsReference = database.getReference("posts");
     public static DatabaseReference  challengesReference = database.getReference("challenges");
-
-
 }

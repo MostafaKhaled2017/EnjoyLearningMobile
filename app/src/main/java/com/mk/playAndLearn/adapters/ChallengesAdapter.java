@@ -105,8 +105,11 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             ref.child(challenge.getId()).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    ref.child(challenge.getId()).child("player2score").setValue(0);
-                                    ref.child(challenge.getId()).child("state").setValue(refusedChallengeText);
+                                    if(dataSnapshot.exists()) {
+                                        ref.child(challenge.getId()).child("player2score").setValue(0);
+                                        ref.child(challenge.getId()).child("state").setValue(refusedChallengeText);
+                                    }
+                                    ref.removeEventListener(this);
                                 }
 
                                 @Override

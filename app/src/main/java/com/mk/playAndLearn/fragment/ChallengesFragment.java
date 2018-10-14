@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengersActivity;
@@ -201,28 +202,34 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     @Override
     public void startUnCompletedChallengesAdapter(ArrayList uncompletedChallengesList) {
-        uncompletedChallengeRecyclerAdapter = new ChallengesAdapter(uncompletedChallengesList, getActivity());
-        RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new LinearLayoutManager(getActivity());
-        uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
-        uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        uncompletedChallengesRecyclerView.setAdapter(uncompletedChallengeRecyclerAdapter);
+        if(uncompletedChallengesRecyclerView.getAdapter() == null) {
+            uncompletedChallengeRecyclerAdapter = new ChallengesAdapter(uncompletedChallengesList, getActivity());
+            RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new LinearLayoutManager(getActivity());
+            uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
+            uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            uncompletedChallengesRecyclerView.setAdapter(uncompletedChallengeRecyclerAdapter);
+        }
     }
 
     @Override
     public void startCompletedChallengesAdapter(ArrayList completedChallengesList) {
-        completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
-        RecyclerView.LayoutManager completedChallengesLayoutManager = new LinearLayoutManager(getActivity());
-        completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
-        completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        completedChallengesRecyclerView.setAdapter(completedChallengeRecyclerAdapter);
+        if(completedChallengesRecyclerView.getAdapter() == null) {
+            completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
+            RecyclerView.LayoutManager completedChallengesLayoutManager = new LinearLayoutManager(getActivity());
+            completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
+            completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            completedChallengesRecyclerView.setAdapter(completedChallengeRecyclerAdapter);
+        }
     }
 
     @Override
-    public void notifyAdapters() {
+    public void notifyAdapters(int completedListSize, int uncompletedListSize) {
         completedChallengesRecyclerView.removeAllViews();
         uncompletedChallengesRecyclerView.removeAllViews();
         completedChallengeRecyclerAdapter.notifyDataSetChanged();
         uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
+        Log.v("Logging2", "completed list size : " + completedListSize
+                + ", uncompleted list size : " + uncompletedListSize);
     }
 
     @Override
@@ -272,10 +279,11 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     public void startNotificationService(int player1childrenCount, int player2childrenCount) {
         //TODO : add timer if needed
         //TODO : remove this method and use firebase function instead
+
         Intent serviceIntent = new Intent(getActivity(), NotificationsService.class);
         serviceIntent.putExtra("player1childrenCount", player1childrenCount);
         serviceIntent.putExtra("player2childrenCount", player2childrenCount);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
             getActivity().startForegroundService(serviceIntent);
         } else {
             getActivity().startService(serviceIntent);

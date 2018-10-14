@@ -1,5 +1,7 @@
 package com.mk.playAndLearn.utils;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
 

@@ -33,15 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mk.playAndLearn.NotificationID.getID;
+import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 public class NotificationsService extends Service {
-    FirebaseDatabase database;
-    FirebaseAuth auth;
-    DatabaseReference challengesReference;
-    String currentSubject, currentUserUid;
     int currentPlayer;
     //the full number which is coming from the challenges fragment
     int player1childrenCount, player2childrenCount;
@@ -57,10 +55,6 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        database = FirebaseDatabase.getInstance();
-        challengesReference = database.getReference("challenges");
-        auth = FirebaseAuth.getInstance();
-        currentUserUid = auth.getCurrentUser().getUid();
         player1childrenCount = -1;
         player2childrenCount = -1;
     }
@@ -68,12 +62,15 @@ public class NotificationsService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            player1childrenCount = intent.getIntExtra("player1childrenCount", -1);
-            player2childrenCount = intent.getIntExtra("player2childrenCount", -1);
+            player1childrenCount = intent.getIntExtra("player1childrenCount", 0);
+            player2childrenCount = intent.getIntExtra("player2childrenCount", 0);
+            Log.v("Logging", "in intent player1childrenCount : " + player1childrenCount
+            +" , player2childrenCount : " + player2childrenCount);
         }
 
+        /*//start of media player(used for debug)
 
-        /*MediaPlayer mediaPlayer = new MediaPlayer();
+        MediaPlayer mediaPlayer = new MediaPlayer();
 
         try {
             mediaPlayer.setLooping(true);
@@ -83,20 +80,38 @@ public class NotificationsService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mediaPlayer.start();*/
+        mediaPlayer.start();
+
+        //end of media player*/
 
         ChildEventListener generalListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                currentPlayer1childrenCount++;
                 String challengeState = dataSnapshot.child("state").getValue().toString();
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
                 getCurrentPlayer(player1Uid);
-                if (player1childrenCount != -1 && currentPlayer1childrenCount > player1childrenCount && challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
-                    showNotification("لديك تحدى", "لديك تحدي جديد");
-                    currentPlayer1childrenCount = player1childrenCount;
+
+                if(currentPlayer == 1){
+                    currentPlayer1childrenCount++;
+                }
+                else if(currentPlayer == 2){
+                    currentPlayer2childrenCount++;
                 }
 
+                Log.v("LoggingOutsideCondition",
+                        "player2childrenCount : " + player2childrenCount
+                        + ", currentPlayer2childrenCount : " + currentPlayer2childrenCount
+                        + "player2childrenCount : " + player2childrenCount
+                        + ", currentPlayer2childrenCount : " + currentPlayer2childrenCount
+                        + ", currentPlayer : " + currentPlayer);
+                if (currentPlayer2childrenCount > player2childrenCount && currentPlayer1childrenCount > player1childrenCount && challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
+                    showNotification("لديك تحدى", "لديك تحدي جديد");
+                    Log.v("LoggingInCondition", "player2childrenCount : " + player2childrenCount
+                            + ", currentPlayer2childrenCount : " + currentPlayer2childrenCount
+                            + ", currentPlayer : " + currentPlayer);
+                    currentPlayer2childrenCount = player2childrenCount;
+                    currentPlayer1childrenCount = player1childrenCount;
+                }
             }
 
             @Override
@@ -129,6 +144,7 @@ public class NotificationsService extends Service {
             }
         };
 
+        //this gives the challenges that the current user has started
         challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addChildEventListener(generalListener);
         //this code gives data where current user is player 2
         challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(generalListener);
@@ -169,7 +185,7 @@ public class NotificationsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //TODO : remove the listeners
+        //TODO : remove the listeners if I should do that
     }
 
     public void getCurrentPlayer(String player1Uid) {
