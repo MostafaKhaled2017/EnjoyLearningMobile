@@ -47,7 +47,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
     int secondPlayerPoints;
     int score, currentChallenger;
 
-    ArrayList questionsList = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList questionsList = new ArrayList();
+    String playerAnswersBooleansList = "", playerAnswersList = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +71,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
             currentChallenger = intent.getIntExtra("currentChallenger", currentChallenger);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
-            playerAnswersBooleansList = intent.getParcelableArrayListExtra("currentPlayerAnswersBooleans");
-            playerAnswersList = intent.getParcelableArrayListExtra("currentPlayerAnswers");
+            playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
+            playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
 
 
             if(currentChallenger == 1){
@@ -109,7 +110,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
             map.put("date", date);
             map.put("subject", subject);
             map.put("questionsList", questionsList);
-            map.put("player1AnswersBooleans", playerAnswersBooleansList);
+            map.put("player1AnswersBooleans", playerAnswersBooleansList.trim());
             map.put("player1Answers", playerAnswersList);
             map.put("state", "لم يكتمل"); // TODO : edit this
 
@@ -121,7 +122,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         challengesReference.child(challengeId).child("player2score").setValue(score);
-                        challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
+                        challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList.trim());
                         challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
                         challengesReference.child(challengeId).child("state").setValue("اكتمل");
                     }

@@ -40,6 +40,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
     EditText editText1, editText2, editText3, editText4, questionEt;
     String currentSubject = "";
     Map<String, Object> map;
+    int currentCheckedRadioButton;
+    RadioButton r1, r2, r3, r4;
 
     //TODO : fix the problems of signing in if exists
     //TODO : make push to github then revise the names to be used in the database well and change them when put and when get in all things then clear all the database before starting real use
@@ -66,6 +68,10 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             editText3 = findViewById(R.id.et3);
             editText4 = findViewById(R.id.et4);
             questionEt = findViewById(R.id.addQuestionEditText);
+            r1 = findViewById(R.id.radio1);
+            r2 = findViewById(R.id.radio2);
+            r3 = findViewById(R.id.radio3);
+            r4 = findViewById(R.id.radio4);
 
             ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                     R.array.subjects_array, android.R.layout.simple_spinner_item);
@@ -92,24 +98,40 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             switch (view.getId()) {
                 case R.id.radio1:
                     if (checked)
-                        correctAnswer = editText1.getText().toString();
+                        currentCheckedRadioButton = 1;
                     break;
                 case R.id.radio2:
                     if (checked)
-                        correctAnswer = editText2.getText().toString();
+                        currentCheckedRadioButton = 2;
                     break;
                 case R.id.radio3:
                     if (checked)
-                        correctAnswer = editText3.getText().toString();
+                        currentCheckedRadioButton = 3;
                     break;
                 case R.id.radio4:
                     if (checked)
-                        correctAnswer = editText4.getText().toString();
+                        currentCheckedRadioButton = 4;
                     break;
             }
         }
         @OnClick(R.id.addQuestionBtn)
         public void addQuestion (View view){
+
+            switch(currentCheckedRadioButton){
+                case 1:
+                    correctAnswer = editText1.getText().toString();
+                    break;
+                case 2:
+                    correctAnswer = editText2.getText().toString();
+                    break;
+                case 3:
+                    correctAnswer = editText3.getText().toString();
+                    break;
+                case 4:
+                    correctAnswer = editText4.getText().toString();
+                    break;
+            }
+
             String question = questionEt.getText().toString();
             String et1 = editText1.getText().toString();
             String et2 = editText2.getText().toString();
@@ -142,7 +164,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                     public void onClick(DialogInterface dialogInterface, int i) {
                         questionsReference.push().setValue(map);
                         Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
-                        finish();
+                        clearViews();
                     }
                 });
                 alertDialog.create();
@@ -159,5 +181,19 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         @Override
         public void onNothingSelected (AdapterView < ? > adapterView){
 
+        }
+
+        void clearViews(){
+            questionEt.setText("");
+
+            editText1.setText("");
+            editText2.setText("");
+            editText3.setText("");
+            editText4.setText("");
+
+            r1.setChecked(false);
+            r2.setChecked(false);
+            r3.setChecked(false);
+            r4.setChecked(false);
         }
     }

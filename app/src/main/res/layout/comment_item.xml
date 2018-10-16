@@ -37,6 +37,7 @@
             android:textColor="@color/grey"
             android:textSize="12sp"
             />
+
         <TextView
             android:id="@+id/commentContent"
             android:layout_below="@id/commentImage"

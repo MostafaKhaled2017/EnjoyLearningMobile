@@ -32,7 +32,8 @@ import java.util.Collections;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 
 public class QuestionActivity extends AppCompatActivity {
-    ArrayList list = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList list = new ArrayList();
+    String playerAnswersBooleansList = "", playerAnswersList = "";
     TextView tvQuestion;
     RadioGroup rg1;
     Button nextButton;
@@ -80,8 +81,8 @@ public class QuestionActivity extends AppCompatActivity {
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
             list = intent.getParcelableArrayListExtra("questionList");
-            playerAnswersBooleansList = intent.getParcelableArrayListExtra("currentPlayerAnswersBooleans");
-            playerAnswersList = intent.getParcelableArrayListExtra("currentPlayerAnswers");
+            playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
+            playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
 
             if (currentChallenger == 1) {
                 secondPlayerName = intent.getStringExtra("player2Name");
@@ -198,14 +199,20 @@ public class QuestionActivity extends AppCompatActivity {
         } else {
             i.putExtra("answer", false);
         }
+        if(questionNo < 5) {//TODO : check this condition
+            playerAnswersList += selection + " / ";
+        }
+        else {
+            playerAnswersList += selection;
+
+        }
         i.putParcelableArrayListExtra("questionList", list);
         i.putExtra("questionNo", questionNo);
         i.putExtra("score", score);
         i.putExtra("subject", subject);
-        i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-        i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+        i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+        i.putExtra("currentPlayerAnswers", playerAnswersList);
         i.putExtra("currentChallenger", currentChallenger);
-        playerAnswersList.add(selection);
         if (currentChallenger == 1) {
             i.putExtra("player2Name", secondPlayerName);
             i.putExtra("player2Email", secondPlayerEmail);

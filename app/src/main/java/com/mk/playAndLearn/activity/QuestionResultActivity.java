@@ -21,7 +21,8 @@ import java.util.ArrayList;
 public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
     boolean correct;
-    ArrayList list = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList list = new ArrayList();
+    String playerAnswersBooleansList = "", playerAnswersList = "";
     int questionNo, score;
     String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
@@ -48,8 +49,8 @@ public class QuestionResultActivity extends AppCompatActivity {
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
-            playerAnswersBooleansList = intent.getParcelableArrayListExtra("currentPlayerAnswersBooleans");
-            playerAnswersList = intent.getParcelableArrayListExtra("currentPlayerAnswers");
+            playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
+            playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
             if (currentChallenger == 1) {
                 secondPlayerName = intent.getStringExtra("player2Name");
                 secondPlayerEmail = intent.getStringExtra("player2Email");
@@ -63,12 +64,12 @@ public class QuestionResultActivity extends AppCompatActivity {
         if (correct) {
             resultText.setText("إجابة صحيحة");
             resultText.setTextColor(Color.GREEN);
-            playerAnswersBooleansList.add(true);
+            playerAnswersBooleansList += true + " ";//TODO
             score++;
         } else {
             resultText.setText("إجابة خاطئة");
             resultText.setTextColor(Color.RED);
-            playerAnswersBooleansList.add(false);
+            playerAnswersBooleansList += false + " ";
         }
 
         i = new Intent(this, QuestionActivity.class);
@@ -87,8 +88,8 @@ public class QuestionResultActivity extends AppCompatActivity {
                         i.putExtra("questionNo", questionNo + 1);
                         i.putExtra("score", score);
                         i.putExtra("subject", subject);
-                        i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                        i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+                        i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                        i.putExtra("currentPlayerAnswers", playerAnswersList);
                         i.putExtra("currentChallenger", currentChallenger);
 
                         if (currentChallenger == 1) {
@@ -118,8 +119,8 @@ public class QuestionResultActivity extends AppCompatActivity {
                     } finally {
                         Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
                         intent1.putExtra("currentChallenger", currentChallenger);
-                        intent1.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                        intent1.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+                        intent1.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                        intent1.putExtra("currentPlayerAnswers", playerAnswersList);
                         intent1.putExtra("score", score);
                         intent1.putExtra("subject", subject);
 

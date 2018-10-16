@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +29,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
+import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.waitingChallengeText;
+import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 import static com.mk.playAndLearn.utils.Strings.yourTurnChallengeText;
 
 public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.MyHolder> {
@@ -59,15 +66,48 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
         if (challenge.getChallengerName() != null)
             holder.challengerName.setText(challenge.getChallengerName());
         //TODO : think about changing the text below
-        if (challenge.getState().equals("لم يكتمل")) {
+        if (challenge.getState().equals(uncompletedChallengeText)) {
             String stateText;
             if (challenge.getCurrentPlayer() == 1)
                 stateText = waitingChallengeText;
             else
                 stateText = yourTurnChallengeText;
-
+            Log.v("challengesAdapter", "state text is : " + stateText + " current player : " + challenge.getCurrentPlayer());
             holder.state.setText(stateText);
         }
+
+        if (challenge.getState().equals(completedChallengeText)){
+            if(challenge.getPlayer1Score() == challenge.getPlayer2Score()){
+                holder.state.setText(drawChallengeText);
+            }
+            else {
+                if(challenge.getCurrentPlayer() == 1){
+                    if(challenge.getPlayer1Score() > challenge.getPlayer2Score()){
+                        holder.state.setText(wonChallengeText);
+                        holder.state.setBackgroundColor(context.getResources().getColor(R.color.green));
+                    }
+                    else {
+                        holder.state.setText(loseChallengeText);
+                        holder.state.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    }
+                }
+                else if(challenge.getCurrentPlayer() == 2){
+                    if(challenge.getPlayer2Score() > challenge.getPlayer1Score()){
+                        holder.state.setText(wonChallengeText);
+                        holder.state.setBackgroundColor(context.getResources().getColor(R.color.green));
+                    }
+                    else {
+                        holder.state.setText(loseChallengeText);
+                        holder.state.setBackgroundColor(context.getResources().getColor(R.color.red));
+                    }
+                }
+            }
+        }
+
+        if(challenge.getState().equals(refusedChallengeText)){
+            holder.state.setText(refusedChallengeText);
+        }
+
         if (challenge.getDate() != null)
             holder.date.setText(challenge.getDate());
         if (challenge.getSubject() != null)
@@ -77,7 +117,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
         if (challenge.getImage() != null)
             Picasso.with(context).load(challenge.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
         //TODO : add condition if the challenge completed shows the challenge result and right and wrong answers booleans .. by sending the id of challenge to the new activity and get the new data there
-        if (challenge.getState().equals("لم يكتمل") && challenge.getCurrentPlayer() == 2) {
+        if (challenge.getState().equals(uncompletedChallengeText) && challenge.getCurrentPlayer() == 2) {
             //TODO : edit this if needed
             holder.challengeView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -105,7 +145,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             ref.child(challenge.getId()).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()) {
+                                    if (dataSnapshot.exists()) {
                                         ref.child(challenge.getId()).child("player2score").setValue(0);
                                         ref.child(challenge.getId()).child("state").setValue(refusedChallengeText);
                                     }
@@ -124,9 +164,6 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                     dialog.show();
                 }
             });
-        }
-        else {
-            holder.state.setText(challenge.getState());
         }
 
     }

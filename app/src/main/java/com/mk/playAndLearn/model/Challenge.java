@@ -47,6 +47,23 @@ public class Challenge {
 
     String secondChallengerUid;
     String score;
+    long player1Score, player2Score;
+
+    public long getPlayer1Score() {
+        return player1Score;
+    }
+
+    public void setPlayer1Score(long player1Score) {
+        this.player1Score = player1Score;
+    }
+
+    public long getPlayer2Score() {
+        return player2Score;
+    }
+
+    public void setPlayer2Score(long player2Score) {
+        this.player2Score = player2Score;
+    }
 
     public long getSecondChallengerScore() {
         return secondChallengerScore;
@@ -122,4 +139,26 @@ public class Challenge {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
+
+   /* @Override
+    public boolean equals(Object obj) {
+        boolean isEqual = false;
+
+        if (obj != null && obj instanceof Challenge) {
+            isEqual = this.id.equals(((Challenge) obj).getId());
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return id;
+    }*/
 }

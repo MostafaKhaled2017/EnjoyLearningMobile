@@ -250,17 +250,18 @@ public class GeneralSignActivity extends AppCompatActivity {
     }
 
     public void navigate() {
-        /*FirebaseUser user = mAuth.getCurrentUser();
-        assert user != null;
+        FirebaseUser user = mAuth.getCurrentUser();
         userName = user.getDisplayName();
         userImage = user.getPhotoUrl().toString();
         userEmail = user.getEmail();
+        assert user != null;
+
 
         Log.v("Logging", "user name is : " + userName
                 + " user image is : " + userImage
                 + " user email is : " + userEmail);
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        /*SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
         editor.clear();
         editor.apply();
@@ -287,6 +288,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                     myRef.child(mAuth.getUid()).setValue(map);
                 }
                 else {
+                    //TODO : think about moving this part to welcome screen
                     currentUserReference =  myRef.child(mAuth.getUid());
                     currentUserReference.child("userName").setValue(userName);
                     currentUserReference.child("userImage").setValue(userImage);

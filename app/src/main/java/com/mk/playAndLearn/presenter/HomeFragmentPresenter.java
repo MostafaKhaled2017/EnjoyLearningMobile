@@ -90,7 +90,7 @@ public class HomeFragmentPresenter {
 
     public void getPosts() {
         view.startRecyclerAdapter(postsList);
-        if (!postsList.isEmpty()) {
+        if (!postsList.isEmpty()) {//TODO : check if we need to create new objects instead of using clear
             postsList.clear();
             view.notifyAdapter();
         }
@@ -120,7 +120,7 @@ public class HomeFragmentPresenter {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                startAsynkTask();//TODO : think about removeing the child from the list only
             }
 
             @Override

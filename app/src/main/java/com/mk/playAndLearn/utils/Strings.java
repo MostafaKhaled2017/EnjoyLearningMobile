@@ -16,6 +16,9 @@ public class Strings {
     public static String currentUserImage = currentUser.getPhotoUrl().toString();
     public static String currentUserEmail = currentUser.getEmail();
     public static String currentUserUid = currentUser.getUid();
+    public static String wonChallengeText = "ربحت";
+    public static String loseChallengeText = "خسرت";
+    public static String drawChallengeText = "تعادل";
 
 
 }

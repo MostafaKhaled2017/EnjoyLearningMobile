@@ -203,34 +203,31 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     @Override
     public void startUnCompletedChallengesAdapter(ArrayList uncompletedChallengesList) {
-        if(uncompletedChallengesRecyclerView.getAdapter() == null) {
             uncompletedChallengeRecyclerAdapter = new ChallengesAdapter(uncompletedChallengesList, getActivity());
             RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new LinearLayoutManager(getActivity());
             uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
             uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
             uncompletedChallengesRecyclerView.setAdapter(uncompletedChallengeRecyclerAdapter);
-        }
     }
 
     @Override
     public void startCompletedChallengesAdapter(ArrayList completedChallengesList) {
-        if(completedChallengesRecyclerView.getAdapter() == null) {
             completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
             RecyclerView.LayoutManager completedChallengesLayoutManager = new LinearLayoutManager(getActivity());
             completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
             completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
             completedChallengesRecyclerView.setAdapter(completedChallengeRecyclerAdapter);
-        }
+
     }
 
     @Override
-    public void notifyAdapters(int completedListSize, int uncompletedListSize) {
+    public void notifyAdapters(int completedListSize, int uncompletedListSize, String src) {
         completedChallengesRecyclerView.removeAllViews();
         uncompletedChallengesRecyclerView.removeAllViews();
         completedChallengeRecyclerAdapter.notifyDataSetChanged();
         uncompletedChallengeRecyclerAdapter.notifyDataSetChanged();
-        Log.v("Logging2", "completed list size : " + completedListSize
-                + ", uncompleted list size : " + uncompletedListSize);
+        Log.v("Logging23", "completed list size : " + completedListSize
+                + ", uncompleted list size : " + uncompletedListSize + " in : " + src);
     }
 
     @Override

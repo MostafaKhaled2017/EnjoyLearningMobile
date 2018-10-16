@@ -44,7 +44,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
     DatabaseReference questionsReference;
 
 
-    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList(), playerAnswersBooleansList = new ArrayList(), playerAnswersList = new ArrayList();
+    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList();
+    String playerAnswersBooleansList = "", playerAnswersList = "";
 
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
@@ -218,8 +219,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         }
                     }
                     Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
-                    i.putParcelableArrayListExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                    i.putParcelableArrayListExtra("currentPlayerAnswers", playerAnswersList);
+                    i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                    i.putExtra("currentPlayerAnswers", playerAnswersList);
                     i.putExtra("questionNo", 0);
                     i.putExtra("score", 0);
                     i.putExtra("subject", subject);

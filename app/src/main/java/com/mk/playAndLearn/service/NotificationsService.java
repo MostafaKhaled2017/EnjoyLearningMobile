@@ -6,32 +6,16 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
-import com.mk.playAndLearn.model.Challenge;
-import com.mk.playAndLearn.model.Question;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.mk.playAndLearn.NotificationID.getID;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
@@ -42,6 +26,8 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 public class NotificationsService extends Service {
     int currentPlayer;
+    ChildEventListener player1Listener, player2Listener;
+    String onChildAddedPreviusKey = "", onChildChangedpreviusKey = "";
     //the full number which is coming from the challenges fragment
 
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
@@ -82,10 +68,11 @@ public class NotificationsService extends Service {
                 String challengeId = dataSnapshot.getKey();
                 getCurrentPlayer(player1Uid);
                 Log.v("Logging2", "onChildAdded");
-                if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2) {
-                    showNotification("لديك التحدى", "لديك تحدي جديد");
+                if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
+                    showNotification("لديك تحدى", "لديك تحدي جديد");
                     challengesReference.child(challengeId).child("player2notified").setValue(true);
                 }
+                onChildAddedPreviusKey = dataSnapshot.getKey();
             }
 
             @Override
@@ -93,13 +80,14 @@ public class NotificationsService extends Service {
                 String challengeState = dataSnapshot.child("state").getValue().toString();
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
                 String challengeId = dataSnapshot.getKey();
+                Log.v("notification", "onChildChangedNotification");
                 getCurrentPlayer(player1Uid);
-                if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))) {
+                Log.v("onChildChangedService","the current key is : " + dataSnapshot.getKey() + " , previus key is : " + onChildChangedpreviusKey);
+                if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !dataSnapshot.getKey().equals(onChildChangedpreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
                     showNotification("اكتمل التحدى", "لديك تحدي مكتمل جديد");
                     challengesReference.child(challengeId).child("player1notified").setValue(true);
+                    onChildChangedpreviusKey = dataSnapshot.getKey();
                 }
-
-
             }
 
             @Override
@@ -121,9 +109,9 @@ public class NotificationsService extends Service {
         };
 
         //this gives the challenges that the current user has started
-        challengesReference.orderByChild("player1notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
+        player1Listener =  challengesReference.orderByChild("player1notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
         //this code gives data where current user is player 2
-        challengesReference.orderByChild("player2notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
+        player2Listener = challengesReference.orderByChild("player2notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
 
         return START_STICKY;
     }

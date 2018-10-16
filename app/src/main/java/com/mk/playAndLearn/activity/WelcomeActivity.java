@@ -28,5 +28,11 @@ public class WelcomeActivity extends AppCompatActivity {
         };
         timer.start();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.gc();
+    }
 }
 

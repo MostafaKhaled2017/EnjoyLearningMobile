@@ -52,6 +52,7 @@
             android:layout_below="@id/addQuestionEditText"
             android:layout_margin="10dp"
             android:text="الإجابات"
+            android:textColor="@color/writingColor"
             android:textSize="22sp" />
 
         <TextView
