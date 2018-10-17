@@ -17,6 +17,19 @@
         <item>Geometry</item>
         <item>Trigonometry</item>
     </string-array>
+    <string-array name="subjects_array_with_default">
+        <item>اختر المادة</item>
+        <item>لغة عربية</item>
+        <item>لغة انجليزية</item>
+        <item>جغرافيا</item>
+        <item>تاريخ</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+        <item>Algebra</item>
+        <item>Geometry</item>
+        <item>Trigonometry</item>
+    </string-array>
 
     <!--<string-array name="subjects_array2">
         <item>لغة عربية</item>
