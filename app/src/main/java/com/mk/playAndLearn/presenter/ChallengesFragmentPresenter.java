@@ -240,8 +240,10 @@ public class ChallengesFragmentPresenter {
     }
 
     public void removeListeners() {
-        challengesReference.removeEventListener(player1Listener);
-        challengesReference.removeEventListener(player2Listener);
+        if(player1Listener != null)
+            challengesReference.removeEventListener(player1Listener);
+        if(player2Listener != null)
+            challengesReference.removeEventListener(player2Listener);
     }
 
     public void onInitialDataLoaded() {

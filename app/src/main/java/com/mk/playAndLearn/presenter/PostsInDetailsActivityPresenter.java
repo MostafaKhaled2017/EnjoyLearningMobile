@@ -158,7 +158,8 @@ public class PostsInDetailsActivityPresenter {
     }
 
     public void removeListeners(){
-        commentsReference.removeEventListener(commentsListener);
+        if(commentsListener != null)
+            commentsReference.removeEventListener(commentsListener);
     }
 
     public interface View {

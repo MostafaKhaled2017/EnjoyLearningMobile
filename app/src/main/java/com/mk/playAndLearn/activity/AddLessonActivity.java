@@ -73,7 +73,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         unitOrderSpinner.setOnItemSelectedListener(this);
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.subjects_array, android.R.layout.simple_spinner_item);
+                R.array.subjects_array_with_default, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -95,7 +95,11 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                 String title = etTitle.getText().toString();
                 if (TextUtils.isEmpty(content) || TextUtils.isEmpty(title)) {
                     Toast.makeText(AddLessonActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else if(currentSubject.equals("اختر المادة")) {
+                    Toast.makeText(AddLessonActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الدرس", Toast.LENGTH_SHORT).show();
+                }else
+                {
                     map = new HashMap<>();
                     map.put("title", title);
                     map.put("content", content);

@@ -1,83 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal|center_vertical"
-    android:orientation="vertical"
-    tools:context="com.mk.playAndLearn.activity.GeneralSignActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ProgressBar
+        android:id="@+id/progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-7dp"
+        android:indeterminate="true"
+        android:layout_alignParentTop="true"
+        android:max="100"
+        android:visibility="gone"/>
 
-
-
-    <android.support.v7.widget.AppCompatImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/student"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"/>
-
-    <android.support.v7.widget.AppCompatTextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="@dimen/general_margin"
-        android:layout_marginRight="@dimen/general_margin"
-        android:text="قم بإنشاء حساب جديد أو تسجيل الدخول بضغطة زر واحدة."
-        android:textColor="@color/writingColor"
-        android:textSize="20sp"/>
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        tools:context="com.mk.playAndLearn.activity.GeneralSignActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="@dimen/general_margin"
-        android:layout_marginBottom="20dp"
-        android:orientation="horizontal">
-
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/userTypesSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right" />
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/student" />
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="وظيفة المستخدم : "
+            android:layout_gravity="right"
+            android:layout_marginLeft="@dimen/general_margin"
+            android:layout_marginRight="@dimen/general_margin"
+            android:layout_marginBottom="15dp"
+            android:text="قم بإنشاء حساب جديد أو تسجيل الدخول بضغطة زر واحدة."
             android:textColor="@color/writingColor"
-            android:textSize="18sp"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/general_margin"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/userTypesSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="وظيفة المستخدم : "
+                android:textColor="@color/writingColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/unStudentSignAlertText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/general_margin"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="30dp"
+            android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق"
+            android:textColor="#ff0000"
+            android:textSize="15sp"
             android:textStyle="bold" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googleBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp" />
+
+        <!--<com.facebook.login.widget.LoginButton
+            android:id="@+id/facebookBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:layout_marginBottom="30dp" />-->
+
+
     </LinearLayout>
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/unStudentSignAlertText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="@dimen/general_margin"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="15dp"
-        android:text="تنبيه هام : إذا لم تسجل في البرنامج كطالب فلن يظهر اسمك في ترتيب أفضل الطلبة في التطبيق"
-        android:textColor="#ff0000"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/googleBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="10dp" />
-
-    <!--<com.facebook.login.widget.LoginButton
-        android:id="@+id/facebookBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="30dp" />-->
-
-
-
-</LinearLayout>
+</RelativeLayout>

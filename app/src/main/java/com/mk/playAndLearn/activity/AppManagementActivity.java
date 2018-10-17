@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +33,7 @@ public class AppManagementActivity extends AppCompatActivity {
 
     ArrayList questionList = new ArrayList(), lessonsList = new ArrayList();
     boolean questionsReady = false, lessonsReady = false;
+    ValueEventListener questionsListener, lessonsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,7 @@ public class AppManagementActivity extends AppCompatActivity {
     public void getSuggestedQuestions() {
         if (!questionList.isEmpty())
             questionList.clear();
-        questionsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
+       questionsListener =  questionsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -108,7 +110,7 @@ public class AppManagementActivity extends AppCompatActivity {
     public void getSuggestedLessons() {
         if (!lessonsList.isEmpty())
             lessonsList.clear();
-        lessonsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
+      lessonsListener =   lessonsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -175,7 +177,19 @@ public class AppManagementActivity extends AppCompatActivity {
         }
     }
 
+    public void removeListeners(){
+        if(questionsListener != null)
+            questionsReference.removeEventListener(questionsListener);
 
+        if(lessonsListener != null)
+            lessonsReference.removeEventListener(lessonsListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        removeListeners();
+    }
 }
 
 

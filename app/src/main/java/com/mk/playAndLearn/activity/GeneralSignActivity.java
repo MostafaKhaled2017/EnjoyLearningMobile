@@ -1,5 +1,6 @@
 package com.mk.playAndLearn.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +69,7 @@ public class GeneralSignActivity extends AppCompatActivity {
     FirebaseDatabase database;
     Spinner userTypesSpinner;
     TextView unStudentSignAlertText;
+    ProgressBar progressBar;
 
     private GoogleSignInClient mGoogleSignInClient;
     String userName = "", userImage = "", userEmail = "", userType = "";
@@ -83,7 +86,9 @@ public class GeneralSignActivity extends AppCompatActivity {
         myRef = database.getReference("users");
         userTypesSpinner = findViewById(R.id.userTypesSpinner);
         unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
+        progressBar = findViewById(R.id.progressbar);
 
+        progressBar.setVisibility(View.GONE);
 
         ArrayAdapter<CharSequence> userTypesAdapter = ArrayAdapter.createFromResource(this,
                 R.array.user_types_array, android.R.layout.simple_spinner_item);
@@ -172,7 +177,7 @@ public class GeneralSignActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        progressBar.setVisibility(View.VISIBLE);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -189,7 +194,8 @@ public class GeneralSignActivity extends AppCompatActivity {
                                     navigate();
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق قد يكون لديك مشكلة في الإتصال بالانترنت أو أن إدارة البرنامج قامت بإلغاء تفعيل حسابك", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق من فضلك تأكد من الإتصال بالإنترنت وأعد المحاولة", Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.GONE);
                                     //updateUI(null);
                                 }
 
@@ -199,7 +205,9 @@ public class GeneralSignActivity extends AppCompatActivity {
 
                 //Toast.makeText(this, "نجح تسجيل الدخول",Toast.LENGTH_SHORT).show();
             } catch (ApiException e) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(GeneralSignActivity.this, "حدثت مشكلة أثناء محاولة التسجيل برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
+                Log.v("Logging", "sign in exception : " + e);
 
             }
         }//TODO
@@ -225,6 +233,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(GeneralSignActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
                             //updateUI(null);
                         }
 

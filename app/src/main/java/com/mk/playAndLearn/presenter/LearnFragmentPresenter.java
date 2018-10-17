@@ -129,7 +129,8 @@ public class LearnFragmentPresenter {
     }
 
     public void removeListeners(){
-        lessonsReference.removeEventListener(lessonsListener);
+        if(lessonsListener != null)
+            lessonsReference.removeEventListener(lessonsListener);
     }
 
     public interface View {
