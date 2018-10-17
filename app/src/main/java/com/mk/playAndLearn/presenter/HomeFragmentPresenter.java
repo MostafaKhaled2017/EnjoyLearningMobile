@@ -153,7 +153,8 @@ public class HomeFragmentPresenter {
     }
 
     public void removeListeners(){
-        postsReference.removeEventListener(postsEventListener);
+        if(postsEventListener != null)
+            postsReference.removeEventListener(postsEventListener);
     }
     public interface View {
         void retryConnection();
