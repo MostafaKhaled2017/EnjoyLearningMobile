@@ -33,11 +33,14 @@ import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHolder> {
     ArrayList<Comment> list;
     Context context;
+    //used to load the votes number at the first time only
+    boolean visied;
     long votes;
 
-    public CommentsAdapter(ArrayList<Comment> list, Context context) {
+    public CommentsAdapter(ArrayList<Comment> list, Context context, boolean visited) {
         this.list = list;
         this.context = context;
+        this.visied = visited;
     }
 
     @Override
@@ -61,20 +64,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (comment.getUserImage() != null)
             Picasso.with(context).load(comment.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
-        commentsReference.child(comment.getCommentId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            holder.votes.setText(comment.getVotes() + "");
 
-                votes = (long) dataSnapshot.child("votes").getValue();
-                holder.votes.setText(votes + "");
-                commentsReference.removeEventListener(this);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         holder.upArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,13 +73,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                 commentsReference.orderByKey().equalTo(comment.getCommentId()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.v("Log83", "up arrow onDataChanged");
                         validateVoting(dataSnapshot, comment, holder, "upArrow");
                         commentsReference.removeEventListener(this);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        commentsReference.removeEventListener(this);
                     }
                 });
             }
@@ -100,13 +92,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                 commentsReference.orderByKey().equalTo(comment.getCommentId()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        validateVoting(dataSnapshot, comment, holder,"downArrow");
+                        Log.v("Log83", "down arrow onDataChanged");
+                        validateVoting(dataSnapshot, comment, holder, "downArrow");
                         commentsReference.removeEventListener(this);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        commentsReference.removeEventListener(this);
                     }
                 });
             }
@@ -119,9 +112,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                     showActionsDialog(comment.getCommentId(), holder, comment.getContent(), position);
                 }
                 return true;
-        }
+            }
         });
-        }
+    }
 
     @Override
     public int getItemCount() {
@@ -159,41 +152,47 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         }
     }
 
-boolean isVoted(String[] upVotedUsersArray, String[] downVotedUsers){
-        for(String id : upVotedUsersArray){
-            if(id.equals(currentUserUid)){
+    boolean isVoted(String[] upVotedUsersArray, String[] downVotedUsers) {
+        for (String id : upVotedUsersArray) {
+            if (id.equals(currentUserUid)) {
                 return true;
             }
         }
-        for(String id : downVotedUsers){
-            if(id.equals(currentUserUid)){
+        for (String id : downVotedUsers) {
+            if (id.equals(currentUserUid)) {
                 return true;
             }
         }
         return false;
-}
+    }
 
-void validateVoting(DataSnapshot dataSnapshot, Comment comment, CommentsAdapter.MyHolder holder, String tag){
-    Log.v("Logging23", "data snapshot is : " + dataSnapshot);
-    String upVotedUsers = dataSnapshot.child(comment.getCommentId()).child("upVotedUsers").getValue().toString();
-    votes = (long) dataSnapshot.child(comment.getCommentId()).child("votes").getValue();
-    String downVotedUsers = dataSnapshot.child(comment.getCommentId()).child("downVotedUsers").getValue().toString();
-    String[] upVotedUsersArray = upVotedUsers.split(" ");
-    String[] downVotedUsersArray = downVotedUsers.split(" ");
-    if(!isVoted(upVotedUsersArray, downVotedUsersArray)) {
-        commentsReference.child(comment.getCommentId()).child("upVotedUsers").setValue(upVotedUsers + currentUserUid + " ");
-        if(tag.equals("upArrow")){
-        votes ++;
-        }else if(tag.equals("downArrow")){
-            votes --;
+    void validateVoting(DataSnapshot dataSnapshot, final Comment comment, final CommentsAdapter.MyHolder holder, String tag) {
+        String upVotedUsers = dataSnapshot.child(comment.getCommentId()).child("upVotedUsers").getValue().toString();
+        String downVotedUsers = dataSnapshot.child(comment.getCommentId()).child("downVotedUsers").getValue().toString();
+        votes = (long) dataSnapshot.child(comment.getCommentId()).child("votes").getValue();
+        String[] upVotedUsersArray = upVotedUsers.split(" ");
+        String[] downVotedUsersArray = downVotedUsers.split(" ");
+        if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
+            if (tag.equals("upArrow")) {
+                votes++;
+                commentsReference.child(comment.getCommentId()).child("upVotedUsers").setValue(upVotedUsers + currentUserUid + " ");
+            } else if (tag.equals("downArrow")) {
+                votes--;
+                commentsReference.child(comment.getCommentId()).child("downVotedUsers").setValue(downVotedUsers + currentUserUid + " ");
+
+            }
+            commentsReference.child(comment.getCommentId()).child("votes").setValue(votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.v("Logging", "votes : " + votes);
+                    holder.votes.setText(votes + "");
+                    comment.setVotes(votes);
+                }
+            });
+        } else {
+            Toast.makeText(context, "لا يمكنك التصويت لنفس التعليق أكثر من مرة", Toast.LENGTH_SHORT).show();
         }
-        holder.votes.setText(votes + "");
-        commentsReference.child(comment.getCommentId()).child("votes").setValue(votes);
     }
-    else {
-        Toast.makeText(context, "لا يمكنك التصويت لنفس التعليق أكثر من مرة", Toast.LENGTH_SHORT).show();
-    }
-}
 
 
     private void showActionsDialog(final String id, final MyHolder holder, final String content, final int position) {

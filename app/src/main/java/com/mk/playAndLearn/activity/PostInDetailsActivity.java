@@ -196,7 +196,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new CommentsAdapter(list, this);
+        recyclerAdapter = new CommentsAdapter(list, this, false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

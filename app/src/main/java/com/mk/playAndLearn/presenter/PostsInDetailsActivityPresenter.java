@@ -87,7 +87,9 @@ public class PostsInDetailsActivityPresenter {
                 String userImage = dataSnapshot.child("userImage").getValue().toString();
                 String date = dataSnapshot.child("date").getValue().toString();
                 String writerUid = dataSnapshot.child("writerUid").getValue().toString();
+                long votes = (long) dataSnapshot.child("votes").getValue();
                 String commentId = dataSnapshot.getKey();
+                comment.setVotes(votes);
                 comment.setCommentId(commentId);
                 comment.setWriterUid(writerUid);
                 comment.setUserName(userName);
@@ -102,12 +104,22 @@ public class PostsInDetailsActivityPresenter {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String content = dataSnapshot.child("content").getValue().toString();
+                long votes = (long) dataSnapshot.child("votes").getValue();
 
+                for (int i = 0; i < commentsList.size(); i++) {
+                    if (commentsList.get(i).getCommentId().equals(dataSnapshot.getKey())) {
+                        commentsList.get(i).setContent(content);
+                        commentsList.get(i).setVotes(votes);
+                        view.notifyAdapter();
+                        break;
+                    }
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                startAsynkTask();
+                startAsynkTask();//TODO : it 's better to change that to more efficient way
             }
 
             @Override

@@ -17,9 +17,7 @@ android {
         }
     }
     lintOptions {
-
         checkReleaseBuilds false
-
     }
     buildToolsVersion '28.0.3'
 }

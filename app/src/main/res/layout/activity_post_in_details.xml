@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- TODO : it's better to add scroll view around the recycler view and solve its problems -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -70,12 +71,12 @@
             android:id="@+id/postContentInDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@id/postImageInDetails"
-            android:layout_marginBottom="5dp"
+            android:layout_alignParentRight="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="25dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="5dp"
             android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
             android:textColor="@color/black"
             android:textSize="@dimen/generalTextSize" />
@@ -85,56 +86,59 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:backgroundTint="@color/fabColor"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@color/white" />
 
     <TextView
-        android:layout_margin="15dp"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/writingColor"
         android:id="@+id/commentsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/postMainData"
+        android:layout_alignParentRight="true"
+        android:layout_margin="15dp"
         android:text="التعليقات"
+        android:textColor="@color/writingColor"
         android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_below="@id/postMainData"/>
+        android:textStyle="bold" />
 
-    <android.support.v7.widget.RecyclerView
-        android:overScrollMode="never"
-        android:id="@+id/commentsRecyclerView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/commentsText"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/commentsRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/commentsText"
+            android:overScrollMode="never" />
 
     <ProgressBar
         android:id="@+id/commentsProgressBar"
-        android:layout_below="@id/commentsText"
-        android:layout_marginTop="75dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@id/commentsText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp" />
 
     <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/noCommentsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/commentsText"
-        android:layout_marginTop="75dp"
-        android:id="@+id/noCommentsText"
-        android:text="لا يوجد تعليقات"
-        android:textSize="@dimen/nothing_text_size"
-        android:textColor="@color/writingColor"
         android:layout_centerHorizontal="true"
-        android:visibility="invisible"/>
+        android:layout_marginTop="75dp"
+        android:text="لا يوجد تعليقات"
+        android:textColor="@color/writingColor"
+        android:textSize="@dimen/nothing_text_size"
+        android:visibility="invisible" />
 
-    <include layout="@layout/no_internet_connection_text"
+    <include
+        layout="@layout/no_internet_connection_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
+        android:layout_below="@id/commentsText"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/commentsText"/>
+        android:layout_marginTop="75dp" />
 
 
 </RelativeLayout>

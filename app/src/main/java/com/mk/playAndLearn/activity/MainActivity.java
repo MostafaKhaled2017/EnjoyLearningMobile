@@ -50,6 +50,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.mk.playAndLearn.utils.Firebase.auth;
+import static com.mk.playAndLearn.utils.Firebase.database;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
@@ -151,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
 
         //end editing in database*/
-
 
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
         mViewPager.setPageTransformer(false, new TabletTransformer());

@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.ButterKnife;
+
+import static com.mk.playAndLearn.utils.Firebase.database;
 //TODO : solve the shared prefrence tutorial
 //TODO : change the app in facebook for developers from in development to live
 //TODO : remove the tradition sign in and sign up and think about removing sign in with facebook
@@ -83,6 +85,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         button = findViewById(R.id.googleBtn);
         database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(false);
         myRef = database.getReference("users");
         userTypesSpinner = findViewById(R.id.userTypesSpinner);
         unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
@@ -263,8 +266,6 @@ public class GeneralSignActivity extends AppCompatActivity {
         userName = user.getDisplayName();
         userImage = user.getPhotoUrl().toString();
         userEmail = user.getEmail();
-        assert user != null;
-
 
         Log.v("Logging", "user name is : " + userName
                 + " user image is : " + userImage

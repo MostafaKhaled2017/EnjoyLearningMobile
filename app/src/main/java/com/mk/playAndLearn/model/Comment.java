@@ -8,6 +8,15 @@ public class Comment {
     String date;
     String commentId;
     String writerUid;
+    long votes;
+
+    public long getVotes() {
+        return votes;
+    }
+
+    public void setVotes(long votes) {
+        this.votes = votes;
+    }
 
     public String getWriterUid() {
         return writerUid;
