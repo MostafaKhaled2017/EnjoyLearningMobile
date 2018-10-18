@@ -10,10 +10,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
-        //setContentView(R.layout.activity_welcome);
+        //setContentView(R.layout.activity_welcome); TODO
         final Intent i = new Intent(this, GeneralSignActivity.class);
-        Thread timer = new Thread() {
+        /*Thread timer = new Thread() {
             @Override
             public void run() {
                 try {
@@ -21,12 +20,14 @@ public class WelcomeActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    startActivity(i);
-                    finish();
+
                 }
             }
         };
-        timer.start();
+        timer.start();*/ //TODO
+
+        startActivity(i);
+        finish();
     }
 
     @Override

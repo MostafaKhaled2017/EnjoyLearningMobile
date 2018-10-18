@@ -11,6 +11,7 @@ public class Lesson implements Serializable {
     String writerName;
     String writerEmail;
     String writerUid;
+    String lessonId;
 
     public String getLessonId() {
         return lessonId;
@@ -20,7 +21,6 @@ public class Lesson implements Serializable {
         this.lessonId = lessonId;
     }
 
-    String lessonId;
     long unitNo, lessonNo;
 
     public long getUnitNo() {

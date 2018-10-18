@@ -33,7 +33,6 @@ import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserName;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 import static com.mk.playAndLearn.utils.Firebase.questionsReference;
-import static com.mk.playAndLearn.utils.Strings.subjectsArray;
 
 public class AddQuestionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Spinner subjectsSpinner;

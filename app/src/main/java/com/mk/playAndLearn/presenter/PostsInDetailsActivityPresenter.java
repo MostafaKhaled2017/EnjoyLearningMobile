@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Comment;
+import com.mk.playAndLearn.model.Post;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -36,10 +37,10 @@ import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class PostsInDetailsActivityPresenter {
     View view;
-    ArrayList commentsList = new ArrayList();
+    ArrayList<Comment> commentsList = new ArrayList();
     ChildEventListener commentsListener;
 
-    public PostsInDetailsActivityPresenter(View view){
+    public PostsInDetailsActivityPresenter(View view) {
         this.view = view;
     }
 
@@ -72,7 +73,6 @@ public class PostsInDetailsActivityPresenter {
     }
 
 
-
     public void getComments() {
         clearList();
         view.startRecyclerAdapter(commentsList);
@@ -86,12 +86,18 @@ public class PostsInDetailsActivityPresenter {
                 String content = dataSnapshot.child("content").getValue().toString();
                 String userImage = dataSnapshot.child("userImage").getValue().toString();
                 String date = dataSnapshot.child("date").getValue().toString();
+                String writerUid = dataSnapshot.child("writerUid").getValue().toString();
+                String commentId = dataSnapshot.getKey();
+                comment.setCommentId(commentId);
+                comment.setWriterUid(writerUid);
                 comment.setUserName(userName);
                 comment.setContent(content);
                 comment.setUserImage(userImage);
                 comment.setDate(date);
-                commentsList.add(0, comment);
-                view.notifyAdapter();
+                if(!existsInCommentsList(commentId)) {
+                    commentsList.add(0, comment);
+                    view.notifyAdapter();
+                }
             }
 
             @Override
@@ -133,13 +139,13 @@ public class PostsInDetailsActivityPresenter {
         });
     }
 
-    void clearList(){
-        if(!commentsList.isEmpty()) {
+    void clearList() {
+        if (!commentsList.isEmpty()) {
             commentsList.clear();
         }
     }
 
-    public void addComment(String commentText){
+    public void addComment(String commentText) {
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
@@ -151,15 +157,26 @@ public class PostsInDetailsActivityPresenter {
         map.put("userImage", currentUserImage);
         map.put("votes", 0);
         map.put("date", date);
+        map.put("upVotedUsers", "users: ");
+        map.put("downVotedUsers", "users: ");
         map.put("postId", view.getPostId());
-        map.put("userUid", currentUserUid);
-        map.put("content", commentText);
+        map.put("writerUid", currentUserUid);
+        map.put("content", commentText.trim());
         commentsReference.push().setValue(map);
     }
 
-    public void removeListeners(){
-        if(commentsListener != null)
+    public void removeListeners() {
+        if (commentsListener != null)
             commentsReference.removeEventListener(commentsListener);
+    }
+
+    private boolean existsInCommentsList(String commentId) {
+        for (Comment comment : commentsList) {
+            if (comment.getCommentId().equals(commentId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public interface View {

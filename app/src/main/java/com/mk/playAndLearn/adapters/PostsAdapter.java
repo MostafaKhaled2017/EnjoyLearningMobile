@@ -1,15 +1,22 @@
 package com.mk.playAndLearn.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.model.Post;
@@ -17,7 +24,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
+import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
 
     ArrayList<Post> list;
     Context context;
@@ -30,22 +40,22 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.post_item,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.post_item, parent, false);
         MyHolder myHolder = new MyHolder(view);
 
         return myHolder;
     }
 
     @Override
-    public void onBindViewHolder(MyHolder holder, int position) {
+    public void onBindViewHolder(final MyHolder holder,final int position) {
         final Post post = list.get(position);
-        if(post.getContent() != null)
+        if (post.getContent() != null)
             holder.content.setText(post.getContent());
-        if(post.getDate() != null)
+        if (post.getDate() != null)
             holder.date.setText(post.getDate());
-        if(post.getWriter() != null && !post.getWriter().equals(""))
+        if (post.getWriter() != null && !post.getWriter().equals(""))
             holder.name.setText(post.getWriter());
-        if(post.getImage() != null && !post.getImage().equals(""))
+        if (post.getImage() != null && !post.getImage().equals(""))
             Picasso.with(context).load(post.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -56,9 +66,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
                 intent.putExtra("date", post.getDate());
                 intent.putExtra("name", post.getWriter());
                 intent.putExtra("image", post.getImage());
-                if(post.getId() != null)
+                if (post.getId() != null)
                     intent.putExtra("id", post.getId());
                 context.startActivity(intent);
+            }
+        });
+
+        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (post.getWriterUid().equals(currentUserUid)) {
+                    showActionsDialog(post.getId(), holder, post.getContent(), position);
+                }
+                return true;//TODO : check this
             }
         });
     }
@@ -68,20 +88,75 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
 
         int arr = 0;
 
-        try{
-            if(list.size()==0) {
+        try {
+            if (list.size() == 0) {
                 arr = 0;
+            } else {
+                arr = list.size();
             }
-            else{
-                arr=list.size();
-            }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
         return arr;
 
     }
 
-    class MyHolder extends RecyclerView.ViewHolder{
+    private void showActionsDialog(final String id, final MyHolder holder, final String content, final int position) {
+        CharSequence colors[] = new CharSequence[]{"تعديل", "حذف"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("اختر من القائمة");
+        builder.setItems(colors, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    showDialog(id, holder, content, position);
+                } else {
+                    postsReference.child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }
+        });
+        builder.show();
+    }
+
+    public void showDialog(final String id, final MyHolder holder, final String content, final int position) {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(context);
+        alertDialogBuilderUserInput.setView(view);
+
+        final EditText inputTextEt = view.findViewById(R.id.dialog_value);
+        inputTextEt.setText(content);
+        final TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        dialogTitle.setText("تعديل المنشور");
+
+        alertDialogBuilderUserInput.setCancelable(true);
+        alertDialogBuilderUserInput.setPositiveButton("تعديل", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String inputText = inputTextEt.getText().toString();
+                postsReference.child(id).child("content").setValue(inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        list.get(position).setContent(inputText);
+                        holder.content.setText(inputText);
+                        Toast.makeText(context, "تم تعديل المنشور بنجاح", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
+        alertDialogBuilderUserInput.show();
+    }
+
+    class MyHolder extends RecyclerView.ViewHolder {
         TextView content, date, name;
         ImageView imageView;
         CardView cardView;
@@ -89,12 +164,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder>{
 
         public MyHolder(View itemView) {
             super(itemView);
-            content =  itemView.findViewById(R.id.postContentInDetails);
+            content = itemView.findViewById(R.id.postContentInDetails);
             date = itemView.findViewById(R.id.postDateInDetails);
             name = itemView.findViewById(R.id.postUserNameInDetails);
             imageView = itemView.findViewById(R.id.postImageInDetails);
             cardView = itemView.findViewById(R.id.card_view_of_posts);
         }
     }
+
 
 }

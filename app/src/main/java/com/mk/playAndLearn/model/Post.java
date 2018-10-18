@@ -2,6 +2,33 @@ package com.mk.playAndLearn.model;
 
 public class Post {
     private String writerName;
+
+    public String getWriterName() {
+        return writerName;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getWriterUid() {
+
+        return writerUid;
+    }
+
+    public void setWriterUid(String writerUid) {
+        this.writerUid = writerUid;
+    }
+
+    private String writerUid;
     private String content;
     private String date;
     private String imageUrl;

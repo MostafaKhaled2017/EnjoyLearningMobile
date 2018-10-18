@@ -50,6 +50,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.mk.playAndLearn.utils.Firebase.auth;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
 import static com.mk.playAndLearn.utils.Strings.currentUserName;
@@ -115,15 +116,15 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
 
-       /* //TODO : comment this part
+       /*//TODO : comment this part
         //start editing in database
-        final DatabaseReference reference = database.getReference("questions");
-        reference.addChildEventListener(new ChildEventListener() {
+
+        usersReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                // DataSnapshot subjectSnapshot = dataSnapshot.child("subject");
                 String id = dataSnapshot.getKey();
-                reference.child(id).child("writerUid").setValue(mAuth.getCurrentUser().getUid());
+                usersReference.child(id).child("admin").setValue(false);
 
             }
 
@@ -233,6 +234,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.appManagement:
                 startActivity(new Intent(this, AppManagementActivity.class));
                 return true;
+            case R.id.editAccoutData:{
+                Intent i=new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("https://myaccount.google.com/privacy"));
+                startActivity(i);
+                return true;}
             case R.id.signOut:
                 auth.signOut();
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);

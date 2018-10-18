@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.playAndLearn.model.Lesson;
+import com.mk.playAndLearn.model.Post;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,7 +22,7 @@ public class LearnFragmentPresenter {
     private Lesson lesson;
     private View view;
 
-    ArrayList lessonsList = new ArrayList();
+    ArrayList<Lesson> lessonsList = new ArrayList();
     ChildEventListener lessonsListener;
 
     public LearnFragmentPresenter(View view) {
@@ -79,12 +80,16 @@ public class LearnFragmentPresenter {
                     String title = value.getTitle();
                     String content = value.getContent();
                     String arabicPosition = value.getArabicPosition();
+                    String lessonId = dataSnapshot.getKey();
+                    lesson.setLessonId(lessonId);
                     lesson.setTitle(title);
                     lesson.setContent(content);
                     lesson.setArabicPosition(arabicPosition);
-                    lessonsList.add(lesson);
+                    if(!existsInLessonsList(lessonId)) {
+                        lessonsList.add(lesson);
+                        view.notifyAdapter();
+                    }
                 }
-                view.notifyAdapter();
             }
 
             @Override
@@ -131,6 +136,15 @@ public class LearnFragmentPresenter {
     public void removeListeners(){
         if(lessonsListener != null)
             lessonsReference.removeEventListener(lessonsListener);
+    }
+
+    private boolean existsInLessonsList(String lessonId) {
+        for (Lesson lesson : lessonsList) {
+            if (lesson.getLessonId().equals(lessonId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public interface View {

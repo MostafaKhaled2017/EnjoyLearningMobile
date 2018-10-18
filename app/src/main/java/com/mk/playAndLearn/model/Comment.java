@@ -6,6 +6,24 @@ public class Comment {
     String userImage;
     String content;
     String date;
+    String commentId;
+    String writerUid;
+
+    public String getWriterUid() {
+        return writerUid;
+    }
+
+    public void setWriterUid(String writerUid) {
+        this.writerUid = writerUid;
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
 
     public String getDate() {
         return date;

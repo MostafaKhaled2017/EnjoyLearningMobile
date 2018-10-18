@@ -15,20 +15,24 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/appManagement"
-        android:title="إدارة التطبيق"
-        app:showAsAction="ifRoom"
         android:icon="@drawable/app_management"
-        android:visible="false"/>
+        android:title="إدارة التطبيق"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
 
     <!-- TODO : add this item if possible -->
-   <!-- <item
-        android:id="@+id/myAccount"
-        android:icon="@drawable/account"
-        android:title="حسابي"
-        app:showAsAction="ifRoom" />-->
+    <!-- <item
+         android:id="@+id/myAccount"
+         android:icon="@drawable/account"
+         android:title="حسابي"
+         app:showAsAction="ifRoom" />-->
     <item
         android:id="@+id/bestStudents"
         android:title="أفضل الطلاب"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/editAccoutData"
+        android:title="تعديل بيانات الحساب"
         app:showAsAction="never" />
     <item
         android:id="@+id/aboutApp"

@@ -10,6 +10,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Post;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 public class HomeFragmentPresenter {
     Post post;
     View view;
-    ArrayList postsList = new ArrayList();
+    ArrayList<Post> postsList = new ArrayList();
     ChildEventListener postsEventListener;
 
     public HomeFragmentPresenter(View view) {
@@ -76,7 +77,7 @@ public class HomeFragmentPresenter {
         Log.v("Logging2", date);
         if (view.validateInput(postText)) {
             Map<String, Object> map = new HashMap<>();
-            map.put("content", postText);
+            map.put("content", postText.trim());
             map.put("date", date);
             map.put("writerName", currentUserName);
             map.put("writerUid", currentUserUid);
@@ -104,13 +105,17 @@ public class HomeFragmentPresenter {
                 String postWriter = dataSnapshot.child("writerName").getValue().toString();
                 String postImage = dataSnapshot.child("image").getValue().toString();
                 String postId = dataSnapshot.getKey();
+                String writerUid = dataSnapshot.child("writerUid").getValue().toString();
+                post.setWriterUid(writerUid);
                 post.setContent(postContent);
                 post.setDate(postDate);
                 post.setWriter(postWriter);
                 post.setImage(postImage);
                 post.setId(postId);
-                postsList.add(0, post);
-                view.notifyAdapter();
+                if(!existsInPostsList(postId)) {
+                    postsList.add(0, post);
+                    view.notifyAdapter();
+                }
             }
 
             @Override
@@ -150,6 +155,15 @@ public class HomeFragmentPresenter {
 
             }
         });
+    }
+
+    private boolean existsInPostsList(String postId) {
+        for (Post p : postsList) {
+            if (p.getId().equals(postId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void removeListeners(){

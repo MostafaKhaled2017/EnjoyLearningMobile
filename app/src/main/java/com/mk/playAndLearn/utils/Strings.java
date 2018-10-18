@@ -19,9 +19,5 @@ public class Strings {
     public static String wonChallengeText = "ربحت";
     public static String loseChallengeText = "خسرت";
     public static String drawChallengeText = "تعادل";
-    public static String[] subjectsArray = {"اختر المادة", "لغة عربية", "لغة انجليزية"
-            , "جغرافيا", "تاريخ", "Physics", "Chemistry"
-            , "Biology", "Algebra", "Geometry", "Trigonometry"};
-
 
 }
