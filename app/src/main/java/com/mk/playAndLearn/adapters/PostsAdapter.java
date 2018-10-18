@@ -17,6 +17,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.model.Post;
@@ -24,6 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
@@ -47,7 +51,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final MyHolder holder,final int position) {
+    public void onBindViewHolder(final MyHolder holder, final int position) {
         final Post post = list.get(position);
         if (post.getContent() != null)
             holder.content.setText(post.getContent());
@@ -119,6 +123,20 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                         }
                     });
 
+                    commentsReference.orderByChild("postId").equalTo(id).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                commentsReference.child(dataSnapshot1.getKey()).removeValue();
+                            }
+                            commentsReference.removeEventListener(this);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         });
