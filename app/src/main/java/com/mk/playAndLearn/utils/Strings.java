@@ -18,6 +18,6 @@ public class Strings {
     public static String currentUserUid = currentUser.getUid();
     public static String wonChallengeText = "ربحت";
     public static String loseChallengeText = "خسرت";
-    public static String drawChallengeText = "تعادل";
+    public static String drawChallengeText = "تعادلت";
 
 }

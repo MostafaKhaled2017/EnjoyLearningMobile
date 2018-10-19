@@ -21,8 +21,11 @@ import static com.mk.playAndLearn.NotificationID.getID;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
+import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 
 public class NotificationsService extends Service {
     int currentPlayer;
@@ -65,11 +68,16 @@ public class NotificationsService extends Service {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String challengeState = dataSnapshot.child("state").getValue().toString();
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
+                String player1Name = dataSnapshot.child("player1Name").getValue().toString();
+                String subject = dataSnapshot.child("subject").getValue().toString();
                 String challengeId = dataSnapshot.getKey();
+
+                subject =  adjustSubject(subject);
+
                 getCurrentPlayer(player1Uid);
                 Log.v("Logging2", "onChildAdded");
                 if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
-                    showNotification("لديك تحدى", "لديك تحدي جديد");
+                    showNotification("لديك تحدى جديد", "تم تحديك فى مادة " + subject + " بواسطة " + player1Name);
                     challengesReference.child(challengeId).child("player2notified").setValue(true);
                 }
                 onChildAddedPreviusKey = dataSnapshot.getKey();
@@ -79,12 +87,18 @@ public class NotificationsService extends Service {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String challengeState = dataSnapshot.child("state").getValue().toString();
                 String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
+                String player2Name = dataSnapshot.child("player2Name").getValue().toString();
+                String subject = dataSnapshot.child("subject").getValue().toString();
+
+                subject =  adjustSubject(subject);
+                String state = currentUserState(dataSnapshot);
+
                 String challengeId = dataSnapshot.getKey();
-                Log.v("notification", "onChildChangedNotification");
                 getCurrentPlayer(player1Uid);
-                Log.v("onChildChangedService","the current key is : " + dataSnapshot.getKey() + " , previus key is : " + onChildChangedpreviusKey);
                 if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !dataSnapshot.getKey().equals(onChildChangedpreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
-                    showNotification("اكتمل التحدى", "لديك تحدي مكتمل جديد");
+                    showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
+                            " تحديك ضد " + player2Name
+                            /*+ " فى مادة " + subject*/);//TODO : add this
                     challengesReference.child(challengeId).child("player1notified").setValue(true);
                     onChildChangedpreviusKey = dataSnapshot.getKey();
                 }
@@ -114,6 +128,59 @@ public class NotificationsService extends Service {
         player2Listener = challengesReference.orderByChild("player2notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
 
         return START_STICKY;
+    }
+
+    private String currentUserState(DataSnapshot dataSnapshot) {
+        String challengeState = dataSnapshot.child("state").getValue().toString();
+        String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
+        long player1Score = (long) dataSnapshot.child("player1score").getValue();
+        long player2Score = (long) dataSnapshot.child("player2score").getValue();
+
+        if (challengeState.equals(completedChallengeText)){
+            if(player1Score == player2Score){
+                 return  drawChallengeText + " فى";
+            }
+            else {
+                getCurrentPlayer(player1Uid);
+                if(currentPlayer == 1){
+                    if(player1Score > player2Score){
+                        return wonChallengeText;
+                    }
+                    else {
+                        return loseChallengeText;
+                    }
+                }
+                else if(currentPlayer == 2){
+                    if(player2Score > player1Score){
+                        return wonChallengeText;
+                    }
+                    else {
+                        return loseChallengeText;
+                    }
+                }
+            }
+        }
+        return "تم رفض";
+    }
+
+    private String adjustSubject(String subject) {
+
+        switch (subject){
+            case "لغة عربية":
+                subject = "اللغة العربية";
+                break;
+            case "لغة انجليزية":
+                subject = "اللغة الإنجليزية";
+                break;
+            case "جغرافيا":
+                subject = "الجغرافيا";
+                break;
+            case "تاريخ":
+                subject = "التاريخ";
+                break;
+            default:  subject =  "ال " + subject;//TODO : check this and make this code a method returns the new subject
+        }
+        return subject;
     }
 
     @Override

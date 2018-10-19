@@ -76,27 +76,23 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
             holder.state.setText(stateText);
         }
 
-        if (challenge.getState().equals(completedChallengeText)){
-            if(challenge.getPlayer1Score() == challenge.getPlayer2Score()){
+        if (challenge.getState().equals(completedChallengeText)) {
+            if (challenge.getPlayer1Score() == challenge.getPlayer2Score()) {
                 holder.state.setText(drawChallengeText);
-            }
-            else {
-                if(challenge.getCurrentPlayer() == 1){
-                    if(challenge.getPlayer1Score() > challenge.getPlayer2Score()){
+            } else {
+                if (challenge.getCurrentPlayer() == 1) {
+                    if (challenge.getPlayer1Score() > challenge.getPlayer2Score()) {
                         holder.state.setText(wonChallengeText);
                         holder.state.setBackgroundColor(context.getResources().getColor(R.color.green));
-                    }
-                    else {
+                    } else {
                         holder.state.setText(loseChallengeText);
                         holder.state.setBackgroundColor(context.getResources().getColor(R.color.red));
                     }
-                }
-                else if(challenge.getCurrentPlayer() == 2){
-                    if(challenge.getPlayer2Score() > challenge.getPlayer1Score()){
+                } else if (challenge.getCurrentPlayer() == 2) {
+                    if (challenge.getPlayer2Score() > challenge.getPlayer1Score()) {
                         holder.state.setText(wonChallengeText);
                         holder.state.setBackgroundColor(context.getResources().getColor(R.color.green));
-                    }
-                    else {
+                    } else {
                         holder.state.setText(loseChallengeText);
                         holder.state.setBackgroundColor(context.getResources().getColor(R.color.red));
                     }
@@ -104,7 +100,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
             }
         }
 
-        if(challenge.getState().equals(refusedChallengeText)){
+        if (challenge.getState().equals(refusedChallengeText)) {
             holder.state.setText(refusedChallengeText);
         }
 
@@ -112,8 +108,13 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
             holder.date.setText(challenge.getDate());
         if (challenge.getSubject() != null)
             holder.subject.setText(challenge.getSubject());
-        if (challenge.getScore() != null)
-            holder.score.setText(challenge.getScore());
+        if (challenge.getScore() != null) {
+            if (challenge.getState().equals(completedChallengeText) || challenge.getState().equals(refusedChallengeText)) {
+                holder.score.setText(challenge.getScore());
+            } else {
+                holder.score.setText("");//TODO : think about adding space with the size of real scores
+            }
+        }
         if (challenge.getImage() != null)
             Picasso.with(context).load(challenge.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
         //TODO : add condition if the challenge completed shows the challenge result and right and wrong answers booleans .. by sending the id of challenge to the new activity and get the new data there
