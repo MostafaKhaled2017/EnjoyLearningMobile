@@ -4,14 +4,18 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -30,12 +34,15 @@ import android.widget.Toast;
 
 
 import com.ToxicBakery.viewpager.transforms.TabletTransformer;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.ViewPagerAdapter;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
@@ -50,11 +57,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.mk.playAndLearn.utils.Firebase.auth;
+import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.database;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserName;
+import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
@@ -62,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     TabLayout tabLayout;
 
     int tabPosition = 1;
+    boolean newUser;
+
+    public SharedPreferences pref; // 0 - for private mode
+    SharedPreferences.Editor editor;
 
     //TODO : read all the TODOs in all the app well
     //TODO : at a begging support mobiles support mobiles from 4 to 6 inches only but later support the rest
@@ -110,6 +120,20 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setDisplayShowTitleEnabled(false);
+
+        pref = getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
+
+        Intent intent = getIntent();
+        if(intent != null){
+            newUser = intent.getBooleanExtra("newUser", false);
+        }
+        if(newUser){
+            showDialog();//TODO : add shared preference inside the method
+        }
+        else {
+            setCurrentUserNameToSharedPreferences();
+        }
 
         mViewPager = findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
@@ -205,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             }*/
         }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -234,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.appManagement:
                 startActivity(new Intent(this, AppManagementActivity.class));
                 return true;
-            case R.id.editAccoutData:{
+            /*case R.id.editAccoutData:{
                 Intent i=new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse("https://myaccount.google.com/privacy"));
                 startActivity(i);
-                return true;}
+                return true;}*/
             case R.id.signOut:
                 auth.signOut();
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
@@ -305,4 +328,53 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         }
     }
 
+    public void showDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
+        alertDialogBuilderUserInput.setView(view);
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        inputComment.setText(currentUser.getDisplayName());
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        dialogTitle.setText("قم بكتابة اسم المستخدم");//TODO : remove this If I copy the method to another thing
+        //TODO : allow users to change their profile picture
+        alertDialogBuilderUserInput.setNegativeButton("موافق",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialogBox, int id) {
+                        Toast.makeText(MainActivity.this, "جارى إعداد حسابك", Toast.LENGTH_SHORT).show();
+                        String commentText = inputComment.getText().toString();
+                        usersReference.child(currentUserUid).child("userName").setValue(commentText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(MainActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
+                                dialogBox.dismiss();
+                                setCurrentUserNameToSharedPreferences();
+                            }
+                        });
+                    }
+                });
+
+        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
+        alertDialog.show();
+
+    }
+    public void setCurrentUserNameToSharedPreferences(){
+        usersReference.child(currentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String currentUserName = dataSnapshot.child("userName").getValue().toString();
+                editor.putString("currentUserName", currentUserName);
+                editor.apply();
+
+                usersReference.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

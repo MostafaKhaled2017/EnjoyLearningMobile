@@ -46,7 +46,6 @@ import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserName;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 
@@ -86,7 +85,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deleteCache(getActivity());
-        presenter = new HomeFragmentPresenter(this);
+        presenter = new HomeFragmentPresenter(this, getActivity());
     }
 
     @Override

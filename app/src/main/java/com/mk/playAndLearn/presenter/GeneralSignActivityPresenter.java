@@ -89,10 +89,7 @@ public class GeneralSignActivityPresenter {
                     usersReference.child(currentUser.getUid()).setValue(map);
                 }
                 else {
-                    //TODO : check if this part is working or no
-                    currentUserReference.child("userName").setValue(currentUser.getDisplayName());
-                    currentUserReference.child("userImage").setValue(currentUser.getPhotoUrl());
-                    currentUserReference.child("userType").setValue(userType);
+                    
                 }
                 view.goToMainActivity();
             }

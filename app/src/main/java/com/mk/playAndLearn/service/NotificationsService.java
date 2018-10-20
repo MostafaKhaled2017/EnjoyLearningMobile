@@ -14,6 +14,8 @@ import android.util.Log;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
 
@@ -123,6 +125,8 @@ public class NotificationsService extends Service {
         };
 
         //this gives the challenges that the current user has started
+
+        DatabaseReference challengesReference = FirebaseDatabase.getInstance().getReference("challenges"); //TODO : change this
         player1Listener =  challengesReference.orderByChild("player1notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
         //this code gives data where current user is player 2
         player2Listener = challengesReference.orderByChild("player2notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);

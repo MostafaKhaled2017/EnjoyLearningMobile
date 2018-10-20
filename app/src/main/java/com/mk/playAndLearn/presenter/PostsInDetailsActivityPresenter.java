@@ -2,6 +2,7 @@ package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -32,16 +33,17 @@ import java.util.TimeZone;
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserName;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class PostsInDetailsActivityPresenter {
     View view;
+    Context context;
     ArrayList<Comment> commentsList = new ArrayList();
     ChildEventListener commentsListener;
 
-    public PostsInDetailsActivityPresenter(View view) {
+    public PostsInDetailsActivityPresenter(View view, Context context) {
         this.view = view;
+        this.context = context;
     }
 
     public void startAsynkTask() {
@@ -164,6 +166,10 @@ public class PostsInDetailsActivityPresenter {
         String date = format.format(today);
 
         Map<String, Object> map = new HashMap<>();
+        SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
+        String currentUserName = pref.getString("currentUserName", "غير معروف");
+        Log.v("sharedPreference", " current userName is : " + currentUserName);
+
         map.put("userName", currentUserName);
         map.put("userEmail", currentUserEmail);
         map.put("userImage", currentUserImage);

@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +35,6 @@ import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserName;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class ChallengeResultActivity extends AppCompatActivity {
@@ -42,13 +42,16 @@ public class ChallengeResultActivity extends AppCompatActivity {
     //TODO : handle loosing internet connection before uploading data for example show a dialog when try to go out.
     TextView challengeResultTv;
 
-    String subject, challengeId;
+    String subject, challengeId, currentUserName;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     int secondPlayerPoints;
     int score, currentChallenger;
 
     ArrayList questionsList = new ArrayList();
     String playerAnswersBooleansList = "", playerAnswersList = "";
+
+    public SharedPreferences pref; // 0 - for private mode
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +66,16 @@ public class ChallengeResultActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        
+
         challengeResultTv = findViewById(R.id.challengeResultText);
 
+        pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        currentUserName = pref.getString("currentUserName", "غير معروف");
+        Log.v("sharedPreference", " current userName is : " + currentUserName);
+
+
         Intent intent = getIntent();
-        if(intent.getExtras() != null){
+        if (intent.getExtras() != null) {
             currentChallenger = intent.getIntExtra("currentChallenger", currentChallenger);
             score = intent.getIntExtra("score", -1);
             subject = intent.getStringExtra("subject");
@@ -75,26 +83,25 @@ public class ChallengeResultActivity extends AppCompatActivity {
             playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
 
 
-            if(currentChallenger == 1){
+            if (currentChallenger == 1) {
                 secondPlayerName = intent.getStringExtra("player2Name");
-                secondPlayerEmail= intent.getStringExtra("player2Email");
+                secondPlayerEmail = intent.getStringExtra("player2Email");
                 secondPlayerImage = intent.getStringExtra("player2Image");
                 secondPlayerUid = intent.getStringExtra("player2Uid");
                 secondPlayerPoints = intent.getIntExtra("player2Points", -1);
                 questionsList = intent.getParcelableArrayListExtra("questionsList");
-            }
-            else if(currentChallenger == 2){
+            } else if (currentChallenger == 2) {
                 challengeId = intent.getStringExtra("challengeId");
             }
         }
-        challengeResultTv.append(score +"");
+        challengeResultTv.append(score + "");
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         String date = format.format(today);
 
         Map<String, Object> map = new HashMap<>();
-        if(currentChallenger == 1) {
+        if (currentChallenger == 1) {
             map.put("player1Name", currentUserName);
             map.put("player1Email", currentUserEmail);
             map.put("player1Image", currentUserImage);
@@ -106,7 +113,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
             map.put("player2Uid", secondPlayerUid);
             map.put("player2score", 0);
             map.put("player1notified", currentUserUid + "false");
-            map.put("player2notified", secondPlayerUid+"false");
+            map.put("player2notified", secondPlayerUid + "false");
             map.put("date", date);
             map.put("subject", subject);
             map.put("questionsList", questionsList);
@@ -115,8 +122,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
             map.put("state", "لم يكتمل"); // TODO : edit this
 
             challengesReference.push().setValue(map);
-        }
-        else if(currentChallenger == 2){
+        } else if (currentChallenger == 2) {
             challengesReference.child(challengeId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -125,8 +131,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
                         challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList.trim());
                         challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
                         challengesReference.child(challengeId).child("state").setValue("اكتمل");
-                    }
-                    else {
+                    } else {
                         challengesReference.child(challengeId).removeEventListener(this);
                     }
                 }

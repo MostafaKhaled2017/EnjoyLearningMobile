@@ -53,15 +53,14 @@ import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserName;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
-public class PostInDetailsActivity extends AppCompatActivity implements PostsInDetailsActivityPresenter.View{
+public class PostInDetailsActivity extends AppCompatActivity implements PostsInDetailsActivityPresenter.View {
     String content, name, date, image;
     TextView contentTv, nameTv, dateTv;
     ImageView imageView;
     PostsInDetailsActivityPresenter presenter;
-    
+
     String postId = "";
 
     CommentsAdapter recyclerAdapter;
@@ -86,7 +85,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
 
         deleteCache(this);
 
-        presenter = new PostsInDetailsActivityPresenter(this);
+        presenter = new PostsInDetailsActivityPresenter(this, this);
 
         contentTv = findViewById(R.id.postContentInDetails);
         nameTv = findViewById(R.id.postUserNameInDetails);
@@ -212,7 +211,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
     @Override
     public void onDataFound() {
         noCommentsText.setVisibility(android.view.View.GONE);
-       hideProgressBar();
+        hideProgressBar();
         noInternetConnectionText.setVisibility(android.view.View.GONE);
     }
 

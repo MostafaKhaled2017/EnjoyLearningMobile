@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +22,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,6 +50,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
 
     String currentSubject = "", currentUnitOrder = "", currentLessonOrder = "", userName = "", userEmail = "";
     Map<String, Object> map;
+    public SharedPreferences pref; // 0 - for private mode
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +75,8 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         subjectsSpinner.setOnItemSelectedListener(this);
         lessonOrderSpinner.setOnItemSelectedListener(this);
         unitOrderSpinner.setOnItemSelectedListener(this);
+
+        pref = getApplicationContext().getSharedPreferences("MyPref", 0);
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.subjects_array_with_default, android.R.layout.simple_spinner_item);
@@ -100,6 +106,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     Toast.makeText(AddLessonActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الدرس", Toast.LENGTH_SHORT).show();
                 }else
                 {
+                    userName = pref.getString("currentUserName","غير معروف");
                     map = new HashMap<>();
                     map.put("title", title);
                     map.put("content", content);
@@ -117,8 +124,13 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            lessonsReference.push().setValue(map);
-                            Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddLessonActivity.this, "جارى رفع الدرس", Toast.LENGTH_SHORT).show();
+                            lessonsReference.push().setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                             finish();
                         }
                     });

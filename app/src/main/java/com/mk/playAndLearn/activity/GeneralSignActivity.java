@@ -1,6 +1,5 @@
 package com.mk.playAndLearn.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -53,7 +52,6 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 
-import static com.mk.playAndLearn.utils.Firebase.database;
 //TODO : solve the shared prefrence tutorial
 //TODO : change the app in facebook for developers from in development to live
 //TODO : remove the tradition sign in and sign up and think about removing sign in with facebook
@@ -273,8 +271,6 @@ public class GeneralSignActivity extends AppCompatActivity {
 
         /*SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
-        editor.clear();
-        editor.apply();
 
         editor.putString("userName", userName);
         editor.putString("userImage", userImage);
@@ -284,6 +280,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                final Intent i = new Intent(GeneralSignActivity.this, MainActivity.class);
                 if (!dataSnapshot.child(mAuth.getUid()).exists()) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("userName", userName);
@@ -296,16 +293,19 @@ public class GeneralSignActivity extends AppCompatActivity {
                     map.put("acceptedLessons", 0);
                     map.put("refusedLessons", 0);
                     map.put("userType", userType);
-                    myRef.child(mAuth.getUid()).setValue(map);
+                    myRef.child(mAuth.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            i.putExtra("newUser", true);
+                            startActivity(i);
+                        }
+                    });
+
                 }
                 else {
-                    //TODO : think about moving this part to welcome screen
-                    currentUserReference =  myRef.child(mAuth.getUid());
-                    currentUserReference.child("userName").setValue(userName);
-                    currentUserReference.child("userImage").setValue(userImage);
-                    currentUserReference.child("userType").setValue(userType);
+                    i.putExtra("newUser", false);
+                    startActivity(i);
                 }
-                startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
                 myRef.removeEventListener(this);
             }
 

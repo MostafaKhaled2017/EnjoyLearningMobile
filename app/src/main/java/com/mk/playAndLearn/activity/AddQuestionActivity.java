@@ -5,12 +5,14 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +23,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.mk.enjoylearning.R;
 
 import java.util.HashMap;
@@ -30,7 +34,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserName;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 import static com.mk.playAndLearn.utils.Firebase.questionsReference;
 
@@ -38,10 +41,12 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
     Spinner subjectsSpinner;
     String correctAnswer = "";
     EditText editText1, editText2, editText3, editText4, questionEt;
-    String currentSubject = "";
+    String currentSubject = "", currentUserName;
     Map<String, Object> map;
     int currentCheckedRadioButton;
     RadioButton r1, r2, r3, r4;
+    public SharedPreferences pref; // 0 - for private mode
+
 
     //TODO : fix the problems of signing in if exists
     //TODO : make push to github then revise the names to be used in the database well and change them when put and when get in all things then clear all the database before starting real use
@@ -62,6 +67,10 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("إضافة سؤال");
 
+        pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        currentUserName = pref.getString("currentUserName", "غير معروف");
+        Log.v("sharedPreference", " current userName is : " + currentUserName);
+
         subjectsSpinner = findViewById(R.id.subjectsSpinner);
         editText1 = findViewById(R.id.et1);
         editText2 = findViewById(R.id.et2);
@@ -73,7 +82,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
 
-            ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                     R.array.subjects_array_with_default, android.R.layout.simple_spinner_item);
             subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
             subjectsSpinner.setAdapter(subjectsAdapter);
@@ -167,8 +176,13 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    questionsReference.push().setValue(map);
-                    Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, "جارى رفع السؤال", Toast.LENGTH_SHORT).show();
+                    questionsReference.push().setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     clearViews();
                 }
             });
