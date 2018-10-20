@@ -144,7 +144,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
-        app:backgroundTint="@color/fabColor"
+        app:backgroundTint="@color/color1"
         app:srcCompat="@android:drawable/ic_input_add"
         app:tint="@color/white" />
 

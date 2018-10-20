@@ -51,10 +51,10 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/timerProgressbar"
         android:layout_above="@id/radioGroup"
-        android:layout_margin="5dp"
+        android:padding="5dp"
         android:text="ما هي أقسام الأدب؟"
         android:textColor="@color/writingColor"
-        android:textSize="22sp"
+        android:textSize="21sp"
         android:textStyle="bold" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"

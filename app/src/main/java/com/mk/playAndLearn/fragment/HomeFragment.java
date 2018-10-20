@@ -161,7 +161,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     @Override
     public boolean validateInput(String postText) {
-        if (TextUtils.isEmpty(postText)) {
+        if (TextUtils.isEmpty(postText.trim())) {
             etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
             return false;
         }

@@ -22,11 +22,9 @@
         android:id="@+id/dialog_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
         android:gravity="top"
         android:hint="اكتب التعليق الذي تريد إضافته"
         android:inputType="textCapSentences|textMultiLine"
-        android:lines="4"
         android:textColorHint="@color/hint_enter_note"
         android:textColor="#000"
         android:textSize="@dimen/input_new_note" />

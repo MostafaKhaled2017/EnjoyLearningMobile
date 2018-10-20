@@ -283,7 +283,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         Intent serviceIntent = new Intent(getActivity(), NotificationsService.class);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
-            getActivity().startForegroundService(serviceIntent);
+            //getActivity().startForegroundService(serviceIntent); TODO : add this after solving its errors
         } else {
             getActivity().startService(serviceIntent);
         }

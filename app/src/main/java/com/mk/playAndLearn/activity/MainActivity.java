@@ -334,11 +334,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
         alertDialogBuilderUserInput.setView(view);
+        //alertDialogBuilderUserInput.setCancelable(false);
 
         final EditText inputComment = view.findViewById(R.id.dialog_value);
         inputComment.setText(currentUser.getDisplayName());
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText("قم بكتابة اسم المستخدم");//TODO : remove this If I copy the method to another thing
+        dialogTitle.setText("اكتب اسم المستخدم الذى تريده");//TODO : remove this If I copy the method to another thing
         //TODO : allow users to change their profile picture
         alertDialogBuilderUserInput.setNegativeButton("موافق",
                 new DialogInterface.OnClickListener() {
@@ -349,8 +350,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(MainActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
-                                dialogBox.dismiss();
                                 setCurrentUserNameToSharedPreferences();
+                                dialogBox.dismiss();
                             }
                         });
                     }
@@ -364,11 +365,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         usersReference.child(currentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.v("signDebug", "dataSnapshot is : " + dataSnapshot);
                 String currentUserName = dataSnapshot.child("userName").getValue().toString();
                 editor.putString("currentUserName", currentUserName);
                 editor.apply();
 
-                usersReference.removeEventListener(this);
             }
 
             @Override

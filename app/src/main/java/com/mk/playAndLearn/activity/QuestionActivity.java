@@ -232,4 +232,10 @@ public class QuestionActivity extends AppCompatActivity {
         super.onDestroy();
         timer.cancel();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+    }
 }

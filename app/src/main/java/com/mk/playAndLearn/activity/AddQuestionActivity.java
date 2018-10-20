@@ -83,9 +83,9 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         r4 = findViewById(R.id.radio4);
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.subjects_array_with_default, android.R.layout.simple_spinner_item);
-            subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-            subjectsSpinner.setAdapter(subjectsAdapter);
+                R.array.subjects_array_with_default, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        subjectsSpinner.setAdapter(subjectsAdapter);
 
         subjectsSpinner.setOnItemSelectedListener(this);
 
@@ -151,11 +151,9 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             Toast.makeText(this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
         } else if (correctAnswer.equals("")) {
             Toast.makeText(this, "من فضلك قم بتحديد الإجابة الصحيحة للسؤال", Toast.LENGTH_SHORT).show();
-        }
-        else if(currentSubject.equals("اختر المادة")) {
+        } else if (currentSubject.equals("اختر المادة")) {
             Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
-        }else
-         {
+        } else {
             map = new HashMap<>();
             map.put("writerName", currentUserName);
             map.put("writerEmail", currentUserEmail);

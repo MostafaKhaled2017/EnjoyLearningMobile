@@ -36,7 +36,7 @@
         app:showAsAction="never" />-->
     <item
         android:id="@+id/aboutApp"
-        android:title="عن التطبيق"
+        android:title="تواصل معنا"
         app:showAsAction="never" />
     <item
         android:id="@+id/signOut"
