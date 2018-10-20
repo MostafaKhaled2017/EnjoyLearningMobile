@@ -76,10 +76,10 @@ public class NotificationsService extends Service {
 
                 subject =  adjustSubject(subject);
 
-                getCurrentPlayer(player1Uid);
+                currentPlayer = getCurrentPlayer(player1Uid);
                 Log.v("Logging2", "onChildAdded");
                 if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
-                    showNotification("لديك تحدى جديد", "تم تحديك فى مادة " + subject + " بواسطة " + player1Name);
+                    showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
                     challengesReference.child(challengeId).child("player2notified").setValue(true);
                 }
                 onChildAddedPreviusKey = dataSnapshot.getKey();
@@ -96,7 +96,7 @@ public class NotificationsService extends Service {
                 String state = currentUserState(dataSnapshot);
 
                 String challengeId = dataSnapshot.getKey();
-                getCurrentPlayer(player1Uid);
+                currentPlayer = getCurrentPlayer(player1Uid);
                 if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !dataSnapshot.getKey().equals(onChildChangedpreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
                     showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
                             " تحديك ضد " + player2Name
@@ -145,7 +145,7 @@ public class NotificationsService extends Service {
                  return  drawChallengeText + " فى";
             }
             else {
-                getCurrentPlayer(player1Uid);
+               currentPlayer = getCurrentPlayer(player1Uid);
                 if(currentPlayer == 1){
                     if(player1Score > player2Score){
                         return wonChallengeText;
@@ -222,11 +222,11 @@ public class NotificationsService extends Service {
         super.onDestroy();
     }
 
-    public void getCurrentPlayer(String player1Uid) {
+    public int getCurrentPlayer(String player1Uid) {
         if (player1Uid.equals(currentUserUid)) {
-            currentPlayer = 1;
+            return 1;
         } else {
-            currentPlayer = 2;
+            return 2;
         }
     }
 

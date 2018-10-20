@@ -83,7 +83,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         button = findViewById(R.id.googleBtn);
         database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(false);
+       // database.setPersistenceEnabled(false);
         myRef = database.getReference("users");
         userTypesSpinner = findViewById(R.id.userTypesSpinner);
         unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);

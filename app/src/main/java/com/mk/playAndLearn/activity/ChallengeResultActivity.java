@@ -33,6 +33,7 @@ import java.util.TimeZone;
 import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
@@ -123,7 +124,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
             challengesReference.push().setValue(map);
         } else if (currentChallenger == 2) {
-            challengesReference.child(challengeId).addValueEventListener(new ValueEventListener() {
+            challengesReference.child(challengeId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -131,8 +132,9 @@ public class ChallengeResultActivity extends AppCompatActivity {
                         challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList.trim());
                         challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
                         challengesReference.child(challengeId).child("state").setValue("اكتمل");
-                    } else {
-                        challengesReference.child(challengeId).removeEventListener(this);
+
+                        addPoints(dataSnapshot);
+
                     }
                 }
 
@@ -149,5 +151,92 @@ public class ChallengeResultActivity extends AppCompatActivity {
         finish();
         return true;
     }
+    void addPoints(DataSnapshot dataSnapshot){
+        final String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
+        final String player2Uid = dataSnapshot.child("player2Uid").getValue().toString();
 
+        long player1Score = (long) dataSnapshot.child("player1score").getValue();
+        long player2Score = (long) score;
+
+        final DatabaseReference player1Reference = usersReference.child(player1Uid);
+        DatabaseReference player2Reference = usersReference.child(player2Uid);
+
+        if(getCurrentPlayer(player1Uid) == 2) {
+
+            if (player1Score == player2Score) {
+                player1Reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.v("pointsDebug", "onDataChanged1");
+                        long points = (long) dataSnapshot.child("points").getValue();
+                        usersReference.child(player1Uid).child("points").setValue(points + 1);
+
+                       // usersReference.removeEventListener(this);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                player2Reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.v("pointsDebug", "onDataChanged2");
+                        long points = (long) dataSnapshot.child("points").getValue();
+                        usersReference.child(player2Uid).child("points").setValue(points + 1);
+
+                        //usersReference.removeEventListener(this);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            } else {
+                if (player1Score > player2Score) {
+                    Log.v("debugPoints3", "listener1 called");
+                    player1Reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            long points = (long) dataSnapshot.child("points").getValue();
+                            usersReference.child(player1Uid).child("points").setValue(points + 3);
+
+                           // usersReference.removeEventListener(this);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                } else {
+                    Log.v("debugPoints3", "listener1 called");
+                    player2Reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            long points = (long) dataSnapshot.child("points").getValue();
+                            usersReference.child(player2Uid).child("points").setValue(points + 3);
+
+                            //usersReference.removeEventListener(this);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    public int getCurrentPlayer(String player1Uid) {
+        if (player1Uid.equals(currentUserUid)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
 }
