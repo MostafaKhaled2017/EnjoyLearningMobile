@@ -306,7 +306,6 @@ public class GeneralSignActivity extends AppCompatActivity {
                     i.putExtra("newUser", false);
                     startActivity(i);
                 }
-                myRef.removeEventListener(this);
             }
 
             @Override
