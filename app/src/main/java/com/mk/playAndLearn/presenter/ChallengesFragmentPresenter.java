@@ -69,8 +69,9 @@ public class ChallengesFragmentPresenter {
                             for (int i = 0; i < uncompletedChallengesList.size(); i++) {
                                 if (uncompletedChallengesList.get(i).getId().equals(dataSnapshot.getKey())) {
                                     uncompletedChallengesList.remove(i);
-                                    view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "onChildChanged");
+                                    Log.v("challenge Removed", "challengeRemoved");
                                     getChallengeData(dataSnapshot, "onChildChanged");
+                                    view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "onChildChanged");
                                     break;
                                 }
                             }
@@ -188,6 +189,7 @@ public class ChallengesFragmentPresenter {
         if (challenge.getState().equals("اكتمل")) {
             Log.v("loggingC1", "value is " + !existsInCompletedChallengesList(challengeId));
             if (!existsInCompletedChallengesList(dataSnapshot.getKey())) {
+                Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(0, challenge);
                 view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData1");
@@ -196,6 +198,7 @@ public class ChallengesFragmentPresenter {
         else if (challenge.getState().equals(refusedChallengeText)) {
             Log.v("loggingC2", "value is " + !existsInCompletedChallengesList(challengeId));
             if (!existsInCompletedChallengesList(dataSnapshot.getKey())) {
+                Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(0, challenge);
                 view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData3");
@@ -204,6 +207,7 @@ public class ChallengesFragmentPresenter {
         else if (challenge.getState().equals(uncompletedChallengeText)) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getKey()));
             if (!existsInUncompletedChallengesList(challengeId)) {
+                Log.v("challengesDebug", "uncompletedListItemAdded");
                 view.showUncompletedChallengesTv();
                 uncompletedChallengesList.add(0, challenge);
                 view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData2");
@@ -263,8 +267,6 @@ public class ChallengesFragmentPresenter {
     }
 
     boolean existsInUncompletedChallengesList(String currentChallengeId) {
-        no++;
-        Log.v("check", "number of times is : " + no);
         for (Challenge c : uncompletedChallengesList) {
             Log.v("uncompletedChallengesLi", "id of challenge in uncompletedChallengesList : " + c.getId() + " current challengeId " + currentChallengeId);
             if (c.getId().equals(currentChallengeId)) {

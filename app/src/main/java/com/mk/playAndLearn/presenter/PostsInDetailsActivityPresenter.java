@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +12,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Comment;
@@ -31,6 +35,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
+import static com.mk.playAndLearn.utils.Firebase.postsReference;
 import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
 import static com.mk.playAndLearn.utils.Strings.currentUserImage;
 import static com.mk.playAndLearn.utils.Strings.currentUserUid;
@@ -40,6 +45,7 @@ public class PostsInDetailsActivityPresenter {
     Context context;
     ArrayList<Comment> commentsList = new ArrayList();
     ChildEventListener commentsListener;
+    String date;
 
     public PostsInDetailsActivityPresenter(View view, Context context) {
         this.view = view;
@@ -90,8 +96,10 @@ public class PostsInDetailsActivityPresenter {
                 String date = dataSnapshot.child("date").getValue().toString();
                 String writerUid = dataSnapshot.child("writerUid").getValue().toString();
                 long votes = (long) dataSnapshot.child("votes").getValue();
+                boolean posted = (boolean) dataSnapshot.child("posted").getValue();
                 String commentId = dataSnapshot.getKey();
                 comment.setVotes(votes);
+                comment.setPosted(posted);
                 comment.setCommentId(commentId);
                 comment.setWriterUid(writerUid);
                 comment.setUserName(userName);
@@ -107,10 +115,14 @@ public class PostsInDetailsActivityPresenter {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String content = dataSnapshot.child("content").getValue().toString();
+                String date = dataSnapshot.child("date").getValue().toString();
                 long votes = (long) dataSnapshot.child("votes").getValue();
+                boolean posted = (boolean) dataSnapshot.child("posted").getValue();
 
                 for (int i = 0; i < commentsList.size(); i++) {
                     if (commentsList.get(i).getCommentId().equals(dataSnapshot.getKey())) {
+                        commentsList.get(i).setPosted(posted);
+                        commentsList.get(i).setDate(date);
                         commentsList.get(i).setContent(content);
                         commentsList.get(i).setVotes(votes);
                         view.notifyAdapter();
@@ -163,7 +175,7 @@ public class PostsInDetailsActivityPresenter {
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        String date = format.format(today);
+        date = format.format(today);
 
         Map<String, Object> map = new HashMap<>();
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
@@ -175,12 +187,23 @@ public class PostsInDetailsActivityPresenter {
         map.put("userImage", currentUserImage);
         map.put("votes", 0);
         map.put("date", date);
+        map.put("posted", false);
         map.put("upVotedUsers", "users: ");
         map.put("downVotedUsers", "users: ");
         map.put("postId", view.getPostId());
         map.put("writerUid", currentUserUid);
         map.put("content", commentText.trim());
-        commentsReference.push().setValue(map);
+        final String commentId = commentsReference.push().getKey();
+        final DatabaseReference currentCommentRef = commentsReference.child(commentId);
+        currentCommentRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                currentCommentRef.child("posted").setValue(true);
+                currentCommentRef.child("date").setValue(date);
+                view.showToast("تم إضافة التعليق بنجاح");
+                view.notifyAdapter();
+            }
+        });
     }
 
     public void removeListeners() {
@@ -213,5 +236,7 @@ public class PostsInDetailsActivityPresenter {
         void notifyAdapter();
 
         void onNoCommentsFound();
+        
+        void showToast(String value);
     }
 }

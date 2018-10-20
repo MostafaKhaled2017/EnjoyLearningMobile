@@ -31,12 +31,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
+    <ScrollView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:layout_below="@id/appBar"
+        xmlns:android="http://schemas.android.com/apk/res/android" >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
     <RelativeLayout
         android:id="@+id/postMainData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/appBar"
         android:background="@color/white">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -82,16 +89,6 @@
             android:textSize="@dimen/generalTextSize" />
     </RelativeLayout>
     <!-- TODO : edit the icon shape -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="5dp"
-        app:backgroundTint="@color/fabColor"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/commentsText"
@@ -111,34 +108,44 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/commentsText"
             android:overScrollMode="never" />
+            <ProgressBar
+                android:id="@+id/commentsProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/commentsText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="85dp" />
 
-    <ProgressBar
-        android:id="@+id/commentsProgressBar"
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/noCommentsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/commentsText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="75dp"
+                android:text="لا يوجد تعليقات"
+                android:textColor="@color/writingColor"
+                android:textSize="@dimen/nothing_text_size"
+                android:visibility="invisible" />
+
+            <include
+                layout="@layout/no_internet_connection_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/commentsText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="75dp" />
+        </RelativeLayout>
+    </ScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/commentsText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/noCommentsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/commentsText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp"
-        android:text="لا يوجد تعليقات"
-        android:textColor="@color/writingColor"
-        android:textSize="@dimen/nothing_text_size"
-        android:visibility="invisible" />
-
-    <include
-        layout="@layout/no_internet_connection_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/commentsText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp" />
-
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        app:backgroundTint="@color/fabColor"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@color/white" />
 
 </RelativeLayout>

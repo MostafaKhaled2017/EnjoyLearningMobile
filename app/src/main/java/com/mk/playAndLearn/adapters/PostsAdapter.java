@@ -55,12 +55,32 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         final Post post = list.get(position);
         if (post.getContent() != null)
             holder.content.setText(post.getContent());
-        if (post.getDate() != null)
-            holder.date.setText(post.getDate());
+        if (post.getDate() != null) {
+            if(post.isPosted()) {
+                holder.date.setText(post.getDate());
+            }
+            else {
+                holder.date.setText("جارى النشر...");
+            }
+        }
         if (post.getWriter() != null && !post.getWriter().equals(""))
             holder.name.setText(post.getWriter());
         if (post.getImage() != null && !post.getImage().equals(""))
             Picasso.with(context).load(post.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
+      /*  if (!post.isPosted()) {
+            {
+                holder.warningIcon.setVisibility(View.VISIBLE);
+                holder.warningIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(context, "لم يتم رفع المنشور برجاء التأكد من الاتصال بالانترنت وسيتم رفعه تلقائيا عند الإتصال بالإنترنت", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+        else {
+            holder.warningIcon.setVisibility(View.GONE);
+        }*/
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,6 +2,15 @@ package com.mk.playAndLearn.model;
 
 public class Post {
     private String writerName;
+    private boolean posted;
+
+    public boolean isPosted() {
+        return posted;
+    }
+
+    public void setPosted(boolean posted) {
+        this.posted = posted;
+    }
 
     public String getWriterName() {
         return writerName;

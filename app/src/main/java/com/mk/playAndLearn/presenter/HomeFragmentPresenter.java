@@ -3,16 +3,16 @@ package com.mk.playAndLearn.presenter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Post;
 
 import java.io.IOException;
@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -76,7 +75,7 @@ public class HomeFragmentPresenter {
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        String date = format.format(today);
+        final String date = format.format(today);
         Log.v("Logging2", date);
         if (view.validateInput(postText)) {
             SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
@@ -90,9 +89,19 @@ public class HomeFragmentPresenter {
             map.put("writerUid", currentUserUid);
             map.put("image", currentUserImage);
             map.put("email", currentUserEmail);
+            map.put("posted", false);
             map.put("votes", 0);
-            postsReference.push().setValue(map);
-            view.onPostAddedSuccessfully();
+            final String postId = postsReference.push().getKey();
+            final DatabaseReference currentPostRef = postsReference.child(postId);
+            currentPostRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    currentPostRef.child("posted").setValue(true);
+                    currentPostRef.child("date").setValue(date);
+                    view.showToast("تم إضافة المنشور بنجاح");
+                    view.notifyAdapter();
+                }
+            });
         }
     }
 
@@ -106,28 +115,20 @@ public class HomeFragmentPresenter {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 view.onDataFound();
-                post = new Post();
-                String postContent = dataSnapshot.child("content").getValue().toString();
-                String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
-                String postWriter = dataSnapshot.child("writerName").getValue().toString();
-                String postImage = dataSnapshot.child("image").getValue().toString();
-                String postId = dataSnapshot.getKey();
-                String writerUid = dataSnapshot.child("writerUid").getValue().toString();
-                post.setWriterUid(writerUid);
-                post.setContent(postContent);
-                post.setDate(postDate);
-                post.setWriter(postWriter);
-                post.setImage(postImage);
-                post.setId(postId);
-                if(!existsInPostsList(postId)) {
-                    postsList.add(0, post);
-                    view.notifyAdapter();
-                }
+                getPostData(dataSnapshot);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                for (int i = 0; i < postsList.size(); i++) {
+                    if (postsList.get(i).getId().equals(dataSnapshot.getKey())) {
+                        postsList.remove(i);
+                        view.notifyAdapter();
+                        getPostData(dataSnapshot);
+                        view.notifyAdapter();
+                        break;
+                    }
+                }
             }
 
             @Override
@@ -173,6 +174,28 @@ public class HomeFragmentPresenter {
         return false;
     }
 
+    void getPostData(DataSnapshot dataSnapshot){
+        post = new Post();
+        String postContent = dataSnapshot.child("content").getValue().toString();
+        String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
+        String postWriter = dataSnapshot.child("writerName").getValue().toString();
+        String postImage = dataSnapshot.child("image").getValue().toString();
+        String postId = dataSnapshot.getKey();
+        String writerUid = dataSnapshot.child("writerUid").getValue().toString();
+        boolean posted = (boolean) dataSnapshot.child("posted").getValue();
+        post.setPosted(posted);
+        post.setWriterUid(writerUid);
+        post.setContent(postContent);
+        post.setDate(postDate);
+        post.setWriter(postWriter);
+        post.setImage(postImage);
+        post.setId(postId);
+        if(!existsInPostsList(postId)) {
+            postsList.add(0, post);
+            view.notifyAdapter();
+        }
+    }
+
     public void removeListeners(){
         if(postsEventListener != null)
             postsReference.removeEventListener(postsEventListener);
@@ -186,7 +209,7 @@ public class HomeFragmentPresenter {
 
         boolean validateInput(String postText);
 
-        void onPostAddedSuccessfully();
+        void showToast(String value);
 
         void notifyAdapter();
 

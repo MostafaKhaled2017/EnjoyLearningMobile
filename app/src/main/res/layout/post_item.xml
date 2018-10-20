@@ -37,6 +37,14 @@
             android:textColor="@color/grey"
             android:textSize="12sp"
             />
+
+        <!--<android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/warning_icon"
+            android:layout_margin="8dp"
+            android:id="@+id/warningIcon"
+            android:visibility="invisible"/>-->
         <TextView
             android:id="@+id/postContentInDetails"
             android:layout_below="@id/postImageInDetails"

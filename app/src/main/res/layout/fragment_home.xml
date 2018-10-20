@@ -42,6 +42,7 @@
         android:layout_marginTop="5dp"
         android:id="@+id/postsRecyclerView"
         android:layout_width="match_parent"
+        android:scrollbars="none"
         android:layout_height="wrap_content" />
 
     <ProgressBar

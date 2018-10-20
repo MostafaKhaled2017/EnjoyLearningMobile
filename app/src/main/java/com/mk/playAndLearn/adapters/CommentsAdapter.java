@@ -59,8 +59,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
             holder.name.setText(comment.getUserName());
         if (comment.getContent() != null)
             holder.content.setText(comment.getContent());
-        if (comment.getDate() != null)
-            holder.date.setText(comment.getDate());
+        if (comment.getDate() != null) {
+            if(comment.isPosted()) {
+                holder.date.setText(comment.getDate());
+            }
+            else {
+                holder.date.setText("جارى النشر ...");
+            }
+        }
         if (comment.getUserImage() != null)
             Picasso.with(context).load(comment.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 

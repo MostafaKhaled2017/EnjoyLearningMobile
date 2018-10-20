@@ -153,6 +153,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         question.setCorrectAnswer(correctAnswer);
                         question.setWriterName(writerName);
                         question.setAlQuestion(questionText);
+                        question.setReviewed(reviewed);
 
                         list.add(question);
                     }

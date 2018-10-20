@@ -207,6 +207,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
             RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new LinearLayoutManager(getActivity());
             uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
             uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            uncompletedChallengesRecyclerView.setNestedScrollingEnabled(false);
             uncompletedChallengesRecyclerView.setAdapter(uncompletedChallengeRecyclerAdapter);
     }
 
@@ -216,6 +217,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
             RecyclerView.LayoutManager completedChallengesLayoutManager = new LinearLayoutManager(getActivity());
             completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
             completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            completedChallengesRecyclerView.setNestedScrollingEnabled(false);
             completedChallengesRecyclerView.setAdapter(completedChallengeRecyclerAdapter);
 
     }

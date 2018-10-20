@@ -9,6 +9,15 @@ public class Comment {
     String commentId;
     String writerUid;
     long votes;
+    boolean posted;
+
+    public boolean isPosted() {
+        return posted;
+    }
+
+    public void setPosted(boolean posted) {
+        this.posted = posted;
+    }
 
     public long getVotes() {
         return votes;

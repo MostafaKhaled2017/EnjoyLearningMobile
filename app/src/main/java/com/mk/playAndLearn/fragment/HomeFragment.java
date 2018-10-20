@@ -203,9 +203,9 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     }
 
     @Override
-    public void onPostAddedSuccessfully() {
+    public void showToast(String value) {
         etAddPost.setText("");
-        Toast.makeText(getActivity(), "تم إضافة المنشور بنجاح", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), value, Toast.LENGTH_SHORT).show();
     }
 
     @Override

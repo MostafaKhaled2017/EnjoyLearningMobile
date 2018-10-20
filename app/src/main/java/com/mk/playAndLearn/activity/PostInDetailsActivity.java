@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -198,6 +199,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         recyclerAdapter = new CommentsAdapter(list, this, false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
     }
@@ -236,5 +238,10 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
     public void onNoCommentsFound() {
         progressBar.setVisibility(android.view.View.GONE);
         noCommentsText.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void showToast(String value) {
+        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
     }
 }
