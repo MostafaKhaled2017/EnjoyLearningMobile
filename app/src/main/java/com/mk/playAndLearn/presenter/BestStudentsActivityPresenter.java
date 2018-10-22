@@ -27,11 +27,15 @@ public class BestStudentsActivityPresenter {
     }
 
     private void getBestStudents() {
-      usersListener =   usersReference.orderByChild("points").addValueEventListener(new ValueEventListener() {
+      usersReference.orderByChild("points").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                usersListener = this;
                 if (!bestStudentsList.isEmpty())
                     bestStudentsList.clear();
+
+                view.startRecyclerAdapter(bestStudentsList);
+
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     user = new User();
                     String name = dataSnapshot1.child("userName").getValue().toString();
@@ -44,10 +48,10 @@ public class BestStudentsActivityPresenter {
                         user.setImageUrl(imageUrl);
                         bestStudentsList.add(0, user);
                     }
-                    view.startRecyclerAdapter(bestStudentsList);
                     view.hideProgressBar();
                     view.notifyAdapter();
                 }
+                view.hideSwipeRefreshLayout();
             }
 
             @Override
@@ -93,6 +97,8 @@ public class BestStudentsActivityPresenter {
     public interface View {
 
         void hideProgressBar();
+
+        void hideSwipeRefreshLayout();
 
         void notifyAdapter();
 

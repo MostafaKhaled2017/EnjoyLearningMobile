@@ -4,6 +4,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -36,6 +37,7 @@ public class BestStudentsActivity extends AppCompatActivity implements BestStude
     ProgressBar progressBar;
     RecyclerView recyclerView;
     TextView noInternetConnectionText;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     BestStudentsActivityPresenter presenter;
 
@@ -60,6 +62,14 @@ public class BestStudentsActivity extends AppCompatActivity implements BestStude
 
         recyclerView = findViewById(R.id.bestStudentsRecyclerView);
         progressBar = findViewById(R.id.bestStudentsProgressBar);
+        swipeRefreshLayout = findViewById(R.id.bestStudentsSwipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.startAsynkTask();
+            }
+        });
 
         noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +78,8 @@ public class BestStudentsActivity extends AppCompatActivity implements BestStude
                 retryConnection();
             }
         });
+
+
 
         presenter.startAsynkTask();
 
@@ -118,5 +130,12 @@ public class BestStudentsActivity extends AppCompatActivity implements BestStude
     public void handleNoInternetConnection() {
         progressBar.setVisibility(android.view.View.GONE);
         noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void hideSwipeRefreshLayout() {
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }

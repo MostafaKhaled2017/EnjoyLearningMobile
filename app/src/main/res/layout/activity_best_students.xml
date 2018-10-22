@@ -30,15 +30,22 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/no_internet_connection_text"/>
+    <include layout="@layout/no_internet_connection_text" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/bestStudentsRecyclerView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/bestStudentsSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@id/appBar"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bestStudentsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/bestStudentsProgressBar"
