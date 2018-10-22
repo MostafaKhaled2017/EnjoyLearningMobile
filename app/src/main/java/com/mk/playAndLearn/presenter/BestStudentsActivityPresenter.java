@@ -19,6 +19,7 @@ public class BestStudentsActivityPresenter {
     private User user;
     private View view;
     private ArrayList bestStudentsList = new ArrayList();
+    ValueEventListener usersListener;
 
     public BestStudentsActivityPresenter(View view) {
         //this.user = new User();
@@ -26,7 +27,7 @@ public class BestStudentsActivityPresenter {
     }
 
     private void getBestStudents() {
-        usersReference.orderByChild("points").addValueEventListener(new ValueEventListener() {
+      usersListener =   usersReference.orderByChild("points").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!bestStudentsList.isEmpty())
@@ -84,6 +85,10 @@ public class BestStudentsActivityPresenter {
         asyncTask.execute();
     }
 
+    public void removeListeners(){
+        if(usersListener != null)
+            usersReference.removeEventListener(usersListener);
+    }
 
     public interface View {
 

@@ -84,6 +84,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginRight="25dp"
             android:layout_marginBottom="5dp"
+            android:autoLink="all"
             android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
             android:textColor="@color/black"
             android:textSize="@dimen/generalTextSize" />

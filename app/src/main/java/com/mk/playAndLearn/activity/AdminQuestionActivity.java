@@ -179,7 +179,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         } else {
             answerTv.setTextColor(Color.RED);
         }
-        answerTv.append(correctAnswer);
+        answerTv.setText("الإجابة : " + correctAnswer);
 
     }
 

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public class LessonContentActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         tvContent = findViewById(R.id.lessonContent);
+        tvContent.setMovementMethod(LinkMovementMethod.getInstance());
+
 
         TextView title = findViewById(R.id.toolbar_title_in_lesson);
 

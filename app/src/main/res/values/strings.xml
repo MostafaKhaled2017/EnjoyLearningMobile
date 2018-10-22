@@ -10,6 +10,9 @@
         <item>لغة انجليزية</item>
         <item>جغرافيا</item>
         <item>تاريخ</item>
+        <item>أحياء</item>
+
+
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
@@ -17,12 +20,19 @@
         <item>Geometry</item>
         <item>Trigonometry</item>
     </string-array>
-    <string-array name="subjects_array_with_default">
+    <string-array name="subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
         <item>جغرافيا</item>
         <item>تاريخ</item>
+        <item>فيزياء</item>
+        <item>كيمياء</item>
+        <item>أحياء</item>
+        <item>جبر</item>
+        <item>هندسة</item>
+        <item>حساب مثلثات</item>
+
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>

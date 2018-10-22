@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +44,8 @@ public class AdminLessonContentActivity extends AppCompatActivity {
     Lesson lesson;
     int index;
     String writerType;
+    //TODO : remove the other references
+    ValueEventListener usersListener, lessonsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +83,12 @@ public class AdminLessonContentActivity extends AppCompatActivity {
             lessonTitleEt.setText(lesson.getTitle());
             lessonContentEt.setText(lesson.getContent());
 
-            usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+           usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     writerType = dataSnapshot.child("userType").getValue().toString();
                     writerTypeTv.append(writerType);
+                    usersListener = this;
                 }
 
                 @Override
@@ -131,27 +138,19 @@ public class AdminLessonContentActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void approvePart(View view) {
-        usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                usersReference.child(lesson.getWriterUid()).child("points").setValue(userPoints + 5);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+    public void save(View view) {
+        Toast.makeText(this, "جارى حفظ الدرس", Toast.LENGTH_SHORT).show();
         lessonsReference.child(lesson.getLessonId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               /* lessonsReference.child(lesson.getLessonId()).child("reviewed").setValue(true);
+                lessonsListener = this;
                 lessonsReference.child(lesson.getLessonId()).child("title").setValue(lesson.getTitle());
-                lessonsReference.child(lesson.getLessonId()).child("content").setValue(lesson.getContent());*/
-               //TODO
+                lessonsReference.child(lesson.getLessonId()).child("content").setValue(lesson.getContent()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(AdminLessonContentActivity.this, "تم حفظ الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -164,7 +163,8 @@ public class AdminLessonContentActivity extends AppCompatActivity {
         if (writerType.equals("طالب")) {
             composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته قبولا جزئيا حيث سيتم رفع أجزاء منه فى البرنامج" + "\"" + lesson.getTitle() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
         } else {
-            composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"");
+            composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle()
+                    + "\" وسيتم الإستعانة به فى التطبيق");
         }
     }
 
@@ -270,6 +270,15 @@ public class AdminLessonContentActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return  true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(usersListener != null)
+            usersReference.removeEventListener(usersListener);
+        if(lessonsListener != null)
+            lessonsReference.removeEventListener(lessonsListener);
     }
 }
 

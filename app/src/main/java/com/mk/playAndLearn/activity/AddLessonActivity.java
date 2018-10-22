@@ -1,6 +1,5 @@
 package com.mk.playAndLearn.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -24,12 +23,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
 import java.util.HashMap;
@@ -79,7 +72,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.subjects_array_with_default, android.R.layout.simple_spinner_item);
+                R.array.subjects_array_for_upload, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -134,7 +127,6 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                             finish();
                         }
                     });
-                    alertDialog.setCancelable(false);
                     alertDialog.create();
                     alertDialog.show();
                 }

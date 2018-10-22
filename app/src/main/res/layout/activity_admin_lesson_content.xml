@@ -101,8 +101,8 @@
         android:layout_gravity="bottom"
         android:layout_margin="5dp"
         android:layout_toLeftOf="@id/skipLessonButton"
-        android:onClick="approvePart"
-        android:text="قبول جزئى" />
+        android:onClick="save"
+        android:text="حفظ" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/approveAllBtn"

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,8 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     Context context;
 
     private final String TAG, subject;
-    int currentPosition = 0, lastPoints = (int)1e9;
+    int currentPosition = 0,  lastPoints  = (int)1e9, lastPosition = -1;
+
 
     public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject) {
         this.list = list;
@@ -63,11 +65,50 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             });
         }
         else {
-            if(user.getPoints() < lastPoints){
-                currentPosition ++;
+            //TODO
+           /* if(position > lastPosition) {
+                //Scroll Down
+                if (user.getPoints() != lastPoints) {
+                    currentPosition = position + 1;
+                }
             }
+            else {
+                //scroll Up
+                if(position != 0) {
+                    for (int i = position; i > 0; i--) {
+                        if(position != list.size()) {
+                            Log.v("studentsAdapterLogging", "points is : " + list.get(i).getPoints()
+                            + " , before points : " + list.get(i - 1).getPoints()
+                            + " , after points : " + list.get(i + 1).getPoints());
+                            if (list.get(i).getPoints() != list.get(i + 1).getPoints()
+                                    && list.get(i).getPoints() != list.get(i - 1).getPoints()) {
+                                currentPosition = i + 1;
+                                Log.v("studentsAdapterLogging", "i : " + i +
+                                        " , current position is : " +currentPosition);
+                                break;
+                            }
+                        }
+                        else {
+                            //TODO
+                            if (list.get(i).getPoints() != list.get(i - 1).getPoints()) {
+                                currentPosition = i + 2;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    position = currentPosition + 1;
+                }
+            }
+            Log.v("studentsAdapter", "user points is : " + user.getPoints()
+                    + " , last points is : " + lastPoints
+                    + " , current position is : " + currentPosition);
             holder.position.setText(currentPosition + "");
-            lastPoints = user.getPoints();
+            lastPosition = position;
+            lastPoints = user.getPoints();*/
+            holder.position.setText(position + 1 + "");
+
         }
         holder.points.setText(user.getPoints() + " XP");
         if (user.getName() != null)
