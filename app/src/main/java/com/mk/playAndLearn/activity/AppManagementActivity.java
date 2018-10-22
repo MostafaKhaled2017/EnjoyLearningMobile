@@ -94,7 +94,7 @@ public class AppManagementActivity extends AppCompatActivity {
                     question.setSubject(subject);//extra than normal
                     question.setWriterEmail(writerEmail);//extra than normal
 
-                    questionList.add(question);
+                    questionList.add(0, question);
                 }
                 questionsReady = true;
             }

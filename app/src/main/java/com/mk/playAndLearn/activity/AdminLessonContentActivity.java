@@ -158,14 +158,6 @@ public class AdminLessonContentActivity extends AppCompatActivity {
 
             }
         });
-
-        Toast.makeText(this, "تم قبول الدرس", Toast.LENGTH_SHORT).show();
-        if (writerType.equals("طالب")) {
-            composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته قبولا جزئيا حيث سيتم رفع أجزاء منه فى البرنامج" + "\"" + lesson.getTitle() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
-        } else {
-            composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle()
-                    + "\" وسيتم الإستعانة به فى التطبيق");
-        }
     }
 
     public void refuseLesson(View view) {

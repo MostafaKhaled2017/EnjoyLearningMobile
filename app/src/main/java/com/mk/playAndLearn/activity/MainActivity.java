@@ -370,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 editor.putString("currentUserName", currentUserName);
                 editor.apply();
 
+
             }
 
             @Override
