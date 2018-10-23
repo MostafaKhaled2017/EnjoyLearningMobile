@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.mk.enjoylearning.R;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +81,20 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         r2 = findViewById(R.id.radio2);
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
+
+            // Set popupWindow height to 500px
+            popupWindow.setHeight(500);
+        }
+        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.subjects_array_for_upload, android.R.layout.simple_spinner_item);

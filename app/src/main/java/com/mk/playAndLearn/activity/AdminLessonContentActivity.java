@@ -149,6 +149,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(AdminLessonContentActivity.this, "تم حفظ الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                        nextLesson();
                     }
                 });
             }

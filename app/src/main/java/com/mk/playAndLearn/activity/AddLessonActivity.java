@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.mk.enjoylearning.R;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,6 +72,22 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         unitOrderSpinner.setOnItemSelectedListener(this);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+
+        etContent.setMovementMethod(LinkMovementMethod.getInstance());
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
+
+            // Set popupWindow height to 500px
+            popupWindow.setHeight(500);
+        }
+        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                 R.array.subjects_array_for_upload, android.R.layout.simple_spinner_item);

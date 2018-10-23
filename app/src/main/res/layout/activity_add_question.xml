@@ -20,8 +20,8 @@
             android:id="@+id/subjectsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@id/appBar"
+            android:layout_alignParentRight="true"
             android:layout_margin="8dp"
             android:text="المادة : "
             android:textSize="18sp" />
@@ -32,15 +32,16 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/appBar"
             android:layout_marginTop="8dp"
-            android:layout_toLeftOf="@id/subjectsTextView" />
+            android:layout_toLeftOf="@id/subjectsTextView"
+            android:scrollbars="none" />
 
         <EditText
             android:id="@+id/addQuestionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/subjectsSpinner"
-            android:layout_marginBottom="15dp"
             android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             android:hint="السؤال"
             android:inputType="textCapSentences" />
 
@@ -48,8 +49,8 @@
             android:id="@+id/answerText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@id/addQuestionEditText"
+            android:layout_alignParentRight="true"
             android:layout_margin="10dp"
             android:text="الإجابات"
             android:textColor="@color/writingColor"
@@ -70,8 +71,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/instuctionsText"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
             android:orientation="vertical">
 
             <RadioButton

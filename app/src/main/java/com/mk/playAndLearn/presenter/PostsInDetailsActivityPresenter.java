@@ -106,7 +106,7 @@ public class PostsInDetailsActivityPresenter {
                 comment.setContent(content);
                 comment.setUserImage(userImage);
                 comment.setDate(date);
-                if(!existsInCommentsList(commentId)) {
+                if (!existsInCommentsList(commentId)) {
                     commentsList.add(0, comment);
                     view.notifyAdapter();
                 }
@@ -236,7 +236,7 @@ public class PostsInDetailsActivityPresenter {
         void notifyAdapter();
 
         void onNoCommentsFound();
-        
+
         void showToast(String value);
     }
 }

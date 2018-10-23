@@ -17,10 +17,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -141,31 +143,50 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
         android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
-        alertDialogBuilderUserInput.setView(view);
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton("إضافة", null)
+                .create();
+
+
 
         final EditText inputComment = view.findViewById(R.id.dialog_value);
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
         dialogTitle.setText("إضافة تعليق");
 
-        alertDialogBuilderUserInput.setCancelable(true);
-        alertDialogBuilderUserInput.setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String commentText = inputComment.getText().toString();
+                        if (TextUtils.isEmpty(commentText.trim())) {
+                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
+                        }
+                        else {
+                            presenter.addComment(commentText);
+                            alertDialogBuilderUserInput.dismiss();
+                        }
+                    }
+                });
             }
         });
 
-        alertDialogBuilderUserInput.setNegativeButton("إضافة",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogBox, int id) {
-                        String commentText = inputComment.getText().toString();
-                        presenter.addComment(commentText);
-                    }
-                });
-
-        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
-        alertDialog.show();
+        alertDialogBuilderUserInput.show();
 
     }
 

@@ -35,11 +35,10 @@ public class LessonContentActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+        TextView title = findViewById(R.id.toolbar_title_in_lesson);
+
         tvContent = findViewById(R.id.lessonContent);
         tvContent.setMovementMethod(LinkMovementMethod.getInstance());
-
-
-        TextView title = findViewById(R.id.toolbar_title_in_lesson);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -51,9 +50,8 @@ public class LessonContentActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "رجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
         }
-
-
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();

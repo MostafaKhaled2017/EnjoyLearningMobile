@@ -31,6 +31,7 @@ import com.mk.playAndLearn.presenter.LearnFragmentPresenter;
 import com.mk.playAndLearn.utils.GridAutofitLayoutManager;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -87,6 +88,20 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
                 retryConnection();
             }
         });
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
+
+            // Set popupWindow height to 500px
+            popupWindow.setHeight(500);
+        }
+        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.subjects_array, android.R.layout.simple_spinner_item);
