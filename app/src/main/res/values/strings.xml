@@ -10,16 +10,15 @@
         <item>لغة انجليزية</item>
         <item>جغرافيا</item>
         <item>تاريخ</item>
-        <item>أحياء</item>
         <item>فيزياء</item>
         <item>كيمياء</item>
-
+        <item>أحياء</item>
+        <item>فلسفة</item>
+        <item>رياضيات</item>
+        <item>Mathematics</item>
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
-        <item>Algebra</item>
-        <item>Geometry</item>
-        <item>Trigonometry</item>
     </string-array>
     <string-array name="subjects_array_for_upload">
         <item>اختر المادة</item>
@@ -30,30 +29,14 @@
         <item>فيزياء</item>
         <item>كيمياء</item>
         <item>أحياء</item>
-        <item>جبر</item>
-        <item>هندسة</item>
-        <item>حساب مثلثات</item>
-
+        <item>فلسفة</item>
+        <item>رياضيات</item>
+        <item>Mathematics</item>
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
-        <item>Algebra</item>
-        <item>Geometry</item>
-        <item>Trigonometry</item>
     </string-array>
 
-    <!--<string-array name="subjects_array2">
-        <item>لغة عربية</item>
-        <item>لغة انجليزية</item>
-        <item>جغرافيا</item>
-        <item>تاريخ</item>
-        <item>فيزياء (لغة إنجليزية)</item>
-        <item>كيمياء (لغة إنجليزية)</item>
-        <item>احياء (لغة إنجليزية)</item>
-        <item>جبر (لغة إنجليزية)</item>
-        <item>هندسة (لغة إنجليزية)</item>
-        <item>علم المثلثات (لغة إنجليزية)</item>
-    </string-array>-->
     <string-array name="units_array">
         <item>1</item>
         <item>2</item>

@@ -34,9 +34,6 @@ import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class ChallengeResultActivity extends AppCompatActivity {
     //TODO : think about removing challenge result activity but think well before determine what to do in this
@@ -50,6 +47,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
     ArrayList questionsList = new ArrayList();
     String playerAnswersBooleansList = "", playerAnswersList = "";
+    String localCurrentUserUid;
 
     public SharedPreferences pref; // 0 - for private mode
 
@@ -69,6 +67,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
         challengeResultTv = findViewById(R.id.challengeResultText);
+
+        localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -97,25 +97,34 @@ public class ChallengeResultActivity extends AppCompatActivity {
         }
         challengeResultTv.append(score + "");
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
-        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        String date = format.format(today);
+        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+        formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+        SimpleDateFormat formatTime = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+        formatTime.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+        String date = formatDate.format(today);
+        String time = formatTime.format(today);
 
         Map<String, Object> map = new HashMap<>();
         if (currentChallenger == 1) {
+            String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+            String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
             map.put("player1Name", currentUserName);
-            map.put("player1Email", currentUserEmail);
-            map.put("player1Image", currentUserImage);
+            map.put("player1Email", localCurrentUserEmail);
+            map.put("player1Image", localCurrentUserImage);
             map.put("player1score", score);
-            map.put("player1Uid", currentUserUid);
+            map.put("player1Uid", localCurrentUserUid);
             map.put("player2Name", secondPlayerName);
             map.put("player2Email", secondPlayerEmail);
             map.put("player2Image", secondPlayerImage);
             map.put("player2Uid", secondPlayerUid);
             map.put("player2score", 0);
-            map.put("player1notified", currentUserUid + "false");
+            map.put("player1notified", localCurrentUserUid + "false");
             map.put("player2notified", secondPlayerUid + "false");
             map.put("date", date);
+            map.put("time", time);//TODO : note that old challenges doesn't have time
             map.put("subject", subject);
             map.put("questionsList", questionsList);
             map.put("player1AnswersBooleans", playerAnswersBooleansList.trim());
@@ -233,7 +242,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
     }
 
     public int getCurrentPlayer(String player1Uid) {
-        if (player1Uid.equals(currentUserUid)) {
+
+        if (player1Uid.equals(localCurrentUserUid)) {
             return 1;
         } else {
             return 2;

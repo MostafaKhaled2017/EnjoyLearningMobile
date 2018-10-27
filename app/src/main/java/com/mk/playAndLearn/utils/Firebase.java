@@ -5,8 +5,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
+//TODO : note that general sign activity and main activity use other variables
 public class Firebase {
     public static FirebaseAuth auth = FirebaseAuth.getInstance();
     public static FirebaseUser currentUser = auth.getCurrentUser();

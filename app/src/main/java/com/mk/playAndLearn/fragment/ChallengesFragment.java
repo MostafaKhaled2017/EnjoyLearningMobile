@@ -79,7 +79,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         super.onCreate(savedInstanceState);
         deleteCache(getActivity());
         presenter = new ChallengesFragmentPresenter(this);
-
     }
 
     @Override
@@ -96,7 +95,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
                 navigate();
             }
         });
-
 
         progressBar = view.findViewById(R.id.challengesProgressBar);
         noChallengesTv = view.findViewById(R.id.loadingText);
@@ -123,8 +121,8 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
             // Get private mPopup member variable and try cast to ListPopupWindow
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinner);
 
-            // Set popupWindow height to 500px
-            popupWindow.setHeight(500);
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
         }
         catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
@@ -147,9 +145,15 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
             }
         });
 
-        presenter.startAsynkTask();
-
         return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            presenter.startAsynkTask();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -292,21 +296,10 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     }
 
     @Override
-    public void startNotificationService(int player1childrenCount, int player2childrenCount) {
-        //TODO : add timer if needed
-        //TODO : remove this method and use firebase function instead
-
-        Intent serviceIntent = new Intent(getActivity(), NotificationsService.class);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
-            //getActivity().startForegroundService(serviceIntent); TODO : add this after solving its errors
-        } else {
-            getActivity().startService(serviceIntent);
-        }
-    }
-
-    @Override
     public void onNoInternetConnection() {
+        //TODO : check what these things do
+        completedChallengesRecyclerView.removeAllViews();
+        uncompletedChallengesRecyclerView.removeAllViews();
         hideProgressBar();
         hideCompletedChallengesTv();
         hideUncompletedChallengesTv();

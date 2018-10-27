@@ -3,6 +3,7 @@ package com.mk.playAndLearn.presenter;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
@@ -29,6 +29,7 @@ public class ChallengesFragmentPresenter {
     int player1childrenCount = 0, player2childrenCount = 0, currentPlayer;
     ChildEventListener player1Listener, player2Listener;
     int no = 0;
+    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
     public ChallengesFragmentPresenter(View view) {
@@ -57,9 +58,9 @@ public class ChallengesFragmentPresenter {
                     ChildEventListener generalChallengesListener = new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Log.v("onChildAdded", "child added");
-                                getChallengeData(dataSnapshot, "onChildAdded");
-                                view.onDataFound();
+                            Log.v("onChildAdded", "child added");
+                            getChallengeData(dataSnapshot, "onChildAdded");
+                            view.onDataFound();
 
                         }
 
@@ -98,16 +99,16 @@ public class ChallengesFragmentPresenter {
                     };
 
                     //this code gives data where current user is player 1
-                    player1Listener = challengesReference.orderByChild("player1Uid").equalTo(currentUserUid).addChildEventListener(generalChallengesListener);
+                    player1Listener = challengesReference.orderByChild("player1Uid").equalTo(localCurrentUserUid).addChildEventListener(generalChallengesListener);
                     //this code gives data where current user is player 2
-                    player2Listener = challengesReference.orderByChild("player2Uid").equalTo(currentUserUid).addChildEventListener(generalChallengesListener);
+                    player2Listener = challengesReference.orderByChild("player2Uid").equalTo(localCurrentUserUid).addChildEventListener(generalChallengesListener);
 
                     challengesReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             onInitialDataLoaded();
+
                             Log.v("ChallengesFragPresenter", "completed list size :" + completedChallengesList + " , uncompleted list size : " + uncompletedChallengesList);
-                            challengesReference.removeEventListener(this);
                         }
 
 
@@ -152,7 +153,7 @@ public class ChallengesFragmentPresenter {
 
         String challengerName, challengerImage;
 
-        if (player1Uid.equals(currentUserUid)) {
+        if (player1Uid.equals(localCurrentUserUid)) {
             currentPlayer = 1;
             challengerName = player2Name;
             challengerImage = player2Image;
@@ -194,8 +195,7 @@ public class ChallengesFragmentPresenter {
                 completedChallengesList.add(0, challenge);
                 view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData1");
             }
-        }
-        else if (challenge.getState().equals(refusedChallengeText)) {
+        } else if (challenge.getState().equals(refusedChallengeText)) {
             Log.v("loggingC2", "value is " + !existsInCompletedChallengesList(challengeId));
             if (!existsInCompletedChallengesList(dataSnapshot.getKey())) {
                 Log.v("challengesDebug", "completedListItemAdded");
@@ -203,8 +203,7 @@ public class ChallengesFragmentPresenter {
                 completedChallengesList.add(0, challenge);
                 view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData3");
             }
-        }
-        else if (challenge.getState().equals(uncompletedChallengeText)) {
+        } else if (challenge.getState().equals(uncompletedChallengeText)) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getKey()));
             if (!existsInUncompletedChallengesList(challengeId)) {
                 Log.v("challengesDebug", "uncompletedListItemAdded");
@@ -236,29 +235,27 @@ public class ChallengesFragmentPresenter {
     }
 
     private void recreatingLists() {
-            completedChallengesList = new ArrayList<>();
-            view.startCompletedChallengesAdapter(completedChallengesList);
+        completedChallengesList = new ArrayList<>();
+        view.startCompletedChallengesAdapter(completedChallengesList);
 
-            uncompletedChallengesList = new ArrayList<>();
-            view.startUnCompletedChallengesAdapter(uncompletedChallengesList);
+        uncompletedChallengesList = new ArrayList<>();
+        view.startUnCompletedChallengesAdapter(uncompletedChallengesList);
     }
 
     public void removeListeners() {
-        if(player1Listener != null)
+        if (player1Listener != null)
             challengesReference.removeEventListener(player1Listener);
-        if(player2Listener != null)
+        if (player2Listener != null)
             challengesReference.removeEventListener(player2Listener);
     }
 
     public void onInitialDataLoaded() {
         view.hideProgressBar();
         checkListsSizeAndAdjustViews();
-        view.startNotificationService(player1childrenCount, player2childrenCount);
     }
 
     boolean existsInCompletedChallengesList(String currentChallengeId) {
         for (Challenge c : completedChallengesList) {
-            Log.v("completedChallengesList", "id of challenge in completedChallengesList : " + c.getId() + " current challengeId " + currentChallengeId);
             if (c.getId().equals(currentChallengeId)) {
                 return true;
             }
@@ -268,13 +265,12 @@ public class ChallengesFragmentPresenter {
 
     boolean existsInUncompletedChallengesList(String currentChallengeId) {
         for (Challenge c : uncompletedChallengesList) {
-            Log.v("uncompletedChallengesLi", "id of challenge in uncompletedChallengesList : " + c.getId() + " current challengeId " + currentChallengeId);
             if (c.getId().equals(currentChallengeId)) {
                 Log.v("uncompletedChallengesLi", "id of challenge in uncompletedChallengesList : " + c.getId() + " returned true" + currentChallengeId);
                 return true;
             }
         }
-        Log.v("uncompletedChallengesLi", "returned false" );
+        Log.v("uncompletedChallengesLi", "returned false");
         return false;
     }
 
@@ -304,8 +300,6 @@ public class ChallengesFragmentPresenter {
         void hideNoChallengesTv();
 
         void showNoChallengesTv();
-
-        void startNotificationService(int player1childrenCount, int player2childrenCount);
 
         void onNoInternetConnection();
     }

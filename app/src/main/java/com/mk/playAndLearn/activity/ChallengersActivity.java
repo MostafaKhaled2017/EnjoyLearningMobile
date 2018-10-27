@@ -34,7 +34,6 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class ChallengersActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
@@ -127,6 +126,9 @@ public class ChallengersActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //TODO : think about the conditions here
                 if(list.isEmpty()) {
+
+                    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         User user = new User();
                         String name = dataSnapshot1.child("userName").getValue().toString();
@@ -135,7 +137,7 @@ public class ChallengersActivity extends AppCompatActivity {
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                         String userType = dataSnapshot1.child("userType").getValue().toString();
-                        if (userType.equals("طالب") && !uid.equals(currentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                        if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                             user.setName(name);
                             user.setPoints(Integer.parseInt(points));
                             user.setImageUrl(imageUrl);

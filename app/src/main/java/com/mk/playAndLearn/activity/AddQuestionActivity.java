@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 
 import java.lang.reflect.Field;
@@ -33,8 +34,6 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 import static com.mk.playAndLearn.utils.Firebase.questionsReference;
 
 public class AddQuestionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -89,8 +88,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             // Get private mPopup member variable and try cast to ListPopupWindow
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
 
-            // Set popupWindow height to 500px
-            popupWindow.setHeight(500);
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
         }
         catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
@@ -168,12 +167,16 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         } else if (currentSubject.equals("اختر المادة")) {
             Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
         } else {
+            String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
             map = new HashMap<>();
             map.put("writerName", currentUserName);
-            map.put("writerEmail", currentUserEmail);
-            map.put("writerUid", currentUserUid);
+            map.put("writerEmail", localCurrentUserEmail);
+            map.put("writerUid", localCurrentUserUid);
             map.put("subject", currentSubject);
             map.put("al question", question);
+            map.put("question type", "choose"); // TODO : edit this when new type of questions added
             map.put("answer 1", et1);
             map.put("answer 2", et2);
             map.put("answer 3", et3);

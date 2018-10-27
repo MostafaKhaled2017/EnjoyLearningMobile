@@ -43,10 +43,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
-import static com.mk.playAndLearn.utils.Firebase.postsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 
 /**

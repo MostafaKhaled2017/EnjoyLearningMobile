@@ -20,6 +20,7 @@
         android:id="@+id/challengerName"
         android:text="Mostafa Khaled"
         android:textSize="17sp"
+        android:textColor="@color/writingColor"
         android:textStyle="bold"
         android:layout_toRightOf="@id/challengeImage"/>
     <TextView

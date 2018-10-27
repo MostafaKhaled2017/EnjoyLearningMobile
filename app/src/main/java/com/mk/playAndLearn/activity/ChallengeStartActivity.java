@@ -207,10 +207,10 @@ public class ChallengeStartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
-                if(list.size() < 5 && challengeQuestionList.size() < 5){
+                if(list.size() < 5 && currentChallenger == 1){
                     showDialog();
                 }
-                else if (currentChallenger == 1) {
+                else if (currentChallenger == 1 && list.size() >= 5) {
                         if (!chosenQuestionsList.isEmpty())
                             chosenQuestionsList.clear();
                         Collections.shuffle(list);

@@ -6,8 +6,8 @@ android {
         applicationId "com.mk.playAndLearn"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 10008
-        versionName "1.0.08"
+        versionCode 10010
+        versionName "1.0.10"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

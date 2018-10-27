@@ -1,43 +1,33 @@
 package com.mk.playAndLearn.activity;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.ToxicBakery.viewpager.transforms.TabletTransformer;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,19 +38,19 @@ import com.mk.playAndLearn.adapters.ViewPagerAdapter;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LearnFragment;
+import com.mk.playAndLearn.model.User;
+import com.mk.playAndLearn.service.NotificationsService;
+import com.mk.playAndLearn.utils.Firebase;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
-import static com.mk.playAndLearn.utils.Firebase.auth;
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
-import static com.mk.playAndLearn.utils.Firebase.database;
+import static com.mk.playAndLearn.utils.Firebase.challengesReference;
+import static com.mk.playAndLearn.utils.Firebase.commentsReference;
+import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Firebase.questionsReference;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
@@ -72,6 +62,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
+    FirebaseAuth localAuth;
+    FirebaseDatabase localDatabase;
+    DatabaseReference localUsersReference;
+    String localCurrentUserUid ;
+
+    Intent serviceIntent;
 
     //TODO : read all the TODOs in all the app well
     //TODO : at a begging support mobiles support mobiles from 4 to 6 inches only but later support the rest
@@ -124,16 +120,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         pref = getSharedPreferences("MyPref", 0);
         editor = pref.edit();
 
-        Intent intent = getIntent();
-        if(intent != null){
-            newUser = intent.getBooleanExtra("newUser", false);
-        }
-        if(newUser){
-            showDialog();//TODO : add shared preference inside the method
-        }
-        else {
-            setCurrentUserNameToSharedPreferences();
-        }
+        serviceIntent = new Intent(this, NotificationsService.class);
+
+         localAuth = FirebaseAuth.getInstance();
+         localDatabase = FirebaseDatabase.getInstance();
+         localUsersReference = localDatabase.getReference("users");
+         localCurrentUserUid = localAuth.getCurrentUser().getUid();
 
         mViewPager = findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
@@ -141,15 +133,38 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
 
-       /*//TODO : comment this part
-        //start editing in database
+      /*  Intent intent = getIntent();
+        boolean newUser = false;
+        if(intent != null){
+            newUser = intent.getBooleanExtra("newUser", false);
+        }
 
-        usersReference.addChildEventListener(new ChildEventListener() {
+        if(newUser){
+            postsReference.keepSynced(true);
+            commentsReference.keepSynced(true);
+            lessonsReference.keepSynced(true);
+            usersReference.keepSynced(true);
+        }*/
+
+        startNotificationService();
+        setCurrentUserNameToSharedPreferences();
+
+
+        //TODO : comment this part
+        //start editing in database
+/*
+        questionsReference.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-               // DataSnapshot subjectSnapshot = dataSnapshot.child("subject");
+                String subject = dataSnapshot.child("subject").getValue().toString();
                 String id = dataSnapshot.getKey();
-                usersReference.child(id).child("admin").setValue(false);
+
+                if(subject.equals("Algebra") || subject.equals("Geometry") || subject.equals("Trigonometry"))
+                    questionsReference.child(id).child("subject").setValue("Mathematics");
+
+                if(subject.equals("جبر") || subject.equals("هندسة") || subject.equals("حساب مثلثات"))
+                    questionsReference.child(id).child("subject").setValue("رياضيات");
+
 
             }
 
@@ -174,11 +189,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             }
         });
 
-
-        //end editing in database*/
+*/
+        //end editing in database
 
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
-        mViewPager.setPageTransformer(false, new TabletTransformer());
 
         TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabOne.setText("تعلم");
@@ -227,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             } catch (Exception e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }*/
-        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -242,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.addQuestion:
                 startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
                 return true;
-            case R.id.aboutApp:
+            case R.id.contactUs:
                 startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
                 return true;
             case R.id.bestStudents:
@@ -263,7 +277,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 startActivity(i);
                 return true;}*/
             case R.id.signOut:
-                auth.signOut();
+                stopNotificationService();
+                localAuth.signOut();
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -277,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem appManagementItem = menu.findItem(R.id.appManagement);
-        if (auth.getCurrentUser().getEmail().equals("mostafakhaled835@gmail.com")) {
+        if (localAuth.getCurrentUser().getEmail().equals("mostafakhaled835@gmail.com")) {
             appManagementItem.setVisible(true);
         } else {
             appManagementItem.setVisible(false);
@@ -303,12 +318,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     //TODO : remove this method with all of its uses and find a better way to achieve the same thing
     public static void deleteCache(Context context) {
-        try {
+        /*try {
             File dir = context.getCacheDir();
             deleteDir(dir);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public static boolean deleteDir(File dir) {
@@ -328,49 +343,16 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         }
     }
 
-    public void showDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
-        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
-
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
-        alertDialogBuilderUserInput.setView(view);
-        //alertDialogBuilderUserInput.setCancelable(false);
-
-        final EditText inputComment = view.findViewById(R.id.dialog_value);
-        inputComment.setText(currentUser.getDisplayName());
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText("اكتب اسم المستخدم الذى تريده");//TODO : remove this If I copy the method to another thing
-        //TODO : allow users to change their profile picture
-        alertDialogBuilderUserInput.setNegativeButton("موافق",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialogBox, int id) {
-                        Toast.makeText(MainActivity.this, "جارى إعداد حسابك", Toast.LENGTH_SHORT).show();
-                        String commentText = inputComment.getText().toString();
-                        usersReference.child(currentUserUid).child("userName").setValue(commentText).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(MainActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
-                                setCurrentUserNameToSharedPreferences();
-                                dialogBox.dismiss();
-                            }
-                        });
-                    }
-                });
-
-        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
-        alertDialog.show();
-
-    }
-    public void setCurrentUserNameToSharedPreferences(){
-        usersReference.child(currentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void setCurrentUserNameToSharedPreferences() {
+        localUsersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.v("signDebug", "dataSnapshot is : " + dataSnapshot);
-                String currentUserName = dataSnapshot.child("userName").getValue().toString();
-                editor.putString("currentUserName", currentUserName);
-                editor.apply();
-
-
+                if (dataSnapshot.exists()) {
+                    String currentUserName = dataSnapshot.child("userName").getValue().toString();
+                    editor.putString("currentUserName", currentUserName);
+                    editor.apply();
+                }
             }
 
             @Override
@@ -378,5 +360,27 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
             }
         });
+    }
+
+    public void startNotificationService() {
+        //TODO : add timer if needed
+        //TODO : remove this method and use firebase function instead
+        Log.v("notificationsDebug", "Service started");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
+            startForegroundService(serviceIntent);// TODO : check this after solving its errors
+        } else {
+            startService(serviceIntent);
+        }
+    }
+
+    public void stopNotificationService() {
+        //TODO : add timer if needed
+        //TODO : remove this method and use firebase function instead
+        Log.v("notificationsDebug", "Service stopped");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
+            //ForegroundService(serviceIntent);// TODO : check this after solving its errors
+        } else {
+            stopService(serviceIntent);
+        }
     }
 }

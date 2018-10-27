@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -29,12 +31,12 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
 
     ArrayList<Post> list;
     Context context;
+    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     public PostsAdapter(ArrayList<Post> list, Context context) {
         this.list = list;
@@ -90,6 +92,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 intent.putExtra("date", post.getDate());
                 intent.putExtra("name", post.getWriter());
                 intent.putExtra("image", post.getImage());
+                intent.putExtra("postWriterUid", post.getWriterUid());
                 if (post.getId() != null)
                     intent.putExtra("id", post.getId());
                 context.startActivity(intent);
@@ -99,8 +102,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (post.getWriterUid().equals(currentUserUid)) {
-                    showActionsDialog(post.getId(), holder, post.getContent(), position);
+
+                String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+                //TODO : change this way
+                if (post.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals("mostafakhaled835@gmail.com")) {
+                    showActionsDialog(post.getId(), holder, post.getContent(), position); //TODO :  search why I need to add one
                 }
                 return true;//TODO : check this
             }
@@ -143,7 +150,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                         }
                     });
 
-                    commentsReference.orderByChild("postId").equalTo(id).addValueEventListener(new ValueEventListener() {
+                    commentsReference.orderByChild("postId").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -183,8 +190,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 postsReference.child(id).child("content").setValue(inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        Log.v("Logging","position is : " + position + " , postContent is : " + list.get(position).getContent());
                         list.get(position).setContent(inputText);
                         holder.content.setText(inputText);
+                        notifyDataSetChanged();
+
                         Toast.makeText(context, "تم تعديل المنشور بنجاح", Toast.LENGTH_SHORT).show();
                     }
                 });

@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 
 import java.lang.reflect.Field;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class AddLessonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
@@ -82,8 +82,8 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
             // Get private mPopup member variable and try cast to ListPopupWindow
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
 
-            // Set popupWindow height to 500px
-            popupWindow.setHeight(500);
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
         }
         catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
@@ -117,6 +117,9 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     Toast.makeText(AddLessonActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الدرس", Toast.LENGTH_SHORT).show();
                 }else
                 {
+                    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
                     userName = pref.getString("currentUserName","غير معروف");
                     map = new HashMap<>();
                     map.put("title", title);
@@ -125,8 +128,8 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map.put("lesson", Integer.parseInt(currentLessonOrder));
                     map.put("subject", currentSubject);
                     map.put("writerName", userName);
-                    map.put("writerEmail", userEmail);
-                    map.put("writerUid", currentUserUid);
+                    map.put("writerEmail", localCurrentUserEmail);
+                    map.put("writerUid", localCurrentUserUid);
                     map.put("reviewed", false);
                     //TODO : add icon to the dialog
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddLessonActivity.this);

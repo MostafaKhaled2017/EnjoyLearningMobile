@@ -96,8 +96,8 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
             // Get private mPopup member variable and try cast to ListPopupWindow
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
 
-            // Set popupWindow height to 500px
-            popupWindow.setHeight(500);
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
         }
         catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...

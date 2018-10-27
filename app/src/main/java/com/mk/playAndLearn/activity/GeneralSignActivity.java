@@ -1,17 +1,22 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -70,6 +75,9 @@ public class GeneralSignActivity extends AppCompatActivity {
     Spinner userTypesSpinner;
     TextView unStudentSignAlertText;
     ProgressBar progressBar;
+    public SharedPreferences pref; // 0 - for private mode
+    SharedPreferences.Editor editor;
+    Intent i;
 
     private GoogleSignInClient mGoogleSignInClient;
     String userName = "", userImage = "", userEmail = "", userType = "";
@@ -83,11 +91,13 @@ public class GeneralSignActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         button = findViewById(R.id.googleBtn);
         database = FirebaseDatabase.getInstance();
-       // database.setPersistenceEnabled(false);
+        // database.setPersistenceEnabled(false);
         myRef = database.getReference("users");
         userTypesSpinner = findViewById(R.id.userTypesSpinner);
         unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
         progressBar = findViewById(R.id.progressbar);
+
+        pref = getSharedPreferences("MyPref", 0);
 
         progressBar.setVisibility(View.GONE);
 
@@ -212,7 +222,7 @@ public class GeneralSignActivity extends AppCompatActivity {
 
             }
         }//TODO
-            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
 
@@ -279,8 +289,8 @@ public class GeneralSignActivity extends AppCompatActivity {
         editor.apply();*/
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final Intent i = new Intent(GeneralSignActivity.this, MainActivity.class);
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                i = new Intent(GeneralSignActivity.this, MainActivity.class);
                 if (!dataSnapshot.child(mAuth.getUid()).exists()) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("userName", userName);
@@ -296,14 +306,15 @@ public class GeneralSignActivity extends AppCompatActivity {
                     myRef.child(mAuth.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            i.putExtra("newUser", true);
-                            startActivity(i);
-                        }
+                            editor = pref.edit();
+                            editor.putString("currentUserName", userName);
+                            editor.apply();
+
+                            showDialog();
+                            }
                     });
 
-                }
-                else {
-                    i.putExtra("newUser", false);
+                } else {
                     startActivity(i);
                 }
             }
@@ -323,9 +334,52 @@ public class GeneralSignActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             Log.v("GeneralSignActivity", "current user value is : " + currentUser
-            +"current user Email is : " + currentUser.getEmail());
+                    + "current user Email is : " + currentUser.getEmail());
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
             //Toast.makeText(this, "mAuth : " + mAuth + " , current user : " + currentUser, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void showDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
+        alertDialogBuilderUserInput.setView(view);
+        //alertDialogBuilderUserInput.setCancelable(false);
+
+        FirebaseAuth localAuth = FirebaseAuth.getInstance();
+        FirebaseUser localCurrentUser = localAuth.getCurrentUser();
+        final DatabaseReference localUsersReference = FirebaseDatabase.getInstance().getReference("users");
+        final String localCurrentUserUid = localCurrentUser.getUid();
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        inputComment.setText(localCurrentUser.getDisplayName());
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        dialogTitle.setText("اكتب اسم المستخدم الذى تريده");//TODO : remove this If I copy the method to another thing
+        //TODO : allow users to change their profile picture
+        alertDialogBuilderUserInput.setNegativeButton("موافق",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialogBox, int id) {
+                        Toast.makeText(GeneralSignActivity.this, "جارى إعداد حسابك", Toast.LENGTH_SHORT).show();
+                        final String commentText = inputComment.getText().toString();
+                        localUsersReference.child(localCurrentUserUid).child("userName").setValue(commentText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(GeneralSignActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
+                                editor.putString("currentUserName", commentText);
+                                editor.apply();
+                              // i.putExtra("newUser", true);
+                                startActivity(i);
+
+                                dialogBox.dismiss();
+                            }
+                        });
+                    }
+                });
+
+        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
+        alertDialog.show();
+
     }
 }

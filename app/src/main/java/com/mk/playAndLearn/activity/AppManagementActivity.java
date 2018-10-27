@@ -149,6 +149,8 @@ public class AppManagementActivity extends AppCompatActivity {
 
     public void suggestedLessonsButton(View view) {
         if (lessonsReady && lessonsList.size() != 0) {
+            Toast.makeText(this,"عدد الدروس : " + lessonsList.size(), Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, AdminLessonContentActivity.class);
             intent.putParcelableArrayListExtra("lessonsList", lessonsList);
             intent.putExtra("index", 0);
@@ -165,6 +167,8 @@ public class AppManagementActivity extends AppCompatActivity {
 
     public void suggestedQuestionsButton(View view) {
         if (questionsReady && questionList.size() != 0) {
+            Toast.makeText(this,"عدد الأسئلة : " + questionList.size(), Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, AdminQuestionActivity.class);
             intent.putParcelableArrayListExtra("questionsList", questionList);
             intent.putExtra("index", 0);

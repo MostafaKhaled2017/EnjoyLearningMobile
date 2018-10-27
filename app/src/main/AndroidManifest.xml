@@ -7,6 +7,7 @@
 
     <!-- I am preventing backup to solve backing up authentication problem -->
     <application
+        android:name="com.mk.playAndLearn.utils.MyFirebaseApp"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/app_icon"
@@ -20,7 +21,6 @@
         <activity
             android:name="com.mk.playAndLearn.activity.GeneralSignActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="com.mk.playAndLearn.activity.WelcomeActivity"
             android:screenOrientation="portrait"

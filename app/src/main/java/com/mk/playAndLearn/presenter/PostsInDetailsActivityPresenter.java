@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,9 +37,6 @@ import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class PostsInDetailsActivityPresenter {
     View view;
@@ -91,6 +89,7 @@ public class PostsInDetailsActivityPresenter {
                 view.onDataFound();
                 Comment comment = new Comment();
                 String userName = dataSnapshot.child("userName").getValue().toString();
+                String userEmail = dataSnapshot.child("userEmail").getValue().toString();
                 String content = dataSnapshot.child("content").getValue().toString();
                 String userImage = dataSnapshot.child("userImage").getValue().toString();
                 String date = dataSnapshot.child("date").getValue().toString();
@@ -100,6 +99,7 @@ public class PostsInDetailsActivityPresenter {
                 String commentId = dataSnapshot.getKey();
                 comment.setVotes(votes);
                 comment.setPosted(posted);
+                comment.setUserEmail(userEmail);
                 comment.setCommentId(commentId);
                 comment.setWriterUid(writerUid);
                 comment.setUserName(userName);
@@ -180,18 +180,24 @@ public class PostsInDetailsActivityPresenter {
         Map<String, Object> map = new HashMap<>();
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
         String currentUserName = pref.getString("currentUserName", "غير معروف");
+        String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+        String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         Log.v("sharedPreference", " current userName is : " + currentUserName);
 
         map.put("userName", currentUserName);
-        map.put("userEmail", currentUserEmail);
-        map.put("userImage", currentUserImage);
+        map.put("userEmail", localCurrentUserEmail);
+        map.put("userImage", localCurrentUserImage);
         map.put("votes", 0);
         map.put("date", date);
         map.put("posted", false);
+        map.put("notified", view.getPostWriterUid() + "false");
         map.put("upVotedUsers", "users: ");
         map.put("downVotedUsers", "users: ");
         map.put("postId", view.getPostId());
-        map.put("writerUid", currentUserUid);
+        map.put("postWriterUid", view.getPostWriterUid());
+        map.put("writerUid", localCurrentUserUid);
         map.put("content", commentText.trim());
         final String commentId = commentsReference.push().getKey();
         final DatabaseReference currentCommentRef = commentsReference.child(commentId);
@@ -222,6 +228,8 @@ public class PostsInDetailsActivityPresenter {
 
     public interface View {
         String getPostId();
+
+        String getPostWriterUid();
 
         void retryConnection();
 

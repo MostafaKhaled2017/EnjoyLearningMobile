@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,9 +21,7 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
 
 import static com.mk.playAndLearn.NotificationID.getID;
-import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
@@ -31,10 +30,15 @@ import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 
 public class NotificationsService extends Service {
     int currentPlayer;
-    ChildEventListener player1Listener, player2Listener;
+    ChildEventListener player1Listener, player2Listener, commentsListener;
     String onChildAddedPreviusKey = "", onChildChangedpreviusKey = "";
     //the full number which is coming from the challenges fragment
+    String localCurrentUserUid;
 
+    DatabaseReference localChallengesReference;
+    DatabaseReference localCommentsReference;
+    FirebaseAuth localAuth;
+    FirebaseDatabase localDatabase;
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
     //TODO : change the text of notification according to the written and unwritten states in the database like refused, win, lose, draw ...
     //TODO : know why the app shows notifications for the uncompleted challenges when it is started and solve this problem
@@ -44,10 +48,17 @@ public class NotificationsService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v("notificationsDebug", "onCreate" + localCurrentUserUid);
+        localAuth = FirebaseAuth.getInstance();
+        localDatabase = FirebaseDatabase.getInstance();
+        localChallengesReference = localDatabase.getReference("challenges");
+        localCommentsReference = localDatabase.getReference("comments");
+        localCurrentUserUid = localAuth.getCurrentUser().getUid();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v("notificationsDebug", "onStartCommand" + localCurrentUserUid);
 
         /*//start of media player(used for debug)
 
@@ -65,7 +76,7 @@ public class NotificationsService extends Service {
 
         //end of media player*/
 
-        ChildEventListener generalListener = new ChildEventListener() {
+        ChildEventListener generalChallengesListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String challengeState = dataSnapshot.child("state").getValue().toString();
@@ -80,7 +91,7 @@ public class NotificationsService extends Service {
                 Log.v("Logging2", "onChildAdded");
                 if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
                     showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
-                    challengesReference.child(challengeId).child("player2notified").setValue(true);
+                    localChallengesReference.child(challengeId).child("player2notified").setValue(true);
                 }
                 onChildAddedPreviusKey = dataSnapshot.getKey();
             }
@@ -101,7 +112,7 @@ public class NotificationsService extends Service {
                     showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
                             " تحديك ضد " + player2Name
                             /*+ " فى مادة " + subject*/);//TODO : add this
-                    challengesReference.child(challengeId).child("player1notified").setValue(true);
+                    localChallengesReference.child(challengeId).child("player1notified").setValue(true);
                     onChildChangedpreviusKey = dataSnapshot.getKey();
                 }
             }
@@ -125,11 +136,45 @@ public class NotificationsService extends Service {
         };
 
         //this gives the challenges that the current user has started
-
-        DatabaseReference challengesReference = FirebaseDatabase.getInstance().getReference("challenges"); //TODO : change this
-        player1Listener =  challengesReference.orderByChild("player1notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
+        Log.v("notificationsDebug", "localCurrentUserUid is : " + localCurrentUserUid);
+        player1Listener =  localChallengesReference.orderByChild("player1notified").equalTo(localCurrentUserUid + "false").addChildEventListener(generalChallengesListener);
         //this code gives data where current user is player 2
-        player2Listener = challengesReference.orderByChild("player2notified").equalTo(currentUserUid + "false").addChildEventListener(generalListener);
+        player2Listener = localChallengesReference.orderByChild("player2notified").equalTo(localCurrentUserUid + "false").addChildEventListener(generalChallengesListener);
+
+
+        //commentsListener
+        commentsListener = localCommentsReference.orderByChild("notified").equalTo(localCurrentUserUid + "false").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String writerName = dataSnapshot.child("userName").getValue().toString();
+                String postWriterUid = dataSnapshot.child("postWriterUid").getValue().toString();
+                String commentWriterUid = dataSnapshot.child("writerUid").getValue().toString();
+                if(!postWriterUid.equals(commentWriterUid)) {//TODO : think about changing the notification text to a shorter one
+                    showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
+                }
+                localCommentsReference.child(dataSnapshot.getKey()).child("notified").setValue(true);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         return START_STICKY;
     }
@@ -191,6 +236,9 @@ public class NotificationsService extends Service {
             case "كيمياء":
                 subject = "الكيمياء";
                 break;
+            case "رياضيات":
+                subject = "الرياضيات";
+                break;
             default:  subject =  "ال " + subject;//TODO : check this and make this code a method returns the new subject
         }
         return subject;
@@ -213,7 +261,7 @@ public class NotificationsService extends Service {
             mNotificationManager.createNotificationChannel(channel);
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
-                .setSmallIcon(R.mipmap.app_icon) // notification icon
+                .setSmallIcon(R.mipmap.app_icon) //TODO : add setLargeIcon
                 .setContentTitle(title) // title for notification
                 .setContentText(content)// message for notification
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)) // set alarm sound for notification
@@ -229,14 +277,23 @@ public class NotificationsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        
+       /*if(player1Listener != null){
+            localChallengesReference.removeEventListener(player1Listener);
+        }
+        if(player2Listener != null){
+            localChallengesReference.removeEventListener(player2Listener);
+        }
+        if(commentsListener != null){
+            localCommentsReference.removeEventListener(commentsListener);
+        }*/
     }
 
     public int getCurrentPlayer(String player1Uid) {
-        if (player1Uid.equals(currentUserUid)) {
+        if (player1Uid.equals(localCurrentUserUid)) {
             return 1;
         } else {
             return 2;
         }
     }
-
 }

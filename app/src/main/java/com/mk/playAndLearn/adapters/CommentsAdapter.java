@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHolder> {
     ArrayList<Comment> list;
@@ -36,6 +36,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
     //used to load the votes number at the first time only
     boolean visied;
     long votes;
+    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     public CommentsAdapter(ArrayList<Comment> list, Context context, boolean visited) {
         this.list = list;
@@ -113,8 +114,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                if (comment.getWriterUid().equals(currentUserUid)) {
+            public boolean onLongClick(View view)
+            {
+                String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+                //TODO : change this hardcoded way
+                if (comment.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals("mostafakhaled835@gmail.com")){
                     showActionsDialog(comment.getCommentId(), holder, comment.getContent(), position);
                 }
                 return true;
@@ -160,12 +165,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
     boolean isVoted(String[] upVotedUsersArray, String[] downVotedUsers) {
         for (String id : upVotedUsersArray) {
-            if (id.equals(currentUserUid)) {
+            if (id.equals(localCurrentUserUid)) {
                 return true;
             }
         }
         for (String id : downVotedUsers) {
-            if (id.equals(currentUserUid)) {
+            if (id.equals(localCurrentUserUid)) {
                 return true;
             }
         }
@@ -181,10 +186,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
             if (tag.equals("upArrow")) {
                 votes++;
-                commentsReference.child(comment.getCommentId()).child("upVotedUsers").setValue(upVotedUsers + currentUserUid + " ");
+                commentsReference.child(comment.getCommentId()).child("upVotedUsers").setValue(upVotedUsers + localCurrentUserUid + " ");
             } else if (tag.equals("downArrow")) {
                 votes--;
-                commentsReference.child(comment.getCommentId()).child("downVotedUsers").setValue(downVotedUsers + currentUserUid + " ");
+                commentsReference.child(comment.getCommentId()).child("downVotedUsers").setValue(downVotedUsers + localCurrentUserUid + " ");
 
             }
             commentsReference.child(comment.getCommentId()).child("votes").setValue(votes).addOnCompleteListener(new OnCompleteListener<Void>() {

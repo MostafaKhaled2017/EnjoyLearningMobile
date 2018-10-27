@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.RemoteMessage;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.CommentsAdapter;
 import com.mk.playAndLearn.model.Comment;
@@ -53,18 +54,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
-import static com.mk.playAndLearn.utils.Firebase.commentsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
+
 
 public class PostInDetailsActivity extends AppCompatActivity implements PostsInDetailsActivityPresenter.View {
-    String content, name, date, image;
+    String content, name, date, image, postId = "", postWriterUid = "";
     TextView contentTv, nameTv, dateTv;
     ImageView imageView;
     PostsInDetailsActivityPresenter presenter;
-
-    String postId = "";
 
     CommentsAdapter recyclerAdapter;
     ProgressBar progressBar;
@@ -105,12 +101,13 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         });
 
         Intent intent = getIntent();
-        if (intent != null) {
+        if (intent.getExtras() != null) {
             content = intent.getStringExtra("content");
             date = intent.getStringExtra("date");
             name = intent.getStringExtra("name");
             image = intent.getStringExtra("image");
             postId = intent.getStringExtra("id");
+            postWriterUid = intent.getStringExtra("postWriterUid");
 
             contentTv.setText(content);
             dateTv.setText(date);
@@ -122,13 +119,13 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         progressBar = findViewById(R.id.commentsProgressBar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
-        //copy it in a new one
-        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
-        //set the color filter, you can use also Mode.SRC_ATOP
-        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-        //set it to your fab button initialized before
-        fab.setImageDrawable(willBeWhite);
+//        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
+//        //copy it in a new one
+//        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
+//        //set the color filter, you can use also Mode.SRC_ATOP
+//        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+//        //set it to your fab button initialized before
+//        fab.setImageDrawable(willBeWhite);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,6 +238,11 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
     @Override
     public String getPostId() {
         return postId;
+    }
+
+    @Override
+    public String getPostWriterUid() {
+        return postWriterUid;
     }
 
     @Override

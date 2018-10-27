@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,9 +28,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
-import static com.mk.playAndLearn.utils.Strings.currentUserEmail;
-import static com.mk.playAndLearn.utils.Strings.currentUserImage;
-import static com.mk.playAndLearn.utils.Strings.currentUserUid;
 
 public class HomeFragmentPresenter {
     Post post;
@@ -80,15 +78,19 @@ public class HomeFragmentPresenter {
         if (view.validateInput(postText)) {
             SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
             String currentUserName = pref.getString("currentUserName", "غير معروف");
+            String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+            String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
             Log.v("sharedPreference", " current userName is : " + currentUserName);
 
             Map<String, Object> map = new HashMap<>();
             map.put("content", postText.trim());
             map.put("date", date);
             map.put("writerName", currentUserName);
-            map.put("writerUid", currentUserUid);
-            map.put("image", currentUserImage);
-            map.put("email", currentUserEmail);
+            map.put("writerUid", localCurrentUserUid);
+            map.put("image", localCurrentUserImage);
+            map.put("email", localCurrentUserEmail);
             map.put("posted", false);
             map.put("votes", 0);
             final String postId = postsReference.push().getKey();
@@ -96,10 +98,23 @@ public class HomeFragmentPresenter {
             currentPostRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    currentPostRef.child("posted").setValue(true);
-                    currentPostRef.child("date").setValue(date);
-                    view.showToast("تم إضافة المنشور بنجاح");
-                    view.notifyAdapter();
+                    if(currentPostRef != null) {
+
+                        for (int i = 0; i < postsList.size(); i++) {
+                            if (postsList.get(i).getId().equals(postId)){
+                                postsList.get(i).setPosted(true);
+                                postsList.get(i).setDate(date);
+                                view.notifyAdapter();
+                                break;
+                            }
+                        }
+
+                        Log.v("Logging", "current posts reference is : " + currentPostRef);
+                        currentPostRef.child("posted").setValue(true);
+                        currentPostRef.child("date").setValue(date);
+                        view.showToast("تم إضافة المنشور بنجاح");
+                        view.notifyAdapter();
+                    }
                 }
             });
         }
@@ -120,15 +135,7 @@ public class HomeFragmentPresenter {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                for (int i = 0; i < postsList.size(); i++) {
-                    if (postsList.get(i).getId().equals(dataSnapshot.getKey())) {
-                        postsList.remove(i);
-                        view.notifyAdapter();
-                        getPostData(dataSnapshot);
-                        view.notifyAdapter();
-                        break;
-                    }
-                }
+
             }
 
             @Override
@@ -179,12 +186,14 @@ public class HomeFragmentPresenter {
         String postContent = dataSnapshot.child("content").getValue().toString();
         String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
         String postWriter = dataSnapshot.child("writerName").getValue().toString();
+        String postWriterEmail = dataSnapshot.child("email").getValue().toString();
         String postImage = dataSnapshot.child("image").getValue().toString();
         String postId = dataSnapshot.getKey();
         String writerUid = dataSnapshot.child("writerUid").getValue().toString();
         boolean posted = (boolean) dataSnapshot.child("posted").getValue();
         post.setPosted(posted);
         post.setWriterUid(writerUid);
+        post.setEmail(postWriterEmail);
         post.setContent(postContent);
         post.setDate(postDate);
         post.setWriter(postWriter);
