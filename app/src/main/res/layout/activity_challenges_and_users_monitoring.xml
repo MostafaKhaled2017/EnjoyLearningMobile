@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.ChallengesAndUsersMonitoring">
+
+    <include layout="@layout/appbar"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/studentsNumberTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="@dimen/medium_text_size"
+        android:text="عدد الطلبة : "
+        android:textColor="@color/writingColor"
+        android:layout_margin="5dp"
+        android:layout_gravity="right"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/allChallengesNumberTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/writingColor"
+        android:textStyle="bold"
+        android:textSize="@dimen/medium_text_size"
+        android:text="عدد تحديات كاملا : "
+        android:layout_margin="5dp"
+        android:layout_gravity="right"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/yesterdayChallengesNumberTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/writingColor"
+        android:textStyle="bold"
+        android:textSize="@dimen/medium_text_size"
+        android:text="عدد تحديات الأمس : "
+        android:layout_margin="5dp"
+        android:layout_gravity="right"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/todayChallengesNumberTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/writingColor"
+        android:textStyle="bold"
+        android:textSize="@dimen/medium_text_size"
+        android:text="عدد تحديات اليوم : "
+        android:layout_margin="5dp"
+        android:layout_gravity="right"/>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/todayAdminChallengesListView"
+        android:layout_margin="5dp"/>
+
+</android.support.v7.widget.LinearLayoutCompat>

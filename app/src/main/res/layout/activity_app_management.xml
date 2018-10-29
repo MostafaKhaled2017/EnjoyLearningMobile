@@ -28,5 +28,16 @@
         style="@style/buttonStyle"
         android:text="الدروس المقترحة"
         android:padding="10dp"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/challengesAndUsersMonitoring"
+        android:onClick="challengesAndUsersMonitoring"
+        android:layout_below="@id/suggestedLessonsButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/buttonStyle"
+        android:text="التحديات والمستخدمين"
+        android:padding="10dp"/>
 
 </RelativeLayout>

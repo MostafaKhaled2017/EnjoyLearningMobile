@@ -194,6 +194,10 @@ public class AppManagementActivity extends AppCompatActivity {
         super.onDestroy();
         removeListeners();
     }
+
+    public void challengesAndUsersMonitoring(View view) {
+        startActivity(new Intent(this, ChallengesAndUsersMonitoring.class));
+    }
 }
 
 
