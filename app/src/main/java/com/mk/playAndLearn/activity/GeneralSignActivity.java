@@ -10,12 +10,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -344,42 +346,64 @@ public class GeneralSignActivity extends AppCompatActivity {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
         android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
-        alertDialogBuilderUserInput.setView(view);
-        //alertDialogBuilderUserInput.setCancelable(false);
-
         FirebaseAuth localAuth = FirebaseAuth.getInstance();
         FirebaseUser localCurrentUser = localAuth.getCurrentUser();
         final DatabaseReference localUsersReference = FirebaseDatabase.getInstance().getReference("users");
         final String localCurrentUserUid = localCurrentUser.getUid();
 
-        final EditText inputComment = view.findViewById(R.id.dialog_value);
-        inputComment.setText(localCurrentUser.getDisplayName());
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText("اكتب اسم المستخدم الذى تريده");//TODO : remove this If I copy the method to another thing
-        //TODO : allow users to change their profile picture
-        alertDialogBuilderUserInput.setNegativeButton("موافق",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialogBox, int id) {
-                        Toast.makeText(GeneralSignActivity.this, "جارى إعداد حسابك", Toast.LENGTH_SHORT).show();
-                        final String commentText = inputComment.getText().toString();
-                        localUsersReference.child(localCurrentUserUid).child("userName").setValue(commentText).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(GeneralSignActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
-                                editor.putString("currentUserName", commentText);
-                                editor.apply();
-                              // i.putExtra("newUser", true);
-                                startActivity(i);
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton("تم", null)
+                .create();
 
-                                dialogBox.dismiss();
-                            }
-                        });
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        dialogTitle.setText("اكتب اسم المستخدم الذى تريده");
+
+
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        final String commentText = inputComment.getText().toString();
+                        if (TextUtils.isEmpty(commentText.trim())) {
+                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
+                        }
+                        else {
+                            Toast.makeText(GeneralSignActivity.this, "جارى إعداد حسابك", Toast.LENGTH_SHORT).show();
+                            localUsersReference.child(localCurrentUserUid).child("userName").setValue(commentText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(GeneralSignActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
+                                    editor.putString("currentUserName", commentText);
+                                    editor.apply();
+                                    // i.putExtra("newUser", true);
+                                    startActivity(i);
+
+                                    //alertDialogBuilderUserInput.dismiss();
+                                }
+                            });
+                        }
                     }
                 });
+            }
+        });
 
-        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
-        alertDialog.show();
+        alertDialogBuilderUserInput.show();
 
     }
 }

@@ -28,6 +28,7 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -153,19 +154,14 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         //TODO : comment this part
         //start editing in database
 /*
-        questionsReference.orderByKey().addChildEventListener(new ChildEventListener() {
+        usersReference.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String subject = dataSnapshot.child("subject").getValue().toString();
-                String id = dataSnapshot.getKey();
 
-                if(subject.equals("Algebra") || subject.equals("Geometry") || subject.equals("Trigonometry"))
-                    questionsReference.child(id).child("subject").setValue("Mathematics");
-
-                if(subject.equals("جبر") || subject.equals("هندسة") || subject.equals("حساب مثلثات"))
-                    questionsReference.child(id).child("subject").setValue("رياضيات");
-
-
+                String userName = dataSnapshot.child("userName").getValue().toString();
+                if(userName.equals("")){
+                    Log.v("Logging","dataSnapShot is : " + dataSnapshot);
+                }
             }
 
             @Override

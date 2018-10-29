@@ -2,6 +2,7 @@ package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
@@ -9,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +45,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference questionsReference;
 
+    SharedPreferences pref;
 
     ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList();
     String playerAnswersBooleansList = "", playerAnswersList = "";
@@ -80,6 +83,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("ابدأ التحدي");
 
+        pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
 
         player1Name = findViewById(R.id.firstPlayerName);
         player1Image = findViewById(R.id.firstPlayerImage);
@@ -194,7 +198,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
             }
         });
 
-        firstPlayerName = currentUser.getDisplayName();
+        firstPlayerName = pref.getString("currentUserName", "غير معروف");
         firstPlayerEmail = currentUser.getEmail();
         firstPlayerUid = currentUser.getUid();
         firstPlayerImage = currentUser.getPhotoUrl().toString();

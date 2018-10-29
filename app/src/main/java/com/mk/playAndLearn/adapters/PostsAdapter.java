@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.AdminQuestionActivity;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.model.Post;
 import com.squareup.picasso.Picasso;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
 
@@ -106,8 +108,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
                 //TODO : change this way
-                if (post.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals("mostafakhaled835@gmail.com")) {
-                    showActionsDialog(post.getId(), holder, post.getContent(), position); //TODO :  search why I need to add one
+                if (post.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
+                    boolean admin = false;
+                    if(localCurrentUserEmail.equals(adminEmail))
+                        admin = true;
+
+                    showActionsDialog(post.getId(), holder, post.getContent(), post.getEmail(), admin, position); //TODO :  search why I need to add one
                 }
                 return true;//TODO : check this
             }
@@ -132,7 +138,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
 
     }
 
-    private void showActionsDialog(final String id, final MyHolder holder, final String content, final int position) {
+    private void showActionsDialog(final String id, final MyHolder holder, final String content, final String email, final boolean admin, final int position) {
         CharSequence colors[] = new CharSequence[]{"تعديل", "حذف"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -141,12 +147,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    showDialog(id, holder, content, position);
+                    showDialog(id, holder, content, email, admin, position);
                 } else {
                     postsReference.child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
+                            if(admin && !email.equals(adminEmail)) {
+                                composeEmail("تم حذف منشورك", "تم حذف منشورك " + "\"" + content + "\"", email);
+                            }
                         }
                     });
 
@@ -170,7 +179,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         builder.show();
     }
 
-    public void showDialog(final String id, final MyHolder holder, final String content, final int position) {
+    public void showDialog(final String id, final MyHolder holder, final String content, final String email, final boolean admin, final int position) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
         android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
@@ -196,6 +205,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                         notifyDataSetChanged();
 
                         Toast.makeText(context, "تم تعديل المنشور بنجاح", Toast.LENGTH_SHORT).show();
+
+                        if(admin && !email.equals(adminEmail)){
+                            composeEmail("تم تعديل منشورك", "تم تعديل منشورك " + "\"" + content + "\"", email);
+                        }
                     }
                 });
 
@@ -220,5 +233,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         }
     }
 
+    public void composeEmail(String subject, String body, String email) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        i.putExtra(Intent.EXTRA_SUBJECT, subject);
+        i.putExtra(Intent.EXTRA_TEXT, body);
+        try {
+            context.startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.v("Logging", "There are no email clients installed.");
+        }
+    }
 
 }

@@ -200,8 +200,12 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     @Override
     public void showToast(String value) {
-        etAddPost.setText("");
         Toast.makeText(getActivity(), value, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void clearEditText() {
+        etAddPost.setText("");
     }
 
     @Override

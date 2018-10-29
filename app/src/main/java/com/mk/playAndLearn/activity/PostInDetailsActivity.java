@@ -152,8 +152,6 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
                 .setNegativeButton("إضافة", null)
                 .create();
 
-
-
         final EditText inputComment = view.findViewById(R.id.dialog_value);
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
         dialogTitle.setText("إضافة تعليق");

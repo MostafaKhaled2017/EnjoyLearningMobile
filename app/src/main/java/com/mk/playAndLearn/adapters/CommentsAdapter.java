@@ -2,6 +2,7 @@ package com.mk.playAndLearn.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.commentsReference;
 import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHolder> {
     ArrayList<Comment> list;
@@ -119,8 +121,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                 String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
                 //TODO : change this hardcoded way
-                if (comment.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals("mostafakhaled835@gmail.com")){
-                    showActionsDialog(comment.getCommentId(), holder, comment.getContent(), position);
+                if (comment.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
+                    boolean admin = false;
+                    if(localCurrentUserEmail.equals(adminEmail))
+                        admin = true;
+
+                    showActionsDialog(comment.getCommentId(), holder, comment.getContent(), comment.getUserEmail(), admin, position); //TODO :  search why I need to add one
                 }
                 return true;
             }
@@ -206,7 +212,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
     }
 
 
-    private void showActionsDialog(final String id, final MyHolder holder, final String content, final int position) {
+    private void showActionsDialog(final String id, final MyHolder holder, final String content, final String email, final boolean admin, final int position) {
         CharSequence colors[] = new CharSequence[]{"تعديل", "حذف"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -215,12 +221,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    showDialog(id, holder, content, position);
+                    showDialog(id, holder, content, email, admin, position);
                 } else {
                     commentsReference.child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف التعليق بنجاح", Toast.LENGTH_SHORT).show();
+                            if(admin && !email.equals(adminEmail)) {
+                                composeEmail("تم حذف تعليقك", "تم حذف تعليقك " + "\"" + content + "\"", email);
+                            }
                         }
                     });
                 }
@@ -229,7 +238,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         builder.show();
     }
 
-    public void showDialog(final String id, final MyHolder holder, final String content, final int position) {
+    public void showDialog(final String id, final MyHolder holder, final String content, final String email, final boolean admin, final int position) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
         android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
@@ -252,11 +261,28 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                         list.get(position).setContent(inputText);
                         holder.content.setText(inputText);
                         Toast.makeText(context, "تم تعديل التعليق بنجاح", Toast.LENGTH_SHORT).show();
+
+                        if(admin && !email.equals(adminEmail)){
+                            composeEmail("تم تعديل تعليقك", "تم تعديل تعليقك " + "\"" + content + "\"", email);
+                        }
                     }
                 });
 
             }
         });
         alertDialogBuilderUserInput.show();
+    }
+
+    public void composeEmail(String subject, String body, String email) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        i.putExtra(Intent.EXTRA_SUBJECT, subject);
+        i.putExtra(Intent.EXTRA_TEXT, body);
+        try {
+            context.startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.v("Logging", "There are no email clients installed.");
+        }
     }
 }

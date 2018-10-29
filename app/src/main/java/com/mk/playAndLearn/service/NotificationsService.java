@@ -1,12 +1,15 @@
 package com.mk.playAndLearn.service;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -54,11 +57,19 @@ public class NotificationsService extends Service {
         localChallengesReference = localDatabase.getReference("challenges");
         localCommentsReference = localDatabase.getReference("comments");
         localCurrentUserUid = localAuth.getCurrentUser().getUid();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startMyOwnForegroundForOreoAndPie();
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v("notificationsDebug", "onStartCommand" + localCurrentUserUid);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startMyOwnForegroundForOreoAndPie();
+        }
 
         /*//start of media player(used for debug)
 
@@ -179,6 +190,7 @@ public class NotificationsService extends Service {
         return START_STICKY;
     }
 
+
     private String currentUserState(DataSnapshot dataSnapshot) {
         String challengeState = dataSnapshot.child("state").getValue().toString();
         String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
@@ -255,9 +267,9 @@ public class NotificationsService extends Service {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("default",
-                    "YOUR_CHANNEL_NAME",
+                    "CHANNEL_NAME",
                     NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+            channel.setDescription("NOTIFICATION_CHANNEL_DISCRIPTION");
             mNotificationManager.createNotificationChannel(channel);
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
@@ -272,6 +284,29 @@ public class NotificationsService extends Service {
         mNotificationManager.notify(getID(), mBuilder.build());
         //TODO : edit the id if needed
         //TODO : think about making the notification opens the challenges fragment directly
+    }
+
+    private void startMyOwnForegroundForOreoAndPie(){
+        NotificationChannel chan = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            chan = new NotificationChannel("default",
+                    "العب .. تعلم",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            chan.setLightColor(Color.BLUE);
+            chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            assert manager != null;
+            manager.createNotificationChannel(chan);
+        }
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "default");
+        Notification notification = notificationBuilder.setOngoing(true)
+                .setSmallIcon(R.drawable.icon)
+                .setContentTitle("التطبيق يعمل فى الخلفية")
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+        startForeground(getID(), notification);
     }
 
     @Override

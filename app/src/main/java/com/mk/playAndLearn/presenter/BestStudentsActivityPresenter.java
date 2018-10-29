@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.presenter;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,12 +40,12 @@ public class BestStudentsActivityPresenter {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     user = new User();
                     String name = dataSnapshot1.child("userName").getValue().toString();
-                    String points = dataSnapshot1.child("points").getValue().toString();
+                    int points =Integer.parseInt(dataSnapshot1.child("points").getValue().toString());
                     String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                     String userType = dataSnapshot1.child("userType").getValue().toString();
                     if (userType.equals("طالب")) {
                         user.setName(name);
-                        user.setPoints(Integer.parseInt(points));
+                        user.setPoints(points);
                         user.setImageUrl(imageUrl);
                         bestStudentsList.add(0, user);
                     }

@@ -95,6 +95,7 @@ public class HomeFragmentPresenter {
             map.put("votes", 0);
             final String postId = postsReference.push().getKey();
             final DatabaseReference currentPostRef = postsReference.child(postId);
+            view.clearEditText();
             currentPostRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -227,5 +228,7 @@ public class HomeFragmentPresenter {
         void hideProgressBar();
 
         void onNoPostsExists();
+
+        void clearEditText();
     }
 }

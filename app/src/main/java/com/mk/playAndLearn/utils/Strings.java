@@ -20,4 +20,5 @@ public class Strings {
     public static String wonChallengeText = "ربحت";
     public static String loseChallengeText = "خسرت";
     public static String drawChallengeText = "تعادلت";
+    public static String adminEmail = "mostafakhaled835@gmail.com";
 }
