@@ -19,7 +19,7 @@ import static com.mk.playAndLearn.utils.Firebase.usersReference;
 public class BestStudentsActivityPresenter {
     private User user;
     private View view;
-    private ArrayList bestStudentsList = new ArrayList();
+    private ArrayList<User> bestStudentsList = new ArrayList();
     ValueEventListener usersListener;
 
     public BestStudentsActivityPresenter(View view) {
@@ -28,7 +28,7 @@ public class BestStudentsActivityPresenter {
     }
 
     private void getBestStudents() {
-      usersReference.orderByChild("points").addListenerForSingleValueEvent(new ValueEventListener() {
+        usersReference.orderByChild("points").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 usersListener = this;
@@ -39,19 +39,36 @@ public class BestStudentsActivityPresenter {
 
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     user = new User();
+                    boolean admin = false;
                     String name = dataSnapshot1.child("userName").getValue().toString();
-                    int points =Integer.parseInt(dataSnapshot1.child("points").getValue().toString());
+                    int points = Integer.parseInt(dataSnapshot1.child("points").getValue().toString());
                     String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                     String userType = dataSnapshot1.child("userType").getValue().toString();
+                    if(dataSnapshot1.child("admin").getValue() != null)
+                         admin = (boolean) dataSnapshot1.child("admin").getValue();
                     if (userType.equals("طالب")) {
+                        user.setAdmin(admin);
                         user.setName(name);
                         user.setPoints(points);
                         user.setImageUrl(imageUrl);
                         bestStudentsList.add(0, user);
                     }
-                    view.hideProgressBar();
-                    view.notifyAdapter();
+
                 }
+
+                //Adding position to List
+                int position = 1, previousPoints = -1;
+                for (int i = 0; i < bestStudentsList.size(); i++) {
+                    User user = bestStudentsList.get(i);
+                    if (previousPoints != -1 && previousPoints > user.getPoints()){
+                        position ++;
+                    }
+                    bestStudentsList.get(i).setPosition(position);
+                    previousPoints = user.getPoints();
+                }
+
+                view.hideProgressBar();
+                view.notifyAdapter();
                 view.hideSwipeRefreshLayout();
             }
 
@@ -90,8 +107,8 @@ public class BestStudentsActivityPresenter {
         asyncTask.execute();
     }
 
-    public void removeListeners(){
-        if(usersListener != null)
+    public void removeListeners() {
+        if (usersListener != null)
             usersReference.removeEventListener(usersListener);
     }
 

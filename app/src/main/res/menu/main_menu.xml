@@ -30,6 +30,11 @@
         android:id="@+id/bestStudents"
         android:title="أفضل الطلاب"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/generalChallenges"
+        android:title="تحديات عامة"
+        app:showAsAction="never" />
    <!-- <item
         android:id="@+id/editAccoutData"
         android:title="تعديل بيانات الحساب"

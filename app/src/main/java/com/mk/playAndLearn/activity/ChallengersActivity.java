@@ -131,13 +131,18 @@ public class ChallengersActivity extends AppCompatActivity {
 
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         User user = new User();
+                        boolean admin = false;
                         String name = dataSnapshot1.child("userName").getValue().toString();
                         String email = dataSnapshot1.child("userEmail").getValue().toString();
                         String uid = dataSnapshot1.getKey();
                         String points = dataSnapshot1.child("points").getValue().toString();
                         String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
                         String userType = dataSnapshot1.child("userType").getValue().toString();
+
+                        if(dataSnapshot1.child("admin").getValue() != null)
+                            admin = (boolean) dataSnapshot1.child("admin").getValue();
                         if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                            user.setAdmin(admin);
                             user.setName(name);
                             user.setPoints(Integer.parseInt(points));
                             user.setImageUrl(imageUrl);

@@ -267,6 +267,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.appManagement:
                 startActivity(new Intent(this, AppManagementActivity.class));
                 return true;
+
+            case R.id.generalChallenges:
+                startActivity(new Intent(this, GeneralChallengesActivity.class));
+                return true;
             /*case R.id.editAccoutData:{
                 Intent i=new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse("https://myaccount.google.com/privacy"));

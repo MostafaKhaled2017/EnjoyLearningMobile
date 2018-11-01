@@ -389,7 +389,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(GeneralSignActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
-                                    editor.putString("currentUserName", commentText);
+                                    editor.putString("currentUserName", commentText.trim());
                                     editor.apply();
                                     // i.putExtra("newUser", true);
                                     startActivity(i);

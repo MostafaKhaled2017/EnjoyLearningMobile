@@ -3,6 +3,15 @@ package com.mk.playAndLearn.model;
 public class User {
     String name, email, imageUrl, Uid;
     int position = -1, points = -1;
+    boolean admin = false;
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 
     public int getPoints() {
         return points;

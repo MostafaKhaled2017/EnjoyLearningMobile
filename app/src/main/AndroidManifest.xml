@@ -121,7 +121,8 @@
         <activity
             android:name="com.mk.playAndLearn.activity.AdminLessonContentActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.ChallengesAndUsersMonitoring"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.ChallengesAndUsersMonitoring" />
+        <activity android:name="com.mk.playAndLearn.activity.GeneralChallengesActivity"></activity>
     </application>
 
 </manifest>

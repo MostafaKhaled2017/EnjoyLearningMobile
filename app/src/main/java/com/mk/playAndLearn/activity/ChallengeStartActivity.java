@@ -123,6 +123,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
                     player2Points.setText(secondPlayerPoints + "");
 
+                    Log.v("ChallengeStartLog","dataSnapshot is : " + dataSnapshot.toString());
+
                 }
 
                 @Override

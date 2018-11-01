@@ -107,7 +107,9 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             holder.position.setText(currentPosition + "");
             lastPosition = position;
             lastPoints = user.getPoints();*/
-            holder.position.setText(position + 1 + "");
+           if(user.getPosition() != -1) {
+               holder.position.setText(user.getPosition() + "");
+           }
 
         }
         holder.points.setText(user.getPoints() + " XP");
@@ -115,6 +117,12 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             holder.name.setText(user.getName());
         if (user.getImageUrl() != null)
             Picasso.with(context).load(user.getImageUrl()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
+        if(user.isAdmin()){
+            holder.isAdminImageView.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.isAdminImageView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -137,7 +145,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     class MyHolder extends RecyclerView.ViewHolder {
         TextView name, points, position;
-        ImageView imageView;
+        ImageView imageView, isAdminImageView;
         CardView cardView;
 
         public MyHolder(View itemView) {
@@ -147,6 +155,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             position = itemView.findViewById(R.id.positionInBest);
             imageView = itemView.findViewById(R.id.userImageInBest);
             cardView = itemView.findViewById(R.id.card_view_of_student);
+            isAdminImageView = itemView.findViewById(R.id.isAdminImageView);
         }
     }
 
