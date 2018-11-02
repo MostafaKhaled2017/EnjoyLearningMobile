@@ -44,7 +44,7 @@ public class GeneralChallengesActivityPresenter {
                 if ((boolean) o) {
                     loadChallengeState();
                 } else {
-                    //view.onNoInternetConnection();TODO
+                    view.onNoInternetConnection();
                 }
             }
         };
@@ -82,5 +82,7 @@ public class GeneralChallengesActivityPresenter {
         void hideProgressBar();
 
         void setChallengeText(String text);
+
+        void onNoInternetConnection();
     }
 }

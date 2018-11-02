@@ -20,5 +20,6 @@
     <dimen name="medium_text_size">22sp</dimen>
     <dimen name="nothing_text_size">22sp</dimen>
     <dimen name="general_margin">5dp</dimen>
+    <dimen name="toolbar_height_pproximately">60dp</dimen>
 
 </resources>

@@ -102,8 +102,8 @@ public class QuestionActivity extends AppCompatActivity {
         answers.add(question.getAnswer1());
         answers.add(question.getAnswer2());
         answers.add(question.getAnswer3());
-        answers.add(question.getAnswer4());
         Collections.shuffle(answers);
+        answers.add(question.getAnswer4());
 
         r1.setText(answers.get(0));
         r2.setText(answers.get(1));

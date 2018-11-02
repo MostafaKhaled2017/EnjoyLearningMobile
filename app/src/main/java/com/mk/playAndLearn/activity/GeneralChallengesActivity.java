@@ -18,7 +18,7 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
     GeneralChallengesActivityPresenter presenter;
 
     ProgressBar progressBar;
-    TextView challengeTextTv;
+    TextView challengeTextTv, noInternetConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
 
         progressBar = findViewById(R.id.generalChallengesProgressBar);
         challengeTextTv = findViewById(R.id.challengeTextTv);
+        noInternetConnection = findViewById(R.id.noInternetConnectionText);
 
         presenter.startAsynkTask();
     }
@@ -66,5 +67,11 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
     @Override
     public void setChallengeText(String text) {
         challengeTextTv.setText(text);
+    }
+
+    @Override
+    public void onNoInternetConnection() {
+        hideProgressBar();
+        noInternetConnection.setVisibility(android.view.View.VISIBLE);
     }
 }

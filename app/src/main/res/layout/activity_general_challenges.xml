@@ -6,20 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".activity.GeneralChallengesActivity">
 
-    <include layout="@layout/appbar" />
+    <include layout="@layout/appbar"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/challengeTextTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textSize="@dimen/generalTextSize"
+        android:paddingTop="@dimen/toolbar_height_pproximately"
+        android:textSize="@dimen/medium_text_size"
         android:layout_centerInParent="true"/>
 
     <ProgressBar
         android:id="@+id/generalChallengesProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/toolbar_height_pproximately"
         android:layout_centerInParent="true"/>
+
+    <!-- TODO : try to add padding to this -->
+    <include layout="@layout/no_internet_connection_text" />
 
 </RelativeLayout>
