@@ -40,8 +40,8 @@
         android:layout_marginLeft="-1dp"
         android:layout_marginRight="-1dp"
         android:layout_marginTop="-2dp"
-        android:max="20"
-        android:progress="20"
+        android:max="100"
+        android:progress="100"
         android:rotation="180" />
 
     <TextView

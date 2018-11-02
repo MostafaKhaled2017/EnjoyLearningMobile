@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_gravity="center_vertical|center_horizontal"
+    android:layout_height="wrap_content"
     tools:context=".activity.AppManagementActivity">
-    <include layout="@layout/appbar"/>
+    <include layout="@layout/appbar"
+        android:id="@+id/appBar"/>
     <android.support.v7.widget.AppCompatButton
+        android:layout_below="@id/appBar"
         android:id="@+id/suggestedQuestionsButton"
         android:onClick="suggestedQuestionsButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/buttonStyle"
         android:text="الاسئلة المقترحة"
-        android:layout_centerInParent="true"
         android:padding="10dp"/>
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/suggestedLessonsButton"
@@ -23,7 +22,7 @@
         android:layout_below="@id/suggestedQuestionsButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/buttonStyle"
         android:text="الدروس المقترحة"
@@ -34,10 +33,21 @@
         android:layout_below="@id/suggestedLessonsButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/buttonStyle"
         android:text="التحديات والمستخدمين"
+        android:padding="10dp"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/generalChallengeManagement"
+        android:onClick="generalChallengeManagement"
+        android:layout_below="@id/challengesAndUsersMonitoring"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/buttonStyle"
+        android:text="إدارة التحدى العام"
         android:padding="10dp"/>
 
 </RelativeLayout>

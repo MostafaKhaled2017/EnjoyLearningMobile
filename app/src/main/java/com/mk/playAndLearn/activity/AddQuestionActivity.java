@@ -156,10 +156,10 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         }
 
         String question = questionEt.getText().toString();
-        String et1 = editText1.getText().toString();
-        String et2 = editText2.getText().toString();
-        String et3 = editText3.getText().toString();
-        String et4 = editText4.getText().toString();
+        String et1 = editText1.getText().toString().trim();
+        String et2 = editText2.getText().toString().trim();
+        String et3 = editText3.getText().toString().trim();
+        String et4 = editText4.getText().toString().trim();
         if (TextUtils.isEmpty(question) || TextUtils.isEmpty(et1) || TextUtils.isEmpty(et2) || TextUtils.isEmpty(et3) || TextUtils.isEmpty(et4)) {
             Toast.makeText(this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
         } else if (correctAnswer.equals("")) {
@@ -169,6 +169,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         } else {
             String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            String schoolType = getSchoolType(currentSubject);
 
             map = new HashMap<>();
             map.put("writerName", currentUserName);
@@ -182,6 +184,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             map.put("answer 3", et3);
             map.put("answer 4", et4);
             map.put("reviewed", false);
+            map.put("challengeQuestion", false);
+            map.put("schoolType", schoolType);
             map.put("correctAnswer", correctAnswer);
             // Toast.makeText(this, "تم إضافة السؤال بنجاح وسيتم مراجعته", Toast.LENGTH_SHORT).show();
             //TODO : add icon to the dialog
@@ -229,5 +233,19 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         r2.setChecked(false);
         r3.setChecked(false);
         r4.setChecked(false);
+    }
+
+    public String getSchoolType(String subject){
+        if(subject.equals("فيزياء") || subject.equals("كيمياء")
+                || subject.equals("أحياء") || subject.equals("رياضيات")){
+            return "arabic";
+        }
+        else if(subject.equals("Physics") || subject.equals("Chemistry")
+                || subject.equals("Biology") || subject.equals("Mathematics")){
+            return "languages";
+        }
+        else {
+            return "both";
+        }
     }
 }

@@ -33,7 +33,12 @@
 
     <item
         android:id="@+id/generalChallenges"
-        android:title="تحديات عامة"
+        android:title="التحدى العام"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/bestStudentsInGeneralChallenge"
+        android:title="أوائل التحدى العام"
         app:showAsAction="never" />
    <!-- <item
         android:id="@+id/editAccoutData"

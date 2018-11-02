@@ -224,7 +224,7 @@ public class NotificationsService extends Service {
         return "تم رفض";
     }
 
-    private String adjustSubject(String subject) {
+    public static String adjustSubject(String subject) {
 
         switch (subject){
             case "لغة عربية":

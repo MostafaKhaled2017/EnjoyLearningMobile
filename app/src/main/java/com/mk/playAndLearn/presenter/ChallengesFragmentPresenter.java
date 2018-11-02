@@ -133,8 +133,7 @@ public class ChallengesFragmentPresenter {
         view.startCompletedChallengesAdapter(completedChallengesList);
         view.startUnCompletedChallengesAdapter(uncompletedChallengesList);
 
-        GenericTypeIndicator<List<Question>> t = new GenericTypeIndicator<List<Question>>() {
-        };
+        GenericTypeIndicator<List<Question>> t = new GenericTypeIndicator<List<Question>>() {};
         challenge = new Challenge();
         String challengeDate = dataSnapshot.child("date").getValue().toString();
         String challengeSubject = dataSnapshot.child("subject").getValue().toString();

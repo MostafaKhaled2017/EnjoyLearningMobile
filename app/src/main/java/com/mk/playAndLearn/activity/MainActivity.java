@@ -1,15 +1,12 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,16 +16,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,18 +30,10 @@ import com.mk.playAndLearn.adapters.ViewPagerAdapter;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LearnFragment;
-import com.mk.playAndLearn.model.User;
 import com.mk.playAndLearn.service.NotificationsService;
-import com.mk.playAndLearn.utils.Firebase;
 
 import java.io.File;
-
-import static com.mk.playAndLearn.utils.Firebase.challengesReference;
-import static com.mk.playAndLearn.utils.Firebase.commentsReference;
-import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
-import static com.mk.playAndLearn.utils.Firebase.postsReference;
-import static com.mk.playAndLearn.utils.Firebase.questionsReference;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
@@ -60,13 +43,14 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     int tabPosition = 1;
     boolean newUser;
+    ArrayList list;
 
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
     FirebaseAuth localAuth;
     FirebaseDatabase localDatabase;
     DatabaseReference localUsersReference;
-    String localCurrentUserUid ;
+    String localCurrentUserUid;
 
     Intent serviceIntent;
 
@@ -123,10 +107,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
         serviceIntent = new Intent(this, NotificationsService.class);
 
-         localAuth = FirebaseAuth.getInstance();
-         localDatabase = FirebaseDatabase.getInstance();
-         localUsersReference = localDatabase.getReference("users");
-         localCurrentUserUid = localAuth.getCurrentUser().getUid();
+        localAuth = FirebaseAuth.getInstance();
+        localDatabase = FirebaseDatabase.getInstance();
+        localUsersReference = localDatabase.getReference("users");
+        localCurrentUserUid = localAuth.getCurrentUser().getUid();
 
         mViewPager = findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
@@ -151,16 +135,14 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         setCurrentUserNameToSharedPreferences();
 
 
-        //TODO : comment this part
+        //TODO : comment this part or add it to a screen to wowk in an admin activity
         //start editing in database
 /*
         usersReference.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                String userName = dataSnapshot.child("userName").getValue().toString();
-                if(userName.equals("")){
-                    Log.v("Logging","dataSnapShot is : " + dataSnapshot);
+                if (dataSnapshot.child("userType").getValue() == null) {
+                    Log.v("Logging", "null datasnapshot is : " + dataSnapshot.toString());
                 }
             }
 
@@ -184,9 +166,68 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
             }
         });
-
 */
+
         //end editing in database
+
+        //TODO : comment this
+        //start code for setting data to generalChallenge
+
+/*
+        list = new ArrayList();
+        final String schoolType = "arabic";
+        //final String schoolType = "languages";
+        if (!list.isEmpty())
+            list.clear();
+        questionsReference.orderByChild("challengeQuestion").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    Question question = new Question();
+                    String questionText = dataSnapshot1.child("al question").getValue().toString();
+                    String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
+                    String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
+                    String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
+                    String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
+                    String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
+                    String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                    boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
+                    String localSchoolType = dataSnapshot1.child("schoolType").getValue().toString();//TODO
+
+                    if (localSchoolType.equals(schoolType) || localSchoolType.equals("both")) {
+                        question.setAlQuestion(questionText);
+                        question.setAnswer1(answer1);
+                        question.setAnswer2(answer2);
+                        question.setAnswer3(answer3);
+                        question.setAnswer4(answer4);
+                        question.setReviewed(reviewed);
+                        question.setCorrectAnswer(correctAnswer);
+
+                        list.add(question);
+
+                    }
+                }
+                DatabaseReference localGeneralChallengesReference = FirebaseDatabase.getInstance().getReference("generalChallenge");
+
+                Log.v("Logging", "list size is : " + list.size());
+
+                if(schoolType.equals("arabic")){
+                    localGeneralChallengesReference.child("arabicQuestions").setValue(list);
+                }
+                if(schoolType.equals("languages")){
+                    localGeneralChallengesReference.child("languagesQuestions").setValue(list);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+*/
+
+        //end code for setting data to generalChallenge
 
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
 
@@ -265,11 +306,15 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 //showHelp();
                 return true;*/
             case R.id.appManagement:
-                startActivity(new Intent(this, AppManagementActivity.class));
+                startActivity(new Intent(this, AdminAppManagementActivity.class));
                 return true;
 
             case R.id.generalChallenges:
                 startActivity(new Intent(this, GeneralChallengesActivity.class));
+                return true;
+
+            case R.id.bestStudentsInGeneralChallenge:
+                startActivity(new Intent(this, BestStudentsInGeneralChallengeActivity.class));
                 return true;
             /*case R.id.editAccoutData:{
                 Intent i=new Intent(Intent.ACTION_VIEW);
@@ -383,4 +428,5 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             stopService(serviceIntent);
         }
     }
+
 }

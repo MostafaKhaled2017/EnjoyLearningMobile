@@ -18,4 +18,6 @@
     <color name="hint_enter_note">#89c3c3c3</color>
     <color name="gray">#b6b5b5</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

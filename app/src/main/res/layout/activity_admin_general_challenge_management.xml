@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.AdminGeneralChallengeManagement">
+
+    <include layout="@layout/appbar"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:layout_below="@id/appBar"
+        android:id="@+id/startGeneralChallenge"
+        android:onClick="startGeneralChallenge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/buttonStyle"
+        android:text="ابدأ التحدى العام"
+        android:padding="10dp"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:layout_below="@id/appBar"
+        android:id="@+id/stopGeneralChallenge"
+        android:onClick="stopGeneralChallenge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/buttonStyle"
+        android:text="أوقف التحدى العام"
+        android:padding="10dp"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/changeGeneralChallengeText"
+        style="@style/buttonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBar"
+        android:onClick="changeGeneralChallengeText"
+        android:padding="10dp"
+        android:text="قم بتعديل كلمة التحدى" />
+
+
+</android.support.v7.widget.LinearLayoutCompat>

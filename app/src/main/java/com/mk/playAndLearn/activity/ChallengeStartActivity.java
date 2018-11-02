@@ -123,7 +123,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
                     player2Points.setText(secondPlayerPoints + "");
 
-                    Log.v("ChallengeStartLog","dataSnapshot is : " + dataSnapshot.toString());
+                    Log.v("ChallengeStartLog", "dataSnapshot is : " + dataSnapshot.toString());
 
                 }
 
@@ -213,39 +213,40 @@ public class ChallengeStartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
-                if(list.size() < 5 && currentChallenger == 1){
+                if (list.size() < 5 && currentChallenger == 1) {
                     showDialog();
+                } else if (currentChallenger == 1 && list.size() >= 5) {
+                    if (!chosenQuestionsList.isEmpty())
+                        chosenQuestionsList.clear();
+                    Collections.shuffle(list);
+                    for (int i = 0; i < 5; i++) {
+                        Question question = (Question) list.get(i);
+                        chosenQuestionsList.add(question);
+                    }
                 }
-                else if (currentChallenger == 1 && list.size() >= 5) {
-                        if (!chosenQuestionsList.isEmpty())
-                            chosenQuestionsList.clear();
-                        Collections.shuffle(list);
-                        for (int i = 0; i < 5; i++) {
-                            Question question = (Question) list.get(i);
-                            chosenQuestionsList.add(question);
-                        }
-                    }
-                    Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
-                    i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                    i.putExtra("currentPlayerAnswers", playerAnswersList);
-                    i.putExtra("questionNo", 0);
-                    i.putExtra("score", 0);
-                    i.putExtra("subject", subject);
-                    i.putExtra("currentChallenger", currentChallenger);
+                Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
+                i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                i.putExtra("currentPlayerAnswers", playerAnswersList);
+                i.putExtra("questionNo", 0);
+                i.putExtra("score", 0);
+                i.putExtra("subject", subject);
+                i.putExtra("currentChallenger", currentChallenger);
+                i.putExtra("isGeneralChallenge", false);
 
-                    if (currentChallenger == 1) {
-                        i.putExtra("player2Name", secondPlayerName);
-                        i.putExtra("player2Email", secondPlayerEmail);
-                        i.putExtra("player2Image", secondPlayerImage);
-                        i.putExtra("player2Points", secondPlayerPoints);
-                        i.putExtra("player2Uid", secondPlayerUid);
-                        i.putParcelableArrayListExtra("questionList", chosenQuestionsList);
-                    } else {
-                        i.putParcelableArrayListExtra("questionList", challengeQuestionList);
-                        i.putExtra("challengeId", challengeId);
-                    }
 
-                if(chosenQuestionsList.size() >= 5 || challengeQuestionList.size() >= 5) {
+                if (currentChallenger == 1) {
+                    i.putExtra("player2Name", secondPlayerName);
+                    i.putExtra("player2Email", secondPlayerEmail);
+                    i.putExtra("player2Image", secondPlayerImage);
+                    i.putExtra("player2Points", secondPlayerPoints);
+                    i.putExtra("player2Uid", secondPlayerUid);
+                    i.putParcelableArrayListExtra("questionList", chosenQuestionsList);
+                } else {
+                    i.putParcelableArrayListExtra("questionList", challengeQuestionList);
+                    i.putExtra("challengeId", challengeId);
+                }
+
+                if (chosenQuestionsList.size() >= 5 || challengeQuestionList.size() >= 5) {
                     startActivity(i);
                     finish();
                 }
@@ -258,7 +259,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
         finish();
         return true;
     }
-    public void showDialog(){
+
+    public void showDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeStartActivity.this);
         dialog.setTitle("أنت غير جاهز للبدء");//TODO : think about changing these two texts
         dialog.setMessage("سرعة الانترنت لديك بطيئة حاول بدء التحدي مرة أخري");

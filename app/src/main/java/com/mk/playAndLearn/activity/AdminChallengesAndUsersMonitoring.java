@@ -17,7 +17,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,20 +24,24 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.mk.playAndLearn.service.NotificationsService.adjustSubject;
 import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
-public class ChallengesAndUsersMonitoring extends AppCompatActivity {
+public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
 
     TextView studentsNumberTv, allChallengesNumber, todayChallengesNumberTv, yesterdayChallengesNumberTv;
 
     ListView todayAdminChallengesListView;
-    int studentsCount = 0, allChallengesCount = 0, todayChallengesCount = 0, yesterdayChallengesCount = 0;
+    int studentsCount = 0, allChallengesCount = 0, todayChallengesCount = 0, yesterdayChallengesCount = 0
+    ,todayCompletedChallengesCount = 0, yesterdayCompletedChallengesCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_challenges_and_users_monitoring);
+        setContentView(R.layout.activity_admin_challenges_and_users_monitoring);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -61,13 +64,16 @@ public class ChallengesAndUsersMonitoring extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String userType = dataSnapshot1.child("userType").getValue().toString();
+                    String userType = "";
+                    if(dataSnapshot1.child("userType").getValue() != null) {
+                        userType = dataSnapshot1.child("userType").getValue().toString();
+                    }
                     if (userType.equals("طالب")) {
                         studentsCount++;
                     }
                 }
                 studentsNumberTv.append(studentsCount + "");
-                Toast.makeText(ChallengesAndUsersMonitoring.this, "انتهى عد الطلاب", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminChallengesAndUsersMonitoring.this, "انتهى عد الطلاب", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -101,6 +107,7 @@ public class ChallengesAndUsersMonitoring extends AppCompatActivity {
                     long player2Score = (long) dataSnapshot1.child("player2score").getValue();
 
                     String player1Name = dataSnapshot1.child("player1Name").getValue().toString();
+                    String subject = dataSnapshot1.child("subject").getValue().toString();
                     String player1Image = dataSnapshot1.child("player1Image").getValue().toString();
                     String player1Uid = dataSnapshot1.child("player1Uid").getValue().toString();
                     String player2Name = dataSnapshot1.child("player2Name").getValue().toString();
@@ -111,23 +118,31 @@ public class ChallengesAndUsersMonitoring extends AppCompatActivity {
 
                     if (challengeDate.equals(todayDate)) {
                         todayChallengesCount++;
+
+                        if(challengeState.equals(completedChallengeText))
+                            todayCompletedChallengesCount ++;
+
                         todayChallengesList.add(0, " - " + player1Name + "(" + player1Score + ")"
                                 + " ضد " + player2Name + "(" + player2Score + ")"
-                                + "الساعة : " + challengeTime + " (" + challengeState + ")" + "\n\n");
+                                + "الساعة : " + challengeTime + " في مادة " + adjustSubject(subject)+ " (" + challengeState + ")" + "\n\n");
                     }
                     if(challengeDate.equals(yesterdayDate)){
                         yesterdayChallengesCount ++;
+
+                        if(challengeState.equals(completedChallengeText))
+                            yesterdayCompletedChallengesCount ++;
+
                     }
                 }
 
                 allChallengesNumber.append(allChallengesCount + "");
-                todayChallengesNumberTv.append(todayChallengesCount + "");
-                yesterdayChallengesNumberTv.append(yesterdayChallengesCount + "");
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(ChallengesAndUsersMonitoring.this,
+                todayChallengesNumberTv.append(todayChallengesCount + " (" + todayCompletedChallengesCount + ")");
+                yesterdayChallengesNumberTv.append(yesterdayChallengesCount + " (" + yesterdayCompletedChallengesCount + ")");
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(AdminChallengesAndUsersMonitoring.this,
                         android.R.layout.simple_list_item_1, android.R.id.text1, todayChallengesList);
                 todayAdminChallengesListView.setAdapter(adapter);
 
-                Toast.makeText(ChallengesAndUsersMonitoring.this, "انتهى حساب التحديات", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminChallengesAndUsersMonitoring.this, "انتهى حساب التحديات", Toast.LENGTH_SHORT).show();
             }
 
             @Override

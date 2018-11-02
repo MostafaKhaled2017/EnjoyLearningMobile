@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:hint="اكتب التعليق الذي تريد إضافته"
+        android:hint="اكتب هنا"
         android:inputType="textCapSentences|textMultiLine"
         android:textColorHint="@color/hint_enter_note"
         android:textColor="#000"

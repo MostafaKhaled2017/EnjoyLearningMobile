@@ -10,15 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Lesson;
@@ -29,7 +25,7 @@ import java.util.ArrayList;
 import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
 import static com.mk.playAndLearn.utils.Firebase.questionsReference;
 
-public class AppManagementActivity extends AppCompatActivity {
+public class AdminAppManagementActivity extends AppCompatActivity {
 
     ArrayList questionList = new ArrayList(), lessonsList = new ArrayList();
     boolean questionsReady = false, lessonsReady = false;
@@ -38,7 +34,7 @@ public class AppManagementActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_app_management);
+        setContentView(R.layout.activity_admin_app_management);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -50,7 +46,7 @@ public class AppManagementActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        //toolbarTitle.setText("title");
+        toolbarTitle.setText("إدارة التطبيق");
 
         getSuggestedQuestions();
 
@@ -196,7 +192,11 @@ public class AppManagementActivity extends AppCompatActivity {
     }
 
     public void challengesAndUsersMonitoring(View view) {
-        startActivity(new Intent(this, ChallengesAndUsersMonitoring.class));
+        startActivity(new Intent(this, AdminChallengesAndUsersMonitoring.class));
+    }
+
+    public void generalChallengeManagement(View view) {
+        startActivity(new Intent(this, AdminGeneralChallengeManagement.class));
     }
 }
 

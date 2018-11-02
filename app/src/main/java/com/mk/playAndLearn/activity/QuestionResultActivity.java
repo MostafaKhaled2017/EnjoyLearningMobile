@@ -26,7 +26,8 @@ public class QuestionResultActivity extends AppCompatActivity {
     int questionNo, score;
     String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
-    int secondPlayerPoints, currentChallenger;
+    int secondPlayerPoints, currentChallenger, sleepTime = 750;
+    boolean isGeneralChallenge;
     Intent i;
 
     @Override
@@ -43,24 +44,29 @@ public class QuestionResultActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            currentChallenger = intent.getIntExtra("currentChallenger", -1);
             correct = intent.getBooleanExtra("answer", false);
             list = intent.getParcelableArrayListExtra("questionList");
             questionNo = intent.getIntExtra("questionNo", -1);
             score = intent.getIntExtra("score", -1);
-            subject = intent.getStringExtra("subject");
-            playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
-            playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
-            if (currentChallenger == 1) {
-                secondPlayerName = intent.getStringExtra("player2Name");
-                secondPlayerEmail = intent.getStringExtra("player2Email");
-                secondPlayerImage = intent.getStringExtra("player2Image");
-                secondPlayerUid = intent.getStringExtra("player2Uid");
-                secondPlayerPoints = intent.getIntExtra("player2Points", -1);
-            } else if (currentChallenger == 2) {
-                challengeId = intent.getStringExtra("challengeId");
+            isGeneralChallenge = intent.getBooleanExtra("isGeneralChallenge", false);
+
+            if (!isGeneralChallenge) {
+                currentChallenger = intent.getIntExtra("currentChallenger", -1);
+                subject = intent.getStringExtra("subject");
+                playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
+                playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
+                if (currentChallenger == 1) {
+                    secondPlayerName = intent.getStringExtra("player2Name");
+                    secondPlayerEmail = intent.getStringExtra("player2Email");
+                    secondPlayerImage = intent.getStringExtra("player2Image");
+                    secondPlayerUid = intent.getStringExtra("player2Uid");
+                    secondPlayerPoints = intent.getIntExtra("player2Points", -1);
+                } else if (currentChallenger == 2) {
+                    challengeId = intent.getStringExtra("challengeId");
+                }
             }
         }
+
         if (correct) {
             resultText.setText("إجابة صحيحة");
             resultText.setTextColor(Color.GREEN);
@@ -75,31 +81,35 @@ public class QuestionResultActivity extends AppCompatActivity {
         i = new Intent(this, QuestionActivity.class);
 
 
-        if (questionNo + 1 < 5) {
+        if (questionNo + 1 < list.size()) {
             Thread timer = new Thread() {
                 @Override
                 public void run() {
                     try {
-                        sleep(1000);
+                        sleep(sleepTime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
                         i.putExtra("questionList", list);
                         i.putExtra("questionNo", questionNo + 1);
                         i.putExtra("score", score);
-                        i.putExtra("subject", subject);
-                        i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                        i.putExtra("currentPlayerAnswers", playerAnswersList);
-                        i.putExtra("currentChallenger", currentChallenger);
+                        i.putExtra("isGeneralChallenge", isGeneralChallenge);
 
-                        if (currentChallenger == 1) {
-                            i.putExtra("player2Name", secondPlayerName);
-                            i.putExtra("player2Email", secondPlayerEmail);
-                            i.putExtra("player2Image", secondPlayerImage);
-                            i.putExtra("player2Uid", secondPlayerUid);
-                            i.putExtra("player2Points", secondPlayerPoints);
-                        } else if (currentChallenger == 2) {
-                            i.putExtra("challengeId", challengeId);
+                        if (!isGeneralChallenge) {
+                            i.putExtra("subject", subject);
+                            i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                            i.putExtra("currentPlayerAnswers", playerAnswersList);
+                            i.putExtra("currentChallenger", currentChallenger);
+
+                            if (currentChallenger == 1) {
+                                i.putExtra("player2Name", secondPlayerName);
+                                i.putExtra("player2Email", secondPlayerEmail);
+                                i.putExtra("player2Image", secondPlayerImage);
+                                i.putExtra("player2Uid", secondPlayerUid);
+                                i.putExtra("player2Points", secondPlayerPoints);
+                            } else if (currentChallenger == 2) {
+                                i.putExtra("challengeId", challengeId);
+                            }
                         }
 
                         startActivity(i);
@@ -113,28 +123,31 @@ public class QuestionResultActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        sleep(800);
+                        sleep(sleepTime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
                         Intent intent1 = new Intent(QuestionResultActivity.this, ChallengeResultActivity.class);
-                        intent1.putExtra("currentChallenger", currentChallenger);
-                        intent1.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                        intent1.putExtra("currentPlayerAnswers", playerAnswersList);
                         intent1.putExtra("score", score);
-                        intent1.putExtra("subject", subject);
+                        intent1.putExtra("isGeneralChallenge", isGeneralChallenge);
 
-                        if (currentChallenger == 1) {
-                            intent1.putExtra("player2Name", secondPlayerName);
-                            intent1.putExtra("player2Email", secondPlayerEmail);
-                            intent1.putExtra("player2Image", secondPlayerImage);
-                            intent1.putExtra("player2Uid", secondPlayerUid);
-                            intent1.putExtra("player2Points", secondPlayerPoints);
-                            intent1.putParcelableArrayListExtra("questionsList", list);
-                        } else if (currentChallenger == 2) {
-                            intent1.putExtra("challengeId", challengeId);
+                        if(!isGeneralChallenge) {
+                            intent1.putExtra("currentChallenger", currentChallenger);
+                            intent1.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+                            intent1.putExtra("currentPlayerAnswers", playerAnswersList);
+                            intent1.putExtra("subject", subject);
+
+                            if (currentChallenger == 1) {
+                                intent1.putExtra("player2Name", secondPlayerName);
+                                intent1.putExtra("player2Email", secondPlayerEmail);
+                                intent1.putExtra("player2Image", secondPlayerImage);
+                                intent1.putExtra("player2Uid", secondPlayerUid);
+                                intent1.putExtra("player2Points", secondPlayerPoints);
+                                intent1.putParcelableArrayListExtra("questionsList", list);
+                            } else if (currentChallenger == 2) {
+                                intent1.putExtra("challengeId", challengeId);
+                            }
                         }
-
                         startActivity(intent1);
                         finish();
                     }
