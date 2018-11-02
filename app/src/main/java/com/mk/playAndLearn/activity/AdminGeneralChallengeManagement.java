@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 
 import static com.mk.playAndLearn.utils.Firebase.generalChallengeReference;
+import static com.mk.playAndLearn.utils.Firebase.questionsReference;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class AdminGeneralChallengeManagement extends AppCompatActivity {
@@ -73,6 +74,21 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
                     usersReference.child(dataSnapshot1.getKey()).child("lastGeneralChallengeScore").setValue(0);
                 }
                 Toast.makeText(AdminGeneralChallengeManagement.this, "تم اعادة ضبط النقاط بنجاح", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        questionsReference.orderByChild("challengeQuestion").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    questionsReference.child(dataSnapshot1.getKey()).child("challengeQuestion").setValue(false);//TODO : make sure that this won't cause problems
+                }
+                Toast.makeText(AdminGeneralChallengeManagement.this, "تم الغاء القيمة المميزة لاسئلة التحدى", Toast.LENGTH_SHORT).show();
             }
 
             @Override
