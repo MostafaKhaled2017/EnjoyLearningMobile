@@ -23,11 +23,13 @@ public class WelcomeActivity extends AppCompatActivity {
         DatabaseReference localQuestionsReference = database.getReference("questions");
         DatabaseReference localChallengesReference = database.getReference("challenges");
         DatabaseReference localUsersReference = database.getReference("users");
+        DatabaseReference localGeneralChallengeReference = database.getReference("generalChallenge");
 
             localPostsReference.keepSynced(true);
             localCommentsReference.keepSynced(true);
             localLessonsReference.keepSynced(true);
             localQuestionsReference.keepSynced(true);
+            localGeneralChallengeReference.keepSynced(true);
             localChallengesReference.keepSynced(true); //TODO :think about removing this but note that caching isn't working
             localUsersReference.keepSynced(true);
 

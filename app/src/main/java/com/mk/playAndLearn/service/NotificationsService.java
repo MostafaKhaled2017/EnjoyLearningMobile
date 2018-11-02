@@ -251,6 +251,9 @@ public class NotificationsService extends Service {
             case "رياضيات":
                 subject = "الرياضيات";
                 break;
+            case "فلسفة":
+                subject = "الفلسفة";
+                break;
             default:  subject =  "ال " + subject;//TODO : check this and make this code a method returns the new subject
         }
         return subject;
