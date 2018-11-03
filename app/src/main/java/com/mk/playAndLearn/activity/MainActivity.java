@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -133,101 +134,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
         startNotificationService();
         setCurrentUserNameToSharedPreferences();
-
-
-        //TODO : comment this part or add it to a screen to wowk in an admin activity
-        //start editing in database
-/*
-        usersReference.orderByKey().addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.child("userType").getValue() == null) {
-                    Log.v("Logging", "null datasnapshot is : " + dataSnapshot.toString());
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-*/
-
-        //end editing in database
-
-        //TODO : comment this
-        //start code for setting data to generalChallenge
-
-/*
-        list = new ArrayList();
-        final String schoolType = "arabic";
-        //final String schoolType = "languages";
-        if (!list.isEmpty())
-            list.clear();
-        questionsReference.orderByChild("challengeQuestion").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    Question question = new Question();
-                    String questionText = dataSnapshot1.child("al question").getValue().toString();
-                    String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
-                    String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
-                    String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
-                    String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
-                    String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
-                    String writerName = dataSnapshot1.child("writerName").getValue().toString();
-                    boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
-                    String localSchoolType = dataSnapshot1.child("schoolType").getValue().toString();//TODO
-
-                    if (localSchoolType.equals(schoolType) || localSchoolType.equals("both")) {
-                        question.setAlQuestion(questionText);
-                        question.setAnswer1(answer1);
-                        question.setAnswer2(answer2);
-                        question.setAnswer3(answer3);
-                        question.setAnswer4(answer4);
-                        question.setReviewed(reviewed);
-                        question.setCorrectAnswer(correctAnswer);
-
-                        list.add(question);
-
-                    }
-                }
-                DatabaseReference localGeneralChallengesReference = FirebaseDatabase.getInstance().getReference("generalChallenge");
-
-                Log.v("Logging", "list size is : " + list.size());
-
-                if(schoolType.equals("arabic")){
-                    localGeneralChallengesReference.child("arabicQuestions").setValue(list);
-                }
-                if(schoolType.equals("languages")){
-                    localGeneralChallengesReference.child("languagesQuestions").setValue(list);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-*/
-
-        //end code for setting data to generalChallenge
 
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
 
@@ -345,16 +251,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        if (tabPosition != 1) {
-            mViewPager.setCurrentItem(1);
-        } else {
-            //super.onBackPressed();
-            this.finishAffinity();
-            // System.exit(0);
-        }
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -429,4 +325,31 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         }
     }
 
+    //The user state becomes online when it opens the app and it changes to offline when the app stop from the background
+    //TODO : think about making the user offline when it exit the app from the back arrow by uncommenting the code in onBackPressed
+    public void checkIfUserConnected(){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String localCurrentUserUid = currentUser.getUid();
+        DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
+        currentUserPresenceReference.setValue(true);
+        currentUserPresenceReference.onDisconnect().setValue(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkIfUserConnected();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (tabPosition != 1) {
+            mViewPager.setCurrentItem(1);
+        } else {
+            this.finishAffinity();
+           /* DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
+            currentUserPresenceReference.setValue(false);*/
+        }
+    }
 }

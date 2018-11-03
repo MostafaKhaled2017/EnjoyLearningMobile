@@ -160,6 +160,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         question.setWriterName(writerName);
                         question.setAlQuestion(questionText);
                         question.setReviewed(reviewed);
+                        question.setQuestionId(dataSnapshot.getKey());
 
                         list.add(question);
                     }

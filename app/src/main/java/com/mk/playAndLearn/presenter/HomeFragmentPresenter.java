@@ -99,7 +99,10 @@ public class HomeFragmentPresenter {
             currentPostRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if(currentPostRef != null) {
+                    //TO ensure that the child exists
+                    if(currentPostRef.child("posted") != null) {
+                        currentPostRef.child("posted").setValue(true);
+                        currentPostRef.child("date").setValue(date);
 
                         for (int i = 0; i < postsList.size(); i++) {
                             if (postsList.get(i).getId().equals(postId)){
@@ -111,8 +114,6 @@ public class HomeFragmentPresenter {
                         }
 
                         Log.v("Logging", "current posts reference is : " + currentPostRef);
-                        currentPostRef.child("posted").setValue(true);
-                        currentPostRef.child("date").setValue(date);
                         view.showToast("تم إضافة المنشور بنجاح");
                         view.notifyAdapter();
                     }
@@ -184,22 +185,29 @@ public class HomeFragmentPresenter {
 
     void getPostData(DataSnapshot dataSnapshot){
         post = new Post();
-        String postContent = dataSnapshot.child("content").getValue().toString();
-        String postDate = dataSnapshot.child("date").getValue().toString();//TODO : solve the date problem
-        String postWriter = dataSnapshot.child("writerName").getValue().toString();
-        String postWriterEmail = dataSnapshot.child("email").getValue().toString();
-        String postImage = dataSnapshot.child("image").getValue().toString();
+        String postContent = (String) dataSnapshot.child("content").getValue();
+        String postDate = (String) dataSnapshot.child("date").getValue();//TODO : solve the date problem
+        String postWriter = (String) dataSnapshot.child("writerName").getValue();
+        String postWriterEmail = (String) dataSnapshot.child("email").getValue();
+        String postImage = (String) dataSnapshot.child("image").getValue();
         String postId = dataSnapshot.getKey();
-        String writerUid = dataSnapshot.child("writerUid").getValue().toString();
+        String writerUid = (String) dataSnapshot.child("writerUid").getValue();
         boolean posted = (boolean) dataSnapshot.child("posted").getValue();
         post.setPosted(posted);
-        post.setWriterUid(writerUid);
-        post.setEmail(postWriterEmail);
-        post.setContent(postContent);
-        post.setDate(postDate);
-        post.setWriter(postWriter);
-        post.setImage(postImage);
-        post.setId(postId);
+        if(writerUid != null)
+            post.setWriterUid(writerUid);
+        if(postWriterEmail != null)
+            post.setEmail(postWriterEmail);
+        if(postContent != null)
+             post.setContent(postContent);
+        if(postDate != null)
+            post.setDate(postDate);
+        if(postWriter != null)
+            post.setWriter(postWriter);
+        if(postImage != null)
+            post.setImage(postImage);
+        if(postId != null)
+            post.setId(postId);
         if(!existsInPostsList(postId)) {
             postsList.add(0, post);
             view.notifyAdapter();

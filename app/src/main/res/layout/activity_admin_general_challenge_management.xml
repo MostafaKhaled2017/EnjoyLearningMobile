@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/buttonStyle"
-        android:text="ابدأ التحدى العام"
+        android:text="بدء وتصفير وإلغاء تعليم الاسئلة"
         android:padding="10dp"/>
 
     <android.support.v7.widget.AppCompatButton
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/buttonStyle"
-        android:text="أوقف التحدى العام"
+        android:text="ايقاف"
         android:padding="10dp"/>
 
     <android.support.v7.widget.AppCompatButton
@@ -37,7 +37,7 @@
         android:layout_below="@id/appBar"
         android:onClick="changeGeneralChallengeText"
         android:padding="10dp"
-        android:text="قم بتعديل كلمة التحدى" />
+        android:text=" بتعديل كلمة التحدى" />
 
 
 </android.support.v7.widget.LinearLayoutCompat>

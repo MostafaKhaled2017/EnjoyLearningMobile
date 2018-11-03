@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,15 +37,17 @@ import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class ChallengersActivity extends AppCompatActivity {
-    ArrayList list = new ArrayList();
+    ArrayList<User> list = new ArrayList();
     StudentsAdapter recyclerAdapter;
 
     ProgressBar progressBar;
     RecyclerView recyclerView;
     String subject;
     TextView noInternetConnectionText;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private final String TAG = "ChallengersActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,11 +63,20 @@ public class ChallengersActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
         Intent intent = getIntent();
-        if(intent != null){
+        if (intent != null) {
             subject = intent.getStringExtra("subject");
         }
         recyclerView = findViewById(R.id.challengersRecyclerView);
         progressBar = findViewById(R.id.challengersProgressBar);
+        swipeRefreshLayout = findViewById(R.id.challengersSwipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                startAsynkTask();
+            }
+        });
+
         recyclerAdapter = new StudentsAdapter(list, this, TAG, subject);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -120,41 +132,70 @@ public class ChallengersActivity extends AppCompatActivity {
         asyncTask.execute();
     }
 
-    public void getStudents(){
-        usersReference.orderByChild("userName").addValueEventListener(new ValueEventListener() {
+    public void getStudents() {
+        usersReference.orderByChild("userName").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //TODO : think about the conditions here
-                if(list.isEmpty()) {
+                if (!list.isEmpty()) {
+                    list.clear();
+                }
 
-                    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                ArrayList<Integer> onlineUsersIndexes = new ArrayList<>();
 
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        User user = new User();
-                        boolean admin = false;
-                        String name = dataSnapshot1.child("userName").getValue().toString();
-                        String email = dataSnapshot1.child("userEmail").getValue().toString();
-                        String uid = dataSnapshot1.getKey();
-                        String points = dataSnapshot1.child("points").getValue().toString();
-                        String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
-                        String userType = dataSnapshot1.child("userType").getValue().toString();
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    User user = new User();
+                    boolean admin = false, online = false;
+                    String name = dataSnapshot1.child("userName").getValue().toString();
+                    String email = dataSnapshot1.child("userEmail").getValue().toString();
+                    String uid = dataSnapshot1.getKey();
+                    String points = dataSnapshot1.child("points").getValue().toString();
+                    String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
+                    String userType = dataSnapshot1.child("userType").getValue().toString();
 
-                        if(dataSnapshot1.child("admin").getValue() != null)
-                            admin = (boolean) dataSnapshot1.child("admin").getValue();
-                        if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
-                            user.setAdmin(admin);
-                            user.setName(name);
-                            user.setPoints(Integer.parseInt(points));
-                            user.setImageUrl(imageUrl);
-                            user.setEmail(email);
-                            user.setUid(uid);
-                            list.add(user);
-                        }
-                        if (progressBar.getVisibility() != View.GONE)
-                            progressBar.setVisibility(View.GONE);
-                        recyclerAdapter.notifyDataSetChanged();
+                    if (dataSnapshot1.child("admin").getValue() != null)
+                        admin = (boolean) dataSnapshot1.child("admin").getValue();
+
+                    if (dataSnapshot1.child("online").getValue() != null) {
+                        online = (boolean) dataSnapshot1.child("online").getValue();
+
+                        /*if(online)
+                            onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
+                    }
+
+                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                        user.setAdmin(admin);
+                        user.setOnline(online);
+                        user.setName(name);
+                        user.setPoints(Integer.parseInt(points));
+                        user.setImageUrl(imageUrl);
+                        user.setEmail(email);
+                        user.setUid(uid);
+                        list.add(user);
                     }
                 }
+
+                for(int i = 0; i < list.size(); i ++){//TODO : it is better to store indexes of online users only after found the problem happens and fix it
+                    User user = list.get(i);
+
+                   // Toast.makeText(ChallengersActivity.this, "userName removed is : " + user.getName(), Toast.LENGTH_SHORT).show();
+                    if(user.isOnline()) {
+                        list.remove(user);
+                        list.add(0, user);
+                    }
+                }
+
+
+                recyclerAdapter.notifyDataSetChanged();
+
+                if (progressBar.getVisibility() != View.GONE)
+                    progressBar.setVisibility(View.GONE);
+
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
             }
 
             @Override

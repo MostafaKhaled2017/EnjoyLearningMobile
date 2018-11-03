@@ -24,6 +24,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengersActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
@@ -153,6 +155,13 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         super.setUserVisibleHint(isVisibleToUser);
         if(isVisibleToUser){
             presenter.startAsynkTask();
+
+            //start Syncing the data.
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference localChallengesReference = database.getReference("challenges");
+            DatabaseReference localUsersReference = database.getReference("users");
+            localChallengesReference.keepSynced(true); //TODO :think about removing this but note that caching isn't working
+            localUsersReference.keepSynced(true);
         }
     }
 

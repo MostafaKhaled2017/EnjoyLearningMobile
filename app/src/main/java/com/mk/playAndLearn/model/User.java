@@ -5,6 +5,16 @@ public class User {
     int position = -1, points = -1;
     boolean admin = false;
 
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    boolean online = false;
+
     public boolean isAdmin() {
         return admin;
     }

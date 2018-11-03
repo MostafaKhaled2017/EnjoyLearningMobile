@@ -44,7 +44,7 @@
             android:id="@+id/loadingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="لا يوجد تحديات"
+            android:text="لا يوجد تحديات هذا الأسبوع"
             android:textColor="@color/writingColor"
             android:textSize="@dimen/nothing_text_size"
             android:layout_centerInParent="true"

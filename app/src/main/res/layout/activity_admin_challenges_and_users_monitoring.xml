@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="@dimen/medium_text_size"
-        android:text="عدد الطلبة : "
+        android:text="عدد المستخدين : "
         android:textColor="@color/writingColor"
         android:layout_margin="5dp"
         android:layout_gravity="right"/>
@@ -27,7 +27,7 @@
         android:textColor="@color/writingColor"
         android:textStyle="bold"
         android:textSize="@dimen/medium_text_size"
-        android:text="عدد تحديات كاملا : "
+        android:text="عدد التحديات كاملا : "
         android:layout_margin="5dp"
         android:layout_gravity="right"/>
 

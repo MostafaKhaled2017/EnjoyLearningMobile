@@ -31,6 +31,9 @@ public class BestStudentsActivityPresenter {
         usersReference.orderByChild("points").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                usersReference.keepSynced(true);//check this
+
                 usersListener = this;
                 if (!bestStudentsList.isEmpty())
                     bestStudentsList.clear();

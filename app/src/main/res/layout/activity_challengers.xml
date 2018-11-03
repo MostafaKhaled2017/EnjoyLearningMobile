@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color3">
-    <include layout="@layout/no_internet_connection_text"/>
+
+    <include layout="@layout/no_internet_connection_text" />
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
@@ -29,13 +31,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/challengersRecyclerView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/challengersSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/appBar"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
+        android:layout_below="@id/appBar">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/challengersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/challengersProgressBar"

@@ -31,7 +31,7 @@
             android:layout_margin="5dp"
             android:layout_weight="7"
             android:gravity="right"
-            android:hint="اكتب سؤالك هنا"
+            android:hint="اكتب سؤالك هنا لتعرف إجابته"
             android:paddingRight="10dp" />
 
 

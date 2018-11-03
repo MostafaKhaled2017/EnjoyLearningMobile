@@ -1,53 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".activity.AppManagementActivity">
-    <include layout="@layout/appbar"
-        android:id="@+id/appBar"/>
-    <android.support.v7.widget.AppCompatButton
-        android:layout_below="@id/appBar"
-        android:id="@+id/suggestedQuestionsButton"
-        android:onClick="suggestedQuestionsButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/buttonStyle"
-        android:text="الاسئلة المقترحة"
-        android:padding="10dp"/>
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/suggestedLessonsButton"
-        android:onClick="suggestedLessonsButton"
-        android:layout_below="@id/suggestedQuestionsButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/buttonStyle"
-        android:text="الدروس المقترحة"
-        android:padding="10dp"/>
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/challengesAndUsersMonitoring"
-        android:onClick="challengesAndUsersMonitoring"
-        android:layout_below="@id/suggestedLessonsButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/buttonStyle"
-        android:text="التحديات والمستخدمين"
-        android:padding="10dp"/>
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/generalChallengeManagement"
-        android:onClick="generalChallengeManagement"
-        android:layout_below="@id/challengesAndUsersMonitoring"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/buttonStyle"
-        android:text="إدارة التحدى العام"
-        android:padding="10dp"/>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-</RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".activity.AppManagementActivity">
+
+        <include
+            android:id="@+id/appBar"
+            layout="@layout/appbar" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/suggestedQuestionsButton"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar"
+            android:onClick="suggestedQuestionsButton"
+            android:padding="10dp"
+            android:text="الاسئلة المقترحة" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/suggestedLessonsButton"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/suggestedQuestionsButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="suggestedLessonsButton"
+            android:padding="10dp"
+            android:text="الدروس المقترحة" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/challengesAndUsersMonitoring"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/suggestedLessonsButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="challengesAndUsersMonitoring"
+            android:padding="10dp"
+            android:text="التحديات والمستخدمين" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/generalChallengeManagement"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/challengesAndUsersMonitoring"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="generalChallengeManagement"
+            android:padding="10dp"
+            android:text="إدارة التحدى العام" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/doQuery"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/generalChallengeManagement"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="doQuery"
+            android:padding="10dp"
+            android:text="القيام باستعلام في قاعدة البيانات" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/adjustGeneralChallengeQuestions"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/doQuery"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="adjustGeneralChallengeQuestions"
+            android:padding="10dp"
+            android:text="إعداد أسئلة التحدي العام" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/deleteOldChallenges"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/adjustGeneralChallengeQuestions"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="deleteOldChallenges"
+            android:padding="10dp"
+            android:text="حذف التحديات القديمة"/>
+
+
+    </RelativeLayout>
+</ScrollView>

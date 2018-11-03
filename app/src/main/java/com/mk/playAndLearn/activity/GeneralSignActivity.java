@@ -301,6 +301,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                     map.put("points", 0);
                     map.put("lastGeneralChallengeScore", 0);
                     map.put("admin", false);
+                    map.put("online", true);
                     map.put("acceptedQuestions", 0);
                     map.put("refusedQuestions", 0);
                     map.put("acceptedLessons", 0);

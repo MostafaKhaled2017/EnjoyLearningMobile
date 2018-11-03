@@ -121,7 +121,14 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             holder.isAdminImageView.setVisibility(View.VISIBLE);
         }
         else {
-            holder.isAdminImageView.setVisibility(View.INVISIBLE);
+            holder.isAdminImageView.setVisibility(View.GONE);
+        }
+
+        if(user.isOnline()){
+            holder.isOnlineImageView.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.isOnlineImageView.setVisibility(View.GONE);
         }
     }
 
@@ -145,7 +152,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     class MyHolder extends RecyclerView.ViewHolder {
         TextView name, points, position;
-        ImageView imageView, isAdminImageView;
+        ImageView imageView, isAdminImageView, isOnlineImageView;
         CardView cardView;
 
         public MyHolder(View itemView) {
@@ -156,6 +163,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             imageView = itemView.findViewById(R.id.userImageInBest);
             cardView = itemView.findViewById(R.id.card_view_of_student);
             isAdminImageView = itemView.findViewById(R.id.isAdminImageView);
+            isOnlineImageView = itemView.findViewById(R.id.isOnlineImageView);
         }
     }
 

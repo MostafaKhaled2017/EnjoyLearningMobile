@@ -1,9 +1,12 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -20,10 +24,19 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Question;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
 import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 
 public class AdminAppManagementActivity extends AppCompatActivity {
 
@@ -62,7 +75,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     public void getSuggestedQuestions() {
         if (!questionList.isEmpty())
             questionList.clear();
-       questionsListener =  questionsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
+        questionsListener = questionsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -106,7 +119,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     public void getSuggestedLessons() {
         if (!lessonsList.isEmpty())
             lessonsList.clear();
-      lessonsListener =   lessonsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
+        lessonsListener = lessonsReference.orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -145,7 +158,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void suggestedLessonsButton(View view) {
         if (lessonsReady && lessonsList.size() != 0) {
-            Toast.makeText(this,"عدد الدروس : " + lessonsList.size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "عدد الدروس : " + lessonsList.size(), Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, AdminLessonContentActivity.class);
             intent.putParcelableArrayListExtra("lessonsList", lessonsList);
@@ -163,7 +176,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void suggestedQuestionsButton(View view) {
         if (questionsReady && questionList.size() != 0) {
-            Toast.makeText(this,"عدد الأسئلة : " + questionList.size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "عدد الأسئلة : " + questionList.size(), Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, AdminQuestionActivity.class);
             intent.putParcelableArrayListExtra("questionsList", questionList);
@@ -177,11 +190,11 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         }
     }
 
-    public void removeListeners(){
-        if(questionsListener != null)
+    public void removeListeners() {
+        if (questionsListener != null)
             questionsReference.removeEventListener(questionsListener);
 
-        if(lessonsListener != null)
+        if (lessonsListener != null)
             lessonsReference.removeEventListener(lessonsListener);
     }
 
@@ -198,6 +211,144 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     public void generalChallengeManagement(View view) {
         startActivity(new Intent(this, AdminGeneralChallengeManagement.class));
     }
+
+    public void doQuery(View view) {
+        //TODO : comment this part
+
+        //start editing in database
+/*
+        usersReference.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+                    usersReference.child(dataSnapshot1.getKey()).child("online").setValue(false);
+                }
+
+                Toast.makeText(AdminAppManagementActivity.this, "انتهي الاستعلام فى قاعدة البيانات", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+*/
+        //end editing in database
+    }
+
+    public void adjustGeneralChallengeQuestions(View view) {
+
+        //TODO : comment this
+        //start code for setting data to generalChallenge
+
+/*
+        list = new ArrayList();
+        final String schoolType = "arabic";
+        //final String schoolType = "languages";
+        if (!list.isEmpty())
+            list.clear();
+        questionsReference.orderByChild("challengeQuestion").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    Question question = new Question();
+                    String questionText = dataSnapshot1.child("al question").getValue().toString();
+                    String answer1 = dataSnapshot1.child("answer 1").getValue().toString();
+                    String answer2 = dataSnapshot1.child("answer 2").getValue().toString();
+                    String answer3 = dataSnapshot1.child("answer 3").getValue().toString();
+                    String answer4 = dataSnapshot1.child("answer 4").getValue().toString();
+                    String correctAnswer = dataSnapshot1.child("correctAnswer").getValue().toString();
+                    String writerName = dataSnapshot1.child("writerName").getValue().toString();
+                    boolean reviewed = ((boolean) dataSnapshot1.child("reviewed").getValue());
+                    String localSchoolType = dataSnapshot1.child("schoolType").getValue().toString();//TODO
+
+                    if (localSchoolType.equals(schoolType) || localSchoolType.equals("both")) {
+                        question.setAlQuestion(questionText);
+                        question.setAnswer1(answer1);
+                        question.setAnswer2(answer2);
+                        question.setAnswer3(answer3);
+                        question.setAnswer4(answer4);
+                        question.setReviewed(reviewed);
+                        question.setCorrectAnswer(correctAnswer);
+
+                        list.add(question);
+
+                    }
+                }
+                DatabaseReference localGeneralChallengesReference = FirebaseDatabase.getInstance().getReference("generalChallenge");
+
+                Log.v("Logging", "list size is : " + list.size());
+
+                Toast.makeText(this, "انتهى إعداد أسئلة التحدى العام", Toast.LENGTH_SHORT).show();
+
+                if(schoolType.equals("arabic")){
+                    localGeneralChallengesReference.child("arabicQuestions").setValue(list);
+                }
+                if(schoolType.equals("languages")){
+                    localGeneralChallengesReference.child("languagesQuestions").setValue(list);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+*/
+
+        //end code for setting data to generalChallenge
+    }
+
+    public void deleteOldChallenges(View view) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("هل انت متأكد أنك تريد حذف كل التحديات القديمة");
+        dialog.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                challengesReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.DATE, -1);
+                        Date today = new Date();
+                        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+                        formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+                        String todayDate = formatDate.format(today);
+                        String yesterdayDate = formatDate.format(calendar.getTime());
+
+                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                            String challengeDate = dataSnapshot1.child("date").getValue().toString();
+                            String challengeState = dataSnapshot1.child("state").getValue().toString();
+
+                            if (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) {
+                                challengesReference.child(dataSnapshot1.getKey()).removeValue();
+                            } else {
+                                if (!challengeDate.equals(todayDate) && !challengeDate.equals(yesterdayDate)) {
+                                    challengesReference.child(dataSnapshot1.getKey()).removeValue();
+                                }
+                            }
+
+                        }
+
+                        Toast.makeText(AdminAppManagementActivity.this, "انتهت عملية الحذف بنجاح", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+        dialog.create();
+        dialog.show();
+    }
+
 }
 
 

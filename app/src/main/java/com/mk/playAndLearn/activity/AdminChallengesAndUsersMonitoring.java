@@ -36,7 +36,7 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
 
     ListView todayAdminChallengesListView;
     int studentsCount = 0, allChallengesCount = 0, todayChallengesCount = 0, yesterdayChallengesCount = 0
-    ,todayCompletedChallengesCount = 0, yesterdayCompletedChallengesCount = 0;
+    ,todayCompletedChallengesCount = 0, yesterdayCompletedChallengesCount = 0, allUsersCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +68,14 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                     if(dataSnapshot1.child("userType").getValue() != null) {
                         userType = dataSnapshot1.child("userType").getValue().toString();
                     }
+
+                    allUsersCount ++;
+
                     if (userType.equals("طالب")) {
                         studentsCount++;
                     }
                 }
-                studentsNumberTv.append(studentsCount + "");
+                studentsNumberTv.append(allUsersCount + " (" + studentsCount + ")");
                 Toast.makeText(AdminChallengesAndUsersMonitoring.this, "انتهى عد الطلاب", Toast.LENGTH_SHORT).show();
             }
 
@@ -92,7 +95,7 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                 SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
                 formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
                 String todayDate = formatDate.format(today);
-                String yesterdayDate = formatDate.format(calendar.getTime());//TODO : check the value of this
+                String yesterdayDate = formatDate.format(calendar.getTime());
                 ArrayList<String> todayChallengesList = new ArrayList<>();
                 String challengeTime = "غير موجود";
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
