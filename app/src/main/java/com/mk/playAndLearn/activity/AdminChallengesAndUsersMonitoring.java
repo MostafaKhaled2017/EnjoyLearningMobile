@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -99,7 +100,8 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                 ArrayList<String> todayChallengesList = new ArrayList<>();
                 String challengeTime = "غير موجود";
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String challengeDate = dataSnapshot1.child("date").getValue().toString();
+                    Log.v("Logging","challengeId is : " + dataSnapshot1.getKey());
+                    String challengeDate = (String) dataSnapshot1.child("date").getValue();
                     if(dataSnapshot1.child("time").getValue() != null)
                         challengeTime = dataSnapshot1.child("time").getValue().toString();
                     String challengeSubject = dataSnapshot1.child("subject").getValue().toString();

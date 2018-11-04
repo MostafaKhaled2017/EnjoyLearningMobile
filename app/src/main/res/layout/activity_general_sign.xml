@@ -63,6 +63,31 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+
+        <LinearLayout
+            android:id="@+id/userSchoolTypeLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/general_margin"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/userSchoolTypesSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="نوع المدرسة : "
+                android:textColor="@color/writingColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/unStudentSignAlertText"
             android:layout_width="wrap_content"

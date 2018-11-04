@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,8 +25,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.generalChallengeReference;
 import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class GeneralChallengesActivityPresenter {
     View view;
@@ -74,11 +77,20 @@ public class GeneralChallengesActivityPresenter {
                 String challengeText = dataSnapshot.child("text").getValue().toString();
                 boolean activeNow = (boolean) dataSnapshot.child("activeNow").getValue();
 
-                if (activeNow) {
+                if (activeNow || currentUser.getEmail().equals(adminEmail)) {
                     view.showButtonGroup();
                     view.hideChallengeText();
                 } else {
                     view.hideButtonGroup();
+                }
+
+                if(currentUser.getEmail().equals(adminEmail)){
+                   if(activeNow){
+                       Toast.makeText(context, "التحدى نشط الان", Toast.LENGTH_SHORT).show();
+                   }
+                   else {
+                       Toast.makeText(context, "التحدى غير نشط الان", Toast.LENGTH_SHORT).show();
+                   }
                 }
 
                 view.setChallengeText(challengeText);

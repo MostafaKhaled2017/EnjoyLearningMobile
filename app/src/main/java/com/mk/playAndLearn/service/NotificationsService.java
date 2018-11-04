@@ -100,7 +100,7 @@ public class NotificationsService extends Service {
 
                 currentPlayer = getCurrentPlayer(player1Uid);
                 Log.v("Logging2", "onChildAdded");
-                if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
+                if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList") && dataSnapshot.exists()) {
                     showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
                     localChallengesReference.child(challengeId).child("player2notified").setValue(true);
                 }
@@ -160,7 +160,7 @@ public class NotificationsService extends Service {
                 String writerName = dataSnapshot.child("userName").getValue().toString();
                 String postWriterUid = dataSnapshot.child("postWriterUid").getValue().toString();
                 String commentWriterUid = dataSnapshot.child("writerUid").getValue().toString();
-                if(!postWriterUid.equals(commentWriterUid)) {//TODO : think about changing the notification text to a shorter one
+                if(!postWriterUid.equals(commentWriterUid) && dataSnapshot.exists()) {//TODO : think about changing the notification text to a shorter one
                     showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
                 }
                 localCommentsReference.child(dataSnapshot.getKey()).child("notified").setValue(true);

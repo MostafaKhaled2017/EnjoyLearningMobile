@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
     FirebaseAuth localAuth;
+    FirebaseAuth.AuthStateListener authListener;
     FirebaseDatabase localDatabase;
     DatabaseReference localUsersReference;
     String localCurrentUserUid;
@@ -108,11 +110,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
         serviceIntent = new Intent(this, NotificationsService.class);
 
-        localAuth = FirebaseAuth.getInstance();
-        localDatabase = FirebaseDatabase.getInstance();
-        localUsersReference = localDatabase.getReference("users");
-        localCurrentUserUid = localAuth.getCurrentUser().getUid();
-
         mViewPager = findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
         tabLayout = findViewById(R.id.tablayout);
@@ -133,7 +130,15 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         }*/
 
         startNotificationService();
-        setCurrentUserNameToSharedPreferences();
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() != null){
+                    authListener = this; //TODO : Check this
+                    setCurrentUserNameToSharedPreferences();
+                }
+            }
+        });
 
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
 
@@ -285,6 +290,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     }
 
     public void setCurrentUserNameToSharedPreferences() {
+        localAuth = FirebaseAuth.getInstance();
+        localDatabase = FirebaseDatabase.getInstance();
+        localUsersReference = localDatabase.getReference("users");
+        localCurrentUserUid = localAuth.getCurrentUser().getUid();
+
         localUsersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -293,6 +303,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                     String currentUserName = dataSnapshot.child("userName").getValue().toString();
                     editor.putString("currentUserName", currentUserName);
                     editor.apply();
+                }
+
+                if(authListener != null){
+                    FirebaseAuth.getInstance().removeAuthStateListener(authListener);
                 }
             }
 

@@ -55,6 +55,10 @@
         <item>معلم</item>
         <item>آخرون</item>
     </string-array>
+    <string-array name="user_school_types_array">
+        <item>عربى</item>
+        <item>لغات</item>
+    </string-array>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

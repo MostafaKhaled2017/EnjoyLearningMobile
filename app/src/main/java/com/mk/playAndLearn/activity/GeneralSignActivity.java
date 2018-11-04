@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -74,7 +75,8 @@ public class GeneralSignActivity extends AppCompatActivity {
     DatabaseReference myRef;
     DatabaseReference currentUserReference;
     FirebaseDatabase database;
-    Spinner userTypesSpinner;
+    Spinner userTypesSpinner, userSchoolTypeSpinner;
+    LinearLayout userSchoolTypeLinearLayout;
     TextView unStudentSignAlertText;
     ProgressBar progressBar;
     public SharedPreferences pref; // 0 - for private mode
@@ -82,7 +84,7 @@ public class GeneralSignActivity extends AppCompatActivity {
     Intent i;
 
     private GoogleSignInClient mGoogleSignInClient;
-    String userName = "", userImage = "", userEmail = "", userType = "";
+    String userName = "", userImage = "", userEmail = "", userType = "", userSchoolType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,8 @@ public class GeneralSignActivity extends AppCompatActivity {
         // database.setPersistenceEnabled(false);
         myRef = database.getReference("users");
         userTypesSpinner = findViewById(R.id.userTypesSpinner);
+        userSchoolTypeSpinner = findViewById(R.id.userSchoolTypesSpinner);
+        userSchoolTypeLinearLayout = findViewById(R.id.userSchoolTypeLinearLayout);
         unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
         progressBar = findViewById(R.id.progressbar);
 
@@ -108,15 +112,34 @@ public class GeneralSignActivity extends AppCompatActivity {
         userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userTypesSpinner.setAdapter(userTypesAdapter);
 
+        ArrayAdapter<CharSequence> userSchoolTypesAdapter = ArrayAdapter.createFromResource(this,
+                R.array.user_school_types_array, android.R.layout.simple_spinner_item);
+        userSchoolTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        userSchoolTypeSpinner.setAdapter(userSchoolTypesAdapter);
+
         userTypesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 userType = adapterView.getItemAtPosition(i).toString();
                 if (userType.equals("طالب")) {
                     unStudentSignAlertText.setVisibility(View.GONE);
+                    userSchoolTypeLinearLayout.setVisibility(View.VISIBLE);
                 } else {
                     unStudentSignAlertText.setVisibility(View.VISIBLE);
+                    userSchoolTypeLinearLayout.setVisibility(View.GONE);
                 }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        userSchoolTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                userSchoolType = adapterView.getItemAtPosition(i).toString();
             }
 
             @Override
@@ -307,6 +330,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                     map.put("acceptedLessons", 0);
                     map.put("refusedLessons", 0);
                     map.put("userType", userType);
+                    map.put("userSchoolType", userSchoolType);
                     myRef.child(mAuth.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -315,6 +339,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                             editor.apply();
 
                             showDialog();
+
                             }
                     });
 

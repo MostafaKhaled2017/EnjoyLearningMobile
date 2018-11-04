@@ -158,20 +158,18 @@ public class ChallengeResultActivity extends AppCompatActivity {
                     }
                 });
             }
-        }
-        else {
+        } else {
             usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
                     int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                    int finalChallengePoints =  score * generalChallengeScoreMultiply;
-                    challengeResultTv.setText("نتيجة التحدى : " + finalChallengePoints + " نقطة");
-                    if(lastGeneralChallengePoints == 0) {
+                    int finalChallengePoints = score * generalChallengeScoreMultiply;
+                    challengeResultTv.setText("نتيجة التحدى : " + 100 + " / " + finalChallengePoints); //TODO : edit this to (questionsList.size() * generalChallengeScoreMultiply)
+                    if (lastGeneralChallengePoints == 0) {
                         usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
                         usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
-                    }
-                    else {
+                    } else {
                         Toast.makeText(ChallengeResultActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
                     }
                 }
