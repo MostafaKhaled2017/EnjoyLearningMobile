@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,7 +15,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.mk.playAndLearn.model.Post;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -27,13 +39,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 
 public class HomeFragmentPresenter {
     Post post;
     View view;
     Context context;
     ArrayList<Post> postsList = new ArrayList();
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+
     ChildEventListener postsEventListener;
 
     public HomeFragmentPresenter(View view, Context context) {
@@ -41,7 +55,7 @@ public class HomeFragmentPresenter {
         this.context = context;
     }
 
-    public void startAsynkTask() {
+    public void startAsynkTask(final String currentSubject) {
         //TODO : search for a solution to this error
         AsyncTask asyncTask = new AsyncTask() {
             @Override
@@ -59,7 +73,7 @@ public class HomeFragmentPresenter {
             @Override
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
-                    getPosts();
+                    getPosts(currentSubject);
                 } else {
                     view.onNoInternetConnection();
                 }
@@ -69,109 +83,112 @@ public class HomeFragmentPresenter {
         asyncTask.execute();
     }
 
-    public void addPost(String postText) {
+    public void addPost(String postText, String subject) {
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+        final DateClass dateClass = new DateClass();
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        final String date = format.format(today);
-        Log.v("Logging2", date);
-        if (view.validateInput(postText)) {
-            SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
-            String currentUserName = pref.getString("currentUserName", "غير معروف");
-            String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
-            String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        dateClass.setDate(today);
+        SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
+        String currentUserName = pref.getString("currentUserName", "غير معروف");
+        String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+        String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            Log.v("sharedPreference", " current userName is : " + currentUserName);
+        Log.v("sharedPreference", " current userName is : " + currentUserName);
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("content", postText.trim());
-            map.put("date", date);
-            map.put("writerName", currentUserName);
-            map.put("writerUid", localCurrentUserUid);
-            map.put("image", localCurrentUserImage);
-            map.put("email", localCurrentUserEmail);
-            map.put("posted", false);
-            map.put("votes", 0);
-            final String postId = postsReference.push().getKey();
-            final DatabaseReference currentPostRef = postsReference.child(postId);
-            view.clearEditText();
-            currentPostRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    //TO ensure that the child exists
-                    if(currentPostRef.child("posted") != null) {
-                        currentPostRef.child("posted").setValue(true);
-                        currentPostRef.child("date").setValue(date);
+        Map<String, Object> map = new HashMap<>();
+        map.put("content", postText.trim());
+        map.put("writerName", currentUserName);
+        map.put("subject", subject);
+        map.put("writerUid", localCurrentUserUid);
+        map.put("image", localCurrentUserImage);
+        map.put("email", localCurrentUserEmail);
+        map.put("upVotedUsers", "users: ");
+        map.put("downVotedUsers", "users: ");
+        map.put("posted", false);
+        map.put("votes", 0);
+        map.put("date", dateClass.getDate());
 
-                        for (int i = 0; i < postsList.size(); i++) {
-                            if (postsList.get(i).getId().equals(postId)){
-                                postsList.get(i).setPosted(true);
-                                postsList.get(i).setDate(date);
-                                view.notifyAdapter();
-                                break;
-                            }
-                        }
+       /* final String postId = postsReference.push().getKey();
+        final DatabaseReference currentPostRef = postsReference.child(postId);*/
 
-                        Log.v("Logging", "current posts reference is : " + currentPostRef);
-                        view.showToast("تم إضافة المنشور بنجاح");
+        final DocumentReference currentPostRef = fireStorePosts.document();
+        final String postId = currentPostRef.getId();//TODO : check this
+
+
+        currentPostRef.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                //TO ensure that the child exists
+                currentPostRef.update("posted", true);
+                currentPostRef.update("date", dateClass.getDate());
+                format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+
+                for (int i = 0; i < postsList.size(); i++) {
+                    if (postsList.get(i).getId().equals(postId)) {
+                        postsList.get(i).setPosted(true);
+                        postsList.get(i).setDate(format.format(dateClass.getDate()));
                         view.notifyAdapter();
+                        break;
                     }
                 }
-            });
-        }
+
+                Log.v("Logging", "current posts reference is : " + currentPostRef);
+                view.showToast("تم إضافة المنشور بنجاح");
+                view.notifyAdapter();
+            }
+        });
+
     }
 
-    public void getPosts() {
+    public void getPosts(final String currentSubject) {
         view.startRecyclerAdapter(postsList);
+        view.showProgressBar();
+        view.hideNoPostsText();
         if (!postsList.isEmpty()) {//TODO : check if we need to create new objects instead of using clear
             postsList.clear();
             view.notifyAdapter();
         }
-        postsEventListener =  postsReference.addChildEventListener(new ChildEventListener() {
+
+        fireStorePosts.orderBy("date", Query.Direction.ASCENDING).addSnapshotListener((new EventListener<QuerySnapshot>() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                view.onDataFound();
-                getPostData(dataSnapshot);
-            }
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG, listen:error", e);
+                    return;
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    DocumentSnapshot postDocument = dc.getDocument();
+                    switch (dc.getType()) {
+                        case ADDED:
+                            view.onDataFound();
+                            String subject = postDocument.getString("subject");
+                            if (currentSubject.equals("كل المواد")) {
+                                getPostData(postDocument);
+                            } else {
+                                if (subject != null && subject.equals(currentSubject)) {
+                                    getPostData(postDocument);
+                                }
+                            }
+                            break;
+                        case MODIFIED:
+                            Log.d("TAG", "Modified city: " + dc.getDocument().getData());
+                            break;
+                        case REMOVED:
+                            startAsynkTask(currentSubject);//TODO : think about removeing the child from the list only                            break;
+                    }
+                }
 
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                startAsynkTask();//TODO : think about removeing the child from the list only
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                view.hideProgressBar();
-                Log.v("Logging", "error loading data : " + databaseError);
-            }
-        });
-
-        postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
                 if (postsList.size() == 0) {
                     view.onNoPostsExists();
                 }
-                postsReference.removeEventListener(this);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                view.hideProgressBar();
 
             }
-        });
+        }));
     }
 
     private boolean existsInPostsList(String postId) {
@@ -183,49 +200,51 @@ public class HomeFragmentPresenter {
         return false;
     }
 
-    void getPostData(DataSnapshot dataSnapshot){
+    void getPostData(DocumentSnapshot postDocument) {
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        String postDate;
+
         post = new Post();
-        String postContent = (String) dataSnapshot.child("content").getValue();
-        String postDate = (String) dataSnapshot.child("date").getValue();//TODO : solve the date problem
-        String postWriter = (String) dataSnapshot.child("writerName").getValue();
-        String postWriterEmail = (String) dataSnapshot.child("email").getValue();
-        String postImage = (String) dataSnapshot.child("image").getValue();
-        String postId = dataSnapshot.getKey();
-        String writerUid = (String) dataSnapshot.child("writerUid").getValue();
-        boolean posted = (boolean) dataSnapshot.child("posted").getValue();
+        String postContent = postDocument.getString("content");
+        postDate = format.format(postDocument.get("date"));
+        String postWriter = postDocument.getString("writerName");
+        String postWriterEmail = postDocument.getString("email");
+        String postImage = postDocument.getString("image");
+        String postId = postDocument.getId();
+        long votes = postDocument.getLong("votes");
+        String writerUid = postDocument.getString("writerUid");
+        boolean posted = postDocument.getBoolean("posted");
+
         post.setPosted(posted);
-        if(writerUid != null)
+        if (writerUid != null)
             post.setWriterUid(writerUid);
-        if(postWriterEmail != null)
+        if (postWriterEmail != null)
             post.setEmail(postWriterEmail);
-        if(postContent != null)
-             post.setContent(postContent);
-        if(postDate != null)
+        if (postContent != null)
+            post.setContent(postContent);
+        if (postDate != null)
             post.setDate(postDate);
-        if(postWriter != null)
+        if (postWriter != null)
             post.setWriter(postWriter);
-        if(postImage != null)
+        if (postImage != null)
             post.setImage(postImage);
-        if(postId != null)
+        if (postId != null)
             post.setId(postId);
-        if(!existsInPostsList(postId)) {
+
+        post.setVotes(votes);
+
+        if (!existsInPostsList(postId)) {
             postsList.add(0, post);
             view.notifyAdapter();
         }
     }
 
-    public void removeListeners(){
-        if(postsEventListener != null)
-            postsReference.removeEventListener(postsEventListener);
-    }
     public interface View {
         void retryConnection();
 
         void startRecyclerAdapter(ArrayList postsList);
 
         void onNoInternetConnection();
-
-        boolean validateInput(String postText);
 
         void showToast(String value);
 
@@ -235,8 +254,11 @@ public class HomeFragmentPresenter {
 
         void hideProgressBar();
 
+        void hideNoPostsText();
+
+        void showProgressBar();
+
         void onNoPostsExists();
 
-        void clearEditText();
     }
 }

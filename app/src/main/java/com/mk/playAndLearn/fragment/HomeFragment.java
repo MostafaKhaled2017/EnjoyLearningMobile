@@ -1,11 +1,14 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +38,7 @@ import com.mk.playAndLearn.model.Post;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -52,7 +59,7 @@ import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements HomeFragmentPresenter.View{
+public class HomeFragment extends Fragment implements HomeFragmentPresenter.View {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,14 +71,15 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     private OnFragmentInteractionListener mListener;
 
-    EditText etAddPost;
-    Button addPostButton;
     HomeFragmentPresenter presenter;
 
     PostsAdapter recyclerAdapter;
     TextView noPostsText, noInternetConnectionText;
 
     RecyclerView recyclerView;
+    Spinner spinner;
+
+    String currentSubject = "";
 
     public HomeFragment() {
         // Required empty public constructor
@@ -90,8 +98,40 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         final View myView = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = myView.findViewById(R.id.postsRecyclerView);
         progressBar = myView.findViewById(R.id.postsProgressBar);
-        etAddPost = myView.findViewById(R.id.etAddPost);
         noPostsText = myView.findViewById(R.id.noPostsText);
+
+        spinner = myView.findViewById(R.id.subjectsSpinnerInHomeFragment);
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinner);
+
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
+
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.subjects_array_for_home_fragment, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(subjectsAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+                presenter.startAsynkTask(currentSubject);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         noInternetConnectionText = myView.findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
@@ -101,18 +141,90 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
             }
         });
 
-        addPostButton = myView.findViewById(R.id.addPostBtn);
-        addPostButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = myView.findViewById(R.id.fab);
+//        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
+//        //copy it in a new one
+//        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
+//        //set the color filter, you can use also Mode.SRC_ATOP
+//        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+//        //set it to your fab button initialized before
+//        fab.setImageDrawable(willBeWhite);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String postText = etAddPost.getText().toString();
-                presenter.addPost(postText);
+                showSpinnerDialog();
             }
         });
 
-        presenter.startAsynkTask();
-
         return myView;
+
+    }
+
+
+    public void showSpinnerDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());//TODO : check this
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_spinner, null);
+
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton("إضافة", null)
+                .create();
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
+        dialogTitle.setText("إضافة منشور");
+        inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
+
+
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.subjects_array_for_home_fragment_dialog, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(subjectsAdapter);
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+
+                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String commentText = inputComment.getText().toString().trim();
+                        if (TextUtils.isEmpty(commentText)) {
+                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
+                        } else {
+                            presenter.addPost(commentText, currentSubject);
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilderUserInput.show();
 
     }
 
@@ -156,15 +268,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     }
 
     @Override
-    public boolean validateInput(String postText) {
-        if (TextUtils.isEmpty(postText.trim())) {
-            etAddPost.setError("لا يمكنك ترك هذا الحقل فارغا");
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         deleteCache(getActivity());
@@ -173,14 +276,20 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.removeListeners();
+    }
+
+    @Override
+    public void showProgressBar() {
+        if(progressBar.getVisibility() != View.VISIBLE) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void retryConnection() {
         noInternetConnectionText.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        presenter.startAsynkTask();
+        presenter.startAsynkTask(currentSubject);
     }
 
     @Override
@@ -196,16 +305,12 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     public void onNoInternetConnection() {
         progressBar.setVisibility(android.view.View.GONE);
         noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+        noPostsText.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showToast(String value) {
         Toast.makeText(getActivity(), value, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void clearEditText() {
-        etAddPost.setText("");
     }
 
     @Override
@@ -232,5 +337,10 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     public void onNoPostsExists() {
         progressBar.setVisibility(android.view.View.GONE);
         noPostsText.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void hideNoPostsText() {
+        noPostsText.setVisibility(View.GONE);
     }
 }

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,9 +21,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Comment;
 import com.mk.playAndLearn.model.Post;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -35,15 +44,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static com.mk.playAndLearn.utils.Firebase.commentsReference;
-import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
 
 public class PostsInDetailsActivityPresenter {
     View view;
     Context context;
     ArrayList<Comment> commentsList = new ArrayList();
-    ChildEventListener commentsListener;
-    String date;
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
     public PostsInDetailsActivityPresenter(View view, Context context) {
         this.view = view;
@@ -82,87 +89,73 @@ public class PostsInDetailsActivityPresenter {
     public void getComments() {
         clearList();
         view.startRecyclerAdapter(commentsList);
-        commentsListener = commentsReference.orderByChild("postId").equalTo(view.getPostId()).addChildEventListener(new ChildEventListener() {
+        fireStoreComments.whereEqualTo("postId", view.getPostId()).orderBy("date", Query.Direction.ASCENDING).addSnapshotListener((new EventListener<QuerySnapshot>() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //Lesson value = dataSnapshot.getValue(Lesson.class);
-                view.onDataFound();
-                Comment comment = new Comment();
-                String userName = dataSnapshot.child("userName").getValue().toString();
-                String userEmail = dataSnapshot.child("userEmail").getValue().toString();
-                String content = dataSnapshot.child("content").getValue().toString();
-                String userImage = dataSnapshot.child("userImage").getValue().toString();
-                String date = dataSnapshot.child("date").getValue().toString();
-                String writerUid = dataSnapshot.child("writerUid").getValue().toString();
-                long votes = (long) dataSnapshot.child("votes").getValue();
-                boolean posted = (boolean) dataSnapshot.child("posted").getValue();
-                String commentId = dataSnapshot.getKey();
-                comment.setVotes(votes);
-                comment.setPosted(posted);
-                comment.setUserEmail(userEmail);
-                comment.setCommentId(commentId);
-                comment.setWriterUid(writerUid);
-                comment.setUserName(userName);
-                comment.setContent(content);
-                comment.setUserImage(userImage);
-                comment.setDate(date);
-                if (!existsInCommentsList(commentId)) {
-                    commentsList.add(0, comment);
-                    view.notifyAdapter();
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG, listen:error", e);
+                    return;
                 }
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String content = dataSnapshot.child("content").getValue().toString();
-                String date = dataSnapshot.child("date").getValue().toString();
-                long votes = (long) dataSnapshot.child("votes").getValue();
-                boolean posted = (boolean) dataSnapshot.child("posted").getValue();
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    DocumentSnapshot postDocument = dc.getDocument();
+                    format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+                    switch (dc.getType()) {
+                        case ADDED: {
+                            view.onDataFound();
+                            Comment comment = new Comment();
+                            String userName = postDocument.getString("userName");
+                            String userEmail = postDocument.getString("userEmail");
+                            String content = postDocument.getString("content");
+                            String userImage = postDocument.getString("userImage");
+                            String date = format.format(postDocument.get("date"));
+                            String writerUid = postDocument.getString("writerUid");
+                            long votes = postDocument.getLong("votes");
+                            boolean posted = postDocument.getBoolean("posted");
+                            String commentId = postDocument.getId();
 
-                for (int i = 0; i < commentsList.size(); i++) {
-                    if (commentsList.get(i).getCommentId().equals(dataSnapshot.getKey())) {
-                        commentsList.get(i).setPosted(posted);
-                        commentsList.get(i).setDate(date);
-                        commentsList.get(i).setContent(content);
-                        commentsList.get(i).setVotes(votes);
-                        view.notifyAdapter();
-                        break;
+                            comment.setVotes(votes);
+                            comment.setPosted(posted);
+                            comment.setUserEmail(userEmail);
+                            comment.setCommentId(commentId);
+                            comment.setWriterUid(writerUid);
+                            comment.setUserName(userName);
+                            comment.setContent(content);
+                            comment.setUserImage(userImage);
+                            comment.setDate(date);
+                            if (!existsInCommentsList(commentId)) {
+                                commentsList.add(0, comment);
+                                view.notifyAdapter();
+                            }
+                            break;
+                        }
+                        case MODIFIED:
+                            String content = postDocument.getString("content");
+                            String date = format.format(postDocument.get("date"));
+                            long votes = postDocument.getLong("votes");
+                            boolean posted = postDocument.getBoolean("posted");
+
+                            for (int i = 0; i < commentsList.size(); i++) {
+                                if (commentsList.get(i).getCommentId().equals(postDocument.getId())) {
+                                    commentsList.get(i).setPosted(posted);
+                                    commentsList.get(i).setDate(date);
+                                    commentsList.get(i).setContent(content);
+                                    commentsList.get(i).setVotes(votes);
+                                    view.notifyAdapter();
+                                    break;
+                                }
+                            }
+                            break;
+                        case REMOVED:
+                            startAsynkTask();//TODO : think about removeing the child from the list only                            break;
                     }
                 }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                startAsynkTask();//TODO : it 's better to change that to more efficient way
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "database error : " + databaseError);
-                view.hideProgressBar();
-            }
-        });
-        commentsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
                 if (commentsList.size() == 0) {
                     view.onNoCommentsFound();
                 }
-
-                commentsReference.removeEventListener(this);
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        }));
     }
 
     void clearList() {
@@ -173,9 +166,9 @@ public class PostsInDetailsActivityPresenter {
 
     public void addComment(String commentText) {
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+        final DateClass dateClass = new DateClass();
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        date = format.format(today);
+        dateClass.setDate(today);
 
         Map<String, Object> map = new HashMap<>();
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
@@ -190,7 +183,7 @@ public class PostsInDetailsActivityPresenter {
         map.put("userEmail", localCurrentUserEmail);
         map.put("userImage", localCurrentUserImage);
         map.put("votes", 0);
-        map.put("date", date);
+        map.put("date", dateClass.getDate());
         map.put("posted", false);
         map.put("notified", view.getPostWriterUid() + "false");
         map.put("upVotedUsers", "users: ");
@@ -199,22 +192,17 @@ public class PostsInDetailsActivityPresenter {
         map.put("postWriterUid", view.getPostWriterUid());
         map.put("writerUid", localCurrentUserUid);
         map.put("content", commentText.trim());
-        final String commentId = commentsReference.push().getKey();
-        final DatabaseReference currentCommentRef = commentsReference.child(commentId);
-        currentCommentRef.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final DocumentReference currentCommentRef = fireStoreComments.document();
+        final String commentId = currentCommentRef.getId();
+        currentCommentRef.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                currentCommentRef.child("posted").setValue(true);
-                currentCommentRef.child("date").setValue(date);
+                currentCommentRef.update("posted", true);
+                currentCommentRef.update("date", dateClass.getDate());
                 view.showToast("تم إضافة التعليق بنجاح");
                 view.notifyAdapter();
             }
         });
-    }
-
-    public void removeListeners() {
-        if (commentsListener != null)
-            commentsReference.removeEventListener(commentsListener);
     }
 
     private boolean existsInCommentsList(String commentId) {

@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -43,7 +44,7 @@ public class ChallengersActivity extends AppCompatActivity {
     ProgressBar progressBar;
     RecyclerView recyclerView;
     String subject;
-    TextView noInternetConnectionText;
+    TextView noInternetConnectionText, noStudentsTv;
     SwipeRefreshLayout swipeRefreshLayout;
 
     private final String TAG = "ChallengersActivity";
@@ -69,6 +70,7 @@ public class ChallengersActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.challengersRecyclerView);
         progressBar = findViewById(R.id.challengersProgressBar);
         swipeRefreshLayout = findViewById(R.id.challengersSwipeRefreshLayout);
+        noStudentsTv = findViewById(R.id.noActiveStudentsTv);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -133,26 +135,25 @@ public class ChallengersActivity extends AppCompatActivity {
     }
 
     public void getStudents() {
-        usersReference.orderByChild("userName").addListenerForSingleValueEvent(new ValueEventListener() {
+        if (!list.isEmpty()) {
+            list.clear();
+        }
+        usersReference.orderByChild("online").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //TODO : think about the conditions here
-                if (!list.isEmpty()) {
-                    list.clear();
-                }
-
+                String points = "";
                 String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                ArrayList<Integer> onlineUsersIndexes = new ArrayList<>();
-
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     User user = new User();
                     boolean admin = false, online = false;
-                    String name = dataSnapshot1.child("userName").getValue().toString();
-                    String email = dataSnapshot1.child("userEmail").getValue().toString();
+                    String name = (String) dataSnapshot1.child("userName").getValue();
+                    String email = (String) dataSnapshot1.child("userEmail").getValue();
                     String uid = dataSnapshot1.getKey();
-                    String points = dataSnapshot1.child("points").getValue().toString();
-                    String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
-                    String userType = dataSnapshot1.child("userType").getValue().toString();
+                    if (dataSnapshot1.child("points").getValue() != null)
+                        points = dataSnapshot1.child("points").getValue().toString();
+                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
+                    String userType = (String) dataSnapshot1.child("userType").getValue();
 
                     if (dataSnapshot1.child("admin").getValue() != null)
                         admin = (boolean) dataSnapshot1.child("admin").getValue();
@@ -164,7 +165,7 @@ public class ChallengersActivity extends AppCompatActivity {
                             onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
                     }
 
-                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid) && !points.equals("")) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                         user.setAdmin(admin);
                         user.setOnline(online);
                         user.setName(name);
@@ -176,18 +177,64 @@ public class ChallengersActivity extends AppCompatActivity {
                     }
                 }
 
-                for(int i = 0; i < list.size(); i ++){//TODO : it is better to store indexes of online users only after found the problem happens and fix it
+                for (int i = 0; i < list.size(); i++) {//TODO : it is better to store indexes of online users only after found the problem happens and fix it
                     User user = list.get(i);
 
-                   // Toast.makeText(ChallengersActivity.this, "userName removed is : " + user.getName(), Toast.LENGTH_SHORT).show();
-                    if(user.isOnline()) {
+                    // Toast.makeText(ChallengersActivity.this, "userName removed is : " + user.getName(), Toast.LENGTH_SHORT).show();
+                    if (user.isOnline()) {
                         list.remove(user);
                         list.add(0, user);
                     }
                 }
 
+            }
 
-                recyclerAdapter.notifyDataSetChanged();
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        usersReference.orderByChild("points").limitToLast(10).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    User user = new User();
+                    String points = "";
+                    boolean admin = false, online = false;
+                    String name = (String) dataSnapshot1.child("userName").getValue();
+                    String email = (String) dataSnapshot1.child("userEmail").getValue();
+                    String uid = dataSnapshot1.getKey();
+                    if (dataSnapshot1.child("points").getValue() != null)
+                        points = dataSnapshot1.child("points").getValue().toString();
+                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
+                    String userType = (String) dataSnapshot1.child("userType").getValue();
+
+                    if (dataSnapshot1.child("admin").getValue() != null)
+                        admin = (boolean) dataSnapshot1.child("admin").getValue();
+
+                    if (dataSnapshot1.child("online").getValue() != null) {
+                        online = (boolean) dataSnapshot1.child("online").getValue();
+
+                        /*if(online)
+                            onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
+                    }
+
+                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid) && !online && !points.equals("")) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                        user.setAdmin(admin);
+                        user.setOnline(online);
+                        user.setName(name);
+                        user.setPoints(Integer.parseInt(points));
+                        user.setImageUrl(imageUrl);
+                        user.setEmail(email);
+                        user.setUid(uid);
+                        list.add(user);
+                    }
+                    recyclerAdapter.notifyDataSetChanged();
+                }
+
 
                 if (progressBar.getVisibility() != View.GONE)
                     progressBar.setVisibility(View.GONE);
@@ -196,11 +243,16 @@ public class ChallengersActivity extends AppCompatActivity {
                     swipeRefreshLayout.setRefreshing(false);
                 }
 
+                if (list.size() == 0) {
+                    noStudentsTv.setVisibility(View.VISIBLE);
+                } else {
+                    noStudentsTv.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                progressBar.setVisibility(View.GONE);
+
             }
         });
     }

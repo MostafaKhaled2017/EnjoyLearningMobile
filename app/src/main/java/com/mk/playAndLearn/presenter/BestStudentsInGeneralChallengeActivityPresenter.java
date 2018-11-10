@@ -39,13 +39,16 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     user = new User();
                     boolean admin = false;
-                    String name = dataSnapshot1.child("userName").getValue().toString();
-                    int generalChallengePoints = Integer.parseInt(dataSnapshot1.child("lastGeneralChallengeScore").getValue().toString());
-                    String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
-                    String userType = dataSnapshot1.child("userType").getValue().toString();
+                    int generalChallengePoints = -1000;
+                    String name = (String) dataSnapshot1.child("userName").getValue();
+                    if(dataSnapshot1.child("lastGeneralChallengeScore").getValue() != null)
+                         generalChallengePoints = Integer.parseInt(dataSnapshot1.child("lastGeneralChallengeScore").getValue().toString());
+                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
+                    String userType = (String) dataSnapshot1.child("userType").getValue();
                     if (dataSnapshot1.child("admin").getValue() != null)
                         admin = (boolean) dataSnapshot1.child("admin").getValue();
-                    if (userType.equals("طالب")) {
+
+                    if (userType.equals("طالب") && generalChallengePoints != -1000) {
                         user.setAdmin(admin);
                         user.setName(name);
                         user.setPoints(generalChallengePoints);

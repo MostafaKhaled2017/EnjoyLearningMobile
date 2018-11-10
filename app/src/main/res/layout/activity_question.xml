@@ -48,9 +48,9 @@
         android:id="@+id/questionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
         android:layout_alignParentRight="true"
         android:layout_below="@id/timerProgressbar"
-        android:layout_above="@id/radioGroup"
         android:padding="5dp"
         android:text="ما هي أقسام الأدب؟"
         android:textColor="@color/writingColor"
@@ -59,12 +59,13 @@
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radioGroup"
+        android:layout_centerHorizontal="true"
         android:layout_width="300dp"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="5dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/questionText"
         android:layout_marginTop="7dp"
         android:background="@color/white"
         android:orientation="vertical">
@@ -112,6 +113,7 @@
     </RadioGroup>
 
     <android.support.v7.widget.AppCompatButton
+        android:layout_marginTop="5dp"
         android:id="@+id/skipQuestionButton"
         style="@style/buttonStyle"
         android:layout_width="match_parent"

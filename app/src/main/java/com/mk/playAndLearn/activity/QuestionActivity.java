@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -19,19 +20,21 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 
@@ -57,6 +60,7 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_question);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -132,8 +136,8 @@ public class QuestionActivity extends AppCompatActivity {
             countDownInterval = 3000;//3 seconds
             totalSeconds = millisInFuture / 1000;
         } else {
-            millisInFuture = 21000;
-            countDownInterval = 250;
+            millisInFuture = 31000;
+            countDownInterval = 300;
             totalSeconds = millisInFuture / 1000;
         }
 
@@ -174,15 +178,16 @@ public class QuestionActivity extends AppCompatActivity {
             dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
-                    challengesReference.child(challengeId).addValueEventListener(new ValueEventListener() {
+                    fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (!isGeneralChallenge) {
-                                challengesReference.child(challengeId).child("player2score").setValue(score);
-                                challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList);
-                                challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
-                                challengesReference.child(challengeId).child("state").setValue("اكتمل");//TODO : think about changing this
-                            } else {
+                                fireStoreChallenges.document(challengeId).update("player2score", score);
+                                fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList);
+                                fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
+                                fireStoreChallenges.document(challengeId).update("state", "اكتمل");//TODO : think about changing this
+                            }
+                            else {
                                 usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -193,7 +198,7 @@ public class QuestionActivity extends AppCompatActivity {
                                             usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
                                             usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
                                         } else {
-                                            //Toast.makeText(ChallengeResultActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(QuestionActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
@@ -203,11 +208,6 @@ public class QuestionActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
                     finish();

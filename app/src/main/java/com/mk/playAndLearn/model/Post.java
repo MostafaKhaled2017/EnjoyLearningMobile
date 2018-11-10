@@ -4,6 +4,16 @@ public class Post {
     private String writerName;
     private boolean posted;
 
+    public long getVotes() {
+        return votes;
+    }
+
+    public void setVotes(long votes) {
+        this.votes = votes;
+    }
+
+    long votes;
+
     public boolean isPosted() {
         return posted;
     }

@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,6 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
@@ -37,17 +40,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.zip.Inflater;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
+
 public class ChallengeStartActivity extends AppCompatActivity {
     //TODO : make this page loads until all data finished loading by hiding the 4 main views until the data loads
     //TODO : make the app loads only five questions from the database
     FirebaseAuth auth;
     FirebaseUser currentUser;
     FirebaseDatabase database;
-    DatabaseReference questionsReference;
 
     SharedPreferences pref;
 
-    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>(), challengeQuestionList = new ArrayList();
+    String challengeQuestionsIds;
+    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>();
     String playerAnswersBooleansList = "", playerAnswersList = "";
 
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
@@ -69,7 +74,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
-        questionsReference = database.getReference("questions");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -95,22 +99,23 @@ public class ChallengeStartActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             currentChallenger = intent.getIntExtra("currentChallenger", 1);
-
+            subject = intent.getStringExtra("subject");
             secondPlayerUid = intent.getStringExtra("uid");
 
             if (currentChallenger == 2) {
                 challengeId = intent.getStringExtra("challengeId");
-                challengeQuestionList = intent.getParcelableArrayListExtra("questionsList");
+                challengeQuestionsIds = intent.getStringExtra("questionsList");
             } else {
                 secondPlayerName = intent.getStringExtra("name");
                 secondPlayerEmail = intent.getStringExtra("email");
                 secondPlayerImage = intent.getStringExtra("image");
                 secondPlayerPoints = intent.getIntExtra("points", -1);
-                subject = intent.getStringExtra("subject");
             }
         }
         DatabaseReference usersReference = database.getReference("users");
         if (currentChallenger == 2) {
+            setQuestionsList();
+
             usersReference.child(secondPlayerUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -139,53 +144,15 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
             if (!list.isEmpty())
                 list.clear();
-            questionsReference.orderByChild("subject").equalTo(subject).addChildEventListener(new ChildEventListener() {
+            fireStoreQuestions.document(subject).collection(subject).whereEqualTo("reviewed", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Question question = new Question();
-                    String questionText = dataSnapshot.child("al question").getValue().toString();
-                    String answer1 = dataSnapshot.child("answer 1").getValue().toString();
-                    String answer2 = dataSnapshot.child("answer 2").getValue().toString();
-                    String answer3 = dataSnapshot.child("answer 3").getValue().toString();
-                    String answer4 = dataSnapshot.child("answer 4").getValue().toString();
-                    String correctAnswer = dataSnapshot.child("correctAnswer").getValue().toString();
-                    String writerName = dataSnapshot.child("writerName").getValue().toString();
-                    boolean reviewed = ((boolean) dataSnapshot.child("reviewed").getValue());
-                    if (reviewed) {
-                        question.setAnswer1(answer1);
-                        question.setAnswer2(answer2);
-                        question.setAnswer3(answer3);
-                        question.setAnswer4(answer4);
-                        question.setCorrectAnswer(correctAnswer);
-                        question.setWriterName(writerName);
-                        question.setAlQuestion(questionText);
-                        question.setReviewed(reviewed);
-                        question.setQuestionId(dataSnapshot.getKey());
-
-                        list.add(question);
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                            addQuestionData(document);
                     }
                 }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
             });
+
         }
 
         usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -243,11 +210,11 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     i.putExtra("player2Uid", secondPlayerUid);
                     i.putParcelableArrayListExtra("questionList", chosenQuestionsList);
                 } else {
-                    i.putParcelableArrayListExtra("questionList", challengeQuestionList);
+                    i.putParcelableArrayListExtra("questionList", list);
                     i.putExtra("challengeId", challengeId);
                 }
 
-                if (chosenQuestionsList.size() >= 5 || challengeQuestionList.size() >= 5) {
+                if (chosenQuestionsList.size() >= 5 || list.size() >= 5) {
                     startActivity(i);
                     finish();
                 }
@@ -273,5 +240,44 @@ public class ChallengeStartActivity extends AppCompatActivity {
         });
         dialog.create();
         dialog.show();
+    }
+
+    public void setQuestionsList(){
+        if(!list.isEmpty())
+            list.clear();
+
+        String[] questionsIds = challengeQuestionsIds.split(" ");
+        for(String questionId : questionsIds){
+            fireStoreQuestions.document(subject).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    addQuestionData(documentSnapshot);
+                }
+            });
+        }
+    }
+
+    public void addQuestionData(DocumentSnapshot document){
+        Question question = new Question();
+        String questionText = document.getString("alQuestion");
+        String answer1 = document.getString("answer1");
+        String answer2 = document.getString("answer2");
+        String answer3 = document.getString("answer3");
+        String answer4 = document.getString("answer4");
+        String correctAnswer = document.getString("correctAnswer");
+        String writerName = document.getString("writerName");
+        boolean reviewed = document.getBoolean("reviewed");
+
+        question.setAnswer1(answer1);
+        question.setAnswer2(answer2);
+        question.setAnswer3(answer3);
+        question.setAnswer4(answer4);
+        question.setCorrectAnswer(correctAnswer);
+        question.setWriterName(writerName);
+        question.setAlQuestion(questionText);
+        question.setReviewed(reviewed);
+        question.setQuestionId(document.getId());
+
+        list.add(question);
     }
 }

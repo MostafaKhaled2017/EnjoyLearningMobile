@@ -35,30 +35,68 @@
             android:text="9/8/2018"
             android:layout_toLeftOf="@id/postImageInDetails"
             android:textColor="@color/grey"
-            android:textSize="12sp"
-            />
+            android:textSize="12sp" />
 
-        <!--<android.support.v7.widget.AppCompatImageView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/warning_icon"
-            android:layout_margin="8dp"
-            android:id="@+id/warningIcon"
-            android:visibility="invisible"/>-->
-        <TextView
-            android:id="@+id/postContentInDetails"
-            android:layout_below="@id/postImageInDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
-            android:layout_marginLeft="5dp"
-            android:autoLink="all"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="25dp"
-            android:textColor="@color/black"
-            android:textSize="@dimen/generalTextSize"
-            />
+            android:layout_below="@id/postImageInDetails">
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:id="@+id/votesView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/upArrow"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/up_and_down_arrow" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/numberOfVotes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/writingColor"
+                    android:textSize="@dimen/medium_text_size"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/downArrow"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:rotation="180"
+                    android:src="@drawable/up_and_down_arrow" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/postContentInDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_centerVertical="true"
+                android:autoLink="all"
+                android:layout_marginBottom="5dp"
+                android:layout_toLeftOf="@id/votesView"
+                android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
+                android:textColor="@color/black"
+                android:textSize="@dimen/generalTextSize" />
+        </RelativeLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

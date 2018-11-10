@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -25,7 +26,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Question;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -34,15 +38,20 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 
 public class AddQuestionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Spinner subjectsSpinner;
     String correctAnswer = "";
     EditText editText1, editText2, editText3, editText4, questionEt;
+    Question question;
     String currentSubject = "", currentUserName;
     Map<String, Object> map;
     int currentCheckedRadioButton;
+    boolean oldQuestion = false;
+    String oldQuestionId = "";
+    WriteBatch batch;
     RadioButton r1, r2, r3, r4;
     public SharedPreferences pref; // 0 - for private mode
 
@@ -65,6 +74,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         actionBar.setDisplayShowTitleEnabled(false);
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("إضافة سؤال");
+
+        batch = fireStore.batch();
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -103,6 +114,45 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         subjectsSpinner.setOnItemSelectedListener(this);
 
         ButterKnife.bind(this);
+
+
+
+        Intent intent = getIntent();
+        if(intent.getExtras().containsKey("question")){
+            question = (Question) intent.getSerializableExtra("question");
+            questionEt.setText(question.getAlQuestion());
+            editText1.setText(question.getAnswer1());
+            editText2.setText(question.getAnswer2());
+            editText3.setText(question.getAnswer3());
+            editText4.setText(question.getAnswer4());
+
+            String correctAnswer = question.getCorrectAnswer();
+
+            if(question.getAnswer1().equals(correctAnswer)){
+                r1.setChecked(true);
+            }
+            if(question.getAnswer2().equals(correctAnswer)){
+                r2.setChecked(true);
+            }
+            if(question.getAnswer3().equals(correctAnswer)){
+                r3.setChecked(true);
+            }
+            if(question.getAnswer4().equals(correctAnswer)){
+                r4.setChecked(true);
+            }
+
+            String subject = question.getSubject(); //the value you want the position for
+
+            ArrayAdapter myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
+
+            int spinnerPosition = myAdap.getPosition(subject);
+
+            subjectsSpinner.setSelection(spinnerPosition);
+
+            oldQuestion = true;
+            oldQuestionId = question.getQuestionId();
+
+        }
 
     }
 
@@ -155,12 +205,12 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 break;
         }
 
-        String question = questionEt.getText().toString();
-        String et1 = editText1.getText().toString().trim();
-        String et2 = editText2.getText().toString().trim();
-        String et3 = editText3.getText().toString().trim();
-        String et4 = editText4.getText().toString().trim();
-        if (TextUtils.isEmpty(question) || TextUtils.isEmpty(et1) || TextUtils.isEmpty(et2) || TextUtils.isEmpty(et3) || TextUtils.isEmpty(et4)) {
+        String questionText = questionEt.getText().toString().trim();
+        String et1 = editText1.getText().toString();
+        String et2 = editText2.getText().toString();
+        String et3 = editText3.getText().toString();
+        String et4 = editText4.getText().toString();
+        if (TextUtils.isEmpty(questionText) || TextUtils.isEmpty(et1) || TextUtils.isEmpty(et2) || TextUtils.isEmpty(et3) || TextUtils.isEmpty(et4)) {
             Toast.makeText(this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
         } else if (correctAnswer.equals("")) {
             Toast.makeText(this, "من فضلك قم بتحديد الإجابة الصحيحة للسؤال", Toast.LENGTH_SHORT).show();
@@ -172,42 +222,66 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
 
             String schoolType = getSchoolType(currentSubject);
 
-            map = new HashMap<>();
-            map.put("writerName", currentUserName);
-            map.put("writerEmail", localCurrentUserEmail);
-            map.put("writerUid", localCurrentUserUid);
-            map.put("subject", currentSubject);
-            map.put("al question", question);
-            map.put("question type", "choose"); // TODO : edit this when new type of questions added
-            map.put("answer 1", et1);
-            map.put("answer 2", et2);
-            map.put("answer 3", et3);
-            map.put("answer 4", et4);
-            map.put("reviewed", false);
-            map.put("challengeQuestion", false);
-            map.put("schoolType", schoolType);
-            map.put("correctAnswer", correctAnswer);
-            // Toast.makeText(this, "تم إضافة السؤال بنجاح وسيتم مراجعته", Toast.LENGTH_SHORT).show();
-            //TODO : add icon to the dialog
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setTitle("تنبيه هام!!");
-            alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطلبة بتأليف أسئلة خاصة بهم أو يقوم المدرسون برفع أسئلة من تأليفهم ممنوع نقل الأسئلة من الكتب الخارجية أو استخدام أسئلة خاصة بأى مدرس إلا بعد أخذ موافقته");
-            alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Toast.makeText(AddQuestionActivity.this, "جارى رفع السؤال", Toast.LENGTH_SHORT).show();
-                    questionsReference.push().setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    clearViews();
-                }
-            });
-            alertDialog.create();
-            alertDialog.show();
-            //TODO : think about removing finish and clear the edit texts and radio buttons
+            if(!oldQuestion) {
+
+                map = new HashMap<>();
+                map.put("writerName", currentUserName);
+                map.put("writerEmail", localCurrentUserEmail);
+                map.put("writerUid", localCurrentUserUid);
+                map.put("subject", currentSubject);
+                map.put("alQuestion", questionText);
+                map.put("questionType", "choose"); // TODO : edit this when new type of questions added
+                map.put("answer1", et1.trim());
+                map.put("answer2", et2.trim());
+                map.put("answer3", et3.trim());
+                map.put("answer4", et4.trim());
+                map.put("reviewed", false);
+                map.put("challengeQuestion", false);
+                map.put("schoolType", schoolType);
+                map.put("correctAnswer", correctAnswer.trim());
+                // Toast.makeText(this, "تم إضافة السؤال بنجاح وسيتم مراجعته", Toast.LENGTH_SHORT).show();
+                //TODO : add icon to the dialog
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("تنبيه هام!!");
+                alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطلبة بتأليف أسئلة خاصة بهم أو يقوم المدرسون برفع أسئلة من تأليفهم ممنوع نقل الأسئلة من الكتب الخارجية أو استخدام أسئلة خاصة بأى مدرس إلا بعد أخذ موافقته");
+                alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(AddQuestionActivity.this, "جارى رفع السؤال", Toast.LENGTH_SHORT).show();
+                        fireStoreQuestions.document(currentSubject).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                        clearViews();
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+
+            }
+            else {
+               DocumentReference currentQuestionReference =  fireStoreQuestions.document(question.getSubject()).collection(question.getSubject()).document(question.getQuestionId());
+
+                batch.update(currentQuestionReference, "alQuestion", questionText);
+                batch.update(currentQuestionReference, "answer1", et1.trim());
+                batch.update(currentQuestionReference, "answer2", et2.trim());
+                batch.update(currentQuestionReference, "answer3", et3.trim());
+                batch.update(currentQuestionReference, "answer4", et4.trim());
+                batch.update(currentQuestionReference, "correctAnswer", correctAnswer.trim());
+                batch.update(currentQuestionReference, "subject", currentSubject);
+                batch.update(currentQuestionReference, "schoolType", schoolType);
+
+                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(AddQuestionActivity.this, "تم تحديث السؤال بنجاح", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+            }
         }
     }
 

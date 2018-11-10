@@ -11,19 +11,28 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
 
-import static com.mk.playAndLearn.NotificationID.getID;
+import static com.mk.playAndLearn.utils.NotificationID.getID;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
@@ -38,10 +47,9 @@ public class NotificationsService extends Service {
     //the full number which is coming from the challenges fragment
     String localCurrentUserUid;
 
-    DatabaseReference localChallengesReference;
-    DatabaseReference localCommentsReference;
+    FirebaseFirestore localFireStore;
+    CollectionReference localFireStoreChallenges, localFireStoreComments;
     FirebaseAuth localAuth;
-    FirebaseDatabase localDatabase;
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
     //TODO : change the text of notification according to the written and unwritten states in the database like refused, win, lose, draw ...
     //TODO : know why the app shows notifications for the uncompleted challenges when it is started and solve this problem
@@ -53,9 +61,9 @@ public class NotificationsService extends Service {
         super.onCreate();
         Log.v("notificationsDebug", "onCreate" + localCurrentUserUid);
         localAuth = FirebaseAuth.getInstance();
-        localDatabase = FirebaseDatabase.getInstance();
-        localChallengesReference = localDatabase.getReference("challenges");
-        localCommentsReference = localDatabase.getReference("comments");
+        localFireStore = FirebaseFirestore.getInstance();
+        localFireStoreChallenges = localFireStore.collection("challenges");
+        localFireStoreComments = localFireStore.collection("comments");
         localCurrentUserUid = localAuth.getCurrentUser().getUid();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -87,115 +95,94 @@ public class NotificationsService extends Service {
 
         //end of media player*/
 
-        ChildEventListener generalChallengesListener = new ChildEventListener() {
+
+        EventListener generalSnapShotListener = new EventListener<QuerySnapshot>() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String challengeState = dataSnapshot.child("state").getValue().toString();
-                String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
-                String player1Name = dataSnapshot.child("player1Name").getValue().toString();
-                String subject = dataSnapshot.child("subject").getValue().toString();
-                String challengeId = dataSnapshot.getKey();
-
-                subject =  adjustSubject(subject);
-
-                currentPlayer = getCurrentPlayer(player1Uid);
-                Log.v("Logging2", "onChildAdded");
-                if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !dataSnapshot.getKey().equals(onChildAddedPreviusKey) && !dataSnapshot.getKey().equals("questionsList") && dataSnapshot.exists()) {
-                    showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
-                    localChallengesReference.child(challengeId).child("player2notified").setValue(true);
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG, listen:error", e);
+                    return;
                 }
-                onChildAddedPreviusKey = dataSnapshot.getKey();
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String challengeState = dataSnapshot.child("state").getValue().toString();
-                String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
-                String player2Name = dataSnapshot.child("player2Name").getValue().toString();
-                String subject = dataSnapshot.child("subject").getValue().toString();
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    DocumentSnapshot challengeDocument = dc.getDocument();
+                    switch (dc.getType()) {
+                        case ADDED:{
+                            String challengeState = challengeDocument.getString("state");
+                            String player1Uid = challengeDocument.getString("player1Uid");
+                            final String player1Name = adjustSubject(challengeDocument.getString("player1Name"));
+                            final String subject = challengeDocument.getString("subject");
+                            String challengeId = challengeDocument.getId();
 
-                subject =  adjustSubject(subject);
-                String state = currentUserState(dataSnapshot);
 
-                String challengeId = dataSnapshot.getKey();
-                currentPlayer = getCurrentPlayer(player1Uid);
-                if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !dataSnapshot.getKey().equals(onChildChangedpreviusKey) && !dataSnapshot.getKey().equals("questionsList")) {
-                    showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
-                            " تحديك ضد " + player2Name
-                            /*+ " فى مادة " + subject*/);//TODO : add this
-                    localChallengesReference.child(challengeId).child("player1notified").setValue(true);
-                    onChildChangedpreviusKey = dataSnapshot.getKey();
+                            currentPlayer = getCurrentPlayer(player1Uid);
+                            Log.v("Logging2", "onChildAdded");
+                            if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
+                                localFireStoreChallenges.document(challengeId).update("player2notified", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                    }
+                                });
+                            }
+                            break;}
+                        case MODIFIED:
+                            String challengeState = challengeDocument.getString("state");
+                            String player1Uid = challengeDocument.getString("player1Uid");
+                            String player2Name = challengeDocument.getString("player2Name");
+                            String subject = challengeDocument.getString("subject");
+
+                            subject =  adjustSubject(subject);
+                            String state = currentUserState(challengeDocument);
+
+                            String challengeId = challengeDocument.getId();
+                            currentPlayer = getCurrentPlayer(player1Uid);
+                            if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
+                                showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
+                                                " تحديك ضد " + player2Name
+                                        /*+ " فى مادة " + subject*/);//TODO : add this
+                                localFireStoreChallenges.document(challengeId).update("player1notified", true);
+                                onChildChangedpreviusKey = challengeDocument.getId();
+                            }
+                        case REMOVED:
+                    }
                 }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //Toast.makeText(getActivity(), "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "error loading data : " + databaseError);
             }
         };
 
         //this gives the challenges that the current user has started
         Log.v("notificationsDebug", "localCurrentUserUid is : " + localCurrentUserUid);
-        player1Listener =  localChallengesReference.orderByChild("player1notified").equalTo(localCurrentUserUid + "false").addChildEventListener(generalChallengesListener);
+         localFireStoreChallenges.whereEqualTo("player1notified",localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
         //this code gives data where current user is player 2
-        player2Listener = localChallengesReference.orderByChild("player2notified").equalTo(localCurrentUserUid + "false").addChildEventListener(generalChallengesListener);
+        localFireStoreChallenges.whereEqualTo("player2notified", localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
 
 
         //commentsListener
-        commentsListener = localCommentsReference.orderByChild("notified").equalTo(localCurrentUserUid + "false").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String writerName = dataSnapshot.child("userName").getValue().toString();
-                String postWriterUid = dataSnapshot.child("postWriterUid").getValue().toString();
-                String commentWriterUid = dataSnapshot.child("writerUid").getValue().toString();
-                if(!postWriterUid.equals(commentWriterUid) && dataSnapshot.exists()) {//TODO : think about changing the notification text to a shorter one
-                    showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
-                }
-                localCommentsReference.child(dataSnapshot.getKey()).child("notified").setValue(true);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+         localFireStoreComments.whereEqualTo("notified",localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+             @Override
+             public void onSuccess(QuerySnapshot documentSnapshots) {
+                 for(DocumentSnapshot document : documentSnapshots.getDocuments()){
+                     String writerName = document.getString("userName");
+                     String postWriterUid = document.getString("postWriterUid");
+                     String commentWriterUid = document.getString("writerUid");
+                     if(!postWriterUid.equals(commentWriterUid) && document.exists()) {//TODO : think about changing the notification text to a shorter one
+                         showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
+                     }
+                     localFireStoreComments.document(document.getId()).update("notified", true);
+                 }
+             }
+         });
 
         return START_STICKY;
     }
 
 
-    private String currentUserState(DataSnapshot dataSnapshot) {
-        String challengeState = dataSnapshot.child("state").getValue().toString();
-        String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
-        long player1Score = (long) dataSnapshot.child("player1score").getValue();
-        long player2Score = (long) dataSnapshot.child("player2score").getValue();
+    private String currentUserState(DocumentSnapshot dataSnapshot) {
+        String challengeState = dataSnapshot.getString("state");
+        String player1Uid = dataSnapshot.getString("player1Uid");
+        long player1Score = (long) dataSnapshot.getLong("player1score");
+        long player2Score = (long) dataSnapshot.getLong("player2score");
 
         if (challengeState.equals(completedChallengeText)){
             if(player1Score == player2Score){

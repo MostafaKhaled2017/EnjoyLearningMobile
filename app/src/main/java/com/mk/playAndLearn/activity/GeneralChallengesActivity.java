@@ -40,7 +40,7 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("تحديات عامة");
+        toolbarTitle.setText("التحدى العام");
 
         presenter = new GeneralChallengesActivityPresenter(this);
 

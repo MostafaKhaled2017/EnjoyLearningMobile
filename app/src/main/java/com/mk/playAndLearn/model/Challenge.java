@@ -74,13 +74,13 @@ public class Challenge {
     }
 
     long secondChallengerScore;
-    ArrayList questionsList = new ArrayList();
+    String questionsList;
 
-    public ArrayList getQuestionsList() {
+    public String getQuestionsList() {
         return questionsList;
     }
 
-    public void setQuestionsList(ArrayList questionsList) {
+    public void setQuestionsList(String questionsList) {
         this.questionsList = questionsList;
     }
 

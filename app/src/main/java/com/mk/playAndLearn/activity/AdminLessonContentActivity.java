@@ -27,12 +27,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Lesson;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class AdminLessonContentActivity extends AppCompatActivity {
@@ -44,8 +48,10 @@ public class AdminLessonContentActivity extends AppCompatActivity {
     Lesson lesson;
     int index;
     String writerType;
+    WriteBatch batch;
     //TODO : remove the other references
     ValueEventListener usersListener, lessonsListener;
+    DocumentReference currentLessonReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,8 @@ public class AdminLessonContentActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+        batch = fireStore.batch();
+
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             list = intent.getParcelableArrayListExtra("lessonsList");
@@ -76,6 +84,9 @@ public class AdminLessonContentActivity extends AppCompatActivity {
 
         if (index < list.size()) {
             lesson = (Lesson) list.get(index);
+
+            currentLessonReference =  fireStoreLessons.document(lesson.getSubject()).collection(lesson.getSubject()).document(lesson.getLessonId());
+
             writerNameTv.append(lesson.getWriterName());
             subjectTv.append(lesson.getSubject());
             Toast.makeText(this, "المادة : " + lesson.getSubject(), Toast.LENGTH_SHORT).show();
@@ -140,31 +151,24 @@ public class AdminLessonContentActivity extends AppCompatActivity {
 
     public void save(View view) {
         Toast.makeText(this, "جارى حفظ الدرس", Toast.LENGTH_SHORT).show();
-        lessonsReference.child(lesson.getLessonId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                lessonsListener = this;
-                lessonsReference.child(lesson.getLessonId()).child("title").setValue(lesson.getTitle());
-                lessonsReference.child(lesson.getLessonId()).child("content").setValue(lesson.getContent()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(AdminLessonContentActivity.this, "تم حفظ الدرس بنجاح", Toast.LENGTH_SHORT).show();
-                        nextLesson();
-                    }
-                });
-            }
 
+        currentLessonReference = fireStoreLessons.document(lesson.getSubject()).collection(lesson.getSubject()).document(lesson.getLessonId());
+        batch.update(currentLessonReference, "title", lessonTitleEt.getText().toString().trim());
+        batch.update(currentLessonReference, "content", lessonContentEt.getText().toString().trim());
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(AdminLessonContentActivity.this, "تم حفظ الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                nextLesson();
             }
         });
+
     }
 
     public void refuseLesson(View view) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("تنبيه هام");
-        dialog.setMessage("هل أنت متأكد أنك تريد حذف هذا السؤال ؟");
+        dialog.setMessage("هل أنت متأكد أنك تريد حذف هذا الدرس ؟");
         dialog.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -181,19 +185,16 @@ public class AdminLessonContentActivity extends AppCompatActivity {
                     }
                 });
 
-                lessonsReference.child(lesson.getLessonId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        lessonsReference.child(lesson.getLessonId()).removeValue();
-                    }
 
+                batch.delete(currentLessonReference);
+                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
+                    public void onComplete(@NonNull Task<Void> task) {
+                        composeEmail("تم رفض الدرس الذى رفعته", "تم رفض الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"");
+                        Toast.makeText(AdminLessonContentActivity.this, "تم رفض الدرس", Toast.LENGTH_SHORT).show();
                     }
                 });
-                composeEmail("تم رفض الدرس الذى رفعته", "تم رفض الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"");
-                Toast.makeText(AdminLessonContentActivity.this, "تم رفض الدرس", Toast.LENGTH_SHORT).show();
+
             }
         });
         dialog.create();
@@ -216,26 +217,22 @@ public class AdminLessonContentActivity extends AppCompatActivity {
             }
         });
         
-        lessonsReference.child(lesson.getLessonId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                lessonsReference.child(lesson.getLessonId()).child("reviewed").setValue(true);
-                lessonsReference.child(lesson.getLessonId()).child("title").setValue(lesson.getTitle());
-                lessonsReference.child(lesson.getLessonId()).child("content").setValue(lesson.getContent());
-            }
+        batch.update(currentLessonReference, "reviewed", true);
+        batch.update(currentLessonReference, "title", lesson.getTitle());
+        batch.update(currentLessonReference, "content", lesson.getContent());
 
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(AdminLessonContentActivity.this, "تم قبول الدرس", Toast.LENGTH_SHORT).show();
+                if (writerType.equals("طالب")) {
+                    composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"" + " وسيتم زيادة نقطك 10 نقاط");
+                } else {
+                    composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"");
+                }
             }
         });
-
-        Toast.makeText(this, "تم قبول الدرس", Toast.LENGTH_SHORT).show();
-        if (writerType.equals("طالب")) {
-            composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"" + " وسيتم زيادة نقطك 10 نقاط");
-        } else {
-            composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"");
-        }    }
+  }
 
     public void composeEmail(String subject, String body) {
         Intent i = new Intent(Intent.ACTION_SEND);
@@ -256,7 +253,6 @@ public class AdminLessonContentActivity extends AppCompatActivity {
         if (requestCode == 0) {
             nextLesson();
         }
-
     }
 
     @Override
@@ -268,10 +264,6 @@ public class AdminLessonContentActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(usersListener != null)
-            usersReference.removeEventListener(usersListener);
-        if(lessonsListener != null)
-            lessonsReference.removeEventListener(lessonsListener);
     }
 }
 

@@ -1,4 +1,4 @@
-package com.mk.playAndLearn;
+package com.mk.playAndLearn.utils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -16,18 +16,6 @@ public class WelcomeActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_welcome); TODO
         final Intent i = new Intent(this, GeneralSignActivity.class);
         //TODO : think about using that the data is stored with the app to make it able to works offline
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference localPostsReference = database.getReference("posts");
-        DatabaseReference localCommentsReference = database.getReference("comments");
-        DatabaseReference localLessonsReference = database.getReference("lessons");
-        DatabaseReference localQuestionsReference = database.getReference("questions");
-        DatabaseReference localGeneralChallengeReference = database.getReference("generalChallenge");
-
-        localPostsReference.keepSynced(true);
-        localCommentsReference.keepSynced(true);
-        localLessonsReference.keepSynced(true);
-        localGeneralChallengeReference.keepSynced(true);
-        localQuestionsReference.keepSynced(true);
 
         Thread timer = new Thread() {
             @Override

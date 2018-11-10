@@ -37,7 +37,7 @@
         android:layout_below="@id/appBar"
         android:onClick="changeGeneralChallengeText"
         android:padding="10dp"
-        android:text=" بتعديل كلمة التحدى" />
+        android:text=" تعديل كلمة التحدى" />
 
 
 </android.support.v7.widget.LinearLayoutCompat>

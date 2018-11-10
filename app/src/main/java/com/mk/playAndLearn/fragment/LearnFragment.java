@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +38,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
-import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
 
 public class LearnFragment extends Fragment implements LearnFragmentPresenter.View {
     //TODO : adjust colors of fonts and colors of the app
@@ -145,7 +145,6 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.removeListeners();
     }
 
     /**
@@ -222,7 +221,7 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
     @Override
     public void startRecyclerAdapter(ArrayList list) {
         recyclerAdapter = new LessonsAdapter(list, getActivity());
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);

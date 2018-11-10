@@ -14,13 +14,17 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,8 +35,8 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.auth;
-import static com.mk.playAndLearn.utils.Firebase.challengesReference;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 
@@ -94,20 +98,18 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 secondPlayerImage = intent.getStringExtra("player2Image");
                 secondPlayerUid = intent.getStringExtra("player2Uid");
                 secondPlayerPoints = intent.getIntExtra("player2Points", -1);
-                questionsList = intent.getParcelableArrayListExtra("questionsList");
+                questionsList =  intent.getParcelableArrayListExtra("questionsList");
             } else if (currentChallenger == 2) {
                 challengeId = intent.getStringExtra("challengeId");
             }
         }
+        DateClass dateClass = new DateClass();
         Date today = new Date();
-        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
-        formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
-        SimpleDateFormat formatTime = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
-        formatTime.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-
-        String date = formatDate.format(today);
-        String time = formatTime.format(today);
+        String date = format.format(today);
+        dateClass.setDate(today);
 
         if (!isGeneralChallenge) {
             challengeResultTv.append(score + "");
@@ -128,33 +130,27 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 map.put("player2score", 0);
                 map.put("player1notified", localCurrentUserUid + "false");
                 map.put("player2notified", secondPlayerUid + "false");
-                map.put("date", date);
-                map.put("time", time);//TODO : note that old challenges doesn't have time
+                map.put("date", dateClass.getDate());
                 map.put("subject", subject);
-                map.put("questionsList", questionsList);
+                map.put("questionsId", getQuestionsId());
                 map.put("player1AnswersBooleans", playerAnswersBooleansList.trim());
                 map.put("player1Answers", playerAnswersList);
                 map.put("state", "لم يكتمل"); // TODO : edit this
 
-                challengesReference.push().setValue(map);
+                fireStoreChallenges.document().set(map);
             } else if (currentChallenger == 2) {
-                challengesReference.child(challengeId).addListenerForSingleValueEvent(new ValueEventListener() {
+                fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            challengesReference.child(challengeId).child("player2score").setValue(score);
-                            challengesReference.child(challengeId).child("player2AnswersBooleans").setValue(playerAnswersBooleansList.trim());
-                            challengesReference.child(challengeId).child("player2Answers").setValue(playerAnswersList);
-                            challengesReference.child(challengeId).child("state").setValue("اكتمل");
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            fireStoreChallenges.document(challengeId).update("player2score", score);
+                            fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList.trim());
+                            fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
+                            fireStoreChallenges.document(challengeId).update("state", "اكتمل");
 
-                            addPoints(dataSnapshot);
+                            addPoints(documentSnapshot);
 
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             }
@@ -189,11 +185,11 @@ public class ChallengeResultActivity extends AppCompatActivity {
         return true;
     }
 
-    void addPoints(DataSnapshot dataSnapshot) {
-        final String player1Uid = dataSnapshot.child("player1Uid").getValue().toString();
-        final String player2Uid = dataSnapshot.child("player2Uid").getValue().toString();
+    void addPoints(DocumentSnapshot dataSnapshot) {
+        final String player1Uid = dataSnapshot.getString("player1Uid");
+        final String player2Uid = dataSnapshot.getString("player2Uid");
 
-        long player1Score = (long) dataSnapshot.child("player1score").getValue();
+        long player1Score = (long) dataSnapshot.getLong("player1score");
         long player2Score = (long) score;
 
         final DatabaseReference player1Reference = usersReference.child(player1Uid);
@@ -277,5 +273,14 @@ public class ChallengeResultActivity extends AppCompatActivity {
         } else {
             return 2;
         }
+    }
+
+    public String getQuestionsId(){
+        String Ids = "";
+        ArrayList<Question> list = questionsList;
+        for(Question question : list){
+            Ids += question.getQuestionId() + " ";//TODO : check this
+        }
+        return Ids.trim();
     }
 }

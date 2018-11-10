@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
@@ -40,7 +40,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
         final Lesson lesson = list.get(position);
         if (lesson.getTitle() != null)
             holder.arabicPosition.setText(lesson.getTitle());
-        holder.lessonButton.setOnClickListener(new View.OnClickListener() {
+        holder.lessonTitleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent lessonIntent = new Intent(context, LessonContentActivity.class);
@@ -72,12 +72,12 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
 
     class MyHolder extends RecyclerView.ViewHolder {
         TextView arabicPosition;
-        Button lessonButton;
+        RelativeLayout lessonTitleLayout;
 
         public MyHolder(View itemView) {
             super(itemView);
             arabicPosition = itemView.findViewById(R.id.lessonTitle);
-            lessonButton = itemView.findViewById(R.id.lessonButton);
+            lessonTitleLayout = itemView.findViewById(R.id.lessonTitleView);
         }
     }
 

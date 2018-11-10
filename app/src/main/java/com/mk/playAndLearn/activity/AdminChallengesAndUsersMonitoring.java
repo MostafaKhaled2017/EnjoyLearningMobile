@@ -13,9 +13,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 
 import java.text.SimpleDateFormat;
@@ -26,9 +30,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.service.NotificationsService.adjustSubject;
-import static com.mk.playAndLearn.utils.Firebase.challengesReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
+import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
@@ -86,10 +91,9 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
             }
         });
 
-        challengesReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        fireStoreChallenges.orderBy("date", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
+            public void onSuccess(QuerySnapshot documentSnapshots) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DATE,-1);
                 Date today = new Date();
@@ -97,39 +101,35 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                 formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
                 String todayDate = formatDate.format(today);
                 String yesterdayDate = formatDate.format(calendar.getTime());
+
+                SimpleDateFormat fullDateFormatter = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+                fullDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+
                 ArrayList<String> todayChallengesList = new ArrayList<>();
                 String challengeTime = "غير موجود";
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    Log.v("Logging","challengeId is : " + dataSnapshot1.getKey());
-                    String challengeDate = (String) dataSnapshot1.child("date").getValue();
-                    if(dataSnapshot1.child("time").getValue() != null)
-                        challengeTime = dataSnapshot1.child("time").getValue().toString();
-                    String challengeSubject = dataSnapshot1.child("subject").getValue().toString();
-                    String challengeState = dataSnapshot1.child("state").getValue().toString();
-                    String challengeId = dataSnapshot1.getKey();
-                    ArrayList challengeQuestionsList = (ArrayList) dataSnapshot1.child("questionsList").getValue();
-                    long player1Score = (long) dataSnapshot1.child("player1score").getValue();
-                    long player2Score = (long) dataSnapshot1.child("player2score").getValue();
+                for (DocumentSnapshot documentSnapshot : documentSnapshots.getDocuments()) {
+                    String challengeDate = formatDate.format(documentSnapshot.get("date"));
+                    String fullDate = fullDateFormatter.format(documentSnapshot.get("date"));
+                    String challengeState = documentSnapshot.getString("state");
+                    long player1Score = (long) documentSnapshot.getLong("player1score");
+                    long player2Score = (long) documentSnapshot.getLong("player2score");
 
-                    String player1Name = dataSnapshot1.child("player1Name").getValue().toString();
-                    String subject = dataSnapshot1.child("subject").getValue().toString();
-                    String player1Image = dataSnapshot1.child("player1Image").getValue().toString();
-                    String player1Uid = dataSnapshot1.child("player1Uid").getValue().toString();
-                    String player2Name = dataSnapshot1.child("player2Name").getValue().toString();
-                    String player2Image = dataSnapshot1.child("player2Image").getValue().toString();
-                    String player2Uid = dataSnapshot1.child("player2Uid").getValue().toString();
+                    String player1Name = documentSnapshot.getString("player1Name");
+                    String subject = documentSnapshot.getString("subject");
+                    String player2Name = documentSnapshot.getString("player2Name");
 
                     allChallengesCount++;
 
                     if (challengeDate.equals(todayDate)) {
                         todayChallengesCount++;
 
-                        if(challengeState.equals(completedChallengeText))
+                        if(challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))
                             todayCompletedChallengesCount ++;
 
                         todayChallengesList.add(0, " - " + player1Name + "(" + player1Score + ")"
                                 + " ضد " + player2Name + "(" + player2Score + ")"
-                                + "الساعة : " + challengeTime + " في مادة " + adjustSubject(subject)+ " (" + challengeState + ")" + "\n\n");
+                                + " الساعة " + fullDate.substring(10) + " في مادة " + adjustSubject(subject)+ " (" + challengeState + ")" + "\n\n");
                     }
                     if(challengeDate.equals(yesterdayDate)){
                         yesterdayChallengesCount ++;
@@ -148,11 +148,6 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                 todayAdminChallengesListView.setAdapter(adapter);
 
                 Toast.makeText(AdminChallengesAndUsersMonitoring.this, "انتهى حساب التحديات", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }

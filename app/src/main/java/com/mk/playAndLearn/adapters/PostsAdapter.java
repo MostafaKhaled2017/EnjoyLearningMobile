@@ -17,11 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.AdminQuestionActivity;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
@@ -30,8 +34,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.commentsReference;
-import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
+import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
@@ -39,6 +43,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
     ArrayList<Post> list;
     Context context;
     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    long votes;
 
     public PostsAdapter(ArrayList<Post> list, Context context) {
         this.list = list;
@@ -67,6 +72,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 holder.date.setText("جارى النشر...");
             }
         }
+
+        holder.votes.setText(post.getVotes() + "");
+
         if (post.getWriter() != null && !post.getWriter().equals(""))
             holder.name.setText(post.getWriter());
         if (post.getImage() != null && !post.getImage().equals(""))
@@ -85,6 +93,34 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         else {
             holder.warningIcon.setVisibility(View.GONE);
         }*/
+
+
+        holder.upArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fireStorePosts.document(post.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Log.v("Log83", "up arrow onDataChanged");
+                        validateVoting(documentSnapshot, post, holder, "upArrow");
+                    }
+                });
+            }
+        });
+
+        holder.downArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fireStorePosts.document(post.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Log.v("Log83", "down arrow onDataChanged");
+                        validateVoting(documentSnapshot, post, holder, "downArrow");
+                    }
+                });
+
+            }
+        });
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +185,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 if (which == 0) {
                     showDialog(id, holder, content, email, admin, position);
                 } else {
-                    postsReference.child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    fireStorePosts.document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
@@ -159,20 +195,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                         }
                     });
 
-                    commentsReference.orderByChild("postId").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    fireStoreComments.whereEqualTo("postId",id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                commentsReference.child(dataSnapshot1.getKey()).removeValue();
+                        public void onSuccess(QuerySnapshot documentSnapshots) {
+                            for (DocumentSnapshot dataSnapshot1 : documentSnapshots.getDocuments()) {
+                                fireStoreComments.document(dataSnapshot1.getId()).delete();
                             }
-                            commentsReference.removeEventListener(this);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
+
                 }
             }
         });
@@ -196,7 +227,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final String inputText = inputTextEt.getText().toString();
-                postsReference.child(id).child("content").setValue(inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                fireStorePosts.document(id).update("content", inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.v("Logging","position is : " + position + " , postContent is : " + list.get(position).getContent());
@@ -218,8 +249,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView content, date, name;
-        ImageView imageView;
+        TextView content, date, name, votes;
+        ImageView imageView, upArrow, downArrow;
         CardView cardView;
 
 
@@ -228,7 +259,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
             content = itemView.findViewById(R.id.postContentInDetails);
             date = itemView.findViewById(R.id.postDateInDetails);
             name = itemView.findViewById(R.id.postUserNameInDetails);
+            votes = itemView.findViewById(R.id.numberOfVotes);
             imageView = itemView.findViewById(R.id.postImageInDetails);
+            upArrow = itemView.findViewById(R.id.upArrow);
+            downArrow = itemView.findViewById(R.id.downArrow);
             cardView = itemView.findViewById(R.id.card_view_of_posts);
         }
     }
@@ -243,6 +277,55 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
             context.startActivity(Intent.createChooser(i, "Send mail..."));
         } catch (android.content.ActivityNotFoundException ex) {
             Log.v("Logging", "There are no email clients installed.");
+        }
+    }
+
+    boolean isVoted(String[] upVotedUsersArray, String[] downVotedUsers) {
+        for (String id : upVotedUsersArray) {
+            if (id.equals(localCurrentUserUid)) {
+                return true;
+            }
+        }
+        for (String id : downVotedUsers) {
+            if (id.equals(localCurrentUserUid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void validateVoting(DocumentSnapshot dataSnapshot, final Post post, final PostsAdapter.MyHolder holder, String tag) {
+        Log.v("postVotingLogging", "datasnapshot is : " + dataSnapshot);
+        String upVotedUsers = dataSnapshot.getString("upVotedUsers");
+        String downVotedUsers = dataSnapshot.getString("downVotedUsers");
+        votes = dataSnapshot.getLong("votes");
+        if(upVotedUsers != null && downVotedUsers != null) {
+            String[] upVotedUsersArray = upVotedUsers.split(" ");
+            String[] downVotedUsersArray = downVotedUsers.split(" ");
+            if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
+                if (tag.equals("upArrow")) {
+                    votes++;
+                    fireStorePosts.document(post.getId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
+                } else if (tag.equals("downArrow")) {
+                    votes--;
+                    fireStorePosts.document(post.getId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
+
+                }
+                fireStorePosts.document(post.getId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.v("Logging", "votes : " + votes);
+                        holder.votes.setText(votes + "");
+                        post.setVotes(votes);
+                        notifyDataSetChanged();
+                    }
+                });
+            } else {
+                Toast.makeText(context, "لا يمكنك التصويت لنفس السؤال أكثر من مرة", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            Toast.makeText(context, "لا يمكن التصويت لهذا المنشور", Toast.LENGTH_SHORT).show();
         }
     }
 

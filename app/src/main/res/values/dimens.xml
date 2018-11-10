@@ -18,7 +18,7 @@
     <dimen name="dialogTitleTextSize">20sp</dimen>
     <dimen name="input_new_note">20sp</dimen>
     <dimen name="medium_text_size">22sp</dimen>
-    <dimen name="nothing_text_size">22sp</dimen>
+    <dimen name="nothing_text_size">20dp</dimen>
     <dimen name="general_margin">5dp</dimen>
     <dimen name="toolbar_height_approximately">60dp</dimen>
 

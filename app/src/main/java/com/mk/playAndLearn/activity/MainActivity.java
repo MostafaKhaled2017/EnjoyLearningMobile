@@ -116,18 +116,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
 
-      /*  Intent intent = getIntent();
-        boolean newUser = false;
-        if(intent != null){
-            newUser = intent.getBooleanExtra("newUser", false);
-        }
-
-        if(newUser){
-            postsReference.keepSynced(true);
-            commentsReference.keepSynced(true);
-            lessonsReference.keepSynced(true);
-            usersReference.keepSynced(true);
-        }*/
 
         startNotificationService();
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -300,14 +288,14 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.v("signDebug", "dataSnapshot is : " + dataSnapshot);
                 if (dataSnapshot.exists()) {
-                    String currentUserName = dataSnapshot.child("userName").getValue().toString();
+                    String currentUserName = (String) dataSnapshot.child("userName").getValue();
                     editor.putString("currentUserName", currentUserName);
                     editor.apply();
                 }
 
-                if(authListener != null){
+               /* if(authListener != null){
                     FirebaseAuth.getInstance().removeAuthStateListener(authListener);
-                }
+                }*/ //TODO : think about adding this again
             }
 
             @Override
@@ -345,8 +333,11 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String localCurrentUserUid = currentUser.getUid();
         DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
-        currentUserPresenceReference.setValue(true);
-        currentUserPresenceReference.onDisconnect().setValue(false);
+        String key = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online").getKey();
+        if(key != null) {//TODO : check this
+            currentUserPresenceReference.setValue(true);
+            currentUserPresenceReference.onDisconnect().setValue(false);
+        }
     }
 
     @Override

@@ -155,13 +155,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         super.setUserVisibleHint(isVisibleToUser);
         if(isVisibleToUser){
             presenter.startAsynkTask();
-
-            //start Syncing the data.
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference localChallengesReference = database.getReference("challenges");
-            DatabaseReference localUsersReference = database.getReference("users");
-            localChallengesReference.keepSynced(true); //TODO :think about removing this but note that caching isn't working
-            localUsersReference.keepSynced(true);
         }
     }
 
@@ -213,7 +206,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.removeListeners();
     }
 
     @Override

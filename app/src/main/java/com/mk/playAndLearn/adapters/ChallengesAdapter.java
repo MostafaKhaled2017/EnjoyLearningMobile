@@ -15,11 +15,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.activity.QuestionActivity;
@@ -29,6 +31,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
@@ -42,7 +45,6 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
     ArrayList<Challenge> list;
     Context context;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference ref = database.getReference("challenges");
     String secondChallengerName, secondChallengerImage;
     long secondChallengerPoints;
 
@@ -135,29 +137,17 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             intent.putExtra("challengeId", challenge.getId());
                             intent.putExtra("currentChallenger", 2);
                             intent.putExtra("uid", challenge.getSecondChallengerUid());//second means that he isn't the current user
-                            intent.putParcelableArrayListExtra("questionsList", challenge.getQuestionsList());
+                            intent.putExtra("questionsList", challenge.getQuestionsList());
+                            intent.putExtra("subject", challenge.getSubject());
                             context.startActivity(intent);
                         }
                     });
                     dialog.setPositiveButton("رفض", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //TODO : make the other user knows that challenge has refused
-                            ref.child(challenge.getId()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        ref.child(challenge.getId()).child("player2score").setValue(0);
-                                        ref.child(challenge.getId()).child("state").setValue(refusedChallengeText);
-                                    }
-                                    ref.removeEventListener(this);
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
+                            fireStoreChallenges.document(challenge.getId()).update("player2score", 0);
+                            fireStoreChallenges.document(challenge.getId()).update("state", refusedChallengeText);
                         }
                     });
 

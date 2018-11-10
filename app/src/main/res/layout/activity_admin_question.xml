@@ -158,7 +158,7 @@
         android:id="@+id/skipQuestionButton"
         android:layout_below="@id/answerTv"
         style="@style/buttonStyle"
-        android:layout_width="47dp"
+        android:layout_width="30dp"
         android:layout_height="47dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -169,7 +169,7 @@
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/showAnswerButton"
         style="@style/buttonStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/answerTv"
@@ -177,12 +177,12 @@
         android:layout_margin="5dp"
         android:layout_toLeftOf="@id/skipQuestionButton"
         android:onClick="showAnswer"
-        android:text="إظهار الإجابة" />
+        android:text="الإجابة" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/acceptQuestionBtn"
         style="@style/buttonStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
@@ -195,7 +195,7 @@
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/refuseQuestionBtn"
         style="@style/buttonStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
@@ -204,5 +204,18 @@
         android:layout_below="@id/answerTv"
         android:onClick="refuseQuestion"
         android:text="رفض" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/editQuestionBtn"
+        style="@style/buttonStyle"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/refuseQuestionBtn"
+        android:layout_below="@id/answerTv"
+        android:onClick="editQuestion"
+        android:text="تعديل" />
 </RelativeLayout>
 </ScrollView>

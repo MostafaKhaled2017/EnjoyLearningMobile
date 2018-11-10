@@ -17,19 +17,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Comment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.commentsReference;
-import static com.mk.playAndLearn.utils.Firebase.postsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHolder> {
@@ -79,17 +80,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         holder.upArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                commentsReference.orderByKey().equalTo(comment.getCommentId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                fireStoreComments.document(comment.getCommentId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.v("Log83", "up arrow onDataChanged");
-                        validateVoting(dataSnapshot, comment, holder, "upArrow");
-                        commentsReference.removeEventListener(this);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        commentsReference.removeEventListener(this);
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        validateVoting(documentSnapshot, comment, holder, "upArrow");
                     }
                 });
             }
@@ -98,17 +92,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         holder.downArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                commentsReference.orderByKey().equalTo(comment.getCommentId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                fireStoreComments.document(comment.getCommentId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Log.v("Log83", "down arrow onDataChanged");
-                        validateVoting(dataSnapshot, comment, holder, "downArrow");
-                        commentsReference.removeEventListener(this);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        commentsReference.removeEventListener(this);
+                        validateVoting(documentSnapshot, comment, holder, "downArrow");
                     }
                 });
             }
@@ -183,22 +171,22 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         return false;
     }
 
-    void validateVoting(DataSnapshot dataSnapshot, final Comment comment, final CommentsAdapter.MyHolder holder, String tag) {
-        String upVotedUsers = dataSnapshot.child(comment.getCommentId()).child("upVotedUsers").getValue().toString();
-        String downVotedUsers = dataSnapshot.child(comment.getCommentId()).child("downVotedUsers").getValue().toString();
-        votes = (long) dataSnapshot.child(comment.getCommentId()).child("votes").getValue();
+    void validateVoting(DocumentSnapshot dataSnapshot, final Comment comment, final CommentsAdapter.MyHolder holder, String tag) {
+        String upVotedUsers = dataSnapshot.getString("upVotedUsers");
+        String downVotedUsers = dataSnapshot.getString("downVotedUsers");
+        votes = dataSnapshot.getLong("votes");
         String[] upVotedUsersArray = upVotedUsers.split(" ");
         String[] downVotedUsersArray = downVotedUsers.split(" ");
         if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
             if (tag.equals("upArrow")) {
                 votes++;
-                commentsReference.child(comment.getCommentId()).child("upVotedUsers").setValue(upVotedUsers + localCurrentUserUid + " ");
+                fireStoreComments.document(comment.getCommentId()).update("upVotedUsers",upVotedUsers + localCurrentUserUid + " ");
             } else if (tag.equals("downArrow")) {
                 votes--;
-                commentsReference.child(comment.getCommentId()).child("downVotedUsers").setValue(downVotedUsers + localCurrentUserUid + " ");
+                fireStoreComments.document(comment.getCommentId()).update("downVotedUsers",downVotedUsers + localCurrentUserUid + " ");
 
             }
-            commentsReference.child(comment.getCommentId()).child("votes").setValue(votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+            fireStoreComments.document(comment.getCommentId()).update("votes",votes).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Log.v("Logging", "votes : " + votes);
@@ -223,7 +211,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                 if (which == 0) {
                     showDialog(id, holder, content, email, admin, position);
                 } else {
-                    commentsReference.child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    fireStoreComments.document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف التعليق بنجاح", Toast.LENGTH_SHORT).show();
@@ -255,7 +243,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final String inputText = inputTextEt.getText().toString();
-                commentsReference.child(id).child("content").setValue(inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                fireStoreComments.document(id).update("content",inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         list.get(position).setContent(inputText);

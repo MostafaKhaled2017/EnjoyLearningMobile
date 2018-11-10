@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,18 +20,23 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class AdminQuestionActivity extends AppCompatActivity {
@@ -44,6 +50,8 @@ public class AdminQuestionActivity extends AppCompatActivity {
     RadioButton r1, r2, r3, r4;
     Intent i;
     ProgressBar timerProgressBar;
+    WriteBatch batch;
+    DocumentReference currentQuestionReference;
 
     int index;
 
@@ -61,6 +69,9 @@ public class AdminQuestionActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         i = new Intent(AdminQuestionActivity.this, QuestionResultActivity.class);
+
+        batch = fireStore.batch();
+
 
         rg1 = findViewById(R.id.radioGroup);
         skipQuestionButton = findViewById(R.id.skipQuestionButton);
@@ -82,6 +93,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         }
         if (index < list.size()) {
             question = (Question) list.get(index);
+            currentQuestionReference =  fireStoreQuestions.document(question.getSubject()).collection(question.getSubject()).document(question.getQuestionId());
             correctAnswer = question.getCorrectAnswer();
 
             tvQuestion.setText(question.getAlQuestion());
@@ -204,20 +216,15 @@ public class AdminQuestionActivity extends AppCompatActivity {
                     }
                 });
 
-                questionsReference.child(question.getQuestionId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                batch.delete(currentQuestionReference);
+                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        questionsReference.child(question.getQuestionId()).removeValue();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
+                    public void onComplete(@NonNull Task<Void> task) {
+                        composeEmail("تم رفض سؤالك", "تم رفض سؤالك " + "\"" + question.getAlQuestion() + "\"");
+                        Toast.makeText(AdminQuestionActivity.this, "تم رفض السؤال", Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                composeEmail("تم رفض سؤالك", "تم رفض سؤالك " + "\"" + question.getAlQuestion() + "\"");
-                Toast.makeText(AdminQuestionActivity.this, "تم رفض السؤال", Toast.LENGTH_SHORT).show();
             }
         });
         dialog.create();
@@ -241,24 +248,21 @@ public class AdminQuestionActivity extends AppCompatActivity {
             }
         });
 
-        questionsReference.child(question.getQuestionId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                questionsReference.child(question.getQuestionId()).child("reviewed").setValue(true);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        batch.update(currentQuestionReference, "reviewed", true);
 
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(AdminQuestionActivity.this, "تم قبول السؤال", Toast.LENGTH_SHORT).show();
+                if (writerType.equals("طالب")) {
+                    composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
+                } else {
+                    composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"");
+                }
             }
         });
 
-        Toast.makeText(this, "تم قبول السؤال", Toast.LENGTH_SHORT).show();
-        if (writerType.equals("طالب")) {
-            composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
-        } else {
-            composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"");
-        }
     }
 
     public void composeEmail(String subject, String body) {
@@ -282,4 +286,9 @@ public class AdminQuestionActivity extends AppCompatActivity {
         }
     }
 
+    public void editQuestion(View view) {
+        Intent i = new Intent(this, AddQuestionActivity.class);
+        i.putExtra("question", question);
+        startActivity(i);
+    }
 }

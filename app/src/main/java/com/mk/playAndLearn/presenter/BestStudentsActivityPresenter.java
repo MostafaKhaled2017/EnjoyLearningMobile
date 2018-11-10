@@ -28,11 +28,10 @@ public class BestStudentsActivityPresenter {
     }
 
     private void getBestStudents() {
-        usersReference.orderByChild("points").addListenerForSingleValueEvent(new ValueEventListener() {
+        usersReference.orderByChild("points").limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                usersReference.keepSynced(true);//check this
+                int points = -1000;
 
                 usersListener = this;
                 if (!bestStudentsList.isEmpty())
@@ -43,13 +42,16 @@ public class BestStudentsActivityPresenter {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     user = new User();
                     boolean admin = false;
-                    String name = dataSnapshot1.child("userName").getValue().toString();
-                    int points = Integer.parseInt(dataSnapshot1.child("points").getValue().toString());
-                    String imageUrl = dataSnapshot1.child("userImage").getValue().toString();
-                    String userType = dataSnapshot1.child("userType").getValue().toString();
+                    Log.v("Logging", "the key is : " + dataSnapshot1.getKey());
+                    String name = (String) dataSnapshot1.child("userName").getValue();
+                    if(dataSnapshot1.child("points").getValue() != null)
+                        points = Integer.parseInt(dataSnapshot1.child("points").getValue().toString());
+                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
+                    String userType = (String) dataSnapshot1.child("userType").getValue();
+
                     if(dataSnapshot1.child("admin").getValue() != null)
                          admin = (boolean) dataSnapshot1.child("admin").getValue();
-                    if (userType.equals("طالب")) {
+                    if (userType.equals("طالب") && points != -1000) {
                         user.setAdmin(admin);
                         user.setName(name);
                         user.setPoints(points);

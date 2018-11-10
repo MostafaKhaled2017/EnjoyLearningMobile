@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,15 +24,18 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.mk.enjoylearning.R;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 
 public class AddLessonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
@@ -124,8 +128,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map = new HashMap<>();
                     map.put("title", title);
                     map.put("content", content);
-                    map.put("unit", Integer.parseInt(currentUnitOrder));
-                    map.put("lesson", Integer.parseInt(currentLessonOrder));
+                    map.put("position", currentUnitOrder + currentLessonOrder);
                     map.put("subject", currentSubject);
                     map.put("writerName", userName);
                     map.put("writerEmail", localCurrentUserEmail);
@@ -139,13 +142,18 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Toast.makeText(AddLessonActivity.this, "جارى رفع الدرس", Toast.LENGTH_SHORT).show();
-                            lessonsReference.push().setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            fireStoreLessons.document(currentSubject).collection(currentSubject).add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                                public void onSuccess(DocumentReference documentReference) {
                                     Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }
-                            });
-                            finish();
+                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(AddLessonActivity.this, "لم يتم رفع الدرس برجاء التأكد من الإتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         }
                     });
                     alertDialog.create();

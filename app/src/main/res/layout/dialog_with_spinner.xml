@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_margin"
+    android:paddingRight="@dimen/activity_margin"
+    android:paddingTop="@dimen/activity_margin">
+
+    <TextView android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_10"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/dialogTitleTextSize"
+        android:textStyle="normal"
+        android:layout_gravity="right"/>
+
+    <EditText
+        android:id="@+id/dialog_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:hint="اكتب هنا"
+        android:inputType="textCapSentences|textMultiLine"
+        android:textColorHint="@color/hint_enter_note"
+        android:textColor="#000"
+        android:textSize="@dimen/input_new_note" />
+
+    <LinearLayout
+        android:id="@+id/selectSubjectView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:gravity="right">
+
+        <Spinner
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:id="@+id/subjectsSpinnerInDialog"
+            android:gravity="right"/>
+
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+
+            android:text="المادة : "/>
+    </LinearLayout>
+
+</LinearLayout>

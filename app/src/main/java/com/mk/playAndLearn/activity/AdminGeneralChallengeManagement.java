@@ -19,21 +19,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Question;
 
-import static com.mk.playAndLearn.utils.Firebase.generalChallengeReference;
-import static com.mk.playAndLearn.utils.Firebase.questionsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class AdminGeneralChallengeManagement extends AppCompatActivity {
+    DocumentReference generalChallengeDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("إدارة التحدى العام");
+
+        generalChallengeDocument = fireStoreGeneralChallenge.document("generalChallengeDocument");
     }
 
     @Override
@@ -60,7 +64,7 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
     }
 
     public void startGeneralChallenge(View view) {
-        generalChallengeReference.child("activeNow").setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+        generalChallengeDocument.update("activeNow",true).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(AdminGeneralChallengeManagement.this, "تم بدء التحدى بنجاح", Toast.LENGTH_SHORT).show();
@@ -82,24 +86,23 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
             }
         });
 
-        questionsReference.orderByChild("challengeQuestion").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    questionsReference.child(dataSnapshot1.getKey()).child("challengeQuestion").setValue(false);//TODO : make sure that this won't cause problems
+        String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
+        for (final String subject : subjectsArray) {
+            fireStoreQuestions.document(subject).collection(subject).whereEqualTo("challengeQuestion", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                        fireStoreQuestions.document(subject).collection(subject).document(document.getId()).update("challengeQuestion", false);//TODO : make sure that this won't cause problems
+                    }
                 }
-                Toast.makeText(AdminGeneralChallengeManagement.this, "تم الغاء القيمة المميزة لاسئلة التحدى", Toast.LENGTH_SHORT).show();
-            }
+            });
+        }
+        Toast.makeText(AdminGeneralChallengeManagement.this, "تم الغاء القيمة المميزة لاسئلة التحدى", Toast.LENGTH_SHORT).show();
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     public void stopGeneralChallenge(View view) {
-        generalChallengeReference.child("activeNow").setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
+        generalChallengeDocument.update("activeNow", false).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(AdminGeneralChallengeManagement.this, "تم إيقاف التحدى بنجاح", Toast.LENGTH_SHORT).show();
@@ -148,7 +151,7 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
                             inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
                         }
                         else {
-                            generalChallengeReference.child("text").setValue(commentText.trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            generalChallengeDocument.update("text", commentText.trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     alertDialogBuilderUserInput.dismiss();

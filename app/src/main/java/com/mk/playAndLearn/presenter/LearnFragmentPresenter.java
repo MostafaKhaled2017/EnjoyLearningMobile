@@ -1,26 +1,38 @@
 package com.mk.playAndLearn.presenter;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Post;
+
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
-import static com.mk.playAndLearn.utils.Firebase.lessonsReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 
 public class LearnFragmentPresenter {
     private Lesson lesson;
     private View view;
+
+    final String TAG = "LearnFragmentPresenter";
 
     ArrayList<Lesson> lessonsList = new ArrayList();
     ChildEventListener lessonsListener;
@@ -47,7 +59,7 @@ public class LearnFragmentPresenter {
             @Override
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
-                    if(!lessonsList.isEmpty()){
+                    if (!lessonsList.isEmpty()) {
                         lessonsList.clear();
                         view.notifyAdapter();
                     }
@@ -68,74 +80,35 @@ public class LearnFragmentPresenter {
             view.notifyAdapter();
         }
         view.onLoadingData();
-        lessonsListener = lessonsReference.orderByChild("subject").equalTo(currentSubject).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                view.onDataFound();
 
-                 Lesson value = dataSnapshot.getValue(Lesson.class);
-                lesson = new Lesson();
-                boolean reviewed = (boolean) dataSnapshot.child("reviewed").getValue();
-                if (reviewed) {
-                    String title = value.getTitle();
-                    String content = value.getContent();
-                    String arabicPosition = value.getArabicPosition();
-                    String lessonId = dataSnapshot.getKey();
+        //TODO : order lessons by position
+        fireStoreLessons.document(currentSubject).collection(currentSubject).whereEqualTo("reviewed", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    view.onDataFound();
+
+                    lesson = new Lesson();
+                    String title = document.getString("title");
+                    String content = document.getString("content");
+                    String position = document.getString("position");
+                    String lessonId = document.getId();
                     lesson.setLessonId(lessonId);
                     lesson.setTitle(title);
                     lesson.setContent(content);
-                    lesson.setArabicPosition(arabicPosition);
-                    if(!existsInLessonsList(lessonId)) {
+                    lesson.setPosition(position);
+                    if (!existsInLessonsList(lessonId)) {
                         lessonsList.add(lesson);
                         view.notifyAdapter();
                     }
                 }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Toast.makeText(getActivity(), "فشل تحميل البينات من فضلك تأكد من الاتصال بالإنترنت", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "database error : " + databaseError);
-                view.hideProgressBar();
-            }
-        });
-
-        lessonsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
                 view.hideProgressBar();
                 if (lessonsList.size() == 0) {
                     view.showNoLessonsTextView();
                 }
-
-                lessonsReference.removeEventListener(this);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+                }
         });
-    }
-
-    public void removeListeners(){
-        if(lessonsListener != null)
-            lessonsReference.removeEventListener(lessonsListener);
     }
 
     private boolean existsInLessonsList(String lessonId) {
