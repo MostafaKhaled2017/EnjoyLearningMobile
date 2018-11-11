@@ -173,6 +173,27 @@ public class QuestionActivity extends AppCompatActivity {
 
     public void showDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        if(isGeneralChallenge){
+            usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
+                    int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
+                    int finalChallengePoints = score * generalChallengeScoreMultiply;
+                    if (lastGeneralChallengePoints == 0) {
+                        usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
+                        usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
+                    } else {
+                        Toast.makeText(QuestionActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
         if (currentChallenger == 2) {
             dialog.setMessage("هل أنت متأكد أنك تريد الخروج و خسارة نقط الاسئلة الباقية");
             dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
@@ -186,27 +207,6 @@ public class QuestionActivity extends AppCompatActivity {
                                 fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList);
                                 fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
                                 fireStoreChallenges.document(challengeId).update("state", "اكتمل");//TODO : think about changing this
-                            }
-                            else {
-                                usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
-                                        int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                                        int finalChallengePoints = score * generalChallengeScoreMultiply;
-                                        if (lastGeneralChallengePoints == 0) {
-                                            usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
-                                            usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
-                                        } else {
-                                            Toast.makeText(QuestionActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
                             }
                         }
                     });
@@ -236,7 +236,7 @@ public class QuestionActivity extends AppCompatActivity {
             RadioButton btn = (RadioButton) rg1.getChildAt(radioId);
             selection = (String) btn.getText();
         }
-        if (selection != null && selection.equals(correctAnswer)) {
+        if (selection != null && selection.trim().equals(correctAnswer.trim())) {
             i.putExtra("answer", true);
         } else {
             i.putExtra("answer", false);

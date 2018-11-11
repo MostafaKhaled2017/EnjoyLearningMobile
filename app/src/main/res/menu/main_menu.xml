@@ -40,6 +40,11 @@
         android:id="@+id/bestStudentsInGeneralChallenge"
         android:title="أوائل التحدى العام"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/chatBot"
+        android:title="روبوت الدردشة"
+        app:showAsAction="never" />
    <!-- <item
         android:id="@+id/editAccoutData"
         android:title="تعديل بيانات الحساب"

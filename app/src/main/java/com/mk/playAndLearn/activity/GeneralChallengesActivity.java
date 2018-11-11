@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,13 +19,15 @@ import android.widget.Toast;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.GeneralChallengesActivityPresenter;
 
-public class GeneralChallengesActivity extends AppCompatActivity implements GeneralChallengesActivityPresenter.View{
+public class GeneralChallengesActivity extends AppCompatActivity implements GeneralChallengesActivityPresenter.View {
     GeneralChallengesActivityPresenter presenter;
 
     ProgressBar progressBar;
     TextView challengeTextTv, noInternetConnection;
     LinearLayoutCompat startChallengeButtonGroup;
     ProgressBar horizontalProgressBar;
+    Button startForArabicBtn, startForLanguagesBtn;
+    boolean arabicButtonPressed = false, languagesButtonPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,32 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
         challengeTextTv = findViewById(R.id.challengeTextTv);
         noInternetConnection = findViewById(R.id.noInternetConnectionText);
         startChallengeButtonGroup = findViewById(R.id.startChallengeButtonGroup);
+        startForArabicBtn = findViewById(R.id.startGeneralChallengeForArabicBtn);
+        startForLanguagesBtn = findViewById(R.id.startGeneralChallengeForLanguagesBtn);
+
+        startForArabicBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!arabicButtonPressed) {
+                    showHorizontalProgressBar();
+                    Toast.makeText(GeneralChallengesActivity.this, "جارى إعداد الاسئلة", Toast.LENGTH_SHORT).show();
+                    presenter.loadQuestions("arabic");
+                    arabicButtonPressed = true;
+                }
+            }
+        });
+
+        startForLanguagesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!languagesButtonPressed) {
+                    showHorizontalProgressBar();
+                    Toast.makeText(GeneralChallengesActivity.this, "جارى إعداد الاسئلة", Toast.LENGTH_SHORT).show();
+                    presenter.loadQuestions("languages");
+                    languagesButtonPressed = true;
+                }
+            }
+        });
 
         presenter.startAsynkTask();
     }
@@ -61,21 +90,21 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
 
     @Override
     public void hideProgressBar() {
-        if(progressBar.getVisibility() == View.VISIBLE){
+        if (progressBar.getVisibility() == View.VISIBLE) {
             progressBar.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void showHorizontalProgressBar() {
-        if(horizontalProgressBar.getVisibility() != View.VISIBLE){
+        if (horizontalProgressBar.getVisibility() != View.VISIBLE) {
             horizontalProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void hideHorizontalProgressBar() {
-        if(horizontalProgressBar.getVisibility() == View.VISIBLE){
+        if (horizontalProgressBar.getVisibility() == View.VISIBLE) {
             horizontalProgressBar.setVisibility(View.GONE);
         }
     }
@@ -98,34 +127,22 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
 
     @Override
     public void hideButtonGroup() {
-        if(startChallengeButtonGroup.getVisibility() == View.VISIBLE){
+        if (startChallengeButtonGroup.getVisibility() == View.VISIBLE) {
             startChallengeButtonGroup.setVisibility(View.INVISIBLE);
         }
     }
 
     @Override
     public void showButtonGroup() {
-        if(startChallengeButtonGroup.getVisibility() != View.VISIBLE){
+        if (startChallengeButtonGroup.getVisibility() != View.VISIBLE) {
             startChallengeButtonGroup.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void hideChallengeText() {
-        if(challengeTextTv.getVisibility() == View.VISIBLE){
+        if (challengeTextTv.getVisibility() == View.VISIBLE) {
             challengeTextTv.setVisibility(View.INVISIBLE);
         }
-    }
-
-    public void startLanguagesGeneralChallenge(View view) {
-        showHorizontalProgressBar();
-        Toast.makeText(this, "جارى إعداد الاسئلة", Toast.LENGTH_SHORT).show();
-        presenter.loadQuestions("languages");
-    }
-
-    public void startArabicGeneralChallenge(View view) {
-        showHorizontalProgressBar();
-        Toast.makeText(this, "جارى إعداد الاسئلة", Toast.LENGTH_SHORT).show();
-        presenter.loadQuestions("arabic");
     }
 }

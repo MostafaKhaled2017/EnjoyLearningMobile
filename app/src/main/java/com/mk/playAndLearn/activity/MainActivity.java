@@ -215,6 +215,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.bestStudentsInGeneralChallenge:
                 startActivity(new Intent(this, BestStudentsInGeneralChallengeActivity.class));
                 return true;
+
+            case R.id.chatBot:
+                startActivity(new Intent(this, ChatbotActivity.class));
+                return true;
             /*case R.id.editAccoutData:{
                 Intent i=new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse("https://myaccount.google.com/privacy"));

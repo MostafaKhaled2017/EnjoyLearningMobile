@@ -150,7 +150,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
+   public class MyHolder extends RecyclerView.ViewHolder {
         TextView name, points, position;
         ImageView imageView, isAdminImageView, isOnlineImageView;
         CardView cardView;

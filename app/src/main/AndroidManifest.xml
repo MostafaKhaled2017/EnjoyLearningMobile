@@ -130,7 +130,8 @@
         <activity
             android:name="com.mk.playAndLearn.activity.BestStudentsInGeneralChallengeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.AdminGeneralChallengeManagement"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.AdminGeneralChallengeManagement" />
+        <activity android:name="com.mk.playAndLearn.activity.ChatbotActivity"></activity>
     </application>
 
 </manifest>

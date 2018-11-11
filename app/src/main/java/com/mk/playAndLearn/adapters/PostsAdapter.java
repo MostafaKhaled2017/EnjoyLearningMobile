@@ -34,6 +34,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
 import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
@@ -65,7 +66,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         if (post.getContent() != null)
             holder.content.setText(post.getContent());
         if (post.getDate() != null) {
-            if(post.isPosted()) {
+            if(post.isPosted() || !post.getWriterUid().equals(localCurrentUserUid)) {
                 holder.date.setText(post.getDate());
             }
             else {
@@ -248,7 +249,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         alertDialogBuilderUserInput.show();
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
+   public class MyHolder extends RecyclerView.ViewHolder {
         TextView content, date, name, votes;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;

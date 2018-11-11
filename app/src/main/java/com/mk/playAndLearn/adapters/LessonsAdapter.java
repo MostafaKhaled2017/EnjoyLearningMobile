@@ -70,7 +70,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
 
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
+   public class MyHolder extends RecyclerView.ViewHolder {
         TextView arabicPosition;
         RelativeLayout lessonTitleLayout;
 

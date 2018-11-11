@@ -164,12 +164,19 @@ public class ChallengersActivity extends AppCompatActivity {
                         /*if(online)
                             onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
                     }
+                    int pointsInt;
+                    try{
+                        pointsInt = Integer.parseInt(points);
+                    }catch (Exception ex){
+                        Log.v("pointsIntException", "exception is : " + ex);
+                        pointsInt = 0;
+                    }
 
-                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid) && !points.equals("")) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                    if (name != null && userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                         user.setAdmin(admin);
                         user.setOnline(online);
                         user.setName(name);
-                        user.setPoints(Integer.parseInt(points));
+                        user.setPoints(pointsInt);
                         user.setImageUrl(imageUrl);
                         user.setEmail(email);
                         user.setUid(uid);
@@ -186,7 +193,6 @@ public class ChallengersActivity extends AppCompatActivity {
                         list.add(0, user);
                     }
                 }
-
             }
 
             @Override
@@ -222,11 +228,20 @@ public class ChallengersActivity extends AppCompatActivity {
                             onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
                     }
 
-                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid) && !online && !points.equals("")) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                    int pointsInt;
+                    try{
+                        pointsInt = Integer.parseInt(points);
+                    }
+                    catch (Exception ex){
+                        Log.v("pointsException", "exception is : " + ex);
+                        pointsInt = 0;
+                    }
+
+                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid) && !online && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                         user.setAdmin(admin);
                         user.setOnline(online);
                         user.setName(name);
-                        user.setPoints(Integer.parseInt(points));
+                        user.setPoints(pointsInt);
                         user.setImageUrl(imageUrl);
                         user.setEmail(email);
                         user.setUid(uid);

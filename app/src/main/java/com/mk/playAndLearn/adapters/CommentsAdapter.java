@@ -64,7 +64,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (comment.getContent() != null)
             holder.content.setText(comment.getContent());
         if (comment.getDate() != null) {
-            if(comment.isPosted()) {
+            if(comment.isPosted() || !comment.getWriterUid().equals(localCurrentUserUid)) {
                 holder.date.setText(comment.getDate());
             }
             else {
@@ -139,7 +139,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
+   public class MyHolder extends RecyclerView.ViewHolder {
         TextView name, content, date, votes;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;

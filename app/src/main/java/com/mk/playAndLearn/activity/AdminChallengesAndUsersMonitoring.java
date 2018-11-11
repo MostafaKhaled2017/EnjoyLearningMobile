@@ -127,7 +127,7 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                         if(challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))
                             todayCompletedChallengesCount ++;
 
-                        todayChallengesList.add(0, " - " + player1Name + "(" + player1Score + ")"
+                        todayChallengesList.add(" - " + player1Name + "(" + player1Score + ")"
                                 + " ضد " + player2Name + "(" + player2Score + ")"
                                 + " الساعة " + fullDate.substring(10) + " في مادة " + adjustSubject(subject)+ " (" + challengeState + ")" + "\n\n");
                     }

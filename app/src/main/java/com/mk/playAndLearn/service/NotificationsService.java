@@ -111,29 +111,24 @@ public class NotificationsService extends Service {
                         case ADDED:{
                             String challengeState = challengeDocument.getString("state");
                             String player1Uid = challengeDocument.getString("player1Uid");
-                            final String player1Name = adjustSubject(challengeDocument.getString("player1Name"));
-                            final String subject = challengeDocument.getString("subject");
+                            final String player1Name = challengeDocument.getString("player1Name");
+                            final String subject = adjustSubject(challengeDocument.getString("subject"));
                             String challengeId = challengeDocument.getId();
-
 
                             currentPlayer = getCurrentPlayer(player1Uid);
                             Log.v("Logging2", "onChildAdded");
                             if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
-                                localFireStoreChallenges.document(challengeId).update("player2notified", true).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
-                                    }
-                                });
+                                localFireStoreChallenges.document(challengeId).update("player2notified", true);
+                                showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
                             }
-                            break;}
+                            break;
+                        }
                         case MODIFIED:
                             String challengeState = challengeDocument.getString("state");
                             String player1Uid = challengeDocument.getString("player1Uid");
                             String player2Name = challengeDocument.getString("player2Name");
-                            String subject = challengeDocument.getString("subject");
+                            String subject = adjustSubject(challengeDocument.getString("subject"));
 
-                            subject =  adjustSubject(subject);
                             String state = currentUserState(challengeDocument);
 
                             String challengeId = challengeDocument.getId();

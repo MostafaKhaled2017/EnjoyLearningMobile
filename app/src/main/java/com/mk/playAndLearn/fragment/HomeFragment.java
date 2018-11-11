@@ -215,7 +215,10 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
                         String commentText = inputComment.getText().toString().trim();
                         if (TextUtils.isEmpty(commentText)) {
                             inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
-                        } else {
+                        }
+                        else if(currentSubject.equals("اختر المادة")) {
+                            Toast.makeText(getActivity(), "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
+                        }else {
                             presenter.addPost(commentText, currentSubject);
                             dialogInterface.dismiss();
                         }

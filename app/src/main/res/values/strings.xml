@@ -39,6 +39,7 @@
     </string-array>
 
     <string-array name="subjects_array_for_home_fragment_dialog">
+        <item>اختر المادة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
         <item>جغرافيا</item>

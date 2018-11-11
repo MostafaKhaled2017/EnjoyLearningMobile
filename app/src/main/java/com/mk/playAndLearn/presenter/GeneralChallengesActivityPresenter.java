@@ -111,8 +111,6 @@ public class GeneralChallengesActivityPresenter {
         if (!list.isEmpty())
             list.clear();
 
-        CollectionReference arabicQuestionsReference = generalChallengeDocument.collection("arabicQuestions");
-        CollectionReference languagesQuestionsReference = generalChallengeDocument.collection("languagesQuestions");
         String usedCollection = "";
         if(schoolType.equals("arabic"))
             usedCollection = "arabicQuestions";
@@ -143,7 +141,7 @@ public class GeneralChallengesActivityPresenter {
                    question.setReviewed(reviewed);
                    question.setQuestionId(document.getId());
 
-                   list.add(question);
+                   list.add(0,question);
                }
 
                Intent intent = new Intent(context, QuestionActivity.class);

@@ -151,7 +151,9 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                         }
                     });
 
+
                     dialog.create();
+
                     dialog.show();
                 }
             });

@@ -47,17 +47,15 @@
         android:paddingTop="@dimen/toolbar_height_approximately">
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/startGeneralChallengeForArabic"
+            android:id="@+id/startGeneralChallengeForArabicBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="startArabicGeneralChallenge"
             android:text="بدء التحدى للمدارس العربية"
             style="@style/buttonStyle"/>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/startGeneralChallengeForLanguages"
+            android:id="@+id/startGeneralChallengeForLanguagesBtn"
             android:layout_width="match_parent"
-            android:onClick="startLanguagesGeneralChallenge"
             android:layout_height="wrap_content"
             android:text="بدء التحدى للمدارس اللغات"
             style="@style/buttonStyle"/>

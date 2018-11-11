@@ -290,13 +290,19 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 */
 
 
-/*
-        FirebaseDatabase.getInstance().getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
+
+        /*usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
                     Log.v("Logging", "datasnapshot1 is : " + dataSnapshot1.toString());
-                    FirebaseDatabase.getInstance().getReference("users").child(dataSnapshot1.getKey()).child("online").setValue(false);
+                    long generalChallengePoints = -1000;
+                    if(dataSnapshot1.child("lastGeneralChallengeScore").getValue() != null)
+                        generalChallengePoints = (long) dataSnapshot1.child("lastGeneralChallengeScore").getValue();
+                    if(generalChallengePoints == 100) {
+                        usersReference.child(dataSnapshot1.getKey()).child("lastGeneralChallengeScore").setValue(0);
+                        Toast.makeText(AdminAppManagementActivity.this, "uid is : " + dataSnapshot1.getKey(), Toast.LENGTH_SHORT).show();
+                    }
                 }
                 Toast.makeText(AdminAppManagementActivity.this, "انتهى الاستعلام", Toast.LENGTH_SHORT).show();
             }
@@ -305,8 +311,9 @@ public class AdminAppManagementActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-        */
+        });*/
+
+
 
     }
 
@@ -319,13 +326,9 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         if (!languagesQuestionsList.isEmpty())
             languagesQuestionsList.clear();
 
-        getChallengeQuestion("أحياء", arabicSchoolType);
-        getChallengeQuestion("كيمياء", arabicSchoolType);
-        getChallengeQuestion("تاريخ", arabicSchoolType);
-        getChallengeQuestion("جغرافيا", arabicSchoolType);
+        getChallengeQuestion("رياضيات", arabicSchoolType);
 
-        getChallengeQuestion("Biology", languagesSchoolType);
-        getChallengeQuestion("Chemistry", languagesSchoolType);
+        getChallengeQuestion("Mathematics", languagesSchoolType);
 
         //end code for setting data to generalChallenge
     }

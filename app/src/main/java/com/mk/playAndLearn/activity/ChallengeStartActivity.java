@@ -120,8 +120,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    secondPlayerName = dataSnapshot.child("userName").getValue().toString();
-                    secondPlayerImage = dataSnapshot.child("userImage").getValue().toString();
+                    secondPlayerName = (String) dataSnapshot.child("userName").getValue();
+                    secondPlayerImage = (String) dataSnapshot.child("userImage").getValue();
                     secondPlayerPoints = (long) dataSnapshot.child("points").getValue();
 
                     player2Name.setText(secondPlayerName);
