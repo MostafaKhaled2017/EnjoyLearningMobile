@@ -59,7 +59,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     String subject, challengeId;
     int firstPlayerPoints = -1, currentChallenger = 1;
-    long secondPlayerPoints;
+    long secondPlayerPoints = -1;
     boolean finished = false;
 
     ImageView player1Image, player2Image;
@@ -122,7 +122,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
                     secondPlayerName = (String) dataSnapshot.child("userName").getValue();
                     secondPlayerImage = (String) dataSnapshot.child("userImage").getValue();
-                    secondPlayerPoints = (long) dataSnapshot.child("points").getValue();
+                    if(dataSnapshot.child("points").getValue() != null)
+                        secondPlayerPoints = (long) dataSnapshot.child("points").getValue();
 
                     player2Name.setText(secondPlayerName);
                     Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);

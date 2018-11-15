@@ -64,17 +64,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (comment.getContent() != null)
             holder.content.setText(comment.getContent());
         if (comment.getDate() != null) {
-            if(comment.isPosted() || !comment.getWriterUid().equals(localCurrentUserUid)) {
+            if (comment.isPosted() || !comment.getWriterUid().equals(localCurrentUserUid)) {
                 holder.date.setText(comment.getDate());
-            }
-            else {
+            } else {
                 holder.date.setText("جارى النشر ...");
             }
         }
         if (comment.getUserImage() != null)
             Picasso.with(context).load(comment.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
-            holder.votes.setText(comment.getVotes() + "");
+        holder.votes.setText(comment.getVotes() + "");
 
 
         holder.upArrow.setOnClickListener(new View.OnClickListener() {
@@ -104,14 +103,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View view)
-            {
+            public boolean onLongClick(View view) {
                 String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
                 //TODO : change this hardcoded way
                 if (comment.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
                     boolean admin = false;
-                    if(localCurrentUserEmail.equals(adminEmail))
+                    if (localCurrentUserEmail.equals(adminEmail))
                         admin = true;
 
                     showActionsDialog(comment.getCommentId(), holder, comment.getContent(), comment.getUserEmail(), admin, position); //TODO :  search why I need to add one
@@ -139,12 +137,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
     }
 
-   public class MyHolder extends RecyclerView.ViewHolder {
+    class MyHolder extends RecyclerView.ViewHolder {
         TextView name, content, date, votes;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
 
-        public MyHolder(View itemView) {
+        MyHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.commentUserName);
             content = itemView.findViewById(R.id.commentContent);
@@ -180,13 +178,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
             if (tag.equals("upArrow")) {
                 votes++;
-                fireStoreComments.document(comment.getCommentId()).update("upVotedUsers",upVotedUsers + localCurrentUserUid + " ");
+                fireStoreComments.document(comment.getCommentId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
             } else if (tag.equals("downArrow")) {
                 votes--;
-                fireStoreComments.document(comment.getCommentId()).update("downVotedUsers",downVotedUsers + localCurrentUserUid + " ");
+                fireStoreComments.document(comment.getCommentId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
 
             }
-            fireStoreComments.document(comment.getCommentId()).update("votes",votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+            fireStoreComments.document(comment.getCommentId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Log.v("Logging", "votes : " + votes);
@@ -215,7 +213,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف التعليق بنجاح", Toast.LENGTH_SHORT).show();
-                            if(admin && !email.equals(adminEmail)) {
+                            if (admin && !email.equals(adminEmail)) {
                                 composeEmail("تم حذف تعليقك", "تم حذف تعليقك " + "\"" + content + "\"", email);
                             }
                         }
@@ -243,14 +241,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final String inputText = inputTextEt.getText().toString();
-                fireStoreComments.document(id).update("content",inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                fireStoreComments.document(id).update("content", inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         list.get(position).setContent(inputText);
                         holder.content.setText(inputText);
                         Toast.makeText(context, "تم تعديل التعليق بنجاح", Toast.LENGTH_SHORT).show();
 
-                        if(admin && !email.equals(adminEmail)){
+                        if (admin && !email.equals(adminEmail)) {
                             composeEmail("تم تعديل تعليقك", "تم تعديل تعليقك " + "\"" + content + "\"", email);
                         }
                     }

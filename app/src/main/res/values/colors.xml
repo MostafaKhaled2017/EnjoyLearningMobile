@@ -17,6 +17,8 @@
     <color name="fabColor">#94b937</color>
     <color name="hint_enter_note">#89c3c3c3</color>
     <color name="gray">#b6b5b5</color>
+    <color name="bg_bubble_self">#62caa6</color>
+    <color name="bg_bubble_watbot">#ecf0f1</color>
 
     <color name="black_overlay">#66000000</color>
 

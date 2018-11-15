@@ -3,8 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mk.enjoylearning">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+  <!-- TODO : add these permissions
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>-->
 
     <!-- I am preventing backup to solve backing up authentication problem -->
     <application
@@ -36,11 +48,11 @@
                     android:screenOrientation="portrait" />
             </intent-filter>
         </activity>
-
+<!-- Facebook login
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
-            tools:replace="android:value" />
+            tools:replace="android:value" /> -->
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -130,8 +142,12 @@
         <activity
             android:name="com.mk.playAndLearn.activity.BestStudentsInGeneralChallengeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.AdminGeneralChallengeManagement" />
-        <activity android:name="com.mk.playAndLearn.activity.ChatbotActivity"></activity>
+        <activity
+            android:name="com.mk.playAndLearn.activity.AdminGeneralChallengeManagement"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.ChatbotActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

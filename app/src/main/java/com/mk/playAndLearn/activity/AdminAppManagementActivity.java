@@ -66,6 +66,8 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     CollectionReference arabicQuestionsReference, languagesQuestionsReference;
 
+    int counter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,6 +233,20 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void doQuery(View view) {
 
+        usersReference.orderByChild("online").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    Log.v("usersPresuneceLog", "datasnapshot is : " + dataSnapshot1);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         //start editing in database
 
 /*
@@ -312,13 +328,9 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
             }
         });*/
-
-
-
     }
 
     public void adjustGeneralChallengeQuestions(View view) {
-
         //TODO : comment this
         //start code for setting data to generalChallenge
         if (!arabicQuestionsList.isEmpty())

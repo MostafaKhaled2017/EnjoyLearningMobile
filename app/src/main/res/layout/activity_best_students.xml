@@ -30,13 +30,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/no_internet_connection_text" />
+    <include
+        android:id="@+id/noInternetConnectionTextInBestStudents"
+        layout="@layout/no_internet_connection_text"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/bestStudentsSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_below="@id/appBar"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBar">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/bestStudentsRecyclerView"

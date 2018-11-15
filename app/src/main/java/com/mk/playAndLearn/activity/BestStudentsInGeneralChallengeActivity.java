@@ -19,6 +19,7 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
 import com.mk.playAndLearn.presenter.BestStudentsActivityPresenter;
 import com.mk.playAndLearn.presenter.BestStudentsInGeneralChallengeActivityPresenter;
+import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,7 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
         });
 
         noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
+        noInternetConnectionText.setText("لا يوجد اتصال بالانترنت");
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,7 +122,7 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
     @Override
     public void startRecyclerAdapter(ArrayList list) {
         recyclerAdapter = new StudentsAdapter(list, this, TAG, null);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
@@ -131,6 +133,7 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
     public void handleNoInternetConnection() {
         progressBar.setVisibility(android.view.View.GONE);
         noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+        hideSwipeRefreshLayout();
     }
 
     @Override

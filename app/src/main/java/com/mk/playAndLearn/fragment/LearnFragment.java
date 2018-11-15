@@ -30,6 +30,7 @@ import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.presenter.LearnFragmentPresenter;
 import com.mk.playAndLearn.utils.GridAutofitLayoutManager;
+import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -221,7 +222,7 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
     @Override
     public void startRecyclerAdapter(ArrayList list) {
         recyclerAdapter = new LessonsAdapter(list, getActivity());
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);

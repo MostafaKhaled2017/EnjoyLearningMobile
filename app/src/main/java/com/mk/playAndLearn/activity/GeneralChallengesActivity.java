@@ -25,6 +25,7 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
     ProgressBar progressBar;
     TextView challengeTextTv, noInternetConnection;
     LinearLayoutCompat startChallengeButtonGroup;
+    TextView noInternetConnectionText;
     ProgressBar horizontalProgressBar;
     Button startForArabicBtn, startForLanguagesBtn;
     boolean arabicButtonPressed = false, languagesButtonPressed = false;
@@ -79,6 +80,15 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
             }
         });
 
+
+        noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
+        noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retryConnection();
+            }
+        });
+
         presenter.startAsynkTask();
     }
 
@@ -107,6 +117,14 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
         if (horizontalProgressBar.getVisibility() == View.VISIBLE) {
             horizontalProgressBar.setVisibility(View.GONE);
         }
+    }
+
+
+    @Override
+    public void retryConnection(){
+        noInternetConnectionText.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        presenter.startAsynkTask();
     }
 
     @Override

@@ -66,10 +66,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         if (post.getContent() != null)
             holder.content.setText(post.getContent());
         if (post.getDate() != null) {
-            if(post.isPosted() || !post.getWriterUid().equals(localCurrentUserUid)) {
+            if (post.isPosted() || !post.getWriterUid().equals(localCurrentUserUid)) {
                 holder.date.setText(post.getDate());
-            }
-            else {
+            } else {
                 holder.date.setText("جارى النشر...");
             }
         }
@@ -147,7 +146,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 //TODO : change this way
                 if (post.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
                     boolean admin = false;
-                    if(localCurrentUserEmail.equals(adminEmail))
+                    if (localCurrentUserEmail.equals(adminEmail))
                         admin = true;
 
                     showActionsDialog(post.getId(), holder, post.getContent(), post.getEmail(), admin, position); //TODO :  search why I need to add one
@@ -190,13 +189,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
-                            if(admin && !email.equals(adminEmail)) {
+                            if (admin && !email.equals(adminEmail)) {
                                 composeEmail("تم حذف منشورك", "تم حذف منشورك " + "\"" + content + "\"", email);
                             }
                         }
                     });
 
-                    fireStoreComments.whereEqualTo("postId",id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    fireStoreComments.whereEqualTo("postId", id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot documentSnapshots) {
                             for (DocumentSnapshot dataSnapshot1 : documentSnapshots.getDocuments()) {
@@ -231,14 +230,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                 fireStorePosts.document(id).update("content", inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Log.v("Logging","position is : " + position + " , postContent is : " + list.get(position).getContent());
+                        Log.v("Logging", "position is : " + position + " , postContent is : " + list.get(position).getContent());
                         list.get(position).setContent(inputText);
                         holder.content.setText(inputText);
                         notifyDataSetChanged();
 
                         Toast.makeText(context, "تم تعديل المنشور بنجاح", Toast.LENGTH_SHORT).show();
 
-                        if(admin && !email.equals(adminEmail)){
+                        if (admin && !email.equals(adminEmail)) {
                             composeEmail("تم تعديل منشورك", "تم تعديل منشورك " + "\"" + content + "\"", email);
                         }
                     }
@@ -249,13 +248,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         alertDialogBuilderUserInput.show();
     }
 
-   public class MyHolder extends RecyclerView.ViewHolder {
+    class MyHolder extends RecyclerView.ViewHolder {
         TextView content, date, name, votes;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
 
 
-        public MyHolder(View itemView) {
+        MyHolder(View itemView) {
             super(itemView);
             content = itemView.findViewById(R.id.postContentInDetails);
             date = itemView.findViewById(R.id.postDateInDetails);
@@ -300,7 +299,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         String upVotedUsers = dataSnapshot.getString("upVotedUsers");
         String downVotedUsers = dataSnapshot.getString("downVotedUsers");
         votes = dataSnapshot.getLong("votes");
-        if(upVotedUsers != null && downVotedUsers != null) {
+        if (upVotedUsers != null && downVotedUsers != null) {
             String[] upVotedUsersArray = upVotedUsers.split(" ");
             String[] downVotedUsersArray = downVotedUsers.split(" ");
             if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
@@ -324,8 +323,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
             } else {
                 Toast.makeText(context, "لا يمكنك التصويت لنفس السؤال أكثر من مرة", Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
+        } else {
             Toast.makeText(context, "لا يمكن التصويت لهذا المنشور", Toast.LENGTH_SHORT).show();
         }
     }

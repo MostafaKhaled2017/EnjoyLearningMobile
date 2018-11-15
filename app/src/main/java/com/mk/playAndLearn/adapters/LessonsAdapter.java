@@ -70,11 +70,11 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
 
     }
 
-   public class MyHolder extends RecyclerView.ViewHolder {
+    class MyHolder extends RecyclerView.ViewHolder {
         TextView arabicPosition;
         RelativeLayout lessonTitleLayout;
 
-        public MyHolder(View itemView) {
+        MyHolder(View itemView) {
             super(itemView);
             arabicPosition = itemView.findViewById(R.id.lessonTitle);
             lessonTitleLayout = itemView.findViewById(R.id.lessonTitleView);

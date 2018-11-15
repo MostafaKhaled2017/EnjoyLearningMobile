@@ -150,12 +150,12 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     }
 
-   public class MyHolder extends RecyclerView.ViewHolder {
+   class MyHolder extends RecyclerView.ViewHolder {
         TextView name, points, position;
         ImageView imageView, isAdminImageView, isOnlineImageView;
         CardView cardView;
 
-        public MyHolder(View itemView) {
+        MyHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.userNameInBest);
             points = itemView.findViewById(R.id.pointsInBest);

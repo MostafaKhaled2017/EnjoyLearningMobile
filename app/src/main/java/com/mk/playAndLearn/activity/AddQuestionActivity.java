@@ -118,7 +118,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
 
 
         Intent intent = getIntent();
-        if(intent.getExtras().containsKey("question")){
+        if(intent.getExtras() != null && intent.getExtras().containsKey("question")){
             question = (Question) intent.getSerializableExtra("question");
             questionEt.setText(question.getAlQuestion());
             editText1.setText(question.getAnswer1());

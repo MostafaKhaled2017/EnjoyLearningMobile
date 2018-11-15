@@ -184,7 +184,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
         ImageView imageView;
         RelativeLayout challengeView;
 
-        public MyHolder(View itemView) {
+        MyHolder(View itemView) {
             super(itemView);
             challengerName = itemView.findViewById(R.id.challengerName);
             state = itemView.findViewById(R.id.challengeState);

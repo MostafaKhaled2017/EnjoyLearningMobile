@@ -170,6 +170,8 @@ public class GeneralChallengesActivityPresenter {
 
         void onNoInternetConnection();
 
+        void retryConnection();
+
         void hideButtonGroup();
 
         void showButtonGroup();

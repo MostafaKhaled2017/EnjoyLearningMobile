@@ -37,6 +37,8 @@ import com.mk.playAndLearn.service.NotificationsService;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Strings.adminEmail;
+
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
@@ -240,10 +242,13 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem appManagementItem = menu.findItem(R.id.appManagement);
-        if (localAuth.getCurrentUser().getEmail().equals("mostafakhaled835@gmail.com")) {
+        MenuItem chatBotItem = menu.findItem(R.id.chatBot);
+        if (localAuth.getCurrentUser().getEmail().equals(adminEmail)) {
             appManagementItem.setVisible(true);
+            chatBotItem.setVisible(true);
         } else {
             appManagementItem.setVisible(false);
+            chatBotItem.setVisible(false);
         }
         return true;
     }

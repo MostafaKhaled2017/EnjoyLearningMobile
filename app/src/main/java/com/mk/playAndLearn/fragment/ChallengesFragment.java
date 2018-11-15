@@ -31,6 +31,7 @@ import com.mk.playAndLearn.activity.ChallengersActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.presenter.ChallengesFragmentPresenter;
 import com.mk.playAndLearn.service.NotificationsService;
+import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -225,7 +226,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void startUnCompletedChallengesAdapter(ArrayList uncompletedChallengesList) {
             uncompletedChallengeRecyclerAdapter = new ChallengesAdapter(uncompletedChallengesList, getActivity());
-            RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new LinearLayoutManager(getActivity());
+            RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new WrapContentLinearLayoutManager(getActivity());
             uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
             uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
             uncompletedChallengesRecyclerView.setNestedScrollingEnabled(false);
@@ -235,7 +236,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void startCompletedChallengesAdapter(ArrayList completedChallengesList) {
             completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
-            RecyclerView.LayoutManager completedChallengesLayoutManager = new LinearLayoutManager(getActivity());
+            RecyclerView.LayoutManager completedChallengesLayoutManager = new WrapContentLinearLayoutManager(getActivity());
             completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
             completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
             completedChallengesRecyclerView.setNestedScrollingEnabled(false);

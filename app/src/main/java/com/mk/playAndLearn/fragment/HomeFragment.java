@@ -36,6 +36,7 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.model.Post;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
+import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -298,7 +299,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     @Override
     public void startRecyclerAdapter(ArrayList list) {
         recyclerAdapter = new PostsAdapter(list, getActivity());
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
