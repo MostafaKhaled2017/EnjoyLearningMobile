@@ -1,11 +1,13 @@
 package com.mk.playAndLearn.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,65 +23,94 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.AdminQuestionActivity;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
+import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.model.Post;
+import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
+import com.mk.playAndLearn.utils.OnLoadMoreListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
 import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
+public class PostsAdapter extends RecyclerView.Adapter {
 
     ArrayList<Post> list;
+    HomeFragment homeFragment;
     Context context;
     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     long votes;
 
-    public PostsAdapter(ArrayList<Post> list, Context context) {
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
+
+
+    public PostsAdapter(RecyclerView recyclerView, ArrayList<Post> list, Context context, HomeFragment homeFragment) {
         this.list = list;
         this.context = context;
-    }
-
-    @Override
-    public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(context).inflate(R.layout.post_item, parent, false);
-        MyHolder myHolder = new MyHolder(view);
-
-        return myHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(final MyHolder holder, final int position) {
-        final Post post = list.get(position);
-        if (post.getContent() != null)
-            holder.content.setText(post.getContent());
-        if (post.getDate() != null) {
-            if (post.isPosted() || !post.getWriterUid().equals(localCurrentUserUid)) {
-                holder.date.setText(post.getDate().trim());
-            } else {
-                holder.date.setText("جارى النشر...");
+        this.homeFragment = homeFragment;
+     /*   final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                    if (onLoadMoreListener != null) {
+                        onLoadMoreListener.onLoadMore();
+                    }
+                    isLoading = true;
+                }
             }
+        });*/
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return list.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(context).inflate(R.layout.post_item, parent, false);
+            return new MyHolder(view);
+        } else if (viewType == VIEW_TYPE_LOADING) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_loading, parent, false);
+            return new LoadingViewHolder(view);
         }
 
-        holder.votes.setText(post.getVotes() + "");
+        return null;
+    }
 
-        if (post.getWriter() != null && !post.getWriter().equals(""))
-            holder.name.setText(post.getWriter().trim());
-        if (post.getImage() != null && !post.getImage().equals(""))
-            Picasso.with(context).load(post.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        if (holder instanceof MyHolder) {
+            final Post post = list.get(position);
+            if (post.getContent() != null)
+                ((MyHolder) holder).content.setText(post.getContent());
+            if (post.getDate() != null) {
+                if (post.isPosted() || !post.getWriterUid().equals(localCurrentUserUid)) {
+                    ((MyHolder) holder).date.setText(post.getDate().trim());
+                } else {
+                    ((MyHolder) holder).date.setText("جارى النشر...");
+                }
+            }
+
+            ((MyHolder) holder).votes.setText(post.getVotes() + "");
+
+            if (post.getWriter() != null && !post.getWriter().equals(""))
+                ((MyHolder) holder).name.setText(post.getWriter().trim());
+            if (post.getImage() != null && !post.getImage().equals(""))
+                Picasso.with(context).load(post.getImage()).placeholder(R.drawable.picasso_placeholder).into(((MyHolder) holder).imageView);
       /*  if (!post.isPosted()) {
             {
                 holder.warningIcon.setVisibility(View.VISIBLE);
@@ -96,83 +127,74 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         }*/
 
 
-        holder.upArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fireStorePosts.document(post.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Log.v("Log83", "up arrow onDataChanged");
-                        validateVoting(documentSnapshot, post, holder, "upArrow");
-                    }
-                });
-            }
-        });
-
-        holder.downArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fireStorePosts.document(post.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Log.v("Log83", "down arrow onDataChanged");
-                        validateVoting(documentSnapshot, post, holder, "downArrow");
-                    }
-                });
-
-            }
-        });
-
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, PostInDetailsActivity.class);
-                intent.putExtra("content", post.getContent());
-                intent.putExtra("date", post.getDate());
-                intent.putExtra("name", post.getWriter());
-                intent.putExtra("image", post.getImage());
-                intent.putExtra("postWriterUid", post.getWriterUid());
-                if (post.getId() != null)
-                    intent.putExtra("id", post.getId());
-                context.startActivity(intent);
-            }
-        });
-
-        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-
-                String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-                //TODO : change this way
-                if (post.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
-                    boolean admin = false;
-                    if (localCurrentUserEmail.equals(adminEmail))
-                        admin = true;
-
-                    showActionsDialog(post.getId(), holder, post.getContent(), post.getEmail(), admin, position); //TODO :  search why I need to add one
+            ((MyHolder) holder).upArrow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fireStorePosts.document(post.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Log.v("Log83", "up arrow onDataChanged");
+                            validateVoting(documentSnapshot, post, ((MyHolder) holder), "upArrow");
+                        }
+                    });
                 }
-                return true;//TODO : check this
-            }
-        });
+            });
+
+            ((MyHolder) holder).downArrow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fireStorePosts.document(post.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Log.v("Log83", "down arrow onDataChanged");
+                            validateVoting(documentSnapshot, post, ((MyHolder) holder), "downArrow");
+                        }
+                    });
+
+                }
+            });
+
+            ((MyHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, PostInDetailsActivity.class);
+                    intent.putExtra("content", post.getContent());
+                    intent.putExtra("date", post.getDate());
+                    intent.putExtra("name", post.getWriter());
+                    intent.putExtra("image", post.getImage());
+                    intent.putExtra("postWriterUid", post.getWriterUid());
+                    if (post.getId() != null)
+                        intent.putExtra("id", post.getId());
+                    context.startActivity(intent);
+                }
+            });
+
+            ((MyHolder) holder).cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+                    //TODO : change this way
+                    if (post.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
+                        boolean admin = false;
+                        if (localCurrentUserEmail.equals(adminEmail))
+                            admin = true;
+
+                        showActionsDialog(post.getId(), ((MyHolder) holder), post.getContent(), post.getEmail(), admin, position); //TODO :  search why I need to add one
+                    }
+                    return true;//TODO : check this
+                }
+            });
+        } else if (holder instanceof LoadingViewHolder) {
+            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+            loadingViewHolder.progressBar.setIndeterminate(true);
+        }
     }
 
     @Override
     public int getItemCount() {
-
-        int arr = 0;
-
-        try {
-            if (list.size() == 0) {
-                arr = 0;
-            } else {
-                arr = list.size();
-            }
-        } catch (Exception e) {
-        }
-
-        return arr;
-
+        return list == null ? 0 : list.size();
     }
 
     private void showActionsDialog(final String id, final MyHolder holder, final String content, final String email, final boolean admin, final int position) {
@@ -190,6 +212,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
+                            homeFragment.loadData();
+
                             if (admin && !email.equals(adminEmail)) {
                                 composeEmail("تم حذف منشورك", "تم حذف منشورك " + "\"" + content + "\"", email);
                             }
@@ -330,12 +354,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         }
     }
 
-    /*private class LoadingViewHolder extends RecyclerView.ViewHolder {
+    private class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
         public LoadingViewHolder(View view) {
             super(view);
-            progressBar = (ProgressBar) view.findViewById(R.id.pro);
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar1);
         }
-    }*/
+    }
 }

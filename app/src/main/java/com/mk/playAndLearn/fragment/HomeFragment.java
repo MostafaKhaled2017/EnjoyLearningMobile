@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
+import com.mk.playAndLearn.utils.OnLoadMoreListener;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.lang.reflect.Field;
@@ -105,7 +106,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
-                presenter.startAsynkTask(currentSubject);
+                loadData();
             }
 
             @Override
@@ -132,6 +133,10 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
         return myView;
 
+    }
+
+    public void loadData() {
+        presenter.startAsynkTask(currentSubject);
     }
 
 
@@ -189,10 +194,9 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
                         String commentText = inputComment.getText().toString().trim();
                         if (TextUtils.isEmpty(commentText)) {
                             inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
-                        }
-                        else if(currentSubject.equals("اختر المادة")) {
+                        } else if (currentSubject.equals("اختر المادة")) {
                             Toast.makeText(getActivity(), "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
-                        }else {
+                        } else {
                             presenter.addPost(commentText, currentSubject);
                             dialogInterface.dismiss();
                         }
@@ -257,7 +261,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     @Override
     public void showProgressBar() {
-        if(progressBar.getVisibility() != View.VISIBLE) {
+        if (progressBar.getVisibility() != View.VISIBLE) {
             progressBar.setVisibility(View.VISIBLE);
         }
     }
@@ -266,15 +270,18 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     public void retryConnection() {
         noInternetConnectionText.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        presenter.startAsynkTask(currentSubject);
+        loadData();
     }
 
     @Override
-    public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new PostsAdapter(list, getActivity());
+    public void startRecyclerAdapter(final ArrayList list) {
         RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        recyclerAdapter = new PostsAdapter(recyclerView, list, getActivity(), this);
+
         recyclerView.setAdapter(recyclerAdapter);
     }
 
@@ -292,8 +299,12 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     @Override
     public void notifyAdapter() {
-        recyclerView.removeAllViews();
         recyclerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setOnScrollListener(RecyclerView.OnScrollListener onScrollListener) {
+        recyclerView.addOnScrollListener(onScrollListener);
     }
 
     @Override
@@ -301,7 +312,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         hideProgressBar();
         noPostsText.setVisibility(android.view.View.GONE);
         noInternetConnectionText.setVisibility(android.view.View.GONE);
-
     }
 
     @Override

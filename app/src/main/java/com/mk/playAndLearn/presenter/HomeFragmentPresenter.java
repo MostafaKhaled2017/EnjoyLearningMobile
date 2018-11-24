@@ -5,7 +5,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.AbsListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,8 +48,16 @@ public class HomeFragmentPresenter {
     Post post;
     View view;
     Context context;
+    DocumentSnapshot lastVisible;
+    int lastPosition;
     ArrayList<Post> postsList = new ArrayList();
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+
+    int limit = 5;
+    Query firstQuery;
+    private boolean isScrolling = false;
+    private boolean isLastItemReached = false;
+
 
     ChildEventListener postsEventListener;
 
@@ -140,55 +151,109 @@ public class HomeFragmentPresenter {
                 view.notifyAdapter();
             }
         });
-
     }
 
     public void getPosts(final String currentSubject) {
+        postsList = new ArrayList<>();
         view.startRecyclerAdapter(postsList);
         view.showProgressBar();
         view.hideNoPostsText();
-        if (!postsList.isEmpty()) {//TODO : check if we need to create new objects instead of using clear
-            postsList.clear();
-            view.notifyAdapter();
-        }
+        view.notifyAdapter();
 
-        EventListener postsSnapshotListener = new EventListener<QuerySnapshot>() {
+        OnCompleteListener postsListener = new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("TAG, listen:error", e);
-                    return;
-                }
-
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    DocumentSnapshot postDocument = dc.getDocument();
-                    switch (dc.getType()) {
-                        case ADDED:
-                            getPostData(postDocument);
-                            break;
-                        case MODIFIED:
-                            Log.d("TAG", "Modified city: " + dc.getDocument().getData());
-                            break;
-                        case REMOVED:
-                            startAsynkTask(currentSubject);//TODO : think about removeing the child from the list only                            break;
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        getPostData(document);
                     }
-                }
 
-                if (postsList.size() == 0) {
-                    view.onNoPostsExists();
-                }
-                else {
-                    view.onDataFound();
-                }
+                    if (postsList.size() == 0) {
+                        view.onNoPostsExists();
+                    } else {
+                        view.onDataFound();
+                    }
 
+                    if(task.getResult().size() > 0 ) {
+                        lastVisible = task.getResult().getDocuments().get(task.getResult().size() - 1);
+                        lastPosition = task.getResult().size() - 1;
+                    }
+
+
+                    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                isScrolling = true;
+                            }
+                        }
+
+                        @Override
+                        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+
+                            LinearLayoutManager linearLayoutManager = ((LinearLayoutManager) recyclerView.getLayoutManager());
+                            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+                            int visibleItemCount = linearLayoutManager.getChildCount();
+                            int totalItemCount = linearLayoutManager.getItemCount();
+
+                            if (isScrolling && (firstVisibleItemPosition + visibleItemCount == totalItemCount) && !isLastItemReached) {
+                                isScrolling = false;
+
+                                OnCompleteListener secondQueryCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> t) {
+                                        if (t.isSuccessful()) {
+                                            for (DocumentSnapshot d : t.getResult()) {
+                                                getPostData(d);
+                                            }
+                                            view.notifyAdapter();
+
+                                            if(t.getResult().size() > 0) {
+                                                lastVisible = t.getResult().getDocuments().get(t.getResult().size() - 1);
+                                                lastPosition += 5;
+                                            }
+
+                                            Log.v("LoggingPosition", "last position is : " + lastPosition);
+
+                                            if (t.getResult().size() < limit) {
+                                                isLastItemReached = true;
+                                            }
+                                        }
+                                    }
+                                };
+
+                                if (currentSubject.equals("كل المواد")) {
+                                    Query nextQuery = fireStorePosts.orderBy("date", Query.Direction.DESCENDING)
+                                            .startAfter(lastVisible).limit(limit);
+                                    nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
+                                }
+                                else {
+                                    Query nextQuery = fireStorePosts.whereEqualTo("subject", currentSubject)
+                                            .orderBy("date", Query.Direction.DESCENDING).startAfter(lastVisible).limit(limit);
+                                    nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
+                                }
+                            }
+                        }
+                    };
+                    view.setOnScrollListener(onScrollListener);
+
+
+                } else {
+                    Log.v("TAG", "failed");
+                }
             }
         };
 
-        if(currentSubject.equals("كل المواد"))
-            fireStorePosts.orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(postsSnapshotListener);
-        else
-            fireStorePosts.whereEqualTo("subject", currentSubject).orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(postsSnapshotListener);
+        if (currentSubject.equals("كل المواد")) {
+            firstQuery = fireStorePosts.orderBy("date", Query.Direction.DESCENDING).limit(limit);
+            firstQuery.get().addOnCompleteListener(postsListener);
+        } else {
+            firstQuery = fireStorePosts.whereEqualTo("subject", currentSubject)
+                    .orderBy("date", Query.Direction.DESCENDING).limit(limit);
+            firstQuery.get().addOnCompleteListener(postsListener);
+        }
     }
 
     private boolean existsInPostsList(String postId) {
@@ -259,6 +324,8 @@ public class HomeFragmentPresenter {
         void showProgressBar();
 
         void onNoPostsExists();
+
+        void setOnScrollListener(RecyclerView.OnScrollListener onScrollListener);
 
     }
 }

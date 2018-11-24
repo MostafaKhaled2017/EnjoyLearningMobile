@@ -112,6 +112,7 @@ public class LearnFragmentPresenter {
 
                 if (lessonsList.size() == 0) {
                     view.showNoLessonsTextView();
+                    view.hideProgressBar();
                 } else {
                     view.onDataFound();
                 }

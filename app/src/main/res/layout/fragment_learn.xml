@@ -52,7 +52,7 @@
         android:textSize="@dimen/nothing_text_size"
         android:textColor="@color/writingColor"
         android:layout_centerInParent="true"
-        android:text="لا يوجد مقالات لهذه المادة"
+        android:text="لا يوجد مواضيع لهذه المادة"
         android:visibility="invisible"/>
 
 

@@ -12,7 +12,7 @@
     <string name="ad_mob_test_id">ca-app-pub-1283544791526621/5955878039</string>
 
     <!-- either live or debug -->
-    <string name="ad_mob_used_id">ca-app-pub-1283544791526621/5955878039</string>
+    <string name="ad_mob_used_id">ca-app-pub-1283544791526621~9315704399</string>
 
     <string-array name="subjects_array">
         <item>لغة عربية</item>

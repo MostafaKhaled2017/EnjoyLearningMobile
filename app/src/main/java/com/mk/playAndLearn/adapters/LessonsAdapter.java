@@ -40,8 +40,6 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
         final Lesson lesson = list.get(position);
         if (lesson.getTitle() != null)
             holder.title.setText(lesson.getTitle());
-        if(lesson.getWriterName() != null)
-            holder.writerName.append(lesson.getWriterName());
             
         holder.lessonTitleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,13 +72,13 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView title, writerName;
+        TextView title, date;
         RelativeLayout lessonTitleLayout;
 
         MyHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.lessonTitle);
-            writerName = itemView.findViewById(R.id.writerName);
+            date = itemView.findViewById(R.id.date);
             lessonTitleLayout = itemView.findViewById(R.id.lessonTitleView);
         }
     }
