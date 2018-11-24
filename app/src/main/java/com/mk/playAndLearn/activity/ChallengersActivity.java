@@ -95,6 +95,7 @@ public class ChallengersActivity extends AppCompatActivity {
                 startAsynkTask();
             }
         });
+        noInternetConnectionText.setText("لا يوجد اتصال بالانترنت");
 
         startAsynkTask();
     }

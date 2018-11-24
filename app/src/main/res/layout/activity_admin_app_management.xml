@@ -46,7 +46,7 @@
             android:layout_marginTop="40dp"
             android:onClick="challengesAndUsersMonitoring"
             android:padding="10dp"
-            android:text="التحديات والمستخدمين" />
+            android:text="التحديات" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/generalChallengeManagement"
@@ -96,6 +96,18 @@
             android:padding="10dp"
             android:text="حذف التحديات القديمة"/>
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/countUsersButton"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/deleteOldChallenges"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="countUsers"
+            android:visibility="gone"
+            android:padding="10dp"
+            android:text="عدد المستخدمين"/>
 
     </RelativeLayout>
 </ScrollView>

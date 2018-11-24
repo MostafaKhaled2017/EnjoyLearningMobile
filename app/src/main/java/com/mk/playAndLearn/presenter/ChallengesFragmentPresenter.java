@@ -6,10 +6,6 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -17,14 +13,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.Challenge;
-import com.mk.playAndLearn.model.Question;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -151,7 +145,7 @@ public class ChallengesFragmentPresenter {
             currentPlayer = 1;
             challengerName = player2Name;
             challengerImage = player2Image;
-            challenge.setSecondChallengerUid(player2Uid);//second means that it is not the player who starts the challenge
+            challenge.setOpponentUid(player2Uid);//second means that it is not the player who starts the challenge
             if (tag.equals("onChildAdded")) {
                 player1childrenCount++;
             }
@@ -159,13 +153,13 @@ public class ChallengesFragmentPresenter {
             currentPlayer = 2;
             challengerName = player1Name;
             challengerImage = player1Image;
-            challenge.setSecondChallengerUid(player1Uid);//second means that it is not the player who starts the challenge
+            challenge.setOpponentUid(player1Uid);//second means that it is not the player who starts the challenge
             if (tag.equals("onChildAdded")) {
                 player2childrenCount++;
             }
         }
         challenge.setCurrentPlayer(currentPlayer);
-        challenge.setChallengerName(challengerName);
+        challenge.setOpponentName(challengerName);
         challenge.setDate(challengeDate);
         challenge.setImage(challengerImage);
         challenge.setSubject(challengeSubject);

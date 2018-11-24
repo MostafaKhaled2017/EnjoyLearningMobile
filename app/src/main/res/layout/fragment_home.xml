@@ -63,7 +63,6 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
         app:backgroundTint="@color/color1"

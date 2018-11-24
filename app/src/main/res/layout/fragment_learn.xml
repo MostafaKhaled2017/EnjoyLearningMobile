@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/color3"
     tools:context="com.mk.playAndLearn.fragment.LearnFragment">
     <include layout="@layout/no_internet_connection_text"/>
@@ -51,6 +52,19 @@
         android:textSize="@dimen/nothing_text_size"
         android:textColor="@color/writingColor"
         android:layout_centerInParent="true"
-        android:text="لا يوجد دروس لهذه المادة"
+        android:text="لا يوجد مقالات لهذه المادة"
         android:visibility="invisible"/>
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        app:backgroundTint="@color/color1"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@color/white" />
+
 </RelativeLayout>

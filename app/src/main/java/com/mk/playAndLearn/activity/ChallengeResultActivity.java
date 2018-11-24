@@ -14,6 +14,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +43,7 @@ import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
+import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
 
 public class ChallengeResultActivity extends AppCompatActivity {
     //TODO : think about removing challenge result activity but think well before determine what to do in this
@@ -57,6 +62,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
     public SharedPreferences pref; // 0 - for private mode
 
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,19 @@ public class ChallengeResultActivity extends AppCompatActivity {
         challengeResultTv = findViewById(R.id.challengeResultText);
 
         localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        MobileAds.initialize(this, getString(R.string.ad_mob_used_id));
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.ad_mob_used_id));
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                mInterstitialAd.show();//TODO : check this
+            }
+        });
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -230,7 +249,6 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 });
             } else {
                 if (player1Score > player2Score) {
-                    Log.v("debugPoints3", "listener1 called");
                     player1Reference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -246,12 +264,11 @@ public class ChallengeResultActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Log.v("debugPoints3", "listener1 called");
                     player2Reference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             long points = (long) dataSnapshot.child("points").getValue();
-                            usersReference.child(player2Uid).child("points").setValue(points + 3);
+                            usersReference.child(player2Uid).child("points").setValue(points + wonChallengePoints);
 
                             //usersReference.removeEventListener(this);
                         }

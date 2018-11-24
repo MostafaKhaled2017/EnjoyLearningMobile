@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -199,9 +200,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 return true;
             case R.id.bestStudents:
                 startActivity(new Intent(MainActivity.this, BestStudentsActivity.class));
-                return true;
-            case R.id.addLesson:
-                startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
                 return true;
             /*case R.id.myAccount:
                 //showHelp();

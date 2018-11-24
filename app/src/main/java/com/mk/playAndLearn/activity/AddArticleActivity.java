@@ -23,21 +23,24 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 
-public class AddLessonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class AddArticleActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
     //TODO : push to the database who is the user who writes the lesson or the post and push it by a primary data
     //TODO : make a page where the student can see his note on every lesson and think about changing the idea for that the student writes his notes on the lesson but I on't prefer that I prefer make adding lesson adds a lot of XPs
@@ -54,7 +57,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_lesson);
+        setContentView(R.layout.activity_add_article);
         Toolbar toolbar = findViewById(R.id.toolbarInAddLesson);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -94,7 +97,7 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
         }
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.subjects_array_for_upload, android.R.layout.simple_spinner_item);
+                R.array.subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -115,14 +118,20 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                 String content = etContent.getText().toString();
                 String title = etTitle.getText().toString();
                 if (TextUtils.isEmpty(content) || TextUtils.isEmpty(title)) {
-                    Toast.makeText(AddLessonActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddArticleActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
                 }
                 else if(currentSubject.equals("اختر المادة")) {
-                    Toast.makeText(AddLessonActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الدرس", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddArticleActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الموضوع", Toast.LENGTH_SHORT).show();
                 }else
                 {
                     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+                    Date today = new Date();
+                    final DateClass dateClass = new DateClass();
+                    format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+                    dateClass.setDate(today);
 
                     userName = pref.getString("currentUserName","غير معروف");
                     map = new HashMap<>();
@@ -133,31 +142,37 @@ public class AddLessonActivity extends AppCompatActivity implements AdapterView.
                     map.put("writerName", userName);
                     map.put("writerEmail", localCurrentUserEmail);
                     map.put("writerUid", localCurrentUserUid);
-                    map.put("reviewed", false);
-                    //TODO : add icon to the dialog
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddLessonActivity.this);
+                    map.put("type", "موضوع");
+                    map.put("date", dateClass.getDate());
+                    map.put("reviewed", false);//TODO :remove this
+
+                    Toast.makeText(AddArticleActivity.this, "جارى رفع الموضوع", Toast.LENGTH_SHORT).show();
+                    fireStoreLessons.add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Toast.makeText(AddArticleActivity.this, "تم رفع الموضوع بنجاح", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(AddArticleActivity.this, "لم يتم رفع الموضوع برجاء التأكد من الإتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                            Log.v("AddArticleActivity", "exception is : " + e);
+                        }
+                    });
+
+                /*   //TODO : add icon to the dialog
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddArticleActivity.this);
                     alertDialog.setTitle("تنبيه هام!!");
                     alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطالب برفع ملخصه عن الدرس أو يقوم المدرسون بكتابة ملخصاتهم عن الدرس ممنوع نقل الدروس من الكتب الخارجية أو استخدام ملخصات لأي مدرس إلا بعد أخذ موافقته");
                     alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(AddLessonActivity.this, "جارى رفع الدرس", Toast.LENGTH_SHORT).show();
-                            fireStoreLessons.document(currentSubject).collection(currentSubject).add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(AddLessonActivity.this, "لم يتم رفع الدرس برجاء التأكد من الإتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+
                         }
                     });
                     alertDialog.create();
-                    alertDialog.show();
+                    alertDialog.show();*/
                 }
             }
         });

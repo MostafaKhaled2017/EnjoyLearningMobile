@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,25 +12,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
-import com.mk.playAndLearn.activity.QuestionActivity;
-import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Challenge;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
@@ -65,8 +60,8 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
     @Override
     public void onBindViewHolder(ChallengesAdapter.MyHolder holder, int position) {
         final Challenge challenge = list.get(position);
-        if (challenge.getChallengerName() != null)
-            holder.challengerName.setText(challenge.getChallengerName());
+        if (challenge.getOpponentName() != null)
+            holder.challengerName.setText(challenge.getOpponentName().trim());
         //TODO : think about changing the text below
         if (challenge.getState().equals(uncompletedChallengeText)) {
             String stateText;
@@ -136,7 +131,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             Intent intent = new Intent(context, ChallengeStartActivity.class);
                             intent.putExtra("challengeId", challenge.getId());
                             intent.putExtra("currentChallenger", 2);
-                            intent.putExtra("uid", challenge.getSecondChallengerUid());//second means that he isn't the current user
+                            intent.putExtra("uid", challenge.getOpponentUid());//second means that he isn't the current user
                             intent.putExtra("questionsList", challenge.getQuestionsList());
                             intent.putExtra("subject", challenge.getSubject());
                             context.startActivity(intent);
@@ -145,9 +140,65 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                     dialog.setPositiveButton("رفض", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
                             fireStoreChallenges.document(challenge.getId()).update("player2score", 0);
                             fireStoreChallenges.document(challenge.getId()).update("state", refusedChallengeText);
+                        }
+                    });
+
+
+                    dialog.create();
+
+                    dialog.show();
+                }
+            });
+        }
+        if (challenge.getState().equals(completedChallengeText)) {
+            holder.challengeView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO : adjust this dialog content
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                    dialog.setTitle("تحدى جديد");
+                    dialog.setMessage("هل تريد إعادة تحدى هذا الطالب؟");
+                    dialog.setNegativeButton("نعم", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            final Intent intent = new Intent(context, ChallengeStartActivity.class);
+
+                            intent.putExtra("uid", challenge.getOpponentUid());
+                            intent.putExtra("subject", challenge.getSubject());
+
+                            usersReference.child(challenge.getOpponentUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String secondPlayerPoints = "";
+
+                                    String secondPlayerName = (String) dataSnapshot.child("userName").getValue();
+                                    String secondPlayerImage = (String) dataSnapshot.child("userImage").getValue();
+                                    String secondPlayerEmail = (String) dataSnapshot.child("userEmail").getValue();
+                                    if (dataSnapshot.child("points").getValue() != null)
+                                        secondPlayerPoints = dataSnapshot.child("points").getValue().toString();
+
+                                    intent.putExtra("name", secondPlayerName);
+                                    intent.putExtra("image", secondPlayerImage);
+                                    intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
+                                    intent.putExtra("email", secondPlayerEmail);
+                                    context.startActivity(intent);
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+                    });
+                    dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
                         }
                     });
 

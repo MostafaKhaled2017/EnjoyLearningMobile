@@ -2,6 +2,7 @@ package com.mk.playAndLearn.presenter;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
@@ -12,7 +13,10 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.Lesson;
@@ -26,7 +30,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
+import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 
 public class LearnFragmentPresenter {
     private Lesson lesson;
@@ -73,42 +79,49 @@ public class LearnFragmentPresenter {
         asyncTask.execute();
     }
 
-    public void getLessons(String currentSubject) {
+    public void getLessons(final String currentSubject) {
         view.startRecyclerAdapter(lessonsList);
+        view.onLoadingData();
         if (!lessonsList.isEmpty()) {
             lessonsList.clear();
             view.notifyAdapter();
         }
-        view.onLoadingData();
 
-        //TODO : order lessons by position
-        fireStoreLessons.document(currentSubject).collection(currentSubject).whereEqualTo("reviewed", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        EventListener lessonsSnapshotListener = new EventListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot documentSnapshots) {
-                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                    Log.d(TAG, document.getId() + " => " + document.getData());
-                    view.onDataFound();
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG, listen:error", e);
+                    return;
+                }
 
-                    lesson = new Lesson();
-                    String title = document.getString("title");
-                    String content = document.getString("content");
-                    String position = document.getString("position");
-                    String lessonId = document.getId();
-                    lesson.setLessonId(lessonId);
-                    lesson.setTitle(title);
-                    lesson.setContent(content);
-                    lesson.setPosition(position);
-                    if (!existsInLessonsList(lessonId)) {
-                        lessonsList.add(lesson);
-                        view.notifyAdapter();
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    DocumentSnapshot lessonDocument = dc.getDocument();
+                    switch (dc.getType()) {
+                        case ADDED:
+                            getLessonData(lessonDocument);
+                            break;
+                        case MODIFIED:
+                            Log.d("TAG", "Modified city: " + dc.getDocument().getData());
+                            break;
+                        case REMOVED:
+                            startAsynkTask(currentSubject);//TODO : think about removeing the child from the list only                            break;
                     }
                 }
-                view.hideProgressBar();
+
                 if (lessonsList.size() == 0) {
                     view.showNoLessonsTextView();
+                } else {
+                    view.onDataFound();
                 }
-                }
-        });
+            }
+        };
+
+        if(currentSubject.equals("كل المواد"))
+            fireStoreLessons.orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(lessonsSnapshotListener);
+        else
+            fireStoreLessons.whereEqualTo("subject", currentSubject).orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(lessonsSnapshotListener);
     }
 
     private boolean existsInLessonsList(String lessonId) {
@@ -118,6 +131,26 @@ public class LearnFragmentPresenter {
             }
         }
         return false;
+    }
+
+    private void getLessonData(DocumentSnapshot lessonDocument) {
+        lesson = new Lesson();
+        String title = lessonDocument.getString("title");
+        String content = lessonDocument.getString("content");
+        String writerName = lessonDocument.getString("writerName");
+        String position = lessonDocument.getString("position");
+        String lessonId = lessonDocument.getId();
+
+        lesson.setLessonId(lessonId);
+        lesson.setTitle(title);
+        lesson.setContent(content);
+        lesson.setPosition(position);
+        lesson.setWriterName(writerName);
+
+        if (!existsInLessonsList(lessonId)) {
+            lessonsList.add(lesson);
+            view.notifyAdapter();
+        }
     }
 
     public interface View {

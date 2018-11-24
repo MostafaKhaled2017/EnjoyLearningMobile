@@ -63,6 +63,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     ArrayList arabicQuestionsList = new ArrayList(), languagesQuestionsList = new ArrayList();
     final String arabicSchoolType = "arabic";
     final String languagesSchoolType = "languages";
+    int studentsCount = 0,  allUsersCount = 0;
 
     CollectionReference arabicQuestionsReference, languagesQuestionsReference;
 
@@ -233,7 +234,46 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void doQuery(View view) {
 
-        usersReference.orderByChild("online").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+/*
+        final String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
+        Toast.makeText(this, " subjects array size :" + subjectsArray.length, Toast.LENGTH_SHORT).show();
+        for (String subject : subjectsArray) {
+            fireStoreLessons.document(subject).collection(subject).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                        Lesson lesson = new Lesson();
+
+                        String title = document.getString("title");
+                        String content = document.getString("content");
+                        String writerName = document.getString("writerName");
+                        String writerEmail = document.getString("writerEmail");
+                        String writerUid = document.getString("writerUid");
+                        String subject = document.getString("subject");
+                        String position = document.getString("position");
+
+                        lesson.setSubject(subject);
+                        lesson.setWriterEmail(writerEmail);
+                        lesson.setWriterName(writerName);
+                        lesson.setWriterUid(writerUid);
+                        lesson.setPosition(position);
+                        lesson.setTitle(title);
+                        lesson.setContent(content);
+
+                        lessonsList.add(lesson);
+
+                        fireStoreLessons.add(lesson);
+                    }
+
+                    Toast.makeText(AdminAppManagementActivity.this, "done . list size is : "
+                            + lessonsList.size(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+*/
+
+       /* usersReference.orderByChild("online").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
@@ -245,7 +285,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         //start editing in database
 
@@ -282,28 +322,6 @@ public class AdminAppManagementActivity extends AppCompatActivity {
             });
 */
 
-
-/*
-        fireStorePosts.document("posts").collection("posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot documentSnapshots) {
-                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("upVotedUsers", "users: ");
-                    updates.put("downVotedUsers", "users: ");
-
-                    DocumentReference currentPost = fireStorePosts.document("posts").collection("posts").document(document.getId());
-                    currentPost.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(AdminAppManagementActivity.this, "انتهت التحديثات بنجاح", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                }
-            }
-        });
-*/
 
 
 
@@ -430,6 +448,34 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         });
     }
 
+    public void countUsers(View view) {
+        studentsCount = 0;
+        allUsersCount = 0;
+
+        usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    String userType = "";
+                    if(dataSnapshot1.child("userType").getValue() != null) {
+                        userType = dataSnapshot1.child("userType").getValue().toString();
+                    }
+
+                    allUsersCount ++;
+
+                    if (userType.equals("طالب")) {
+                        studentsCount++;
+                    }
+                }
+                Toast.makeText(AdminAppManagementActivity.this, "عدد الطلاب : " + allUsersCount + " (" + studentsCount + ")", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
 
 

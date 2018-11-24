@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,7 +68,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
             holder.content.setText(post.getContent());
         if (post.getDate() != null) {
             if (post.isPosted() || !post.getWriterUid().equals(localCurrentUserUid)) {
-                holder.date.setText(post.getDate());
+                holder.date.setText(post.getDate().trim());
             } else {
                 holder.date.setText("جارى النشر...");
             }
@@ -76,7 +77,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         holder.votes.setText(post.getVotes() + "");
 
         if (post.getWriter() != null && !post.getWriter().equals(""))
-            holder.name.setText(post.getWriter());
+            holder.name.setText(post.getWriter().trim());
         if (post.getImage() != null && !post.getImage().equals(""))
             Picasso.with(context).load(post.getImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
       /*  if (!post.isPosted()) {
@@ -248,24 +249,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         alertDialogBuilderUserInput.show();
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
-        TextView content, date, name, votes;
-        ImageView imageView, upArrow, downArrow;
-        CardView cardView;
-
-
-        MyHolder(View itemView) {
-            super(itemView);
-            content = itemView.findViewById(R.id.postContentInDetails);
-            date = itemView.findViewById(R.id.postDateInDetails);
-            name = itemView.findViewById(R.id.postUserNameInDetails);
-            votes = itemView.findViewById(R.id.numberOfVotes);
-            imageView = itemView.findViewById(R.id.postImageInDetails);
-            upArrow = itemView.findViewById(R.id.upArrow);
-            downArrow = itemView.findViewById(R.id.downArrow);
-            cardView = itemView.findViewById(R.id.card_view_of_posts);
-        }
-    }
 
     public void composeEmail(String subject, String body, String email) {
         Intent i = new Intent(Intent.ACTION_SEND);
@@ -328,4 +311,31 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyHolder> {
         }
     }
 
+    class MyHolder extends RecyclerView.ViewHolder {
+        TextView content, date, name, votes;
+        ImageView imageView, upArrow, downArrow;
+        CardView cardView;
+
+
+        MyHolder(View itemView) {
+            super(itemView);
+            content = itemView.findViewById(R.id.postContentInDetails);
+            date = itemView.findViewById(R.id.postDateInDetails);
+            name = itemView.findViewById(R.id.postUserNameInDetails);
+            votes = itemView.findViewById(R.id.numberOfVotes);
+            imageView = itemView.findViewById(R.id.postImageInDetails);
+            upArrow = itemView.findViewById(R.id.upArrow);
+            downArrow = itemView.findViewById(R.id.downArrow);
+            cardView = itemView.findViewById(R.id.card_view_of_posts);
+        }
+    }
+
+    /*private class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
+        public LoadingViewHolder(View view) {
+            super(view);
+            progressBar = (ProgressBar) view.findViewById(R.id.pro);
+        }
+    }*/
 }

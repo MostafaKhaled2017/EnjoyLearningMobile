@@ -8,13 +8,24 @@
     android:background="@color/white">
     <!-- TODO : think about making the title in the center of the View -->
     <TextView
-        android:layout_centerHorizontal="true"
         android:id="@+id/lessonTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="21sp"
+        android:textSize="22sp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="2dp"
         android:layout_alignParentRight="true"
         android:textColor="@color/writingColor"
-        android:layout_margin="5dp"
+        android:textStyle="bold"
         android:text="عنوان الدرس"/>
+    <TextView
+        android:id="@+id/writerName"
+        android:layout_below="@id/lessonTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/writingColor"
+        android:layout_margin="2dp"
+        android:text="الكاتب : "/>
 </RelativeLayout>

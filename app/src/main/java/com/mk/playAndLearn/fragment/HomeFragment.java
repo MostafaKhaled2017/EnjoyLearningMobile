@@ -2,18 +2,14 @@ package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,29 +22,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
-import com.mk.playAndLearn.model.Post;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
@@ -117,7 +97,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array_for_home_fragment, android.R.layout.simple_spinner_item);
+                R.array.subjects_array_with_all_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
@@ -143,13 +123,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         });
 
         FloatingActionButton fab = myView.findViewById(R.id.fab);
-//        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
-//        //copy it in a new one
-//        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
-//        //set the color filter, you can use also Mode.SRC_ATOP
-//        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-//        //set it to your fab button initialized before
-//        fab.setImageDrawable(willBeWhite);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,7 +159,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array_for_home_fragment_dialog, android.R.layout.simple_spinner_item);
+                R.array.subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 

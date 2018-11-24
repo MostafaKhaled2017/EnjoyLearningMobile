@@ -60,7 +60,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
     public void onBindViewHolder(final CommentsAdapter.MyHolder holder, final int position) {
         final Comment comment = list.get(position);
         if (comment.getUserName() != null)
-            holder.name.setText(comment.getUserName());
+            holder.name.setText(comment.getUserName().trim());
         if (comment.getContent() != null)
             holder.content.setText(comment.getContent());
         if (comment.getDate() != null) {

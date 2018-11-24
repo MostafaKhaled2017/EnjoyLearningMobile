@@ -38,7 +38,7 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
 
-    TextView studentsNumberTv, allChallengesNumber, todayChallengesNumberTv, yesterdayChallengesNumberTv;
+    TextView allChallengesNumber, todayChallengesNumberTv, yesterdayChallengesNumberTv;
 
     ListView todayAdminChallengesListView;
     int studentsCount = 0, allChallengesCount = 0, todayChallengesCount = 0, yesterdayChallengesCount = 0
@@ -60,36 +60,10 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("بيانات التحديات والمستخدمين");
 
-        studentsNumberTv = findViewById(R.id.studentsNumberTv);
         allChallengesNumber = findViewById(R.id.allChallengesNumberTv);
         todayChallengesNumberTv = findViewById(R.id.todayChallengesNumberTv);
         yesterdayChallengesNumberTv = findViewById(R.id.yesterdayChallengesNumberTv);
         todayAdminChallengesListView = findViewById(R.id.todayAdminChallengesListView);
-
-        usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String userType = "";
-                    if(dataSnapshot1.child("userType").getValue() != null) {
-                        userType = dataSnapshot1.child("userType").getValue().toString();
-                    }
-
-                    allUsersCount ++;
-
-                    if (userType.equals("طالب")) {
-                        studentsCount++;
-                    }
-                }
-                studentsNumberTv.append(allUsersCount + " (" + studentsCount + ")");
-                Toast.makeText(AdminChallengesAndUsersMonitoring.this, "انتهى عد الطلاب", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         fireStoreChallenges.orderBy("date", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

@@ -73,7 +73,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.mk.playAndLearn.activity.AddLessonActivity"
+            android:name="com.mk.playAndLearn.activity.AddArticleActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.AddQuestionActivity"
@@ -110,6 +110,10 @@
             android:name="com.mk.playAndLearn.service.NotificationsService"
             android:enabled="true"
             android:exported="true" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/ad_mob_used_id"/>
 
         <activity
             android:name="com.mk.playAndLearn.activity.AdminAppManagementActivity"

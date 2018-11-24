@@ -1,10 +1,8 @@
 package com.mk.playAndLearn.model;
 
-import java.util.ArrayList;
-
 public class Challenge {
     String image, secondChallengerImage;
-    String challengerName, secondChallengerName;
+    String opponentName, opponentImage;
     String date;
     String state;
     String subject;
@@ -28,24 +26,24 @@ public class Challenge {
         this.secondChallengerImage = secondChallengerImage;
     }
 
-    public String getSecondChallengerName() {
-        return secondChallengerName;
+    public String getOpponentImage() {
+        return opponentImage;
     }
 
-    public void setSecondChallengerName(String secondChallengerName) {
-        this.secondChallengerName = secondChallengerName;
+    public void setOpponentImage(String opponentImage) {
+        this.opponentImage = opponentImage;
     }
 
-    public String getSecondChallengerUid() {
+    public String getOpponentUid() {
 
-        return secondChallengerUid;
+        return opponentUid;
     }
 
-    public void setSecondChallengerUid(String secondChallengerUid) {
-        this.secondChallengerUid = secondChallengerUid;
+    public void setOpponentUid(String secondChallengerUid) {
+        this.opponentUid = secondChallengerUid;
     }
 
-    String secondChallengerUid;
+    String opponentUid;
     String score;
     long player1Score, player2Score;
 
@@ -108,12 +106,12 @@ public class Challenge {
         this.image = image;
     }
 
-    public String getChallengerName() {
-        return challengerName;
+    public String getOpponentName() {
+        return opponentName;
     }
 
-    public void setChallengerName(String challengerName) {
-        this.challengerName = challengerName;
+    public void setOpponentName(String opponentName) {
+        this.opponentName = opponentName;
     }
 
     public String getDate() {

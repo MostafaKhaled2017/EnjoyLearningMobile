@@ -39,14 +39,17 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
     public void onBindViewHolder(MyHolder holder, int position) {
         final Lesson lesson = list.get(position);
         if (lesson.getTitle() != null)
-            holder.arabicPosition.setText(lesson.getTitle());
+            holder.title.setText(lesson.getTitle());
+        if(lesson.getWriterName() != null)
+            holder.writerName.append(lesson.getWriterName());
+            
         holder.lessonTitleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent lessonIntent = new Intent(context, LessonContentActivity.class);
                 lessonIntent.putExtra("lessonTitle", lesson.getTitle());
                 lessonIntent.putExtra("lessonContent", lesson.getContent());
-                ((Activity) context).startActivity(lessonIntent);
+                context.startActivity(lessonIntent);
             }
         });
 
@@ -71,12 +74,13 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView arabicPosition;
+        TextView title, writerName;
         RelativeLayout lessonTitleLayout;
 
         MyHolder(View itemView) {
             super(itemView);
-            arabicPosition = itemView.findViewById(R.id.lessonTitle);
+            title = itemView.findViewById(R.id.lessonTitle);
+            writerName = itemView.findViewById(R.id.writerName);
             lessonTitleLayout = itemView.findViewById(R.id.lessonTitleView);
         }
     }

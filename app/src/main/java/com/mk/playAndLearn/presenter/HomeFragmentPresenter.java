@@ -88,6 +88,7 @@ public class HomeFragmentPresenter {
         final DateClass dateClass = new DateClass();
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         dateClass.setDate(today);
+
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
         String currentUserName = pref.getString("currentUserName", "غير معروف");
         String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
@@ -151,7 +152,7 @@ public class HomeFragmentPresenter {
             view.notifyAdapter();
         }
 
-        fireStorePosts.orderBy("date", Query.Direction.ASCENDING).addSnapshotListener((new EventListener<QuerySnapshot>() {
+        EventListener postsSnapshotListener = new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -164,15 +165,7 @@ public class HomeFragmentPresenter {
                     DocumentSnapshot postDocument = dc.getDocument();
                     switch (dc.getType()) {
                         case ADDED:
-                            view.onDataFound();
-                            String subject = postDocument.getString("subject");
-                            if (currentSubject.equals("كل المواد")) {
-                                getPostData(postDocument);
-                            } else {
-                                if (subject != null && subject.equals(currentSubject)) {
-                                    getPostData(postDocument);
-                                }
-                            }
+                            getPostData(postDocument);
                             break;
                         case MODIFIED:
                             Log.d("TAG", "Modified city: " + dc.getDocument().getData());
@@ -185,10 +178,17 @@ public class HomeFragmentPresenter {
                 if (postsList.size() == 0) {
                     view.onNoPostsExists();
                 }
-                view.hideProgressBar();
+                else {
+                    view.onDataFound();
+                }
 
             }
-        }));
+        };
+
+        if(currentSubject.equals("كل المواد"))
+            fireStorePosts.orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(postsSnapshotListener);
+        else
+            fireStorePosts.whereEqualTo("subject", currentSubject).orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(postsSnapshotListener);
     }
 
     private boolean existsInPostsList(String postId) {
@@ -234,7 +234,7 @@ public class HomeFragmentPresenter {
         post.setVotes(votes);
 
         if (!existsInPostsList(postId)) {
-            postsList.add(0, post);
+            postsList.add(post);
             view.notifyAdapter();
         }
     }

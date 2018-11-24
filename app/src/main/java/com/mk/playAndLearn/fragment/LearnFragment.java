@@ -1,15 +1,13 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,23 +17,13 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.AddArticleActivity;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
-import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.presenter.LearnFragmentPresenter;
-import com.mk.playAndLearn.utils.GridAutofitLayoutManager;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
@@ -90,6 +78,14 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
             }
         });
 
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), AddArticleActivity.class));
+            }
+        });
+
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
             popup.setAccessible(true);
@@ -105,7 +101,7 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
         }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array, android.R.layout.simple_spinner_item);
+                R.array.subjects_array_with_all_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -124,6 +120,15 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
         });
 
         return view;
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            presenter.startAsynkTask(currentSubject);
+        }
     }
 
     @Override

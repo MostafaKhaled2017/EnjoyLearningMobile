@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="إضافة درس"
+                android:text="إضافة موضوع"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_in_toolbar" />
         </android.support.v7.widget.Toolbar>
@@ -36,11 +36,12 @@
         android:layout_below="@id/appBar"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
-        android:hint="عنوان الدرس"
+        android:hint="العنوان"
         android:inputType="textCapSentences" />
 
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/unitOrderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,6 +52,7 @@
         android:textSize="@dimen/generalTextSize" />
 
     <Spinner
+        android:visibility="gone"
         android:id="@+id/unitOrderSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,6 +62,7 @@
         android:scrollbars="none" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/lessonOrderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,6 +74,7 @@
         android:textSize="@dimen/generalTextSize" />
 
     <Spinner
+        android:visibility="gone"
         android:id="@+id/lessonOrderSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,7 +110,7 @@
         android:layout_below="@id/subjectsSpinner"
         android:layout_marginTop="15dp"
         android:gravity="top"
-        android:hint="الدرس"
+        android:hint="الموضوع"
         android:inputType="textMultiLine|textCapSentences" />
 
     <Button
@@ -116,7 +120,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
         android:background="@drawable/rectangle_button"
-        android:text="رفع الدرس"
+        android:text="رفع الموضوع"
         android:textColor="@color/white" />
 
 

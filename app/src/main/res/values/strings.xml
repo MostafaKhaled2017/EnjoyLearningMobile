@@ -7,6 +7,13 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="facebook_app_id">260719771249980</string>
     <string name="fb_login_protocol_scheme">fb260719771249980</string>
+
+    <string name="ad_mob_live_id">ca-app-pub-1283544791526621~9315704399</string>
+    <string name="ad_mob_test_id">ca-app-pub-1283544791526621/5955878039</string>
+
+    <!-- either live or debug -->
+    <string name="ad_mob_used_id">ca-app-pub-1283544791526621/5955878039</string>
+
     <string-array name="subjects_array">
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -22,7 +29,8 @@
         <item>Chemistry</item>
         <item>Biology</item>
     </string-array>
-    <string-array name="subjects_array_for_home_fragment">
+
+    <string-array name="subjects_array_with_all_subjects_item">
         <item>كل المواد</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -37,11 +45,12 @@
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
-        <item>موضوعات أخرى</item>
+        <item>موضوعات عامة</item>
     </string-array>
 
-    <string-array name="subjects_array_for_home_fragment_dialog">
+    <string-array name="subjects_array_with_general_subjects_item">
         <item>اختر المادة</item>
+        <item>موضوعات عامة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
         <item>جغرافيا</item>
@@ -55,8 +64,8 @@
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
-        <item>موضوعات أخرى</item>
     </string-array>
+
     <string-array name="subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
@@ -80,6 +89,7 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+
     <string-array name="lessons_array">
         <item>1</item>
         <item>2</item>
@@ -87,11 +97,13 @@
         <item>4</item>
         <item>5</item>
     </string-array>
+
     <string-array name="user_types_array">
         <item>طالب</item>
         <item>معلم</item>
         <item>آخرون</item>
     </string-array>
+
     <string-array name="user_school_types_array">
         <item>عربى</item>
         <item>لغات</item>

@@ -97,8 +97,9 @@ public class AdminLessonContentActivity extends AppCompatActivity {
            usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    writerType = dataSnapshot.child("userType").getValue().toString();
-                    writerTypeTv.append(writerType);
+                    writerType = (String) dataSnapshot.child("userType").getValue();
+                    if(writerType != null)
+                        writerTypeTv.append(writerType);
                     usersListener = this;
                 }
 
