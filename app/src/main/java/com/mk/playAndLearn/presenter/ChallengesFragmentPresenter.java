@@ -166,7 +166,9 @@ public class ChallengesFragmentPresenter {
         challenge.setState(challengeState);
         challenge.setId(challengeId);
         challenge.setPlayer1Score(player1Score);
+        challenge.setPlayer1Uid(player1Uid);
         challenge.setPlayer2Score(player2Score);
+        challenge.setPlayer2Uid(player2Uid);
         challenge.setQuestionsList(challengeQuestionsList);
         String score;
         if (currentPlayer == 1) {

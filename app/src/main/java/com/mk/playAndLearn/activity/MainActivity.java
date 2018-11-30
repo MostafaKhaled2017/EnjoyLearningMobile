@@ -337,14 +337,14 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     //The user state becomes online when it opens the app and it changes to offline when the app stop from the background
     //TODO : think about making the user offline when it exit the app from the back arrow by uncommenting the code in onBackPressed
     public void checkIfUserConnected(){
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+       /* FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String localCurrentUserUid = currentUser.getUid();
         DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
         String key = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online").getKey();
         if(key != null) {//TODO : check this
             currentUserPresenceReference.setValue(true);
             currentUserPresenceReference.onDisconnect().setValue(false);
-        }
+        }*/
     }
 
     @Override

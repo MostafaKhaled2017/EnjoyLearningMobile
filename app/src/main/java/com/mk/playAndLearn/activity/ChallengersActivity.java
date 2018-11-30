@@ -35,6 +35,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Firebase.lastActiveUsersReference;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class ChallengersActivity extends AppCompatActivity {
@@ -43,7 +44,7 @@ public class ChallengersActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     RecyclerView recyclerView;
-    String subject;
+    String subject, userId;
     TextView noInternetConnectionText, noStudentsTv;
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -91,6 +92,7 @@ public class ChallengersActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 noInternetConnectionText.setVisibility(View.GONE);
+                noStudentsTv.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 startAsynkTask();
             }
@@ -139,73 +141,9 @@ public class ChallengersActivity extends AppCompatActivity {
         if (!list.isEmpty()) {
             list.clear();
         }
-        usersReference.orderByChild("online").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+        usersReference.orderByChild("lastChallengeDate").limitToLast(15).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //TODO : think about the conditions here
-                String points = "";
-                String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    User user = new User();
-                    boolean admin = false, online = false;
-                    String name = (String) dataSnapshot1.child("userName").getValue();
-                    String email = (String) dataSnapshot1.child("userEmail").getValue();
-                    String uid = dataSnapshot1.getKey();
-                    if (dataSnapshot1.child("points").getValue() != null)
-                        points = dataSnapshot1.child("points").getValue().toString();
-                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
-                    String userType = (String) dataSnapshot1.child("userType").getValue();
-
-                    if (dataSnapshot1.child("admin").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("admin").getValue();
-
-                    if (dataSnapshot1.child("online").getValue() != null) {
-                        online = (boolean) dataSnapshot1.child("online").getValue();
-
-                        /*if(online)
-                            onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
-                    }
-                    int pointsInt;
-                    try{
-                        pointsInt = Integer.parseInt(points);
-                    }catch (Exception ex){
-                        Log.v("pointsIntException", "exception is : " + ex);
-                        pointsInt = 0;
-                    }
-
-                    if (name != null && userType.equals("طالب") && !uid.equals(localCurrentUserUid)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
-                        user.setAdmin(admin);
-                        user.setOnline(online);
-                        user.setName(name);
-                        user.setPoints(pointsInt);
-                        user.setImageUrl(imageUrl);
-                        user.setEmail(email);
-                        user.setUid(uid);
-                        list.add(user);
-                    }
-                }
-
-                for (int i = 0; i < list.size(); i++) {//TODO : it is better to store indexes of online users only after found the problem happens and fix it
-                    User user = list.get(i);
-
-                    // Toast.makeText(ChallengersActivity.this, "userName removed is : " + user.getName(), Toast.LENGTH_SHORT).show();
-                    if (user.isOnline()) {
-                        list.remove(user);
-                        list.add(0, user);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-
-        usersReference.orderByChild("points").limitToLast(10).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
                 String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     User user = new User();
@@ -219,26 +157,15 @@ public class ChallengersActivity extends AppCompatActivity {
                     String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
                     String userType = (String) dataSnapshot1.child("userType").getValue();
 
-                    if (dataSnapshot1.child("admin").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("admin").getValue();
-
-                    if (dataSnapshot1.child("online").getValue() != null) {
-                        online = (boolean) dataSnapshot1.child("online").getValue();
-
-                        /*if(online)
-                            onlineUsersIndexes.add(list.size());//TODO : try to add this after solving its problem*/
-                    }
-
                     int pointsInt;
-                    try{
+                    try {
                         pointsInt = Integer.parseInt(points);
-                    }
-                    catch (Exception ex){
+                    } catch (Exception ex) {
                         Log.v("pointsException", "exception is : " + ex);
                         pointsInt = 0;
                     }
-
-                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid) && !online && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)
+                            && dataSnapshot1.child("lastChallengeDate").getValue() != null && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                         user.setAdmin(admin);
                         user.setOnline(online);
                         user.setName(name);
@@ -246,11 +173,11 @@ public class ChallengersActivity extends AppCompatActivity {
                         user.setImageUrl(imageUrl);
                         user.setEmail(email);
                         user.setUid(uid);
-                        list.add(user);
+                        list.add(0, user);
                     }
-                    recyclerAdapter.notifyDataSetChanged();
                 }
 
+                recyclerAdapter.notifyDataSetChanged();
 
                 if (progressBar.getVisibility() != View.GONE)
                     progressBar.setVisibility(View.GONE);
@@ -261,8 +188,10 @@ public class ChallengersActivity extends AppCompatActivity {
 
                 if (list.size() == 0) {
                     noStudentsTv.setVisibility(View.VISIBLE);
+                    noInternetConnectionText.setVisibility(View.GONE);
                 } else {
                     noStudentsTv.setVisibility(View.INVISIBLE);
+                    noInternetConnectionText.setVisibility(View.GONE);
                 }
             }
 
@@ -273,3 +202,4 @@ public class ChallengersActivity extends AppCompatActivity {
         });
     }
 }
+

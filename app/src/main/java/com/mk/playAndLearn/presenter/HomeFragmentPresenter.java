@@ -50,6 +50,7 @@ public class HomeFragmentPresenter {
     Context context;
     DocumentSnapshot lastVisible;
     int lastPosition;
+    Map<String, Object> map;
     ArrayList<Post> postsList = new ArrayList();
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
@@ -108,7 +109,7 @@ public class HomeFragmentPresenter {
 
         Log.v("sharedPreference", " current userName is : " + currentUserName);
 
-        Map<String, Object> map = new HashMap<>();
+        map = new HashMap<>();
         map.put("content", postText.trim());
         map.put("writerName", currentUserName);
         map.put("subject", subject);
@@ -118,7 +119,7 @@ public class HomeFragmentPresenter {
         map.put("upVotedUsers", "users: ");
         map.put("downVotedUsers", "users: ");
         map.put("posted", false);
-        map.put("votes", 0);
+        map.put("votes", (long)0);
         map.put("date", dateClass.getDate());
 
        /* final String postId = postsReference.push().getKey();
@@ -127,6 +128,8 @@ public class HomeFragmentPresenter {
         final DocumentReference currentPostRef = fireStorePosts.document();
         final String postId = currentPostRef.getId();//TODO : check this
 
+        //Add the newly added post to the list
+        getPostDataFromMap(map, postId);
 
         currentPostRef.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -147,6 +150,7 @@ public class HomeFragmentPresenter {
                 }
 
                 Log.v("Logging", "current posts reference is : " + currentPostRef);
+
                 view.showToast("تم إضافة المنشور بنجاح");
                 view.notifyAdapter();
             }
@@ -300,6 +304,45 @@ public class HomeFragmentPresenter {
 
         if (!existsInPostsList(postId)) {
             postsList.add(post);
+            view.notifyAdapter();
+        }
+    }
+
+void getPostDataFromMap(Map<String, Object> map, String id) {
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        String postDate;
+
+        post = new Post();
+        String postContent = (String) map.get("content");
+        postDate = format.format(map.get("date"));
+        String postWriter = (String) map.get("writerName");
+        String postWriterEmail = (String) map.get("email");
+        String postImage = (String) map.get("image");
+        String postId = id;
+        long votes = (long) map.get("votes");
+        String writerUid = (String) map.get("writerUid");
+        boolean posted = (boolean) map.get("posted");
+
+        post.setPosted(posted);
+        if (writerUid != null)
+            post.setWriterUid(writerUid);
+        if (postWriterEmail != null)
+            post.setEmail(postWriterEmail);
+        if (postContent != null)
+            post.setContent(postContent);
+        if (postDate != null)
+            post.setDate(postDate);
+        if (postWriter != null)
+            post.setWriter(postWriter);
+        if (postImage != null)
+            post.setImage(postImage);
+        if (postId != null)
+            post.setId(postId);
+
+        post.setVotes(votes);
+
+        if (!existsInPostsList(postId)) {
+            postsList.add(0, post); //To be added at the begging
             view.notifyAdapter();
         }
     }

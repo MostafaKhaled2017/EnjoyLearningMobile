@@ -20,9 +20,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.model.Challenge;
+import com.mk.playAndLearn.utils.DateClass;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
@@ -142,6 +147,16 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                         public void onClick(DialogInterface dialogInterface, int i) {
                             fireStoreChallenges.document(challenge.getId()).update("player2score", 0);
                             fireStoreChallenges.document(challenge.getId()).update("state", refusedChallengeText);
+
+                            //TODO : check that this date is correct
+                            Date today = new Date();
+                            DateClass dateClass = new DateClass();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+                            format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+                            dateClass.setDate(today);
+
+                            usersReference.child(challenge.getPlayer2Uid()).child("lastChallengeDate").setValue(dateClass.getDate());
                         }
                     });
 

@@ -40,7 +40,9 @@ import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
+import static com.mk.playAndLearn.utils.Firebase.database;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
+import static com.mk.playAndLearn.utils.Firebase.lastActiveUsersReference;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
@@ -63,6 +65,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
     public SharedPreferences pref; // 0 - for private mode
 
     private InterstitialAd mInterstitialAd;
+    DateClass dateClass = new DateClass();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +85,10 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
         localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        MobileAds.initialize(this, getString(R.string.ad_mob_used_id));
+      /*  MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
 
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.ad_mob_used_id));
+        mInterstitialAd.setAdUnitId(getString(R.string.ad_mob_test_id));
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         mInterstitialAd.setAdListener(new AdListener(){
             @Override
@@ -93,7 +96,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 super.onAdLoaded();
                 mInterstitialAd.show();//TODO : check this
             }
-        });
+        });*/
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -122,12 +125,11 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 challengeId = intent.getStringExtra("challengeId");
             }
         }
-        DateClass dateClass = new DateClass();
+        //TODO : check that this date is correct
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
-        String date = format.format(today);
         dateClass.setDate(today);
 
         if (!isGeneralChallenge) {
@@ -157,6 +159,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 map.put("state", "لم يكتمل"); // TODO : edit this
 
                 fireStoreChallenges.document().set(map);
+
+                usersReference.child(localCurrentUserUid).child("lastChallengeDate").setValue(dateClass.getDate());
             } else if (currentChallenger == 2) {
                 fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -167,8 +171,9 @@ public class ChallengeResultActivity extends AppCompatActivity {
                             fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
                             fireStoreChallenges.document(challengeId).update("state", "اكتمل");
 
-                            addPoints(documentSnapshot);
+                            usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
 
+                            addPoints(documentSnapshot);
                         }
                     }
                 });

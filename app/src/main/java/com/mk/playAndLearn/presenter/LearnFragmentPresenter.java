@@ -138,15 +138,21 @@ public class LearnFragmentPresenter {
         lesson = new Lesson();
         String title = lessonDocument.getString("title");
         String content = lessonDocument.getString("content");
+        String subject = lessonDocument.getString("subject");
         String writerName = lessonDocument.getString("writerName");
+        String writerEmail = lessonDocument.getString("writerEmail");
+        String writerUid = lessonDocument.getString("writerUid");
         String position = lessonDocument.getString("position");
         String lessonId = lessonDocument.getId();
 
         lesson.setLessonId(lessonId);
         lesson.setTitle(title);
         lesson.setContent(content);
+        lesson.setSubject(subject);
         lesson.setPosition(position);
         lesson.setWriterName(writerName);
+        lesson.setWriterEmail(writerEmail);
+        lesson.setWriterUid(writerUid);
 
         if (!existsInLessonsList(lessonId)) {
             lessonsList.add(lesson);

@@ -2,7 +2,27 @@ package com.mk.playAndLearn.model;
 
 public class Challenge {
     String image, secondChallengerImage;
-    String opponentName, opponentImage;
+    String opponentName;
+    String opponentImage;
+    String player1Uid;
+
+    public String getPlayer1Uid() {
+        return player1Uid;
+    }
+
+    public void setPlayer1Uid(String player1Uid) {
+        this.player1Uid = player1Uid;
+    }
+
+    public String getPlayer2Uid() {
+        return player2Uid;
+    }
+
+    public void setPlayer2Uid(String player2Uid) {
+        this.player2Uid = player2Uid;
+    }
+
+    String player2Uid;
     String date;
     String state;
     String subject;

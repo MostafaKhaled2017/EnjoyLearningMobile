@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,11 +39,12 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
 public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
 
-    TextView allChallengesNumber, todayChallengesNumberTv, yesterdayChallengesNumberTv;
+    TextView todayChallengesNumberTv;
 
     ListView todayAdminChallengesListView;
-    int studentsCount = 0, allChallengesCount = 0, todayChallengesCount = 0, yesterdayChallengesCount = 0
-    ,todayCompletedChallengesCount = 0, yesterdayCompletedChallengesCount = 0, allUsersCount = 0;
+    DateClass dateClass = new DateClass();
+    SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+    int studentsCount = 0, allChallengesCount = 0, todayChallengesCount = 0, yesterdayChallengesCount = 0, todayCompletedChallengesCount = 0, yesterdayCompletedChallengesCount = 0, allUsersCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +62,18 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("بيانات التحديات والمستخدمين");
 
-        allChallengesNumber = findViewById(R.id.allChallengesNumberTv);
         todayChallengesNumberTv = findViewById(R.id.todayChallengesNumberTv);
-        yesterdayChallengesNumberTv = findViewById(R.id.yesterdayChallengesNumberTv);
         todayAdminChallengesListView = findViewById(R.id.todayAdminChallengesListView);
 
-        fireStoreChallenges.orderBy("date", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        Date today = new Date();
+        formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        String todayDate = formatDate.format(today);
+
+        dateClass.setDate(today);
+
+        fireStoreChallenges.whereEqualTo("date", dateClass.getDate()).orderBy("date", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot documentSnapshots) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE,-1);
-                Date today = new Date();
-                SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
-                formatDate.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-                String todayDate = formatDate.format(today);
-                String yesterdayDate = formatDate.format(calendar.getTime());
-
                 SimpleDateFormat fullDateFormatter = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
                 fullDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
@@ -93,30 +91,18 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
                     String subject = documentSnapshot.getString("subject");
                     String player2Name = documentSnapshot.getString("player2Name");
 
-                    allChallengesCount++;
-
-                    if (challengeDate.equals(todayDate)) {
                         todayChallengesCount++;
 
-                        if(challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))
-                            todayCompletedChallengesCount ++;
+                        if (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText))
+                            todayCompletedChallengesCount++;
 
                         todayChallengesList.add(" - " + player1Name + "(" + player1Score + ")"
                                 + " ضد " + player2Name + "(" + player2Score + ")"
-                                + " الساعة " + fullDate.substring(10) + " في مادة " + adjustSubject(subject)+ " (" + challengeState + ")" + "\n\n");
-                    }
-                    if(challengeDate.equals(yesterdayDate)){
-                        yesterdayChallengesCount ++;
+                                + " الساعة " + fullDate.substring(10) + " في مادة " + adjustSubject(subject) + " (" + challengeState + ")" + "\n\n");
 
-                        if(challengeState.equals(completedChallengeText))
-                            yesterdayCompletedChallengesCount ++;
-
-                    }
                 }
 
-                allChallengesNumber.append(allChallengesCount + "");
                 todayChallengesNumberTv.append(todayChallengesCount + " (" + todayCompletedChallengesCount + ")");
-                yesterdayChallengesNumberTv.append(yesterdayChallengesCount + " (" + yesterdayCompletedChallengesCount + ")");
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(AdminChallengesAndUsersMonitoring.this,
                         android.R.layout.simple_list_item_1, android.R.id.text1, todayChallengesList);
                 todayAdminChallengesListView.setAdapter(adapter);

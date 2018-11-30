@@ -10,28 +10,6 @@
     <include layout="@layout/appbar"/>
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/allChallengesNumberTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/writingColor"
-        android:textStyle="bold"
-        android:textSize="@dimen/medium_text_size"
-        android:text="عدد التحديات كاملا : "
-        android:layout_margin="5dp"
-        android:layout_gravity="right"/>
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/yesterdayChallengesNumberTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/writingColor"
-        android:textStyle="bold"
-        android:textSize="@dimen/medium_text_size"
-        android:text="عدد تحديات الأمس : "
-        android:layout_margin="5dp"
-        android:layout_gravity="right"/>
-
-    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/todayChallengesNumberTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

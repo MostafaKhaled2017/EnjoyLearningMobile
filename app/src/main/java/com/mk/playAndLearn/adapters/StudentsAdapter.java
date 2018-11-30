@@ -124,12 +124,12 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             holder.isAdminImageView.setVisibility(View.GONE);
         }
 
-        if(user.isOnline()){
+     /*   if(user.isOnline()){
             holder.isOnlineImageView.setVisibility(View.VISIBLE);
         }
         else {
             holder.isOnlineImageView.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override

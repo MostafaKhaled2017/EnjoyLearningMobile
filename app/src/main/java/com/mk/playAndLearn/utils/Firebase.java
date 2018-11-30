@@ -14,6 +14,7 @@ public class Firebase {
     public static FirebaseUser currentUser = auth.getCurrentUser();
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference usersReference = database.getReference("users");
+    public static DatabaseReference lastActiveUsersReference = database.getReference("lastActiveUsers");
 
 
     public static FirebaseFirestore fireStore = FirebaseFirestore.getInstance();

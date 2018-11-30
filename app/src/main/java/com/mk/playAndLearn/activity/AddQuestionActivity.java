@@ -115,8 +115,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
 
         ButterKnife.bind(this);
 
-
-
         Intent intent = getIntent();
         if(intent.getExtras() != null && intent.getExtras().containsKey("question")){
             question = (Question) intent.getSerializableExtra("question");
@@ -151,7 +149,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
 
             oldQuestion = true;
             oldQuestionId = question.getQuestionId();
-
         }
 
     }
@@ -223,7 +220,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             String schoolType = getSchoolType(currentSubject);
 
             if(!oldQuestion) {
-
                 map = new HashMap<>();
                 map.put("writerName", currentUserName);
                 map.put("writerEmail", localCurrentUserEmail);
@@ -263,7 +259,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
 
             }
             else {
-               DocumentReference currentQuestionReference =  fireStoreQuestions.document(question.getSubject()).collection(question.getSubject()).document(question.getQuestionId());
+               DocumentReference currentQuestionReference =  fireStoreQuestions.document(question.getSubject()).collection(question.getSubject()).document(oldQuestionId);
 
                 batch.update(currentQuestionReference, "alQuestion", questionText);
                 batch.update(currentQuestionReference, "answer1", et1.trim());

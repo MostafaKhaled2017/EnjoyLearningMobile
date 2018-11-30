@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -23,11 +24,16 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Lesson;
+import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.DateClass;
 
 import java.lang.reflect.Field;
@@ -38,7 +44,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 
 public class AddArticleActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
@@ -49,6 +57,10 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
 
     Button addLessonButton;
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner;
+    Lesson lesson;
+    boolean oldLesson = false;
+    String oldLessonId;
+    WriteBatch batch;
 
     String currentSubject = "", currentUnitOrder = "", currentLessonOrder = "", userName = "", userEmail = "";
     Map<String, Object> map;
@@ -73,12 +85,14 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
         subjectsSpinner = findViewById(R.id.subjectsSpinner);
         unitOrderSpinner = findViewById(R.id.unitOrderSpinner);
         lessonOrderSpinner = findViewById(R.id.lessonOrderSpinner);
+        addLessonButton = findViewById(R.id.addLessonButton);
 
         subjectsSpinner.setOnItemSelectedListener(this);
         lessonOrderSpinner.setOnItemSelectedListener(this);
         unitOrderSpinner.setOnItemSelectedListener(this);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        batch = fireStore.batch();
 
         etContent.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -91,8 +105,7 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
 
             // Set popupWindow height to 850px
             popupWindow.setHeight(850);
-        }
-        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
         }
 
@@ -111,68 +124,90 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
         lessonsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         lessonOrderSpinner.setAdapter(lessonsAdapter);
 
-        addLessonButton = findViewById(R.id.addLessonButton);
+        Intent intent = getIntent();
+        if (intent.getExtras() != null && intent.getExtras().containsKey("lesson")) {
+            addLessonButton.setText("تحديث الموضوع");
+
+            lesson = (Lesson) intent.getSerializableExtra("lesson");
+            etTitle.setText(lesson.getTitle());
+            etContent.setText(lesson.getContent());
+
+            String subject = lesson.getSubject(); //the value you want the position for
+
+            ArrayAdapter myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
+
+            int spinnerPosition = myAdap.getPosition(subject);
+
+            subjectsSpinner.setSelection(spinnerPosition);
+
+            oldLesson = true;
+            oldLessonId = lesson.getLessonId();
+        }
+
         addLessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String content = etContent.getText().toString();
-                String title = etTitle.getText().toString();
-                if (TextUtils.isEmpty(content) || TextUtils.isEmpty(title)) {
-                    Toast.makeText(AddArticleActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
+                String content = etContent.getText().toString().trim();
+                String title = etTitle.getText().toString().trim();
+                if (!oldLesson) {
+                    if (TextUtils.isEmpty(content) || TextUtils.isEmpty(title)) {
+                        Toast.makeText(AddArticleActivity.this, "من فضلك ادخل كل البيانات المطلوبة", Toast.LENGTH_SHORT).show();
+                    } else if (currentSubject.equals("اختر المادة")) {
+                        Toast.makeText(AddArticleActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الموضوع", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+                        Date today = new Date();
+                        final DateClass dateClass = new DateClass();
+                        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+                        dateClass.setDate(today);
+
+                        userName = pref.getString("currentUserName", "غير معروف");
+                        map = new HashMap<>();
+                        map.put("title", title);
+                        map.put("content", content);
+                        map.put("position", currentUnitOrder + currentLessonOrder);
+                        map.put("subject", currentSubject);
+                        map.put("writerName", userName);
+                        map.put("writerEmail", localCurrentUserEmail);
+                        map.put("writerUid", localCurrentUserUid);
+                        map.put("type", "موضوع");
+                        map.put("date", dateClass.getDate());
+                        map.put("reviewed", false);//TODO :remove this
+
+                        Toast.makeText(AddArticleActivity.this, "جارى رفع الموضوع", Toast.LENGTH_SHORT).show();
+                        fireStoreLessons.add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Toast.makeText(AddArticleActivity.this, "تم رفع الموضوع بنجاح", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(AddArticleActivity.this, "لم يتم رفع الموضوع برجاء التأكد من الإتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                                Log.v("AddArticleActivity", "exception is : " + e);
+                            }
+                        });
+                    }
                 }
-                else if(currentSubject.equals("اختر المادة")) {
-                    Toast.makeText(AddArticleActivity.this, "من فضلك اختر المادة التي ينتمى لها هذا الموضوع", Toast.LENGTH_SHORT).show();
-                }else
-                {
-                    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
-                    Date today = new Date();
-                    final DateClass dateClass = new DateClass();
-                    format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-                    dateClass.setDate(today);
+                else {
+                    DocumentReference currentLessonReference =  fireStoreLessons.document(oldLessonId);
 
-                    userName = pref.getString("currentUserName","غير معروف");
-                    map = new HashMap<>();
-                    map.put("title", title);
-                    map.put("content", content);
-                    map.put("position", currentUnitOrder + currentLessonOrder);
-                    map.put("subject", currentSubject);
-                    map.put("writerName", userName);
-                    map.put("writerEmail", localCurrentUserEmail);
-                    map.put("writerUid", localCurrentUserUid);
-                    map.put("type", "موضوع");
-                    map.put("date", dateClass.getDate());
-                    map.put("reviewed", false);//TODO :remove this
+                    batch.update(currentLessonReference, "title", title);
+                    batch.update(currentLessonReference, "content", content);
+                    batch.update(currentLessonReference, "subject", currentSubject);
 
-                    Toast.makeText(AddArticleActivity.this, "جارى رفع الموضوع", Toast.LENGTH_SHORT).show();
-                    fireStoreLessons.add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(AddArticleActivity.this, "تم رفع الموضوع بنجاح", Toast.LENGTH_SHORT).show();
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(AddArticleActivity.this, "تم تحديث الموضوع بنجاح", Toast.LENGTH_SHORT).show();
                             finish();
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddArticleActivity.this, "لم يتم رفع الموضوع برجاء التأكد من الإتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                            Log.v("AddArticleActivity", "exception is : " + e);
-                        }
                     });
-
-                /*   //TODO : add icon to the dialog
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddArticleActivity.this);
-                    alertDialog.setTitle("تنبيه هام!!");
-                    alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطالب برفع ملخصه عن الدرس أو يقوم المدرسون بكتابة ملخصاتهم عن الدرس ممنوع نقل الدروس من الكتب الخارجية أو استخدام ملخصات لأي مدرس إلا بعد أخذ موافقته");
-                    alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-                    alertDialog.create();
-                    alertDialog.show();*/
                 }
             }
         });

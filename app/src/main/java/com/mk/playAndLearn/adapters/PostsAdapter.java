@@ -212,7 +212,9 @@ public class PostsAdapter extends RecyclerView.Adapter {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
-                            homeFragment.loadData();
+                            list.remove(position);
+                            notifyDataSetChanged();
+                           // homeFragment.loadData();
 
                             if (admin && !email.equals(adminEmail)) {
                                 composeEmail("تم حذف منشورك", "تم حذف منشورك " + "\"" + content + "\"", email);

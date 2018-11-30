@@ -46,7 +46,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
     RadioGroup rg1;
     Button skipQuestionButton;
     String correctAnswer, selection;
-    String writerType;
+    String writerType = "غير معروف";
     RadioButton r1, r2, r3, r4;
     Intent i;
     ProgressBar timerProgressBar;
@@ -76,7 +76,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         rg1 = findViewById(R.id.radioGroup);
         skipQuestionButton = findViewById(R.id.skipQuestionButton);
         answerTv = findViewById(R.id.answerTv);
-        writerTypeTv = findViewById(R.id.writerTypeTv);
+        writerTypeTv = findViewById(R.id.writerTypeTvInQuestions);
         tvQuestion = findViewById(R.id.questionText);
         r1 = findViewById(R.id.radio1);
         r2 = findViewById(R.id.radio2);
@@ -132,7 +132,10 @@ public class AdminQuestionActivity extends AppCompatActivity {
         usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                writerType = dataSnapshot.child("userType").getValue().toString();
+                writerType = (String) dataSnapshot.child("userType").getValue();
+                if(writerType == null)
+                    writerType = "غير معروف";
+
                 writerTypeTv.append(writerType);
             }
 
