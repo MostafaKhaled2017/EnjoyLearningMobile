@@ -201,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.bestStudents:
                 startActivity(new Intent(MainActivity.this, BestStudentsActivity.class));
                 return true;
+            case R.id.bestQuestionsUploaders:
+                startActivity(new Intent(MainActivity.this, BestQuestionsUploaders.class));
+                return true;
             /*case R.id.myAccount:
                 //showHelp();
                 return true;*/

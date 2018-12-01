@@ -60,7 +60,7 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("بيانات التحديات والمستخدمين");
+        toolbarTitle.setText("عدد تحديات اليوم");
 
         todayChallengesNumberTv = findViewById(R.id.todayChallengesNumberTv);
         todayAdminChallengesListView = findViewById(R.id.todayAdminChallengesListView);
@@ -71,12 +71,11 @@ public class AdminChallengesAndUsersMonitoring extends AppCompatActivity {
 
         dateClass.setDate(today);
 
-        fireStoreChallenges.whereEqualTo("date", dateClass.getDate()).orderBy("date", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        fireStoreChallenges.whereEqualTo("dayDate", todayDate).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot documentSnapshots) {
                 SimpleDateFormat fullDateFormatter = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
                 fullDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-
 
                 ArrayList<String> todayChallengesList = new ArrayList<>();
                 String challengeTime = "غير موجود";

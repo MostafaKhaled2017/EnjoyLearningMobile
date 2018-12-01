@@ -2,7 +2,18 @@ package com.mk.playAndLearn.model;
 
 public class User {
     String name, email, imageUrl, Uid;
-    int position = -1, points = -1;
+    int position = -1;
+    int points = -1;
+
+    public int getAcceptedQuestions() {
+        return acceptedQuestions;
+    }
+
+    public void setAcceptedQuestions(int acceptedQuestions) {
+        this.acceptedQuestions = acceptedQuestions;
+    }
+
+    int acceptedQuestions = -1;
     boolean admin = false;
 
     public boolean isOnline() {

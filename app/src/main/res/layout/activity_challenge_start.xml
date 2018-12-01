@@ -9,6 +9,19 @@
 
     <include layout="@layout/appbar"
         android:id="@+id/appBar"/>
+
+
+    <ProgressBar
+        android:id="@+id/horizontalProgressbarInChallengeStartActivity"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-17dp"
+        android:indeterminate="true"
+        android:layout_below="@id/appBar"
+        android:max="100"
+        android:visibility="invisible"/>
+
     <!-- TODO : ensure that the data appears here is correct-->
     <LinearLayout
         android:layout_below="@id/appBar"

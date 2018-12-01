@@ -85,7 +85,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
         localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-      /*  MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
+        MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
 
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.ad_mob_test_id));
@@ -96,7 +96,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 super.onAdLoaded();
                 mInterstitialAd.show();//TODO : check this
             }
-        });*/
+        });
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -127,8 +127,9 @@ public class ChallengeResultActivity extends AppCompatActivity {
         }
         //TODO : check that this date is correct
         Date today = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        String todayDate = format.format(today);
 
         dateClass.setDate(today);
 
@@ -152,6 +153,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 map.put("player1notified", localCurrentUserUid + "false");
                 map.put("player2notified", secondPlayerUid + "false");
                 map.put("date", dateClass.getDate());
+                map.put("dayDate", todayDate);
                 map.put("subject", subject);
                 map.put("questionsId", getQuestionsId());
                 map.put("player1AnswersBooleans", playerAnswersBooleansList.trim());

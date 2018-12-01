@@ -32,8 +32,12 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -220,6 +224,11 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
             String schoolType = getSchoolType(currentSubject);
 
             if(!oldQuestion) {
+                Date today = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+                format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+                String todayDate = format.format(today);
+
                 map = new HashMap<>();
                 map.put("writerName", currentUserName);
                 map.put("writerEmail", localCurrentUserEmail);
@@ -231,6 +240,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 map.put("answer2", et2.trim());
                 map.put("answer3", et3.trim());
                 map.put("answer4", et4.trim());
+                map.put("dayDate", todayDate);
                 map.put("reviewed", false);
                 map.put("challengeQuestion", false);
                 map.put("schoolType", schoolType);

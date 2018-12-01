@@ -1,5 +1,6 @@
 package com.mk.playAndLearn.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,29 +17,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.model.Question;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.zip.Inflater;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 
@@ -52,8 +50,11 @@ public class ChallengeStartActivity extends AppCompatActivity {
     SharedPreferences pref;
 
     String challengeQuestionsIds;
-    ArrayList list = new ArrayList<>(), chosenQuestionsList = new ArrayList<>();
+    ArrayList list = new ArrayList<>();
     String playerAnswersBooleansList = "", playerAnswersList = "";
+
+    Intent i;
+    Context context;
 
     String firstPlayerName, firstPlayerEmail, firstPlayerImage, firstPlayerUid;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
@@ -65,11 +66,15 @@ public class ChallengeStartActivity extends AppCompatActivity {
     ImageView player1Image, player2Image;
     TextView player1Name, player1Points, player2Name, player2Points;
     Button startChallengeButton;
+    ProgressBar horizontalProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge_start);
+
+        i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
+        context = this;
 
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
@@ -96,6 +101,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
         player2Image = findViewById(R.id.secondPlayerImage);
         player2Points = findViewById(R.id.secondPlayerPoints);
 
+        horizontalProgressBar = findViewById(R.id.horizontalProgressbarInChallengeStartActivity);
+
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             currentChallenger = intent.getIntExtra("currentChallenger", 1);
@@ -114,15 +121,13 @@ public class ChallengeStartActivity extends AppCompatActivity {
         }
         DatabaseReference usersReference = database.getReference("users");
         if (currentChallenger == 2) {
-            setQuestionsList();
-
             usersReference.child(secondPlayerUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     secondPlayerName = (String) dataSnapshot.child("userName").getValue();
                     secondPlayerImage = (String) dataSnapshot.child("userImage").getValue();
-                    if(dataSnapshot.child("points").getValue() != null)
+                    if (dataSnapshot.child("points").getValue() != null)
                         secondPlayerPoints = (long) dataSnapshot.child("points").getValue();
 
                     player2Name.setText(secondPlayerName);
@@ -142,18 +147,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
             player2Name.setText(secondPlayerName);
             Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).placeholder(R.drawable.picasso_placeholder).into(player2Image);
             player2Points.setText(secondPlayerPoints + "");
-
-            if (!list.isEmpty())
-                list.clear();
-            fireStoreQuestions.document(subject).collection(subject).whereEqualTo("reviewed", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot documentSnapshots) {
-                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                            addQuestionData(document);
-                    }
-                }
-            });
-
         }
 
         usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -182,7 +175,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //TODO : after adding the app to play store change challenge activities to fragment to be able to send data one time instead of sending it with intents multiple time
-                if (list.size() < 5 && currentChallenger == 1) {
+                /*if (list.size() < 5 && currentChallenger == 1) {
                     showDialog();
                 } else if (currentChallenger == 1 && list.size() >= 5) {
                     if (!chosenQuestionsList.isEmpty())
@@ -192,8 +185,12 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         Question question = (Question) list.get(i);
                         chosenQuestionsList.add(question);
                     }
-                }
-                Intent i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
+                }*/
+
+                Toast.makeText(ChallengeStartActivity.this, "جارى إعداد الأسئلة", Toast.LENGTH_SHORT).show();
+
+                i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
                 i.putExtra("currentPlayerAnswers", playerAnswersList);
                 i.putExtra("questionNo", 0);
@@ -201,6 +198,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
                 i.putExtra("subject", subject);
                 i.putExtra("currentChallenger", currentChallenger);
                 i.putExtra("isGeneralChallenge", false);
+                i.putParcelableArrayListExtra("questionList", list);
 
 
                 if (currentChallenger == 1) {
@@ -209,15 +207,41 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     i.putExtra("player2Image", secondPlayerImage);
                     i.putExtra("player2Points", secondPlayerPoints);
                     i.putExtra("player2Uid", secondPlayerUid);
-                    i.putParcelableArrayListExtra("questionList", chosenQuestionsList);
                 } else {
-                    i.putParcelableArrayListExtra("questionList", list);
                     i.putExtra("challengeId", challengeId);
                 }
 
-                if (chosenQuestionsList.size() >= 5 || list.size() >= 5) {
-                    startActivity(i);
-                    finish();
+                if (currentChallenger == 1) {
+                    horizontalProgressBar.setVisibility(View.VISIBLE);
+
+                    if (!list.isEmpty())
+                        list.clear();
+
+
+                    loadQuestionsForChallenger1();
+
+                } else if (currentChallenger == 2) {
+                    horizontalProgressBar.setVisibility(View.VISIBLE);
+
+                    if (!list.isEmpty())
+                        list.clear();
+
+                    //setQuestionsList
+                    String[] questionsIds = challengeQuestionsIds.split(" ");
+                    final int listSize = questionsIds.length;
+                    for (String questionId : questionsIds) {
+                        fireStoreQuestions.document(subject).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                addQuestionData(documentSnapshot);
+                                if (list.size() == listSize) {
+                                    context.startActivity(i);
+                                    horizontalProgressBar.setVisibility(View.INVISIBLE);
+                                    finish();
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -243,22 +267,8 @@ public class ChallengeStartActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void setQuestionsList(){
-        if(!list.isEmpty())
-            list.clear();
 
-        String[] questionsIds = challengeQuestionsIds.split(" ");
-        for(String questionId : questionsIds){
-            fireStoreQuestions.document(subject).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    addQuestionData(documentSnapshot);
-                }
-            });
-        }
-    }
-
-    public void addQuestionData(DocumentSnapshot document){
+    public void addQuestionData(DocumentSnapshot document) {
         Question question = new Question();
         String questionText = document.getString("alQuestion");
         String answer1 = document.getString("answer1");
@@ -279,6 +289,41 @@ public class ChallengeStartActivity extends AppCompatActivity {
         question.setReviewed(reviewed);
         question.setQuestionId(document.getId());
 
-        list.add(question);
+        if (list.size() < 5 && !existsInList(questionText))
+            list.add(question);
+    }
+
+    void loadQuestionsForChallenger1() {
+        String randomId = fireStoreQuestions.document().getId();
+
+        fireStoreQuestions.document(subject).collection(subject)
+                .whereEqualTo("reviewed", true)
+                .whereGreaterThan(FieldPath.documentId(), randomId)
+                .limit(1)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                    addQuestionData(document);
+                    if (list.size() < 5) {
+                        loadQuestionsForChallenger1();
+                    } else {
+                        context.startActivity(i);
+                        horizontalProgressBar.setVisibility(View.INVISIBLE);
+                        finish();
+                    }
+                }
+            }
+        });
+    }
+
+    boolean existsInList(String questionText) {
+        ArrayList<Question> localList = list;
+        for (Question q : localList) {
+            if (q.getAlQuestion().equals(questionText)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

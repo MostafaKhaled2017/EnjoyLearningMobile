@@ -129,6 +129,7 @@ public class ChallengersActivity extends AppCompatActivity {
                     getStudents();
                 } else {
                     progressBar.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     noInternetConnectionText.setVisibility(View.VISIBLE);
                 }
             }

@@ -139,7 +139,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         presenter.startAsynkTask(currentSubject);
     }
 
-
     public void showSpinnerDialog() {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());//TODO : check this
         android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_spinner, null);

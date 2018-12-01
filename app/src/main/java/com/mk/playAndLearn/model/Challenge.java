@@ -1,10 +1,23 @@
 package com.mk.playAndLearn.model;
 
-public class Challenge {
+import android.support.annotation.NonNull;
+
+import java.util.Date;
+
+public class Challenge implements Comparable<Challenge>{
     String image, secondChallengerImage;
     String opponentName;
     String opponentImage;
     String player1Uid;
+    Date timestamp;
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getPlayer1Uid() {
         return player1Uid;
@@ -156,6 +169,14 @@ public class Challenge {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    @Override
+    public int compareTo(@NonNull Challenge challenge) {
+        if (getTimestamp() == null || challenge.getTimestamp() == null)
+            return 0;
+
+        return getTimestamp().compareTo(challenge.getTimestamp());
     }
 
 

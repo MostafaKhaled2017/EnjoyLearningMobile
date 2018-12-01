@@ -112,7 +112,12 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
            }
 
         }
-        holder.points.setText(user.getPoints() + " XP");
+        if(TAG.equals("BestQuestionsUploadersActivity")){
+            holder.points.setText("عدد الأسئلة : " + user.getAcceptedQuestions());
+        }
+        else {
+            holder.points.setText(user.getPoints() + " XP");
+        }
         if (user.getName() != null)
             holder.name.setText(user.getName().trim());
         if (user.getImageUrl() != null)

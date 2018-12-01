@@ -13,12 +13,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.Challenge;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -61,8 +64,6 @@ public class ChallengesFragmentPresenter {
                 if ((boolean) o) {
                     recreatingLists();
 
-
-
                     EventListener generalSnapShotListener = new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -98,13 +99,23 @@ public class ChallengesFragmentPresenter {
                                 }
                             }
                             onInitialDataLoaded();
+
+                            Collections.sort(completedChallengesList);
+                            Collections.reverse(completedChallengesList);
+
+                            Collections.sort(uncompletedChallengesList);
+                            Collections.reverse(uncompletedChallengesList);
+
+                            view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData2");
+
                         }
                     };
 
+                    //TODO : find a way better than using limit in the queries
                     //this code gives data where current user is player 1
-                    fireStoreChallenges.whereEqualTo("player1Uid", localCurrentUserUid).orderBy("date", Query.Direction.ASCENDING).addSnapshotListener(generalSnapShotListener);
+                    fireStoreChallenges.whereEqualTo("player1Uid", localCurrentUserUid).orderBy("date", Query.Direction.DESCENDING).limit(15).addSnapshotListener(generalSnapShotListener);
                     //this code gives data where current user is player 2
-                    fireStoreChallenges.whereEqualTo("player2Uid", localCurrentUserUid).orderBy("date", Query.Direction.ASCENDING).addSnapshotListener(generalSnapShotListener);
+                    fireStoreChallenges.whereEqualTo("player2Uid", localCurrentUserUid).orderBy("date", Query.Direction.DESCENDING).limit(15).addSnapshotListener(generalSnapShotListener);
 
                 } else {
                     view.onNoInternetConnection();
@@ -116,15 +127,14 @@ public class ChallengesFragmentPresenter {
     }
 
     public String getChallengeData(DocumentSnapshot dataSnapshot, String tag) {
-        Log.v("ChallengesFragPresenter", "get challenge data called");
-        Log.v("ChallengesFragPresenter", "completedChallengesList : " + completedChallengesList.size()
-                + ", uncompletedChallengesList " + uncompletedChallengesList.size());
         view.startCompletedChallengesAdapter(completedChallengesList);
         view.startUnCompletedChallengesAdapter(uncompletedChallengesList);
 
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         challenge = new Challenge();
-        String challengeDate = format.format(dataSnapshot.get("date"));
+
+        Date timeStamp = (Date) dataSnapshot.get("date");
+        String challengeDate = format.format(timeStamp);
         String challengeSubject = dataSnapshot.getString("subject");
         String challengeState = dataSnapshot.getString("state");
         String challengeId = dataSnapshot.getId();
@@ -160,6 +170,7 @@ public class ChallengesFragmentPresenter {
         }
         challenge.setCurrentPlayer(currentPlayer);
         challenge.setOpponentName(challengerName);
+        challenge.setTimestamp(timeStamp);
         challenge.setDate(challengeDate);
         challenge.setImage(challengerImage);
         challenge.setSubject(challengeSubject);
@@ -182,24 +193,21 @@ public class ChallengesFragmentPresenter {
             if (!existsInCompletedChallengesList(dataSnapshot.getId())) {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
-                completedChallengesList.add(0,challenge);
-                view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData1");
+                completedChallengesList.add(challenge);
             }
         } else if (challenge.getState().equals(refusedChallengeText)) {
             Log.v("loggingC2", "value is " + !existsInCompletedChallengesList(challengeId));
             if (!existsInCompletedChallengesList(dataSnapshot.getId())) {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
-                completedChallengesList.add(0,challenge);
-                view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData3");
+                completedChallengesList.add(challenge);
             }
         } else if (challenge.getState().equals(uncompletedChallengeText)) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getId()));
             if (!existsInUncompletedChallengesList(challengeId)) {
                 Log.v("challengesDebug", "uncompletedListItemAdded");
                 view.showUncompletedChallengesTv();
-                uncompletedChallengesList.add(0, challenge);
-                view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData2");
+                uncompletedChallengesList.add(challenge);
             }
         }
 
