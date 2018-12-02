@@ -315,7 +315,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         r4.setChecked(false);
     }
 
-    public String getSchoolType(String subject){
+    public static String getSchoolType(String subject){
         if(subject.equals("فيزياء") || subject.equals("كيمياء")
                 || subject.equals("أحياء") || subject.equals("رياضيات")){
             return "arabic";

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.EventListener;
 
 import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.lastActiveUsersReference;
@@ -142,7 +143,8 @@ public class ChallengersActivity extends AppCompatActivity {
         if (!list.isEmpty()) {
             list.clear();
         }
-        usersReference.orderByChild("lastChallengeDate").limitToLast(15).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -157,6 +159,7 @@ public class ChallengersActivity extends AppCompatActivity {
                         points = dataSnapshot1.child("points").getValue().toString();
                     String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
                     String userType = (String) dataSnapshot1.child("userType").getValue();
+                    String userSchoolType = (String) dataSnapshot1.child("userSchoolType").getValue();
 
                     int pointsInt;
                     try {
@@ -165,6 +168,9 @@ public class ChallengersActivity extends AppCompatActivity {
                         Log.v("pointsException", "exception is : " + ex);
                         pointsInt = 0;
                     }
+
+                    String subjectSchoolType = AddQuestionActivity.getSchoolType(subject);
+
                     if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)
                             && dataSnapshot1.child("lastChallengeDate").getValue() != null && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
                         user.setAdmin(admin);
@@ -174,7 +180,14 @@ public class ChallengersActivity extends AppCompatActivity {
                         user.setImageUrl(imageUrl);
                         user.setEmail(email);
                         user.setUid(uid);
-                        list.add(0, user);
+
+                        Log.v("usersUIds", "The uid of : " + name + " is " + uid);
+
+                        if(userSchoolType != null && subjectSchoolType.equals("both")
+                                || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
+                                || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
+                            list.add(0, user);
+                        }
                     }
                 }
 
@@ -200,7 +213,11 @@ public class ChallengersActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        usersReference.orderByChild("lastChallengeDate/time")
+                .limitToLast(15)
+                .addListenerForSingleValueEvent(valueEventListener);
     }
 }
 

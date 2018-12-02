@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
@@ -89,7 +90,10 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.ad_mob_test_id));
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.loadAd(new AdRequest.Builder()
+                .addTestDevice("106C57971641BAE74B5A237183F61E44")
+                .build());
+
         mInterstitialAd.setAdListener(new AdListener(){
             @Override
             public void onAdLoaded() {
@@ -152,7 +156,7 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 map.put("player2score", 0);
                 map.put("player1notified", localCurrentUserUid + "false");
                 map.put("player2notified", secondPlayerUid + "false");
-                map.put("date", dateClass.getDate());
+                map.put("date", ServerValue.TIMESTAMP);
                 map.put("dayDate", todayDate);
                 map.put("subject", subject);
                 map.put("questionsId", getQuestionsId());
