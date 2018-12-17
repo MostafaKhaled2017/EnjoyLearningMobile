@@ -10,7 +10,7 @@
     <string name="STT_password">yP4_u_mm3mhVNn9zcgIMFakfbcUO2Q4L5cxbLhYpn8WN</string>
 
     <!--Watson Text-To-Speech Service Credentials-->
-    <string name="TTS_username">-1e1a2d59-7e54-4557-8c49-dd94e19c4eb3</string>
-    <string name="TTS_password">-1e1a2d59-7e54-4557-8c49-dd94e19c4eb3</string>
+    <string name="TTS_username">apikey</string>
+    <string name="TTS_password">-t1Rljl4Mu1pdno09T2OXeMnQOyPPBgrEDieZSwsVzJX</string>
 
 </resources>

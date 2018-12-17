@@ -160,6 +160,7 @@ public class ChallengersActivity extends AppCompatActivity {
                     String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
                     String userType = (String) dataSnapshot1.child("userType").getValue();
                     String userSchoolType = (String) dataSnapshot1.child("userSchoolType").getValue();
+                    Long lastChallengeDate = (Long) dataSnapshot1.child("lastChallengeDate/time").getValue();
 
                     int pointsInt;
                     try {
@@ -171,8 +172,15 @@ public class ChallengersActivity extends AppCompatActivity {
 
                     String subjectSchoolType = AddQuestionActivity.getSchoolType(subject);
 
-                    if (userType.equals("طالب") && !uid.equals(localCurrentUserUid)
-                            && dataSnapshot1.child("lastChallengeDate").getValue() != null && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                    Log.v("challengesLogging", "user type : " + userType
+                     + " , local uid is : " + localCurrentUserUid
+                     + " , lastChallengeDate is : " + lastChallengeDate);
+
+                    if (userType != null && userType.equals("طالب")
+                            && !uid.equals(localCurrentUserUid)
+                            && lastChallengeDate != null
+                            && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+
                         user.setAdmin(admin);
                         user.setOnline(online);
                         user.setName(name);

@@ -1,7 +1,11 @@
 package com.mk.playAndLearn.model;
 
 public class User {
-    String name, email, imageUrl, Uid;
+    String name;
+    String email;
+    String imageUrl;
+    String Uid;
+
     int position = -1;
     int points = -1;
 

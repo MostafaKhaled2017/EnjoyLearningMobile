@@ -2,13 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/challengeStartMainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ChallengeStartActivity"
-    android:id="@+id/challengeStartMainView">
+    tools:context=".activity.ChallengeStartActivity">
 
-    <include layout="@layout/appbar"
-        android:id="@+id/appBar"/>
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/appbar" />
 
 
     <ProgressBar
@@ -16,18 +17,18 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="33dp"
+        android:layout_below="@id/appBar"
         android:layout_marginTop="-25dp"
         android:indeterminate="true"
-        android:layout_below="@id/appBar"
         android:max="100"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <!-- TODO : ensure that the data appears here is correct-->
     <LinearLayout
-        android:layout_below="@id/appBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/againstTextView"
+        android:layout_below="@id/appBar"
         android:layout_centerHorizontal="true"
         android:layout_margin="30dp"
         android:orientation="vertical">
@@ -43,9 +44,9 @@
             android:id="@+id/firstPlayerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="غير معروف"
             android:layout_gravity="center"
             android:gravity="center"
+            android:text="غير معروف"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -71,11 +72,11 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/lastStartChallengeButton"
         android:layout_below="@id/againstTextView"
-        android:layout_margin="30dp"
         android:layout_centerHorizontal="true"
-        android:orientation="vertical"
-        android:layout_above="@id/lastStartChallengeButton">
+        android:layout_margin="30dp"
+        android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/secondPlayerImage"
@@ -88,8 +89,9 @@
             android:id="@+id/secondPlayerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="غير معروف"
             android:layout_gravity="center"
+            android:text="غير معروف"
+            android:textColor="@color/writingColor"
             android:textSize="18sp"
             android:textStyle="bold" />
 

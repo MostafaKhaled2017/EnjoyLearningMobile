@@ -3,21 +3,33 @@ package com.mk.playAndLearn.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.mk.playAndLearn.utils.Firebase.auth;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 
 public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
@@ -27,8 +39,8 @@ public class QuestionResultActivity extends AppCompatActivity {
     int questionNo, score;
     String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
-    int secondPlayerPoints, currentChallenger, sleepTime = 750;
-    boolean isGeneralChallenge;
+    int secondPlayerPoints, currentChallenger, sleepTime = 1000;
+    boolean isGeneralChallenge, reported = false;
     Intent i;
 
     @Override
@@ -92,30 +104,9 @@ public class QuestionResultActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
-                        i.putExtra("questionList", list);
-                        i.putExtra("questionNo", questionNo + 1);
-                        i.putExtra("score", score);
-                        i.putExtra("isGeneralChallenge", isGeneralChallenge);
-
-                        if (!isGeneralChallenge) {
-                            i.putExtra("subject", subject);
-                            i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
-                            i.putExtra("currentPlayerAnswers", playerAnswersList);
-                            i.putExtra("currentChallenger", currentChallenger);
-
-                            if (currentChallenger == 1) {
-                                i.putExtra("player2Name", secondPlayerName);
-                                i.putExtra("player2Email", secondPlayerEmail);
-                                i.putExtra("player2Image", secondPlayerImage);
-                                i.putExtra("player2Uid", secondPlayerUid);
-                                i.putExtra("player2Points", secondPlayerPoints);
-                            } else if (currentChallenger == 2) {
-                                i.putExtra("challengeId", challengeId);
-                            }
+                        if(!reported) {
+                            navigate();
                         }
-
-                        startActivity(i);
-                        finish();
                     }
                 }
             };
@@ -133,7 +124,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                         intent1.putExtra("score", score);
                         intent1.putExtra("isGeneralChallenge", isGeneralChallenge);
 
-                        if(!isGeneralChallenge) {
+                        if (!isGeneralChallenge) {
                             intent1.putExtra("currentChallenger", currentChallenger);
                             intent1.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
                             intent1.putExtra("currentPlayerAnswers", playerAnswersList);
@@ -160,7 +151,93 @@ public class QuestionResultActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.question_result_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.reportQuestion:
+                reported = true;
+                showDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    void navigate(){
+        i.putExtra("questionList", list);
+        i.putExtra("questionNo", questionNo + 1);
+        i.putExtra("score", score);
+        i.putExtra("isGeneralChallenge", isGeneralChallenge);
+
+        if (!isGeneralChallenge) {
+            i.putExtra("subject", subject);
+            i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
+            i.putExtra("currentPlayerAnswers", playerAnswersList);
+            i.putExtra("currentChallenger", currentChallenger);
+
+            if (currentChallenger == 1) {
+                i.putExtra("player2Name", secondPlayerName);
+                i.putExtra("player2Email", secondPlayerEmail);
+                i.putExtra("player2Image", secondPlayerImage);
+                i.putExtra("player2Uid", secondPlayerUid);
+                i.putExtra("player2Points", secondPlayerPoints);
+            } else if (currentChallenger == 2) {
+                i.putExtra("challengeId", challengeId);
+            }
+        }
+
+        startActivity(i);
+        finish();
+    }
+    void showDialog(){
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
+                .setTitle("تقديم شكوى")
+                .setMessage("هل أنت متأكد أنك تريد تقديم شكوى فى هذا السؤال؟")
+                .setCancelable(false)
+                .setPositiveButton("لا", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        navigate();
+                    }
+                })
+                .setNegativeButton("نعم", null)
+                .create();
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String localCurrentEmail = auth.getCurrentUser().getEmail();
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("ComplainantEmail", localCurrentEmail);
+                        map.put("complaintResolved", false);
+                        map.put("subject", subject);
+                        map.put("questionId", ((ArrayList<Question>)list).get(questionNo).getQuestionId());
+                        fireStoreComplaintsQuestions.add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                Toast.makeText(QuestionResultActivity.this, "تم إستقبال شكوتك وسيتم مراجعة السؤال", Toast.LENGTH_SHORT).show();
+                                navigate();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilderUserInput.show();
     }
 }

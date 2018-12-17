@@ -24,5 +24,6 @@ public class Firebase {
     public static CollectionReference fireStoreComments = fireStore.collection("comments");
     public static CollectionReference fireStoreChallenges = fireStore.collection("challenges");
     public static CollectionReference fireStoreGeneralChallenge = fireStore.collection("generalChallenge");
+    public static CollectionReference fireStoreComplaintsQuestions = fireStore.collection("complaintsQuestions");
 
 }

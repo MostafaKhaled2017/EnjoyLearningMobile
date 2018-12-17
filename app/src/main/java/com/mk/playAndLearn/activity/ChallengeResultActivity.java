@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +21,9 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +34,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.utils.AdManager;
 import com.mk.playAndLearn.utils.DateClass;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,18 +52,22 @@ import static com.mk.playAndLearn.utils.Firebase.database;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.lastActiveUsersReference;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
 import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
+import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
+import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
+import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 
 public class ChallengeResultActivity extends AppCompatActivity {
     //TODO : think about removing challenge result activity but think well before determine what to do in this
     //TODO : handle loosing internet connection before uploading data for example show a dialog when try to go out.
-    TextView challengeResultTv;
 
     String subject, challengeId, currentUserName;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     int secondPlayerPoints;
     int score, currentChallenger;
+    long opponentScore;
 
     ArrayList questionsList = new ArrayList();
     String playerAnswersBooleansList = "", playerAnswersList = "";
@@ -65,8 +76,10 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
     public SharedPreferences pref; // 0 - for private mode
 
-    private InterstitialAd mInterstitialAd;
     DateClass dateClass = new DateClass();
+    ImageView player1ImageTv, player2ImageTv;
+    TextView player1NameTv, player1ScoreTv, player2NameTv, player2ScoreTv;
+    TextView challengeResultTv, challengeStateTv, againstTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,30 +95,31 @@ public class ChallengeResultActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
-        challengeResultTv = findViewById(R.id.challengeResultText);
-
         localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
-
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.ad_mob_test_id));
-        mInterstitialAd.loadAd(new AdRequest.Builder()
-                .addTestDevice("106C57971641BAE74B5A237183F61E44")
-                .build());
-
-        mInterstitialAd.setAdListener(new AdListener(){
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                mInterstitialAd.show();//TODO : check this
-            }
-        });
+        player1NameTv = findViewById(R.id.firstPlayerName);
+        player1ImageTv = findViewById(R.id.firstPlayerImage);
+        player1ScoreTv = findViewById(R.id.firstPlayerScore);
+        player2NameTv = findViewById(R.id.secondPlayerName);
+        player2ImageTv = findViewById(R.id.secondPlayerImage);
+        player2ScoreTv = findViewById(R.id.secondPlayerScore);
+        challengeResultTv = findViewById(R.id.challengeResultText);
+        challengeStateTv = findViewById(R.id.challengeState);
+        againstTv = findViewById(R.id.againstTextView);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
         Log.v("sharedPreference", " current userName is : " + currentUserName);
 
+        String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+        String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        AdManager adManager = AdManager.getInstance();
+        InterstitialAd ad = adManager.getAd();
+        Log.v("contestLogging", "ad is : " + ad + " , ad loaded is : " + ad.isLoaded());
+        if (ad != null && ad.isLoaded()) {
+            ad.show();
+        }
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -124,11 +138,54 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 secondPlayerImage = intent.getStringExtra("player2Image");
                 secondPlayerUid = intent.getStringExtra("player2Uid");
                 secondPlayerPoints = intent.getIntExtra("player2Points", -1);
-                questionsList =  intent.getParcelableArrayListExtra("questionsList");
+                questionsList = intent.getParcelableArrayListExtra("questionsList");
             } else if (currentChallenger == 2) {
                 challengeId = intent.getStringExtra("challengeId");
             }
         }
+
+        player1NameTv.setText(currentUserName);
+        Picasso.with(this).load(localCurrentUserImage).into(player1ImageTv);
+        player1ScoreTv.setText(score + "");
+
+        if (currentChallenger == 1) {
+            player2ScoreTv.setText(0 + "");
+            player2NameTv.setText(secondPlayerName);
+            Picasso.with(ChallengeResultActivity.this).load(secondPlayerImage).into(player2ImageTv);
+            challengeStateTv.setText("فى إنتظار المنافس");
+        } else if(currentChallenger == 2 && !isGeneralChallenge){
+            fireStoreChallenges.document(challengeId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        opponentScore = documentSnapshot.getLong("player1score");
+                        String opponentName = documentSnapshot.getString("player1Name");
+                        String opponentImage = documentSnapshot.getString("player1Image");
+
+                        player2ScoreTv.setText(opponentScore + "");
+                        player2NameTv.setText(opponentName);
+                        Picasso.with(ChallengeResultActivity.this).load(opponentImage).into(player2ImageTv);
+
+                        int opponentScoreInt = (int) opponentScore;
+
+                        if (score == opponentScoreInt) {
+                            challengeStateTv.setText(drawChallengeText);
+                        } else {
+                            if (score > opponentScoreInt) {
+                                challengeStateTv.setText(wonChallengeText);
+                                challengeStateTv.setBackgroundColor(ChallengeResultActivity.this.getResources().getColor(R.color.green));
+                            } else {
+                                challengeStateTv.setText(loseChallengeText);
+                                challengeStateTv.setBackgroundColor(ChallengeResultActivity.this.getResources().getColor(R.color.red));
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
+
         //TODO : check that this date is correct
         Date today = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
@@ -138,11 +195,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
         dateClass.setDate(today);
 
         if (!isGeneralChallenge) {
-            challengeResultTv.append(score + "");
             Map<String, Object> map = new HashMap<>();
             if (currentChallenger == 1) {
-                String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
-                String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
                 map.put("player1Name", currentUserName);
                 map.put("player1Email", localCurrentUserEmail);
@@ -156,7 +210,8 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 map.put("player2score", 0);
                 map.put("player1notified", localCurrentUserUid + "false");
                 map.put("player2notified", secondPlayerUid + "false");
-                map.put("date", ServerValue.TIMESTAMP);
+                map.put("score1Added", false);
+                map.put("date", dateClass.getDate());
                 map.put("dayDate", todayDate);
                 map.put("subject", subject);
                 map.put("questionsId", getQuestionsId());
@@ -185,6 +240,9 @@ public class ChallengeResultActivity extends AppCompatActivity {
                 });
             }
         } else {
+            challengeResultTv.setVisibility(View.VISIBLE);
+            hideAllViews();
+
             usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -228,27 +286,11 @@ public class ChallengeResultActivity extends AppCompatActivity {
         if (getCurrentPlayer(player1Uid) == 2) {
 
             if (player1Score == player2Score) {
-                player1Reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.v("pointsDebug", "onDataChanged1");
-                        long points = (long) dataSnapshot.child("points").getValue();
-                        usersReference.child(player1Uid).child("points").setValue(points + 1);
-
-                        // usersReference.removeEventListener(this);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
                 player2Reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.v("pointsDebug", "onDataChanged2");
                         long points = (long) dataSnapshot.child("points").getValue();
-                        usersReference.child(player2Uid).child("points").setValue(points + 1);
+                        usersReference.child(player2Uid).child("points").setValue(points + drawChallengePoints);
 
                         //usersReference.removeEventListener(this);
                     }
@@ -258,38 +300,19 @@ public class ChallengeResultActivity extends AppCompatActivity {
 
                     }
                 });
-            } else {
-                if (player1Score > player2Score) {
-                    player1Reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            long points = (long) dataSnapshot.child("points").getValue();
-                            usersReference.child(player1Uid).child("points").setValue(points + 3);
-
-                            // usersReference.removeEventListener(this);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                } else {
+            } else if(player2Score > player1Score){
                     player2Reference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             long points = (long) dataSnapshot.child("points").getValue();
                             usersReference.child(player2Uid).child("points").setValue(points + wonChallengePoints);
-
-                            //usersReference.removeEventListener(this);
-                        }
+                            }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
 
                         }
                     });
-                }
             }
         }
     }
@@ -303,12 +326,23 @@ public class ChallengeResultActivity extends AppCompatActivity {
         }
     }
 
-    public String getQuestionsId(){
+    public String getQuestionsId() {
         String Ids = "";
         ArrayList<Question> list = questionsList;
-        for(Question question : list){
+        for (Question question : list) {
             Ids += question.getQuestionId() + " ";//TODO : check this
         }
         return Ids.trim();
+    }
+
+    void hideAllViews() {
+        player1NameTv.setVisibility(View.GONE);
+        player1ImageTv.setVisibility(View.GONE);
+        player1ScoreTv.setVisibility(View.GONE);
+        player2NameTv.setVisibility(View.GONE);
+        player2ImageTv.setVisibility(View.GONE);
+        player2ScoreTv.setVisibility(View.GONE);
+        challengeStateTv.setVisibility(View.GONE);
+        againstTv.setVisibility(View.GONE);
     }
 }

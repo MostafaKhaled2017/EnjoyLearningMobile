@@ -101,8 +101,8 @@ public class AdminQuestionActivity extends AppCompatActivity {
             answers.add(question.getAnswer1());
             answers.add(question.getAnswer2());
             answers.add(question.getAnswer3());
-            answers.add(question.getAnswer4());
             Collections.shuffle(answers);
+            answers.add(question.getAnswer4());
 
             r1.setText(answers.get(0));
             r2.setText(answers.get(1));
@@ -235,6 +235,8 @@ public class AdminQuestionActivity extends AppCompatActivity {
     }
 
     public void acceptQuestion(View view) {
+        Button button = findViewById(R.id.acceptQuestionBtn);
+        button.setClickable(false);
 
         usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -251,7 +253,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             }
         });
 
-
+        batch = fireStore.batch();
         batch.update(currentQuestionReference, "reviewed", true);
 
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {

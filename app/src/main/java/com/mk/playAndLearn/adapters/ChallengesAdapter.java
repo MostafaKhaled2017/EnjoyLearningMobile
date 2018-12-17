@@ -186,7 +186,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             usersReference.child(challenge.getOpponentUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    String secondPlayerPoints = "";
+                                    String secondPlayerPoints = "-1";
 
                                     String secondPlayerName = (String) dataSnapshot.child("userName").getValue();
                                     String secondPlayerImage = (String) dataSnapshot.child("userImage").getValue();

@@ -196,6 +196,7 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
 
                 else {
                     DocumentReference currentLessonReference =  fireStoreLessons.document(oldLessonId);
+                    batch = fireStore.batch();
 
                     batch.update(currentLessonReference, "title", title);
                     batch.update(currentLessonReference, "content", content);
@@ -205,6 +206,7 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(AddArticleActivity.this, "تم تحديث الموضوع بنجاح", Toast.LENGTH_SHORT).show();
+                            composeEmail("تم تعديل موضوعك", "تم تعديل موضوعك " + "\"" + lesson.getTitle() + "\"");
                             finish();
                         }
                     });
@@ -237,5 +239,18 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
+    }
+
+    public void composeEmail(String subject, String body) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{lesson.getWriterEmail()});
+        i.putExtra(Intent.EXTRA_SUBJECT, subject);
+        i.putExtra(Intent.EXTRA_TEXT, body);
+        try {
+            startActivityForResult(Intent.createChooser(i, "Send mail..."), 0);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(AddArticleActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

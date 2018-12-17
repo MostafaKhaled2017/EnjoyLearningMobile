@@ -232,6 +232,7 @@ public class GeneralSignActivity extends AppCompatActivity {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق من فضلك تأكد من الإتصال بالإنترنت وأعد المحاولة", Toast.LENGTH_SHORT).show();
                                     progressBar.setVisibility(View.GONE);
+                                    Log.v("sign in exception :", task.getException().toString());
                                     //updateUI(null);
                                 }
 
@@ -243,7 +244,7 @@ public class GeneralSignActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(GeneralSignActivity.this, "حدثت مشكلة أثناء محاولة التسجيل برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "sign in exception : " + e);
+                Log.v("Logging", "sign in exception : " + e.toString());
 
             }
         }//TODO

@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
 
+        MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
 
         startNotificationService();
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -126,6 +127,9 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser() != null){
                     authListener = this; //TODO : Check this
+                    String localCurrentUserUid = firebaseAuth.getCurrentUser().getUid();
+                    DatabaseReference currentUserReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid);
+                    currentUserReference.keepSynced(true);
                     setCurrentUserNameToSharedPreferences();
                 }
             }

@@ -80,8 +80,8 @@ public class ChatbotActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
     private static final int RECORD_REQUEST_CODE = 101;
     private boolean listening = false;
-   /* private SpeechToText speechService; TODO
-    private TextToSpeech textToSpeech;*/
+   // private SpeechToText speechService; TODO
+    private TextToSpeech textToSpeech;
     private MicrophoneInputStream capture;
     private Context mContext;
     private String workspace_id;
@@ -145,10 +145,9 @@ public class ChatbotActivity extends AppCompatActivity {
 
 
         //Watson Text-to-Speech Service on Bluemix
-       /* textToSpeech = new TextToSpeech();
-        //textToSpeech.setUsernameAndPassword(TTS_username, TTS_password);
-        textToSpeech.setApiKey(TTS_username);
-       textToSpeech.setEndPoint("https://gateway-syd.watsonplatform.net/assistant/api");*/
+        textToSpeech = new TextToSpeech();
+        textToSpeech.setUsernameAndPassword(TTS_username, TTS_password);
+        textToSpeech.setEndPoint("https://gateway-syd.watsonplatform.net/text-to-speech/api");
 
 
         int permission = ContextCompat.checkSelfPermission(this,
@@ -168,14 +167,14 @@ public class ChatbotActivity extends AppCompatActivity {
                         Message audioMessage;
                         try {
 
-                         /*   audioMessage =(Message) messageArrayList.get(position);
+                            audioMessage =(Message) messageArrayList.get(position);
                             streamPlayer = new StreamPlayer();
                             if(audioMessage != null && !audioMessage.getMessage().isEmpty())
                                 //Change the Voice format and choose from the available choices
                                 streamPlayer.playStream(textToSpeech.synthesize(audioMessage.getMessage(), Voice.EN_LISA).execute());
                             else
                                 streamPlayer.playStream(textToSpeech.synthesize("No Text Specified", Voice.EN_LISA).execute());
-*/
+
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.v("ERRRRRROR", e.toString());
@@ -264,8 +263,6 @@ public class ChatbotActivity extends AppCompatActivity {
             inputMessage.setMessage(inputmessage);
             inputMessage.setId("100");
             this.initialRequest = false;
-            Toast.makeText(getApplicationContext(),"Tap on the message for Voice",Toast.LENGTH_LONG).show();
-
         }
 
         this.inputMessage.setText("");
@@ -308,12 +305,12 @@ public class ChatbotActivity extends AppCompatActivity {
 
                                         audioMessage = outMessage;
                                         streamPlayer = new StreamPlayer();
-                                      /*  if(audioMessage != null && !audioMessage.getMessage().isEmpty())
+                                        if(audioMessage != null && !audioMessage.getMessage().isEmpty())
                                             //Change the Voice format and choose from the available choices
                                             streamPlayer.playStream(textToSpeech.synthesize(audioMessage.getMessage(), Voice.EN_LISA).execute());
                                         else
                                             streamPlayer.playStream(textToSpeech.synthesize("No Text Specified", Voice.EN_LISA).execute());
-*/
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -350,7 +347,7 @@ public class ChatbotActivity extends AppCompatActivity {
      /*   speechService = new SpeechToText();
        //speechService.setUsernameAndPassword(STT_username, STT_password);
         speechService.setApiKey(STT_username);
-       speechService.setEndPoint("https://gateway-syd.watsonplatform.net/assistant/api");
+       speechService.setEndPoint(TODO : add link from the creditional itself);
 
 
 

@@ -46,7 +46,7 @@ import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class ChallengesFragment extends Fragment implements ChallengesFragmentPresenter.View{
+public class ChallengesFragment extends Fragment implements ChallengesFragmentPresenter.View {
 
     //TODO : handle when fire base failed to get data
     //TODO : handle when the second player doesn't complete the challenge or connection problem happens to him
@@ -126,8 +126,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
             // Set popupWindow height to 850px
             popupWindow.setHeight(850);
-        }
-        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
         }
 
@@ -154,7 +153,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
+        if (isVisibleToUser) {
             presenter.startAsynkTask();
         }
     }
@@ -225,22 +224,22 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     @Override
     public void startUnCompletedChallengesAdapter(ArrayList uncompletedChallengesList) {
-            uncompletedChallengeRecyclerAdapter = new ChallengesAdapter(uncompletedChallengesList, getActivity());
-            RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new WrapContentLinearLayoutManager(getActivity());
-            uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
-            uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            uncompletedChallengesRecyclerView.setNestedScrollingEnabled(false);
-            uncompletedChallengesRecyclerView.setAdapter(uncompletedChallengeRecyclerAdapter);
+        uncompletedChallengeRecyclerAdapter = new ChallengesAdapter(uncompletedChallengesList, getActivity());
+        RecyclerView.LayoutManager uncompletedChallengesLayoutManager = new WrapContentLinearLayoutManager(getActivity());
+        uncompletedChallengesRecyclerView.setLayoutManager(uncompletedChallengesLayoutManager);
+        uncompletedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        uncompletedChallengesRecyclerView.setNestedScrollingEnabled(false);
+        uncompletedChallengesRecyclerView.setAdapter(uncompletedChallengeRecyclerAdapter);
     }
 
     @Override
     public void startCompletedChallengesAdapter(ArrayList completedChallengesList) {
-            completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
-            RecyclerView.LayoutManager completedChallengesLayoutManager = new WrapContentLinearLayoutManager(getActivity());
-            completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
-            completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            completedChallengesRecyclerView.setNestedScrollingEnabled(false);
-            completedChallengesRecyclerView.setAdapter(completedChallengeRecyclerAdapter);
+        completedChallengeRecyclerAdapter = new ChallengesAdapter(completedChallengesList, getActivity());
+        RecyclerView.LayoutManager completedChallengesLayoutManager = new WrapContentLinearLayoutManager(getActivity());
+        completedChallengesRecyclerView.setLayoutManager(completedChallengesLayoutManager);
+        completedChallengesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        completedChallengesRecyclerView.setNestedScrollingEnabled(false);
+        completedChallengesRecyclerView.setAdapter(completedChallengeRecyclerAdapter);
 
     }
 
@@ -263,7 +262,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     @Override
     public void hideProgressBar() {
-        if(progressBar.getVisibility() != View.GONE){
+        if (progressBar.getVisibility() != View.GONE) {
             progressBar.setVisibility(android.view.View.GONE);
         }
     }
@@ -292,6 +291,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     public void hideNoChallengesTv() {
         noChallengesTv.setVisibility(View.GONE);
     }
+
     @Override
     public void showNoChallengesTv() {
         noChallengesTv.setVisibility(View.VISIBLE);
@@ -303,9 +303,24 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         completedChallengesRecyclerView.removeAllViews();
         uncompletedChallengesRecyclerView.removeAllViews();
         hideProgressBar();
-        hideCompletedChallengesTv();
-        hideUncompletedChallengesTv();
+        hideMainViews();
         hideNoChallengesTv();
         noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void hideMainViews() {
+        completedChallengesRecyclerView.setVisibility(View.GONE);
+        uncompletedChallengesRecyclerView.setVisibility(View.GONE);
+        completeChallengesTv.setVisibility(View.GONE);
+        uncompletedChallengesTv.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showMainViews() {
+        completedChallengesRecyclerView.setVisibility(View.VISIBLE);
+        uncompletedChallengesRecyclerView.setVisibility(View.VISIBLE);
+        completeChallengesTv.setVisibility(View.VISIBLE);
+        uncompletedChallengesTv.setVisibility(View.VISIBLE);
     }
 }

@@ -33,6 +33,7 @@ import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.utils.AdManager;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
@@ -61,7 +62,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
     String subject, challengeId;
     int firstPlayerPoints = -1, currentChallenger = 1;
     long secondPlayerPoints = -1;
-    boolean finished = false;
 
     ImageView player1Image, player2Image;
     TextView player1Name, player1Points, player2Name, player2Points;
@@ -75,6 +75,9 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
         i = new Intent(ChallengeStartActivity.this, QuestionActivity.class);
         context = this;
+
+        AdManager adManager = AdManager.getInstance();
+        adManager.createAd(this);
 
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
@@ -132,7 +135,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
                     player2Name.setText(secondPlayerName);
                     Picasso.with(ChallengeStartActivity.this).load(secondPlayerImage).into(player2Image);
-                    player2Points.setText(secondPlayerPoints + "");
+                    player2Points.setText(secondPlayerPoints + " XP");
 
                     Log.v("ChallengeStartLog", "dataSnapshot is : " + dataSnapshot.toString());
 
@@ -153,7 +156,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 firstPlayerPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                player1Points.setText(firstPlayerPoints + "");
+                player1Points.setText(firstPlayerPoints + " XP");
             }
 
             @Override
@@ -187,7 +190,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
                     }
                 }*/
 
-                Toast.makeText(ChallengeStartActivity.this, "جارى إعداد الأسئلة", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(ChallengeStartActivity.this, "جارى إعداد الأسئلة", Toast.LENGTH_SHORT).show();
 
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -236,7 +239,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
                                 addQuestionData(documentSnapshot);
                                 if (list.size() == listSize) {
                                     context.startActivity(i);
-                                    horizontalProgressBar.setVisibility(View.INVISIBLE);
                                     finish();
                                 }
                             }
@@ -252,21 +254,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
         finish();
         return true;
     }
-
-    public void showDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeStartActivity.this);
-        dialog.setTitle("أنت غير جاهز للبدء");//TODO : think about changing these two texts
-        dialog.setMessage("سرعة الانترنت لديك بطيئة حاول بدء التحدي مرة أخري");
-        dialog.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-        dialog.create();
-        dialog.show();
-    }
-
 
     public void addQuestionData(DocumentSnapshot document) {
         Question question = new Question();
@@ -309,7 +296,6 @@ public class ChallengeStartActivity extends AppCompatActivity {
                         loadQuestionsForChallenger1();
                     } else {
                         context.startActivity(i);
-                        horizontalProgressBar.setVisibility(View.INVISIBLE);
                         finish();
                     }
                 }

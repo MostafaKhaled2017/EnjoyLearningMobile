@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
@@ -57,13 +58,13 @@ import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 
 public class AdminAppManagementActivity extends AppCompatActivity {
 
-    ArrayList questionList = new ArrayList(), lessonsList = new ArrayList();
-    boolean questionsReady = false, lessonsReady = false;
+    ArrayList questionsList = new ArrayList(), lessonsList = new ArrayList();
+    boolean questionsReady = false;
     Button queryButton;
     ArrayList arabicQuestionsList = new ArrayList(), languagesQuestionsList = new ArrayList();
     final String arabicSchoolType = "arabic";
     final String languagesSchoolType = "languages";
-    int studentsCount = 0,  allUsersCount = 0;
+    int studentsCount = 0, allUsersCount = 0;
 
     CollectionReference arabicQuestionsReference, languagesQuestionsReference;
 
@@ -94,9 +95,6 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         languagesQuestionsReference = document.collection("languagesQuestions");
         Log.d("Loggingg", "arabicList size : " + arabicQuestionsList + " , languagesListSize : " + languagesQuestionsList);
 
-        getSuggestedQuestions();
-
-        getSuggestedLessons();
     }
 
     @Override
@@ -106,41 +104,28 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     }
 
     public void getSuggestedQuestions() {
-        if (!questionList.isEmpty())
-            questionList.clear();
-        String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
-        for (String subject : subjectsArray) {
+        if (!questionsList.isEmpty())
+            questionsList.clear();
+        final String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
+        for (final String subject : subjectsArray) {
             fireStoreQuestions.document(subject).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
                     for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                        Question question = new Question();
-                        String questionText = document.getString("alQuestion");
-                        String answer1 = document.getString("answer1");
-                        String answer2 = document.getString("answer2");
-                        String answer3 = document.getString("answer3");
-                        String answer4 = document.getString("answer4");
-                        String subject = document.getString("subject");//extra than normal
-                        String writerEmail = document.getString("writerEmail");//extra than normal
-                        String correctAnswer = document.getString("correctAnswer");
-                        String writerName = document.getString("writerName");
-                        String writerUid = document.getString("writerUid");
-                        String questionId = document.getId();
+                        addQuestionData(document, null, null);
+                    }
+                    if (subject.equals(subjectsArray[subjectsArray.length - 1])) {
+                        if (questionsList.size() > 0) {
+                            Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
 
-                        question.setAnswer1(answer1);
-                        question.setAnswer2(answer2);
-                        question.setAnswer3(answer3);
-                        question.setAnswer4(answer4);
-                        question.setCorrectAnswer(correctAnswer);
-                        question.setWriterName(writerName);
-                        question.setQuestionId(questionId);
-                        question.setWriterUid(writerUid);
-                        question.setAlQuestion(questionText);
-                        question.setQuestionId(document.getId());
-                        question.setSubject(subject);//extra than normal
-                        question.setWriterEmail(writerEmail);//extra than normal
-
-                        questionList.add(0, question);
+                            Intent intent = new Intent(AdminAppManagementActivity.this, AdminQuestionActivity.class);
+                            intent.putParcelableArrayListExtra("questionsList", questionsList);
+                            intent.putExtra("index", 0);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(AdminAppManagementActivity.this, "لا يوجد أسئلة حاليا", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
@@ -149,74 +134,57 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         questionsReady = true;
     }
 
-    public void getSuggestedLessons() {
-        if (!lessonsList.isEmpty())
-            lessonsList.clear();
-
-        String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
-        for (String subject : subjectsArray) {
-            fireStoreLessons.document(subject).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot documentSnapshots) {
-                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                        Lesson lesson = new Lesson();
-                        String title = document.getString("title");
-                        String content = document.getString("content");
-                        String writerName = document.getString("writerName");
-                        String writerEmail = document.getString("writerEmail");
-                        String writerUid = document.getString("writerUid");
+    public void complaintsQuestionsButton(View view) {
+        Toast.makeText(this, "جارى إعداد أسئلة الشكاوى", Toast.LENGTH_SHORT).show();
+        if (!questionsList.isEmpty())
+            questionsList.clear();
+        fireStoreComplaintsQuestions.whereEqualTo("complaintResolved", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    counter = 0;
+                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                        final String complainantEmail = document.getString("ComplainantEmail");
+                        final String questionId = document.getString("questionId");
+                        final String reportId = document.getId();
                         String subject = document.getString("subject");
-                        String position = document.getString("position");
-                        String lessonId = document.getId();
-                        lesson.setSubject(subject);
-                        lesson.setWriterEmail(writerEmail);
-                        lesson.setWriterName(writerName);
-                        lesson.setWriterUid(writerUid);
-                        lesson.setPosition(position);
-                        lesson.setTitle(title);
-                        lesson.setContent(content);
-                        lesson.setLessonId(lessonId);
-                        lessonsList.add(0, lesson);
+                        counter ++;
+                        if (subject != null) {
+                            fireStoreQuestions.document(subject).collection(subject).document(questionId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                                    if (task2.isSuccessful()) {
+                                        DocumentSnapshot document = task2.getResult();
+                                        addQuestionData(document, complainantEmail, reportId);
+                                        Log.v("contestLogging", "list size : " + questionsList.size()
+                                        + " , counter is : " + counter
+                                        + " , result size : " + task.getResult().size());
+                                        if (counter == task.getResult().size()) {
+                                            Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
+
+                                            Intent intent = new Intent(AdminAppManagementActivity.this, AdminReportedQuestionActivity.class);
+                                            intent.putParcelableArrayListExtra("questionsList", questionsList);
+                                            intent.putExtra("index", 0);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
-            });
-
-        }
-        lessonsReady = true;
-    }
-
-    public void suggestedLessonsButton(View view) {
-        if (lessonsReady && lessonsList.size() != 0) {
-            Toast.makeText(this, "عدد الدروس : " + lessonsList.size(), Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(this, AdminLessonContentActivity.class);
-            intent.putParcelableArrayListExtra("lessonsList", lessonsList);
-            intent.putExtra("index", 0);
-            startActivity(intent);
-            finish();
-        } else if (!questionsReady) {
-            Toast.makeText(this, "الدروس لم تجهز بعد", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "لا يوجد دروس حاليا", Toast.LENGTH_SHORT).show();
-        }
-
+                else {
+                    Log.v("contestLogging", task.getException().toString());
+                }
+            }
+        });
     }
 
 
     public void suggestedQuestionsButton(View view) {
-        if (questionsReady && questionList.size() != 0) {
-            Toast.makeText(this, "عدد الأسئلة : " + questionList.size(), Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(this, AdminQuestionActivity.class);
-            intent.putParcelableArrayListExtra("questionsList", questionList);
-            intent.putExtra("index", 0);
-            startActivity(intent);
-            finish();
-        } else if (!questionsReady) {
-            Toast.makeText(this, "الاسئلة لم تجهز بعد", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "لا يوجد أسئلة حاليا", Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(this, "جارى تحميل الاسئلة", Toast.LENGTH_SHORT).show();
+        getSuggestedQuestions();
     }
 
     @Override
@@ -457,11 +425,11 @@ public class AdminAppManagementActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     String userType = "";
-                    if(dataSnapshot1.child("userType").getValue() != null) {
+                    if (dataSnapshot1.child("userType").getValue() != null) {
                         userType = dataSnapshot1.child("userType").getValue().toString();
                     }
 
-                    allUsersCount ++;
+                    allUsersCount++;
 
                     if (userType.equals("طالب")) {
                         studentsCount++;
@@ -475,6 +443,40 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    void addQuestionData(DocumentSnapshot document, String complainantEmail, String reportId) {
+        Question question = new Question();
+        String questionText = document.getString("alQuestion");
+        String answer1 = document.getString("answer1");
+        String answer2 = document.getString("answer2");
+        String answer3 = document.getString("answer3");
+        String answer4 = document.getString("answer4");
+        String subject = document.getString("subject");//extra than normal
+        String writerEmail = document.getString("writerEmail");//extra than normal
+        String correctAnswer = document.getString("correctAnswer");
+        String writerName = document.getString("writerName");
+        String writerUid = document.getString("writerUid");
+        String questionId = document.getId();
+
+        question.setAnswer1(answer1);
+        question.setAnswer2(answer2);
+        question.setAnswer3(answer3);
+        question.setAnswer4(answer4);
+        question.setCorrectAnswer(correctAnswer);
+        question.setWriterName(writerName);
+        question.setQuestionId(questionId);
+        question.setWriterUid(writerUid);
+        question.setAlQuestion(questionText);
+        question.setQuestionId(document.getId());
+        question.setSubject(subject);//extra than normal
+        question.setWriterEmail(writerEmail);//extra than normal
+        if (complainantEmail != null)
+            question.setComplainantEmail(complainantEmail);
+        if(reportId != null)
+            question.setReportId(reportId);
+
+        questionsList.add(0, question);
     }
 }
 

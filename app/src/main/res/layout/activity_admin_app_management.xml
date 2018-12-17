@@ -32,9 +32,9 @@
             android:layout_below="@id/suggestedQuestionsButton"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
-            android:onClick="suggestedLessonsButton"
+            android:onClick="complaintsQuestionsButton"
             android:padding="10dp"
-            android:text="الدروس المقترحة" />
+            android:text="الشكاوى" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/challengesAndUsersMonitoring"

@@ -1,40 +1,130 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!-- TODO : enhance the design -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/challengeStartMainView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.ChallengeResultActivity">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/appbar" />
+
+
+    <ProgressBar
+        android:id="@+id/horizontalProgressbarInChallengeStartActivity"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:layout_below="@id/appBar"
+        android:layout_marginTop="-25dp"
+        android:indeterminate="true"
+        android:max="100"
+        android:visibility="invisible" />
+
+    <!-- TODO : ensure that the data appears here is correct-->
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/appBar">
+        android:layout_above="@id/againstTextView"
+        android:layout_below="@id/appBar"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color1">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/firstPlayerImage"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center"
+            android:src="@color/gray" />
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/app_name"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_in_toolbar" />
-        </android.support.v7.widget.Toolbar>
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/firstPlayerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="غير معروف"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    </android.support.design.widget.AppBarLayout>
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/firstPlayerScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0 XP"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/againstTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="ضد"
+        android:textColor="@color/writingColor"
+        android:textSize="35sp" />
 
     <TextView
         android:id="@+id/challengeResultText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:text="النتيجة : "
         android:textSize="20sp"
-        android:layout_centerInParent="true"/>
+        android:visibility="invisible" />
 
+    <LinearLayout
+        android:id="@+id/secondPlayerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/challengeState"
+        android:layout_below="@id/againstTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/secondPlayerImage"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center"
+            android:src="@color/gray" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/secondPlayerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="غير معروف"
+            android:textColor="@color/writingColor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/secondPlayerScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0 XP"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/challengeState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/gray"
+        android:padding="7dp"
+        android:text="جارى التحميل ..."
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 </RelativeLayout>

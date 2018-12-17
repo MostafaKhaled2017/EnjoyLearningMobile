@@ -1,11 +1,17 @@
 package com.mk.playAndLearn.presenter;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -23,9 +29,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
+import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
+import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 
@@ -35,7 +45,7 @@ public class ChallengesFragmentPresenter {
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
     int player1childrenCount = 0, player2childrenCount = 0, currentPlayer;
     ChildEventListener player1Listener, player2Listener;
-    int no = 0;
+    boolean initialDataLoaded = false;
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -63,6 +73,7 @@ public class ChallengesFragmentPresenter {
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
                     recreatingLists();
+                    view.showMainViews();
 
                     EventListener generalSnapShotListener = new EventListener<QuerySnapshot>() {
                         @Override
@@ -95,16 +106,14 @@ public class ChallengesFragmentPresenter {
                                         view.hideProgressBar();
                                         break;
                                     case REMOVED:
-                                        startAsynkTask();//TODO : think about removeing the child from the list only                            break;
+                                        startAsynkTask();//TODO : think about removing the child from the list only                            break;
                                 }
                             }
+                            arrangeLists();
                             onInitialDataLoaded();
+                            initialDataLoaded = true;
 
-                            Collections.sort(completedChallengesList);
-                            Collections.reverse(completedChallengesList);
-
-                            Collections.sort(uncompletedChallengesList);
-                            Collections.reverse(uncompletedChallengesList);
+                            //TODO : add this
 
                             view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData2");
 
@@ -133,12 +142,13 @@ public class ChallengesFragmentPresenter {
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         challenge = new Challenge();
 
-        Date timeStamp = (Date) dataSnapshot.get("date");
+        Date timeStamp = dataSnapshot.getDate("date");
+
         String challengeDate = format.format(timeStamp);
         String challengeSubject = dataSnapshot.getString("subject");
         String challengeState = dataSnapshot.getString("state");
         String challengeId = dataSnapshot.getId();
-        String challengeQuestionsList =  dataSnapshot.getString("questionsId");
+        String challengeQuestionsList = dataSnapshot.getString("questionsId");
         long player1Score = (long) dataSnapshot.getLong("player1score");
         long player2Score = (long) dataSnapshot.getLong("player2score");
 
@@ -148,6 +158,7 @@ public class ChallengesFragmentPresenter {
         String player2Name = dataSnapshot.getString("player2Name");
         String player2Image = dataSnapshot.getString("player2Image");
         String player2Uid = dataSnapshot.getString("player2Uid");
+        Boolean score1Added = dataSnapshot.getBoolean("score1Added");
 
         String challengerName, challengerImage;
 
@@ -170,7 +181,6 @@ public class ChallengesFragmentPresenter {
         }
         challenge.setCurrentPlayer(currentPlayer);
         challenge.setOpponentName(challengerName);
-        challenge.setTimestamp(timeStamp);
         challenge.setDate(challengeDate);
         challenge.setImage(challengerImage);
         challenge.setSubject(challengeSubject);
@@ -194,6 +204,7 @@ public class ChallengesFragmentPresenter {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(challenge);
+                addScoreToPlayer1(player1Score, player2Score, challengeId, score1Added);
             }
         } else if (challenge.getState().equals(refusedChallengeText)) {
             Log.v("loggingC2", "value is " + !existsInCompletedChallengesList(challengeId));
@@ -201,6 +212,7 @@ public class ChallengesFragmentPresenter {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(challenge);
+                addScoreToPlayer1(player1Score, player2Score, challengeId, score1Added);
             }
         } else if (challenge.getState().equals(uncompletedChallengeText)) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getId()));
@@ -265,6 +277,61 @@ public class ChallengesFragmentPresenter {
         return false;
     }
 
+    void arrangeLists() {
+        if (completedChallengesList.size() > 0) {
+            Collections.sort(completedChallengesList);
+            Collections.reverse(completedChallengesList);
+        }
+
+        if (uncompletedChallengesList.size() > 0) {
+            Collections.sort(uncompletedChallengesList);
+            Collections.reverse(uncompletedChallengesList);
+        }
+    }
+
+    void addScoreToPlayer1(long player1Score, long player2Score, final String challengeId, Boolean score1Added) {
+        if (currentPlayer == 1 && score1Added != null && !score1Added) {
+            if (player1Score == player2Score) {
+                usersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long points = (long) dataSnapshot.child("points").getValue();
+                        usersReference.child(localCurrentUserUid).child("points").setValue(points + drawChallengePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                fireStoreChallenges.document(challengeId).update("score1Added", true);
+                            }
+                        });
+                        //usersReference.removeEventListener(this);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            } else if (player1Score > player2Score) {
+                usersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long points = (long) dataSnapshot.child("points").getValue();
+                        usersReference.child(localCurrentUserUid).child("points").setValue(points + wonChallengePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                fireStoreChallenges.document(challengeId).update("score1Added", true);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
+    }
+
     public interface View {
         void navigate();
 
@@ -293,5 +360,9 @@ public class ChallengesFragmentPresenter {
         void showNoChallengesTv();
 
         void onNoInternetConnection();
+
+        void hideMainViews();
+
+        void showMainViews();
     }
 }

@@ -9,6 +9,27 @@ public class Question implements Serializable{
     String answer3;
     String answer4;
     String correctAnswer;
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
+    }
+
+    String reportId;
+
+    public String getComplainantEmail() {
+        return complainantEmail;
+    }
+
+    public void setComplainantEmail(String complainantEmail) {
+        this.complainantEmail = complainantEmail;
+    }
+
+    String complainantEmail;
+
     String subject;
     String writerName;
 

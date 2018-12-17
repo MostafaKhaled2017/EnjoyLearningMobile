@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
     String oldQuestionId = "";
     WriteBatch batch;
     RadioButton r1, r2, r3, r4;
+    RadioGroup radioGroup;
     public SharedPreferences pref; // 0 - for private mode
 
 
@@ -95,6 +97,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         r2 = findViewById(R.id.radio2);
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
+        radioGroup = findViewById(R.id.radioGroup);
 
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
@@ -245,7 +248,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                 map.put("challengeQuestion", false);
                 map.put("schoolType", schoolType);
                 map.put("correctAnswer", correctAnswer.trim());
-                // Toast.makeText(this, "تم إضافة السؤال بنجاح وسيتم مراجعته", Toast.LENGTH_SHORT).show();
                 //TODO : add icon to the dialog
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("تنبيه هام!!");
@@ -257,7 +259,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
                         fireStoreQuestions.document(currentSubject).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
-                                Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح وسيتم مراجعته قبل ظهوره فى التحديات", Toast.LENGTH_SHORT).show();
 
                             }
                         });
@@ -309,10 +311,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AdapterVie
         editText3.setText("");
         editText4.setText("");
 
-        r1.setChecked(false);
-        r2.setChecked(false);
-        r3.setChecked(false);
-        r4.setChecked(false);
+        radioGroup.clearCheck();
     }
 
     public static String getSchoolType(String subject){
