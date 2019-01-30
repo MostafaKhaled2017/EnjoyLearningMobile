@@ -30,7 +30,7 @@ public class BestQuestionsUploadersActivityPresenter {
     private void getBestStudents() {
         usersReference.orderByChild("acceptedQuestions")
                 .startAt(1)
-                .limitToLast(21)
+                .limitToLast(20)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -54,7 +54,7 @@ public class BestQuestionsUploadersActivityPresenter {
                         admin = (boolean) dataSnapshot1.child("admin").getValue();
 
                     if (userType.equals("طالب") && acceptedQuestions != -1000
-                           && email != null && !email.equals(adminEmail)) {
+                           && email != null) {
                         user.setAdmin(admin);
                         user.setName(name);
                         user.setEmail(email);

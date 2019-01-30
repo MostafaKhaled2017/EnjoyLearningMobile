@@ -5,11 +5,16 @@ package com.mk.playAndLearn.adapters;
  */
 
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.mk.enjoylearning.R;
@@ -65,7 +70,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         Message message = messageArrayList.get(position);
         message.setMessage(message.getMessage());
-        ((ViewHolder) holder).message.setText(message.getMessage());
+        //((ViewHolder) holder).message.setText(message.getMessage());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ((ViewHolder) holder).message.setText(Html.fromHtml(message.getMessage(), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            ((ViewHolder) holder).message.setText(Html.fromHtml(message.getMessage()));
+        }
+        Log.v("LoggingMessage", "message content is : " + message.getMessage());
         }
 
     @Override
@@ -79,6 +91,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ViewHolder(View view) {
             super(view);
             message = (TextView) itemView.findViewById(R.id.message);
+            message.setMovementMethod(LinkMovementMethod.getInstance());
 
             //TODO: Uncomment this if you want to use a custom Font
             /*String customFont = "Montserrat-Regular.ttf";
@@ -87,6 +100,4 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
     }
-
-
 }

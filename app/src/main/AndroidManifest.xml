@@ -50,6 +50,12 @@
                     android:screenOrientation="portrait" />
             </intent-filter>
         </activity>
+
+        <activity android:name="com.mk.playAndLearn.activity.SignInActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.mk.playAndLearn.activity.SignUpActivity"
+            android:screenOrientation="portrait"/>
         <!--
      Facebook login
         <meta-data

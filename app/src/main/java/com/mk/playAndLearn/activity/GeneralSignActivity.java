@@ -65,26 +65,14 @@ import butterknife.ButterKnife;
 //TODO : remove the tradition sign in and sign up and think about removing sign in with facebook
 
 public class GeneralSignActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
-    SignInButton button;
-    private final static int RC_SIGN_IN = 2;
     private final String TAG = "Logging";
-    CallbackManager mCallbackManager;
-    GoogleApiClient mGoogleApiClient;
-    GoogleSignInOptions gso;
-    DatabaseReference myRef;
+    Button signUpActivity, signInActivity;
     DatabaseReference currentUserReference;
-    FirebaseDatabase database;
-    Spinner userTypesSpinner, userSchoolTypeSpinner;
+   // Spinner userTypesSpinner, userSchoolTypeSpinner;
     LinearLayout userSchoolTypeLinearLayout;
     TextView unStudentSignAlertText;
-    ProgressBar progressBar;
-    public SharedPreferences pref; // 0 - for private mode
-    SharedPreferences.Editor editor;
-    Intent i;
 
-    private GoogleSignInClient mGoogleSignInClient;
-    String userName = "", userImage = "", userEmail = "", userType = "", userSchoolType = "";
+    String userType = "", userSchoolType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,61 +80,55 @@ public class GeneralSignActivity extends AppCompatActivity {
         setContentView(R.layout.activity_general_sign);
         ButterKnife.bind(this);
         FirebaseApp.initializeApp(this);
-        mAuth = FirebaseAuth.getInstance();
-        button = findViewById(R.id.googleBtn);
-        database = FirebaseDatabase.getInstance();
+        signUpActivity = findViewById(R.id.signUpActivity);
+        signInActivity = findViewById(R.id.signInActivity);
         // database.setPersistenceEnabled(false);
-        myRef = database.getReference("users");
-        userTypesSpinner = findViewById(R.id.userTypesSpinner);
+     /*   userTypesSpinner = findViewById(R.id.userTypesSpinner);
         userSchoolTypeSpinner = findViewById(R.id.userSchoolTypesSpinner);
         userSchoolTypeLinearLayout = findViewById(R.id.userSchoolTypeLinearLayout);
-        unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);
-        progressBar = findViewById(R.id.progressbar);
+        unStudentSignAlertText = findViewById(R.id.unStudentSignAlertText);*/
 
-        pref = getSharedPreferences("MyPref", 0);
-
-        progressBar.setVisibility(View.GONE);
-
-        ArrayAdapter<CharSequence> userTypesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.user_types_array, android.R.layout.simple_spinner_item);
-        userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userTypesSpinner.setAdapter(userTypesAdapter);
-
-        ArrayAdapter<CharSequence> userSchoolTypesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.user_school_types_array, android.R.layout.simple_spinner_item);
-        userSchoolTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userSchoolTypeSpinner.setAdapter(userSchoolTypesAdapter);
-
-        userTypesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        signUpActivity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                userType = adapterView.getItemAtPosition(i).toString();
-                if (userType.equals("طالب")) {
-                    unStudentSignAlertText.setVisibility(View.GONE);
-                    userSchoolTypeLinearLayout.setVisibility(View.VISIBLE);
-                } else {
-                    unStudentSignAlertText.setVisibility(View.VISIBLE);
-                    userSchoolTypeLinearLayout.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onClick(View view) {
+                startActivity(new Intent(GeneralSignActivity.this, SignUpActivity.class));
             }
         });
 
-        userSchoolTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        signInActivity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                userSchoolType = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onClick(View view) {
+                startActivity(new Intent(GeneralSignActivity.this, SignInActivity.class));
             }
         });
+
+
+
+       /* Map<String, Object> map = new HashMap<>();
+        map.put("userName", userName);
+        map.put("userImage", userImage);
+        map.put("userEmail", userEmail);
+        map.put("points", 0);
+        map.put("lastGeneralChallengeScore", 0);
+        map.put("admin", false);
+        map.put("online", true);
+        map.put("acceptedQuestions", 0);
+        map.put("refusedQuestions", 0);
+        map.put("acceptedLessons", 0);
+        map.put("refusedLessons", 0);
+        map.put("userType", userType);
+        map.put("userSchoolType", userSchoolType);
+        myRef.child(mAuth.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                editor = pref.edit();
+                editor.putString("currentUserName", userName);
+                editor.apply();
+
+            }
+        });*/
+
+
 
        /* mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.facebookBtn);
@@ -179,81 +161,10 @@ public class GeneralSignActivity extends AppCompatActivity {
 // ...
 
 
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(GeneralSignActivity.this, "حدث خطأ برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
-
-        mCallbackManager = CallbackManager.Factory.create();
     }
 
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        progressBar.setVisibility(View.VISIBLE);
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                mAuth.signInWithCredential(credential)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    navigate();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(GeneralSignActivity.this, "فشل التسجيل في التطبيق من فضلك تأكد من الإتصال بالإنترنت وأعد المحاولة", Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    Log.v("sign in exception :", task.getException().toString());
-                                    //updateUI(null);
-                                }
-
-                                // ...
-                            }
-                        });
-
-                //Toast.makeText(this, "نجح تسجيل الدخول",Toast.LENGTH_SHORT).show();
-            } catch (ApiException e) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(GeneralSignActivity.this, "حدثت مشكلة أثناء محاولة التسجيل برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
-                Log.v("Logging", "sign in exception : " + e.toString());
-
-            }
-        }//TODO
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-
-    }
-
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        private void handleFacebookAccessToken(AccessToken token) {
+       /* Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
@@ -270,13 +181,13 @@ public class GeneralSignActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(GeneralSignActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
+                           // progressBar.setVisibility(View.GONE);
                             //updateUI(null);
                         }
 
                         // ...
                     }
-                });
+                });*/
     }
 
     private void printKeyHash() {
@@ -295,67 +206,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         }
     }
 
-    public void navigate() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        userName = user.getDisplayName();
-        userImage = user.getPhotoUrl().toString();
-        userEmail = user.getEmail();
 
-        Log.v("Logging", "user name is : " + userName
-                + " user image is : " + userImage
-                + " user email is : " + userEmail);
-
-        /*SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-        SharedPreferences.Editor editor = pref.edit();
-
-        editor.putString("userName", userName);
-        editor.putString("userImage", userImage);
-        editor.putString("userEmail", userEmail);
-
-        editor.apply();*/
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                i = new Intent(GeneralSignActivity.this, MainActivity.class);
-                if (!dataSnapshot.child(mAuth.getUid()).exists()) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("userName", userName);
-                    map.put("userImage", userImage);
-                    map.put("userEmail", userEmail);
-                    map.put("points", 0);
-                    map.put("lastGeneralChallengeScore", 0);
-                    map.put("admin", false);
-                    map.put("online", true);
-                    map.put("acceptedQuestions", 0);
-                    map.put("refusedQuestions", 0);
-                    map.put("acceptedLessons", 0);
-                    map.put("refusedLessons", 0);
-                    map.put("userType", userType);
-                    map.put("userSchoolType", userSchoolType);
-                    myRef.child(mAuth.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            editor = pref.edit();
-                            editor.putString("currentUserName", userName);
-                            editor.apply();
-
-                            showDialog();
-
-                            }
-                    });
-
-                } else {
-                    startActivity(i);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        //Toast.makeText(GeneralSignActivity.this, "data in sharedPrefrences : user name : " , Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onStart() {
@@ -363,10 +214,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         //TODO : note : don't try to update the users data here again
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            Log.v("GeneralSignActivity", "current user value is : " + currentUser
-                    + "current user Email is : " + currentUser.getEmail());
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
-            //Toast.makeText(this, "mAuth : " + mAuth + " , current user : " + currentUser, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -417,10 +265,10 @@ public class GeneralSignActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(GeneralSignActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
-                                    editor.putString("currentUserName", commentText.trim());
-                                    editor.apply();
+                                   // editor.putString("currentUserName", commentText.trim());
+                                    //editor.apply();
                                     // i.putExtra("newUser", true);
-                                    startActivity(i);
+                                  //  startActivity(i);
 
                                     //alertDialogBuilderUserInput.dismiss();
                                 }

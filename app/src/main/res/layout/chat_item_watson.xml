@@ -12,7 +12,6 @@
 
     <TextView
         android:id="@+id/message"
-        android:autoLink="web"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -23,7 +22,7 @@
         android:background="@drawable/bg_bubble_watbot"
         android:fontFamily="sans-serif"
         android:textColor="@android:color/black"
-        android:textIsSelectable="true"
+        android:clickable="true"
         android:textSize="14sp" />
 
 

@@ -80,7 +80,7 @@ public class ChatbotActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
     private static final int RECORD_REQUEST_CODE = 101;
     private boolean listening = false;
-   // private SpeechToText speechService; TODO
+    private SpeechToText speechService;
     private TextToSpeech textToSpeech;
     private MicrophoneInputStream capture;
     private Context mContext;
@@ -159,6 +159,7 @@ public class ChatbotActivity extends AppCompatActivity {
         }
 
 
+        /*TODO : add this again
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, final int position) {
@@ -189,7 +190,7 @@ public class ChatbotActivity extends AppCompatActivity {
                // recordMessage(); TODO
 
             }
-        }));
+        }));*/
 
         btnSend.setOnClickListener(new View.OnClickListener(){
             @Override

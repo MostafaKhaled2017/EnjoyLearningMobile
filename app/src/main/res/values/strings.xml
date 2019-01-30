@@ -108,6 +108,13 @@
         <item>عربى</item>
         <item>لغات</item>
     </string-array>
+    <string-array name="gender_array">
+        <item>ذكر</item>
+        <item>أنثى</item>
+    </string-array>
+    <string-array name="grades_array">
+        <item>الصف الأول الثانوى</item>
+    </string-array>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
