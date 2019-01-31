@@ -104,29 +104,7 @@ public class GeneralSignActivity extends AppCompatActivity {
 
 
 
-       /* Map<String, Object> map = new HashMap<>();
-        map.put("userName", userName);
-        map.put("userImage", userImage);
-        map.put("userEmail", userEmail);
-        map.put("points", 0);
-        map.put("lastGeneralChallengeScore", 0);
-        map.put("admin", false);
-        map.put("online", true);
-        map.put("acceptedQuestions", 0);
-        map.put("refusedQuestions", 0);
-        map.put("acceptedLessons", 0);
-        map.put("refusedLessons", 0);
-        map.put("userType", userType);
-        map.put("userSchoolType", userSchoolType);
-        myRef.child(mAuth.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                editor = pref.edit();
-                editor.putString("currentUserName", userName);
-                editor.apply();
-
-            }
-        });*/
+       /* */
 
 
 

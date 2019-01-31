@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.AddArticleActivity;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
@@ -226,7 +227,7 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new LessonsAdapter(list, getActivity());
+        recyclerAdapter = new LessonsAdapter(list, getActivity(), FirebaseAuth.getInstance().getCurrentUser().getUid());
         RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

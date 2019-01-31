@@ -36,11 +36,12 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyHolder
 
     ArrayList<Lesson> list;
     Context context;
-    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String localCurrentUserUid;
 
-    public LessonsAdapter(ArrayList<Lesson> list, Context context) {
+    public LessonsAdapter(ArrayList<Lesson> list, Context context, String localCurrentUserUid) {
         this.list = list;
         this.context = context;
+        this.localCurrentUserUid = localCurrentUserUid;
     }
 
     @Override

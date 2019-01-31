@@ -23,8 +23,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
@@ -40,7 +38,7 @@ import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 
 public class QuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
-    String playerAnswersBooleansList = "", playerAnswersList = "";
+    String playerAnswersBooleansList = "", playerAnswersList = "", correctAnswersList = "";
     TextView tvQuestion;
     RadioGroup rg1;
     Button nextButton;
@@ -94,6 +92,7 @@ public class QuestionActivity extends AppCompatActivity {
                 subject = intent.getStringExtra("subject");
                 playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
                 playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
+                correctAnswersList = intent.getStringExtra("correctAnswers");
 
                 if (currentChallenger == 1) {
                     secondPlayerName = intent.getStringExtra("player2Name");
@@ -243,8 +242,10 @@ public class QuestionActivity extends AppCompatActivity {
         }
         if (questionNo < list.size()) {//TODO : check this condition
             playerAnswersList += selection + " / ";
+            correctAnswersList += correctAnswer + " / ";
         } else {
             playerAnswersList += selection;
+            correctAnswersList += correctAnswer;
         }
         i.putExtra("questionNo", questionNo);
         i.putExtra("score", score);
@@ -257,6 +258,7 @@ public class QuestionActivity extends AppCompatActivity {
             i.putExtra("subject", subject);
             i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
             i.putExtra("currentPlayerAnswers", playerAnswersList);
+            i.putExtra("correctAnswers", correctAnswersList);
             i.putExtra("currentChallenger", currentChallenger);
             if (currentChallenger == 1) {
                 i.putExtra("player2Name", secondPlayerName);

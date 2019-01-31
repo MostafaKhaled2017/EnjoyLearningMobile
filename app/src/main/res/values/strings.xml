@@ -119,4 +119,9 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="emptyEditText">برجاء كتابة البيانات المطلوبة</string>
+    <string name="differentRePasswordError">تأكيد كلمة السر غير مطابق لكلمة السر</string>
+    <string name="shortPasswordError">كلمة المرور يجب ألا تقل عن 6 حروف</string>
+    <string name="isSignedInUser">هذا الحساب موجود بالفعل برجاء تسجيل الدخول</string>
+    <string name="signUpFailed">فشل الاشتراك فى التطبيق برجاء إعادة المحاولة لاحقا واستخدام كلمة سر قوية</string>
 </resources>

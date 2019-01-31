@@ -4,6 +4,7 @@
     android:gravity="right"
     android:orientation="vertical"
     android:paddingBottom="5dp"
+    android:layoutDirection="ltr"
     android:paddingLeft="16dp">
 
     <!--<TextView

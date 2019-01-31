@@ -47,7 +47,7 @@ public class ChallengesFragmentPresenter {
     ChildEventListener player1Listener, player2Listener;
     boolean initialDataLoaded = false;
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
-    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String localCurrentUserUid;
 
 
     public ChallengesFragmentPresenter(View view) {
@@ -55,6 +55,7 @@ public class ChallengesFragmentPresenter {
     }
 
     public void startAsynkTask() {
+        localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         //TODO : search for a solution to this error
         AsyncTask asyncTask = new AsyncTask() {
             @Override
@@ -162,6 +163,7 @@ public class ChallengesFragmentPresenter {
 
         String challengerName, challengerImage;
 
+        //TODO : select the opponentName and image by getting them directly from the users table
         if (player1Uid.equals(localCurrentUserUid)) {
             currentPlayer = 1;
             challengerName = player2Name;

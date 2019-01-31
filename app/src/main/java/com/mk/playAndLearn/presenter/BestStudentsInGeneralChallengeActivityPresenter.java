@@ -45,8 +45,8 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
                          generalChallengePoints = Integer.parseInt(dataSnapshot1.child("lastGeneralChallengeScore").getValue().toString());
                     String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
                     String userType = (String) dataSnapshot1.child("userType").getValue();
-                    if (dataSnapshot1.child("admin").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("admin").getValue();
+                    if (dataSnapshot1.child("adminStudent").getValue() != null)
+                        admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
 
                     if (userType.equals("طالب") && generalChallengePoints != -1000) {
                         user.setAdmin(admin);

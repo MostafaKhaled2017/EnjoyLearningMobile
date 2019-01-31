@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.ads.MobileAds;
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         assert actionBar != null;
         actionBar.setDisplayShowTitleEnabled(false);
 
+        localAuth = FirebaseAuth.getInstance();
+
         pref = getSharedPreferences("MyPref", 0);
         editor = pref.edit();
 
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
         MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
 
-        startNotificationService();
+
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                     DatabaseReference currentUserReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid);
                     currentUserReference.keepSynced(true);
                     setCurrentUserNameToSharedPreferences();
+                    startNotificationService();
                 }
             }
         });
@@ -246,15 +250,24 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem appManagementItem = menu.findItem(R.id.appManagement);
-        MenuItem chatBotItem = menu.findItem(R.id.chatBot);
-        if (localAuth.getCurrentUser().getEmail().equals(adminEmail)) {
-            appManagementItem.setVisible(true);
-            chatBotItem.setVisible(true);
-        } else {
-            appManagementItem.setVisible(false);
-            chatBotItem.setVisible(false);
-        }
+        final MenuItem appManagementItem = menu.findItem(R.id.appManagement);
+        final MenuItem chatBotItem = menu.findItem(R.id.chatBot);
+
+        localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = localAuth.getCurrentUser();
+                if(user != null){
+                    if (localAuth.getCurrentUser().getEmail().equals(adminEmail)) {
+                        appManagementItem.setVisible(true);
+                        chatBotItem.setVisible(true);
+                    } else {
+                        appManagementItem.setVisible(false);
+                        chatBotItem.setVisible(false);
+                    }
+                }
+            }
+        });
         return true;
     }
 
@@ -354,10 +367,32 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         }*/
     }
 
+    void checkIfOldUser(){
+        localUsersReference.child(localAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String uid = (String) dataSnapshot.child("uid").getValue();
+                Log.v("checkUserLogging", "uid is : " + uid);
+                if(uid == null){
+                    Toast.makeText(MainActivity.this, "يوجد بيانات ناقصة فى حسابك برجاء إعادة تسجيل الاشتراك فى البرنامج", Toast.LENGTH_SHORT).show();
+                    localAuth.signOut();
+                    startActivity(new Intent(MainActivity.this, GeneralSignActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         checkIfUserConnected();
+
     }
 
 

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="1dp"
     android:background="@color/white"
+    android:layoutDirection="ltr"
     android:id="@+id/challengeView">
 
     <de.hdodenhof.circleimageview.CircleImageView

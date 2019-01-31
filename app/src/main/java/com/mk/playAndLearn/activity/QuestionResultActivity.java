@@ -23,8 +23,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
     boolean correct;
     ArrayList list = new ArrayList();
-    String playerAnswersBooleansList = "", playerAnswersList = "";
+    String playerAnswersBooleansList = "", playerAnswersList = "", correctAnswersList = "";
     int questionNo, score;
     String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
@@ -69,6 +71,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                 subject = intent.getStringExtra("subject");
                 playerAnswersBooleansList = intent.getStringExtra("currentPlayerAnswersBooleans");
                 playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
+                correctAnswersList = intent.getStringExtra("correctAnswers");
                 if (currentChallenger == 1) {
                     secondPlayerName = intent.getStringExtra("player2Name");
                     secondPlayerEmail = intent.getStringExtra("player2Email");
@@ -128,6 +131,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                             intent1.putExtra("currentChallenger", currentChallenger);
                             intent1.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
                             intent1.putExtra("currentPlayerAnswers", playerAnswersList);
+                            intent1.putExtra("correctAnswers", correctAnswersList);
                             intent1.putExtra("subject", subject);
 
                             if (currentChallenger == 1) {
@@ -179,6 +183,7 @@ public class QuestionResultActivity extends AppCompatActivity {
             i.putExtra("subject", subject);
             i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
             i.putExtra("currentPlayerAnswers", playerAnswersList);
+            i.putExtra("correctAnswers", correctAnswersList);
             i.putExtra("currentChallenger", currentChallenger);
 
             if (currentChallenger == 1) {
@@ -214,6 +219,9 @@ public class QuestionResultActivity extends AppCompatActivity {
 
             @Override
             public void onShow(DialogInterface dialogInterface) {
+                Date today = new Date();
+                final DateClass dateClass = new DateClass();
+                dateClass.setDate(today);
 
                 Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -225,6 +233,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                         map.put("ComplainantEmail", localCurrentEmail);
                         map.put("complaintResolved", false);
                         map.put("subject", subject);
+                        map.put("date", dateClass.getDate());
                         map.put("questionId", ((ArrayList<Question>)list).get(questionNo).getQuestionId());
                         fireStoreComplaintsQuestions.add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override

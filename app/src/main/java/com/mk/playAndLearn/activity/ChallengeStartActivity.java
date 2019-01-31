@@ -52,7 +52,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
     String challengeQuestionsIds;
     ArrayList list = new ArrayList<>();
-    String playerAnswersBooleansList = "", playerAnswersList = "";
+    String playerAnswersBooleansList = "", playerAnswersList = "", correctAnswersList = "";
 
     Intent i;
     Context context;
@@ -196,6 +196,7 @@ public class ChallengeStartActivity extends AppCompatActivity {
 
                 i.putExtra("currentPlayerAnswersBooleans", playerAnswersBooleansList);
                 i.putExtra("currentPlayerAnswers", playerAnswersList);
+                i.putExtra("correctAnswers", correctAnswersList);
                 i.putExtra("questionNo", 0);
                 i.putExtra("score", 0);
                 i.putExtra("subject", subject);

@@ -103,24 +103,28 @@ public class HomeFragmentPresenter {
 
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
         String currentUserName = pref.getString("currentUserName", "غير معروف");
+        long grade = pref.getLong("grade", -1);
         String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
         String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         Log.v("sharedPreference", " current userName is : " + currentUserName);
 
+
         map = new HashMap<>();
         map.put("content", postText.trim());
-        map.put("writerName", currentUserName);
+        map.put("date", dateClass.getDate());
+        map.put("downVotedUsers", "users: ");
+        map.put("grade", grade);
         map.put("subject", subject);
+        map.put("term", 2);//Todo : make the user control this by entering it
+        map.put("upVotedUsers", "users: ");
+        map.put("votes", (long)0);
         map.put("writerUid", localCurrentUserUid);
+        map.put("writerName", currentUserName);
         map.put("image", localCurrentUserImage);
         map.put("email", localCurrentUserEmail);
-        map.put("upVotedUsers", "users: ");
-        map.put("downVotedUsers", "users: ");
         map.put("posted", false);
-        map.put("votes", (long)0);
-        map.put("date", dateClass.getDate());
 
        /* final String postId = postsReference.push().getKey();
         final DatabaseReference currentPostRef = postsReference.child(postId);*/

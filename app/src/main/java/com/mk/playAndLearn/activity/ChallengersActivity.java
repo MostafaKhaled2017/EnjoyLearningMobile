@@ -157,10 +157,12 @@ public class ChallengersActivity extends AppCompatActivity {
                     String uid = dataSnapshot1.getKey();
                     if (dataSnapshot1.child("points").getValue() != null)
                         points = dataSnapshot1.child("points").getValue().toString();
+                    if(dataSnapshot1.child("adminStudent").getValue() != null)
+                        admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
                     String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
                     String userType = (String) dataSnapshot1.child("userType").getValue();
                     String userSchoolType = (String) dataSnapshot1.child("userSchoolType").getValue();
-                    Long lastChallengeDate = (Long) dataSnapshot1.child("lastChallengeDate/time").getValue();
+                    Long lastOnlineDate = (Long) dataSnapshot1.child("lastOnlineDate/time").getValue();
 
                     int pointsInt;
                     try {
@@ -174,11 +176,12 @@ public class ChallengersActivity extends AppCompatActivity {
 
                     Log.v("challengesLogging", "user type : " + userType
                      + " , local uid is : " + localCurrentUserUid
-                     + " , lastChallengeDate is : " + lastChallengeDate);
+                     + " , lastOnlineDate is : " + lastOnlineDate
+                     + " , name is : " + name);
 
                     if (userType != null && userType.equals("طالب")
                             && !uid.equals(localCurrentUserUid)
-                            && lastChallengeDate != null
+                            && lastOnlineDate != null
                             && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
 
                         user.setAdmin(admin);
@@ -223,7 +226,7 @@ public class ChallengersActivity extends AppCompatActivity {
             }
         };
 
-        usersReference.orderByChild("lastChallengeDate/time")
+        usersReference.orderByChild("lastOnlineDate/time")
                 .limitToLast(15)
                 .addListenerForSingleValueEvent(valueEventListener);
     }

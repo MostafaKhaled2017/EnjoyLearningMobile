@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
@@ -44,17 +45,18 @@ public class PostsAdapter extends RecyclerView.Adapter {
     ArrayList<Post> list;
     HomeFragment homeFragment;
     Context context;
-    String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String localCurrentUserUid;
     long votes;
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
 
 
-    public PostsAdapter(RecyclerView recyclerView, ArrayList<Post> list, Context context, HomeFragment homeFragment) {
+    public PostsAdapter(RecyclerView recyclerView, ArrayList<Post> list, Context context, HomeFragment homeFragment, String localCurrentUserUid) {
         this.list = list;
         this.context = context;
         this.homeFragment = homeFragment;
+        this.localCurrentUserUid = localCurrentUserUid;
      /*   final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

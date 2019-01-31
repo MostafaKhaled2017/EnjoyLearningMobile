@@ -81,7 +81,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deleteCache(getActivity());
-        presenter = new ChallengesFragmentPresenter(this);
     }
 
     @Override
@@ -153,6 +152,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        presenter = new ChallengesFragmentPresenter(this);
         if (isVisibleToUser) {
             presenter.startAsynkTask();
         }

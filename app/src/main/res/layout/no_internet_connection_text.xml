@@ -3,6 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
+    android:layoutDirection="ltr"
     android:textSize="@dimen/generalTextSize"
     android:visibility="invisible"
     android:text="لا يوجد اتصال بالانترنت اضغط لإعادة المحاولة"

@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
@@ -279,7 +280,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerAdapter = new PostsAdapter(recyclerView, list, getActivity(), this);
+        recyclerAdapter = new PostsAdapter(recyclerView, list, getActivity(), this, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         recyclerView.setAdapter(recyclerAdapter);
     }

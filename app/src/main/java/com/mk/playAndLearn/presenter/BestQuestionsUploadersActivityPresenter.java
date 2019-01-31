@@ -50,8 +50,8 @@ public class BestQuestionsUploadersActivityPresenter {
                     String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
                     String userType = (String) dataSnapshot1.child("userType").getValue();
                     String email = (String) dataSnapshot1.child("userEmail").getValue();
-                    if (dataSnapshot1.child("admin").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("admin").getValue();
+                    if (dataSnapshot1.child("adminStudent").getValue() != null)
+                        admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
 
                     if (userType.equals("طالب") && acceptedQuestions != -1000
                            && email != null) {

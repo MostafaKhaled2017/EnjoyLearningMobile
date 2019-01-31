@@ -51,6 +51,7 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
+import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
@@ -312,6 +313,21 @@ public class AdminAppManagementActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });*/
+
+      /*  fireStorePosts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            for(DocumentSnapshot documentSnapshot: task.getResult()){
+                String id = documentSnapshot.getId();
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("grade", 10);
+                map.put("term", 1);
+                fireStorePosts.document(id).update(map);
+
+            }
             }
         });*/
     }

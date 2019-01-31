@@ -11,6 +11,7 @@ public class MyFirebaseApp  extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().getReference("currentTerm").keepSynced(true);
     }
 
     @Override

@@ -21,7 +21,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,6 +52,7 @@ public class NotificationsService extends Service {
     String localCurrentUserUid;
 
     FirebaseFirestore localFireStore;
+    DatabaseReference localUsersReference;
     CollectionReference localFireStoreChallenges, localFireStoreComments;
     FirebaseAuth localAuth;
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
@@ -65,6 +70,7 @@ public class NotificationsService extends Service {
         localFireStoreChallenges = localFireStore.collection("challenges");
         localFireStoreComments = localFireStore.collection("comments");
         localCurrentUserUid = localAuth.getCurrentUser().getUid();
+        localUsersReference = FirebaseDatabase.getInstance().getReference("users");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startMyOwnForegroundForOreoAndPie();
@@ -106,40 +112,65 @@ public class NotificationsService extends Service {
                 }
 
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    DocumentSnapshot challengeDocument = dc.getDocument();
+                    final DocumentSnapshot challengeDocument = dc.getDocument();
                     switch (dc.getType()) {
                         case ADDED:{
-                            String challengeState = challengeDocument.getString("state");
-                            String player1Uid = challengeDocument.getString("player1Uid");
-                            final String player1Name = challengeDocument.getString("player1Name");
+                            final String challengeState = challengeDocument.getString("state");
+                            final String player1Uid = challengeDocument.getString("player1Uid");
                             final String subject = adjustSubject(challengeDocument.getString("subject"));
-                            String challengeId = challengeDocument.getId();
+                            final String challengeId = challengeDocument.getId();
 
-                            currentPlayer = getCurrentPlayer(player1Uid);
+                            localUsersReference.child(player1Uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    currentPlayer = getCurrentPlayer(player1Uid);
+                                    final String player1Name = (String) dataSnapshot.child("userName").getValue();
+                                    if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
+                                        localFireStoreChallenges.document(challengeId).update("player2notified", true);
+                                        showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                             Log.v("Logging2", "onChildAdded");
-                            if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
-                                localFireStoreChallenges.document(challengeId).update("player2notified", true);
-                                showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
-                            }
+
                             break;
                         }
                         case MODIFIED:
-                            String challengeState = challengeDocument.getString("state");
-                            String player1Uid = challengeDocument.getString("player1Uid");
-                            String player2Name = challengeDocument.getString("player2Name");
+                            final String challengeState = challengeDocument.getString("state");
+                            final String player2Uid = challengeDocument.getString("player2Uid");
+                            final String player1Uid = challengeDocument.getString("player1Uid");
                             String subject = adjustSubject(challengeDocument.getString("subject"));
 
-                            String state = currentUserState(challengeDocument);
+                            final String state = currentUserState(challengeDocument);
 
-                            String challengeId = challengeDocument.getId();
-                            currentPlayer = getCurrentPlayer(player1Uid);
-                            if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
-                                showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
-                                                " تحديك ضد " + player2Name
-                                        /*+ " فى مادة " + subject*/);//TODO : add this
-                                localFireStoreChallenges.document(challengeId).update("player1notified", true);
-                                onChildChangedpreviusKey = challengeDocument.getId();
-                            }
+                            final String challengeId = challengeDocument.getId();
+
+                            localUsersReference.child(player2Uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    currentPlayer = getCurrentPlayer(player1Uid);
+                                    final String player2Name = (String) dataSnapshot.child("userName").getValue();
+
+                                    if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
+                                        showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
+                                                        " تحديك ضد " + player2Name
+                                                /*+ " فى مادة " + subject*/);//TODO : add this
+                                        localFireStoreChallenges.document(challengeId).update("player1notified", true);
+                                        onChildChangedpreviusKey = challengeDocument.getId();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                         case REMOVED:
                     }
                 }
