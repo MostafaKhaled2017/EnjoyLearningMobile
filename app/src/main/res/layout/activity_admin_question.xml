@@ -105,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/addQuestionEditText"
-            android:padding="@dimen/margin_between_radiobuttons"
+            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
             android:text="الإجابة الاولي"
             android:textColor="@color/writingColor"
             android:textSize="22sp" />
@@ -115,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio1"
-            android:padding="@dimen/margin_between_radiobuttons"
+            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
             android:text="الإجابة الثانية"
             android:textColor="@color/writingColor"
             android:textSize="22sp" />
@@ -125,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio2"
-            android:padding="@dimen/margin_between_radiobuttons"
+            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
             android:text="الإجابة الثالثة"
             android:textColor="@color/writingColor"
             android:textSize="22sp" />
@@ -135,7 +135,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio3"
-            android:padding="@dimen/margin_between_radiobuttons"
+            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
             android:text="الإجابة الرابعة"
             android:textColor="@color/writingColor"
             android:textSize="22sp" />

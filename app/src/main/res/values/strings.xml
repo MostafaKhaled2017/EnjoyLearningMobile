@@ -84,18 +84,79 @@
     </string-array>
 
     <string-array name="units_array">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-
-    <string-array name="lessons_array">
+        <item>الوحدة</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
         <item>5</item>
+    </string-array>
+
+    <string-array name="lessons_array">
+        <item>الدرس</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="story_chapters_array">
+        <item>الفصل</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+    </string-array>
+
+    <string-array name="arabic_grammar_array">
+        <item>ترتيب الدرس</item>
+        <item>سؤال تراكمي</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="term_array">
+        <item>اختر الفصل الدراسى</item>
+        <item>الفصل الدراسى الأول</item>
+        <item>الفصل الدراسى الثانى</item>
+    </string-array>
+
+    <string-array name="arabic_branches_array">
+        <item>اختر نوع السؤال</item>
+        <item>مفردات</item>
+        <item>بلاغة</item>
+        <item>قصة</item>
+        <item>نحو</item>
+        <item>أشياء أخرى</item>
+    </string-array>
+
+    <string-array name="english_branches_array">
+        <item>اختر نوع السؤال</item>
+        <item>معانى</item>
+        <item>قواعد نحوية</item>
+        <item>قصة</item>
+        <item>أشياء أخرى</item>
     </string-array>
 
     <string-array name="user_types_array">
@@ -112,7 +173,14 @@
         <item>ذكر</item>
         <item>أنثى</item>
     </string-array>
+    <string-array name="sign_up_grades_array">
+        <item>الصف الأول الثانوى</item>
+    </string-array>
     <string-array name="grades_array">
+        <item>اختر الصف الدراسى</item>
+        <item>الصف الأول الإعدادى</item>
+        <item>الصف الثانى الإعدادى</item>
+        <item>الصف الثالث الإعدادى</item>
         <item>الصف الأول الثانوى</item>
     </string-array>
 

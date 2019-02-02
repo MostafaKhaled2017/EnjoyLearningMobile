@@ -2,6 +2,7 @@ package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -229,10 +230,13 @@ public class QuestionResultActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         String localCurrentEmail = auth.getCurrentUser().getEmail();
+                        SharedPreferences pref = getSharedPreferences("MyPref", 0);
+                        String grade = pref.getString("grade", "غير معروف");
                         Map<String, Object> map = new HashMap<>();
                         map.put("ComplainantEmail", localCurrentEmail);
                         map.put("complaintResolved", false);
                         map.put("subject", subject);
+                        map.put("grade", grade);
                         map.put("date", dateClass.getDate());
                         map.put("questionId", ((ArrayList<Question>)list).get(questionNo).getQuestionId());
                         fireStoreComplaintsQuestions.add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

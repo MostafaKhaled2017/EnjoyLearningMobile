@@ -65,12 +65,6 @@ public class NotificationsService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.v("notificationsDebug", "onCreate" + localCurrentUserUid);
-        localAuth = FirebaseAuth.getInstance();
-        localFireStore = FirebaseFirestore.getInstance();
-        localFireStoreChallenges = localFireStore.collection("challenges");
-        localFireStoreComments = localFireStore.collection("comments");
-        localCurrentUserUid = localAuth.getCurrentUser().getUid();
-        localUsersReference = FirebaseDatabase.getInstance().getReference("users");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startMyOwnForegroundForOreoAndPie();
@@ -79,6 +73,12 @@ public class NotificationsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        localAuth = FirebaseAuth.getInstance();
+        localFireStore = FirebaseFirestore.getInstance();
+        localFireStoreChallenges = localFireStore.collection("challenges");
+        localFireStoreComments = localFireStore.collection("comments");
+        localCurrentUserUid = localAuth.getCurrentUser().getUid();
+        localUsersReference = FirebaseDatabase.getInstance().getReference("users");
         Log.v("notificationsDebug", "onStartCommand" + localCurrentUserUid);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

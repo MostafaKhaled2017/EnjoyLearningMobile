@@ -39,8 +39,8 @@
         android:layout_height="5dp"
         android:layout_below="@id/appBar"
         android:layout_marginLeft="-1dp"
-        android:layout_marginRight="-1dp"
         android:layout_marginTop="-2dp"
+        android:layout_marginRight="-1dp"
         android:max="100"
         android:progress="100"
         android:rotation="180" />
@@ -49,9 +49,9 @@
         android:id="@+id/questionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="100dp"
-        android:layout_alignParentRight="true"
         android:layout_below="@id/timerProgressbar"
+        android:layout_alignParentRight="true"
+        android:minHeight="100dp"
         android:padding="5dp"
         android:text="ما هي أقسام الأدب؟"
         android:textColor="@color/writingColor"
@@ -60,66 +60,96 @@
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radioGroup"
-        android:layout_centerHorizontal="true"
         android:layout_width="300dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/questionText"
-        android:layout_marginTop="5dp"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="invisible"
+        style="@style/answersGroupStyle">
 
         <RadioButton
             android:id="@+id/radio1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/addQuestionEditText"
-            android:padding="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الاولي"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle"/>
 
         <RadioButton
             android:id="@+id/radio2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio1"
-            android:padding="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الثانية"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle"/>
 
         <RadioButton
             android:id="@+id/radio3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio2"
-            android:padding="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الثالثة"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle" />
 
         <RadioButton
             android:id="@+id/radio4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radio3"
-            android:padding="@dimen/margin_between_radiobuttons"
             android:text="الإجابة الرابعة"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle"/>
 
     </RadioGroup>
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/checkBoxGroup"
+        android:layout_width="@dimen/width_of_answers_group"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/questionText"
+        android:visibility="invisible"
+        style="@style/answersGroupStyle">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/addQuestionEditText"
+            android:text="الإجابة الاولي"
+            style="@style/oneAnswerStyle"/>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkBox1"
+            android:text="الإجابة الثانية"
+            style="@style/oneAnswerStyle" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkBox2"
+            android:text="الإجابة الثالثة"
+            style="@style/oneAnswerStyle" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkBox3"
+            android:text="الإجابة الرابعة"
+            style="@style/oneAnswerStyle"/>
+
+    </RelativeLayout>
+
     <android.support.v7.widget.AppCompatButton
-        android:layout_marginTop="5dp"
         android:id="@+id/skipQuestionButton"
         style="@style/buttonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
+        android:layout_marginTop="5dp"
         android:text="التالي" />
 </RelativeLayout>

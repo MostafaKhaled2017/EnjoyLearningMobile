@@ -1,5 +1,6 @@
 package com.mk.playAndLearn.presenter;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -160,6 +161,7 @@ public class ChallengesFragmentPresenter {
         String player2Image = dataSnapshot.getString("player2Image");
         String player2Uid = dataSnapshot.getString("player2Uid");
         Boolean score1Added = dataSnapshot.getBoolean("score1Added");
+        String grade = dataSnapshot.getString("grade");
 
         String challengerName, challengerImage;
 
@@ -193,6 +195,7 @@ public class ChallengesFragmentPresenter {
         challenge.setPlayer2Score(player2Score);
         challenge.setPlayer2Uid(player2Uid);
         challenge.setQuestionsList(challengeQuestionsList);
+        challenge.setGrade(grade);
         String score;
         if (currentPlayer == 1) {
             score = player1Score + " : " + player2Score;

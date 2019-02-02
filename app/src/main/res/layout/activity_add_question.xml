@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/appBar"
             android:layout_alignParentRight="true"
-            android:layout_margin="8dp"
+            android:layout_margin="4dp"
             android:text="المادة : "
             android:textSize="18sp" />
 
@@ -36,11 +36,111 @@
             android:layout_toLeftOf="@id/subjectsTextView"
             android:scrollbars="none" />
 
+        <TextView
+            android:id="@+id/gradeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subjectsTextView"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:text="الصف الدراسى : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/gradeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subjectsSpinner"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@id/gradeTv"
+            android:scrollbars="none" />
+
+
+        <TextView
+            android:id="@+id/languageBranchesTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gradeTv"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:visibility="visible"
+            android:text="فرع السؤال : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/languageBranchesSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gradeSpinner"
+            android:layout_marginTop="8dp"
+            android:visibility="visible"
+            android:layout_toLeftOf="@id/lessonOrderTv"
+            android:scrollbars="none" />
+
+
+        <TextView
+            android:id="@+id/unitOrderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/languageBranchesTv"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:text="ترتيب الوحدة : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/unitOrderSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/languageBranchesSpinner"
+            android:layout_marginTop="4dp"
+            android:layout_toLeftOf="@id/unitOrderTextView"
+            android:scrollbars="none" />
+
+        <TextView
+            android:id="@+id/lessonOrderTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/unitOrderTextView"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:text="ترتيب الدرس : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/lessonOrderSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/unitOrderSpinner"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@id/lessonOrderTv"
+            android:scrollbars="none" />
+
+
+        <TextView
+            android:id="@+id/termTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lessonOrderTv"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:text="الفصل الدراسى : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/termSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lessonOrderSpinner"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@id/termTv"
+            android:scrollbars="none" />
+
         <EditText
             android:id="@+id/addQuestionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/subjectsSpinner"
+            android:layout_below="@id/termTv"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
             android:hint="السؤال"
@@ -63,10 +163,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/answerText"
             android:layout_margin="5dp"
-            android:text="قم بكتابة أربعة اختيارات للسؤال وعلم الإجابة الصحيحة منهم."
+            android:text="قم بكتابة اختيارين على الأقل للسؤال وعلم الإجابة أو الإجابات الصحيحة "
             android:textSize="18sp" />
 
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+      <!--  <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,16 +208,32 @@
                 android:layout_marginBottom="@dimen/margin_between_radiobuttons_in_add_question"
                 android:onClick="onRadioButtonClicked" />
 
-        </RadioGroup>
+        </RadioGroup> -->
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="55dp"
+            android:layout_below="@id/instuctionsText"/>
 
         <EditText
             android:id="@+id/et1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/instuctionsText"
+            android:layout_toRightOf="@id/checkbox1"
             android:layout_marginTop="8dp"
-            android:layout_toRightOf="@id/radioGroup"
+            android:hint="الإجابة الأولى"
             android:inputType="text" />
+
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="55dp"
+            android:layout_below="@id/et1"/>
 
         <EditText
             android:id="@+id/et2"
@@ -125,8 +241,16 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/et1"
             android:layout_marginTop="8dp"
-            android:layout_toRightOf="@id/radioGroup"
+            android:layout_toRightOf="@id/checkbox2"
+            android:hint="الإجابة الثانية"
             android:inputType="text" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="55dp"
+            android:layout_below="@id/et2"/>
 
         <EditText
             android:id="@+id/et3"
@@ -134,9 +258,17 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/et2"
             android:layout_marginTop="8dp"
-            android:layout_toRightOf="@id/radioGroup"
+            android:layout_toRightOf="@id/checkbox3"
+            android:hint="الإجابة الثالثة(اختيارية)"
             android:inputType="text" />
 
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="55dp"
+            android:layout_below="@id/et3"/>
 
         <EditText
             android:id="@+id/et4"
@@ -144,14 +276,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/et3"
             android:layout_marginTop="8dp"
-            android:layout_toRightOf="@id/radioGroup"
+            android:layout_toRightOf="@id/checkbox4"
+            android:hint="الإجابة الرابعة(اختيارية)"
             android:inputType="text" />
 
         <Button
             android:id="@+id/addQuestionBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radioGroup"
+            android:layout_below="@id/et4"
             android:layout_margin="8dp"
             android:background="@drawable/rectangle_button"
             android:text="رفع السؤال"

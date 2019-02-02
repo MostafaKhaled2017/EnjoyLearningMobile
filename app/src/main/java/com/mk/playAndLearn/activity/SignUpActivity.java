@@ -147,7 +147,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
 
     public void setUserGradeSpinner(){
             ArrayAdapter<CharSequence> userGradeAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.grades_array, android.R.layout.simple_spinner_item);
+                    R.array.sign_up_grades_array, android.R.layout.simple_spinner_item);
             userGradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             userGradeSpinner.setAdapter(userGradeAdapter);
 
@@ -172,7 +172,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         if (requestCode == 1) { //1 for adding email
             String name = nameEt.getText().toString();
 
-            presenter.checkEmailAndUploadData(data, name, gender, userSchoolType, userType, convertGrade(grade));
+            presenter.checkEmailAndUploadData(data, name, gender, userSchoolType, userType, grade);
         }
 
     }
@@ -202,11 +202,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
     }
 
     @Override
-    public void isSignedInToast() {
-        Toast.makeText(this, R.string.isSignedInUser, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void navigate() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
@@ -226,13 +221,5 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
     @Override
     public void setUserTypeError() {
         Toast.makeText(this, "برجاء تحديد إذا كنت طالب أم معلم", Toast.LENGTH_SHORT).show();
-    }
-
-    //TODO: complete
-    public static long convertGrade(String grade){
-        switch (grade){
-            case "الصف الأول الثانوى" : return 10;
-            default: return 0;
-        }
     }
 }

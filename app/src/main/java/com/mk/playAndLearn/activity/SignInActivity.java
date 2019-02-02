@@ -155,7 +155,7 @@ public class SignInActivity extends AppCompatActivity {
                                                 mAuth.signOut();
                                                 hideProgressBar();
                                             }else {
-                                                long grade = (long) dataSnapshot.child("grade").getValue();
+                                                String grade = (String) dataSnapshot.child("grade").getValue();
                                                 navigate(grade);
                                             }
                                         }
@@ -194,7 +194,7 @@ public class SignInActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
     }
 
-    public void navigate(long grade) {
+    public void navigate(String grade) {
         FirebaseUser user = mAuth.getCurrentUser();
         userName = user.getDisplayName();
         userImage = user.getPhotoUrl().toString();
@@ -203,7 +203,7 @@ public class SignInActivity extends AppCompatActivity {
 
         editor = pref.edit();
         editor.putString("currentUserName", userName);
-        editor.putLong("grade", grade);
+        editor.putString("grade", grade);
         editor.apply();
         startActivity(i);
         hideProgressBar();

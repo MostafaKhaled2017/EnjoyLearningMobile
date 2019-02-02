@@ -54,6 +54,9 @@ public class HomeFragmentPresenter {
     ArrayList<Post> postsList = new ArrayList();
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
+    SharedPreferences pref;
+    String currentUserName ;
+    String grade;
     int limit = 5;
     Query firstQuery;
     private boolean isScrolling = false;
@@ -65,6 +68,10 @@ public class HomeFragmentPresenter {
     public HomeFragmentPresenter(View view, Context context) {
         this.view = view;
         this.context = context;
+        pref = context.getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check thisg
+        currentUserName = pref.getString("currentUserName", "غير معروف");
+        grade = pref.getString("grade", "غير معروف");
+
     }
 
     public void startAsynkTask(final String currentSubject) {
@@ -101,9 +108,6 @@ public class HomeFragmentPresenter {
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         dateClass.setDate(today);
 
-        SharedPreferences pref = context.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check this
-        String currentUserName = pref.getString("currentUserName", "غير معروف");
-        long grade = pref.getLong("grade", -1);
         String localCurrentUserImage = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
         String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -232,13 +236,14 @@ public class HomeFragmentPresenter {
                                     }
                                 };
 
+
                                 if (currentSubject.equals("كل المواد")) {
-                                    Query nextQuery = fireStorePosts.orderBy("date", Query.Direction.DESCENDING)
+                                    Query nextQuery = fireStorePosts.whereEqualTo("grade", grade).orderBy("date", Query.Direction.DESCENDING)
                                             .startAfter(lastVisible).limit(limit);
                                     nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
                                 }
                                 else {
-                                    Query nextQuery = fireStorePosts.whereEqualTo("subject", currentSubject)
+                                    Query nextQuery = fireStorePosts.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
                                             .orderBy("date", Query.Direction.DESCENDING).startAfter(lastVisible).limit(limit);
                                     nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
                                 }
@@ -255,10 +260,10 @@ public class HomeFragmentPresenter {
         };
 
         if (currentSubject.equals("كل المواد")) {
-            firstQuery = fireStorePosts.orderBy("date", Query.Direction.DESCENDING).limit(limit);
+            firstQuery = fireStorePosts.whereEqualTo("grade", grade).orderBy("date", Query.Direction.DESCENDING).limit(limit);
             firstQuery.get().addOnCompleteListener(postsListener);
         } else {
-            firstQuery = fireStorePosts.whereEqualTo("subject", currentSubject)
+            firstQuery = fireStorePosts.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
                     .orderBy("date", Query.Direction.DESCENDING).limit(limit);
             firstQuery.get().addOnCompleteListener(postsListener);
         }
@@ -283,10 +288,13 @@ public class HomeFragmentPresenter {
         String postWriter = postDocument.getString("writerName");
         String postWriterEmail = postDocument.getString("email");
         String postImage = postDocument.getString("image");
+        String grade = postDocument.getString("grade");
         String postId = postDocument.getId();
         long votes = postDocument.getLong("votes");
         String writerUid = postDocument.getString("writerUid");
         boolean posted = postDocument.getBoolean("posted");
+
+       // Log.v("postsLogging","content is : " + postContent + " , grade is : " + grade);
 
         post.setPosted(posted);
         if (writerUid != null)

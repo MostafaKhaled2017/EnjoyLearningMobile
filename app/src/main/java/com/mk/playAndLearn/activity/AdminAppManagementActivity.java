@@ -202,134 +202,66 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     }
 
     public void doQuery(View view) {
-
-/*
-        final String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
-        Toast.makeText(this, " subjects array size :" + subjectsArray.length, Toast.LENGTH_SHORT).show();
-        for (String subject : subjectsArray) {
-            fireStoreLessons.document(subject).collection(subject).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+       /* final String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
+        for (final String subject : subjectsArray) {
+            fireStoreQuestions.document(subject).collection(subject).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
                     for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                        Lesson lesson = new Lesson();
-
-                        String title = document.getString("title");
-                        String content = document.getString("content");
+                        String questionText = document.getString("alQuestion");
+                        String answer1 = document.getString("answer1");
+                        String answer2 = document.getString("answer2");
+                        String answer3 = document.getString("answer3");
+                        String answer4 = document.getString("answer4");
+                        String subject = document.getString("subject");//extra than normal
+                        String writerEmail = document.getString("writerEmail");//extra than normal
+                        String correctAnswer = document.getString("correctAnswer");
+                        String schoolType = document.getString("schoolType");
                         String writerName = document.getString("writerName");
-                        String writerEmail = document.getString("writerEmail");
+                        String dayDate = document.getString("dayDate");
+                        Boolean reviewed = document.getBoolean("reviewed");
+                        Boolean challengeQuestion = document.getBoolean("challengeQuestion");
                         String writerUid = document.getString("writerUid");
-                        String subject = document.getString("subject");
-                        String position = document.getString("position");
+                        String quesionId = document.getId();
+                        String grade = "الصف الأول الثانوى";
 
-                        lesson.setSubject(subject);
-                        lesson.setWriterEmail(writerEmail);
-                        lesson.setWriterName(writerName);
-                        lesson.setWriterUid(writerUid);
-                        lesson.setPosition(position);
-                        lesson.setTitle(title);
-                        lesson.setContent(content);
+                        Map<String, Object> map = new HashMap();
+                        map.put("grade", grade);
+                        map.put("unitNumber", null);//Added
+                        map.put("lessonNumber", null);//Added
+                        map.put("questionType", "choose"); // TODO : edit this when new type of questions added
+                        map.put("reviewed", reviewed);
+                        map.put("schoolType", schoolType);
+                        map.put("subject", subject);
+                        map.put("term", 1);//Added
+                        map.put("writerName", writerName);
+                        map.put("writerEmail", writerEmail);
+                        map.put("writerUid", writerUid);
+                        map.put("dayDate", dayDate);
+                        map.put("challengeQuestion", challengeQuestion);
 
-                        lessonsList.add(lesson);
+                        map.put("languageBranch", null);
 
-                        fireStoreLessons.add(lesson);
+                        map.put("alQuestion", questionText);
+                        map.put("answer1",answer1);
+                        map.put("answer2", answer2);
+                        map.put("answer3", answer3);
+                        map.put("answer4", answer4);
+                        map.put("correctAnswer", correctAnswer);
+
+                       // Log.v("transferingQuestions", "documentSnapShot is : " + document.toString());
+
+                        if(subject != null) {
+                            fireStoreQuestions.document(grade).collection(subject).document(quesionId).set(map);
+                        } else {
+                            Log.v("transferingQuestions", "document is : " + document.getData().toString());
+                        }
+
                     }
-
-                    Toast.makeText(AdminAppManagementActivity.this, "done . list size is : "
-                            + lessonsList.size(), Toast.LENGTH_SHORT).show();
                 }
             });
 
-        }
-*/
-
-       /* usersReference.orderByChild("online").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    Log.v("usersPresuneceLog", "datasnapshot is : " + dataSnapshot1);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
-        //start editing in database
-
-/*
-        fireStorePosts.document("posts").collection("posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot documentSnapshots) {
-                for (DocumentSnapshot dataSnapshot1 : documentSnapshots.getDocuments()) {
-                    String postContent = (String) dataSnapshot1.getString("content");
-                    String postDate = (String) dataSnapshot1.getString("date");
-                    String postWriter = (String) dataSnapshot1.getString("writerName");
-                    String postWriterEmail = (String) dataSnapshot1.getString("email");
-                    String postImage = (String) dataSnapshot1.getString("image");
-                    String subject = (String) dataSnapshot1.getString("subject");
-                    String postWriterUid = (String) dataSnapshot1.getString("writerUid");
-                    boolean posted = (boolean) dataSnapshot1.getBoolean("posted");
-
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("content", postContent);
-                    map.put("date", postDate);
-                    map.put("writerName", postWriter);
-                    map.put("subject", subject);
-                    map.put("writerUid", postWriterUid);
-                    map.put("image", postImage);
-                    map.put("email", postWriterEmail);
-                    map.put("upVotedUsers", "users: ");
-                    map.put("downVotedUsers", "users: ");
-                    map.put("posted", posted);
-                    map.put("votes", 0);
-
-                    fireStorePosts.add(map);
-                }
-            };
-            });
-*/
-
-
-
-
-        /*usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
-                    Log.v("Logging", "datasnapshot1 is : " + dataSnapshot1.toString());
-                    long generalChallengePoints = -1000;
-                    if(dataSnapshot1.child("lastGeneralChallengeScore").getValue() != null)
-                        generalChallengePoints = (long) dataSnapshot1.child("lastGeneralChallengeScore").getValue();
-                    if(generalChallengePoints == 100) {
-                        usersReference.child(dataSnapshot1.getKey()).child("lastGeneralChallengeScore").setValue(0);
-                        Toast.makeText(AdminAppManagementActivity.this, "uid is : " + dataSnapshot1.getKey(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                Toast.makeText(AdminAppManagementActivity.this, "انتهى الاستعلام", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
-      /*  fireStorePosts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            for(DocumentSnapshot documentSnapshot: task.getResult()){
-                String id = documentSnapshot.getId();
-
-                Map<String, Object> map = new HashMap<>();
-                map.put("grade", 10);
-                map.put("term", 1);
-                fireStorePosts.document(id).update(map);
-
-            }
-            }
-        });*/
+        }*/
     }
 
     public void adjustGeneralChallengeQuestions(View view) {
@@ -473,8 +405,10 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         String correctAnswer = document.getString("correctAnswer");
         String writerName = document.getString("writerName");
         String writerUid = document.getString("writerUid");
+        String grade = document.getString("grade");
         String questionId = document.getId();
 
+        question.setGrade(grade);
         question.setAnswer1(answer1);
         question.setAnswer2(answer2);
         question.setAnswer3(answer3);

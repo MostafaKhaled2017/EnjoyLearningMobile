@@ -10,6 +10,15 @@ public class Challenge implements Comparable<Challenge>{
     String opponentImage;
     String player1Uid;
     Date timestamp;
+    String grade;
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
 
     public Date getTimestamp() {
         return timestamp;

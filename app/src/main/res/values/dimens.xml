@@ -4,7 +4,7 @@
     <dimen name="generalTextSize">16sp</dimen>
     <dimen name="text_size_in_toolbar">20sp</dimen>
     <dimen name="large_text_size">25sp</dimen>
-    <dimen name="margin_between_radiobuttons">15dp</dimen>
+    <dimen name="margin_between_radiobuttons_orCheckBoxes">15dp</dimen>
     <dimen name="margin_between_radiobuttons_in_add_question">22dp</dimen>
     <dimen name="margin_top_of_contact_us">17dp</dimen>
     <dimen name="text_size_of_contact_us">20sp</dimen>
@@ -21,5 +21,10 @@
     <dimen name="nothing_text_size">20dp</dimen>
     <dimen name="general_margin">5dp</dimen>
     <dimen name="toolbar_height_approximately">60dp</dimen>
+    <dimen name="width_of_answers_group">300dp</dimen>
+    <dimen name="margin_right_of_answers_group">5dp</dimen>
+    <dimen name="margin_left_of_answers_group">5dp</dimen>
+    <dimen name="margin_bottom_of_answers_group">5dp</dimen>
+    <dimen name="margin_top_of_answers_group">5dp</dimen>
 
 </resources>

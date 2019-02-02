@@ -108,7 +108,7 @@ public class ChallengeResultActivityPresenter {
             , final String secondPlayerUid, final int score, final String currentUserName, final String localCurrentUserImage, final String secondPlayerName
             , final String secondPlayerImage, final ArrayList questionsList, final String subject) {
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
-        final long grade = pref.getLong("grade", -1);
+        final String grade = pref.getString("grade", "غير معروف");
         final Map<String, Object> map = new HashMap<>();
 
         final String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -175,7 +175,7 @@ public class ChallengeResultActivityPresenter {
                     fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
                     fireStoreChallenges.document(challengeId).update("state", "اكتمل");
 
-                    usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
+                   // usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
 
                     addPoints(documentSnapshot, score);
                 }

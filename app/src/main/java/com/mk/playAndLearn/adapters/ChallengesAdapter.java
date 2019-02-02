@@ -138,6 +138,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             intent.putExtra("currentChallenger", 2);
                             intent.putExtra("uid", challenge.getOpponentUid());//second means that he isn't the current user
                             intent.putExtra("questionsList", challenge.getQuestionsList());
+                            intent.putExtra("grade", challenge.getGrade());
                             intent.putExtra("subject", challenge.getSubject());
                             context.startActivity(intent);
                         }

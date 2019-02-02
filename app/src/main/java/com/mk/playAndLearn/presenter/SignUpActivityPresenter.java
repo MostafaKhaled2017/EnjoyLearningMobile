@@ -48,7 +48,7 @@ public class SignUpActivityPresenter {
     }
 
     public void checkEmailAndUploadData(Intent data, final String name, final String gender, final String schoolType
-            , final String type, final long grade) {
+            , final String type, final String grade) {
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         try {
             // Google Sign In was successful, authenticate with Firebase
@@ -87,9 +87,9 @@ public class SignUpActivityPresenter {
                                                 map.put("adminTeacherSubject", "");
                                                 map.put("adminStudent", false);
                                                 map.put("generalAdmin", false);
-                                                map.put("userName", name);
+                                                map.put("userName", name.trim());
                                                 map.put("userImage", imageUrl);
-                                                map.put("userEmail", email);
+                                                map.put("userEmail", email.trim());
                                                 map.put("userType", type);
                                                 map.put("pointsHistory", "");
                                                 map.put("grade", grade);
@@ -174,11 +174,11 @@ public class SignUpActivityPresenter {
 
     }
 
-    void setSharedPreferenceAndNavigate(String name, long grade) {
+    void setSharedPreferenceAndNavigate(String name, String grade) {
         pref = context.getSharedPreferences("MyPref", 0);
         editor = pref.edit();
         editor.putString("currentUserName", name);
-        editor.putLong("grade", grade);
+        editor.putString("grade", grade);
         editor.apply();
 
         view.navigate();
@@ -194,10 +194,6 @@ public class SignUpActivityPresenter {
         void setAcceptTermsCheckedError();
 
         void setUserTypeError();
-
-
-
-        void isSignedInToast();
 
         void navigate();
 
