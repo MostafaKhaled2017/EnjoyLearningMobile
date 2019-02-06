@@ -17,30 +17,13 @@
 
         <include layout="@layout/appbar" />
 
-        <TextView
-            android:id="@+id/subjectsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/appBar"
-            android:layout_alignParentRight="true"
-            android:layout_margin="4dp"
-            android:text="المادة : "
-            android:textSize="18sp" />
 
-        <Spinner
-            android:id="@+id/subjectsSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/appBar"
-            android:layout_marginTop="8dp"
-            android:layout_toLeftOf="@id/subjectsTextView"
-            android:scrollbars="none" />
 
         <TextView
             android:id="@+id/gradeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/subjectsTextView"
+            android:layout_below="@id/appBar"
             android:layout_alignParentRight="true"
             android:layout_margin="4dp"
             android:text="الصف الدراسى : "
@@ -50,9 +33,50 @@
             android:id="@+id/gradeSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/subjectsSpinner"
+            android:layout_below="@id/appBar"
             android:layout_marginTop="8dp"
             android:layout_toLeftOf="@id/gradeTv"
+            android:scrollbars="none" />
+
+
+
+
+        <TextView
+            android:id="@+id/termTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gradeTv"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:text="الفصل الدراسى : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/termSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gradeSpinner"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@id/termTv"
+            android:scrollbars="none" />
+
+        <TextView
+            android:id="@+id/subjectsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/termTv"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:text="المادة : "
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/subjectsSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/termSpinner"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@id/subjectsTextView"
             android:scrollbars="none" />
 
 
@@ -60,10 +84,10 @@
             android:id="@+id/languageBranchesTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/gradeTv"
+            android:layout_below="@id/subjectsTextView"
             android:layout_alignParentRight="true"
             android:layout_margin="4dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:text="فرع السؤال : "
             android:textSize="18sp" />
 
@@ -71,9 +95,9 @@
             android:id="@+id/languageBranchesSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/gradeSpinner"
+            android:layout_below="@id/subjectsSpinner"
             android:layout_marginTop="8dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_toLeftOf="@id/lessonOrderTv"
             android:scrollbars="none" />
 
@@ -116,31 +140,11 @@
             android:layout_toLeftOf="@id/lessonOrderTv"
             android:scrollbars="none" />
 
-
-        <TextView
-            android:id="@+id/termTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/lessonOrderTv"
-            android:layout_alignParentRight="true"
-            android:layout_margin="4dp"
-            android:text="الفصل الدراسى : "
-            android:textSize="18sp" />
-
-        <Spinner
-            android:id="@+id/termSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/lessonOrderSpinner"
-            android:layout_marginTop="8dp"
-            android:layout_toLeftOf="@id/termTv"
-            android:scrollbars="none" />
-
         <EditText
             android:id="@+id/addQuestionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/termTv"
+            android:layout_below="@id/lessonOrderTv"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
             android:hint="السؤال"

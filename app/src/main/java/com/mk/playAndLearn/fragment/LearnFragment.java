@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -45,6 +46,8 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
     ProgressBar progressBar;
     RecyclerView recyclerView;
     LearnFragmentPresenter presenter;
+
+    boolean initialDataLoaded = false;
 
     private OnFragmentInteractionListener mListener;
 
@@ -102,7 +105,7 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
         }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array_with_all_subjects_item, android.R.layout.simple_spinner_item);
+                R.array.secondary_subjects_array_with_all_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -111,7 +114,16 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 hideNoLessonsTextView();
-                presenter.startAsynkTask(currentSubject);
+                FirebaseAuth localAuth = FirebaseAuth.getInstance();
+                localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                            presenter.startAsynkTask(currentSubject);
+                            initialDataLoaded = true;
+                        }
+                    }
+                });
             }
 
             @Override

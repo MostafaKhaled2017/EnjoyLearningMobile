@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
-import com.mk.playAndLearn.utils.OnLoadMoreListener;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.lang.reflect.Field;
@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     RecyclerView recyclerView;
     Spinner spinner;
+    boolean initialDataLoaded = false;
 
     String currentSubject = "";
 
@@ -99,7 +100,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array_with_all_subjects_item, android.R.layout.simple_spinner_item);
+                R.array.secondary_subjects_array_with_all_subjects_item, R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
@@ -107,7 +108,16 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
-                loadData();
+                FirebaseAuth localAuth = FirebaseAuth.getInstance();
+                localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                            loadData();
+                            initialDataLoaded = true;
+                        }
+                    }
+                });
             }
 
             @Override
@@ -164,7 +174,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
+                R.array.secondary_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 

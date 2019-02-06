@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,16 +16,22 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
 import com.mk.playAndLearn.model.User;
@@ -35,9 +42,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.EventListener;
 
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
-import static com.mk.playAndLearn.utils.Firebase.lastActiveUsersReference;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+
 
 public class ChallengersActivity extends AppCompatActivity {
     ArrayList<User> list = new ArrayList();
@@ -144,62 +150,61 @@ public class ChallengersActivity extends AppCompatActivity {
             list.clear();
         }
 
-        ValueEventListener valueEventListener = new ValueEventListener() {
+        OnCompleteListener usersListener = new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
                 String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    User user = new User();
-                    String points = "";
-                    boolean admin = false, online = false;
-                    String name = (String) dataSnapshot1.child("userName").getValue();
-                    String email = (String) dataSnapshot1.child("userEmail").getValue();
-                    String uid = dataSnapshot1.getKey();
-                    if (dataSnapshot1.child("points").getValue() != null)
-                        points = dataSnapshot1.child("points").getValue().toString();
-                    if(dataSnapshot1.child("adminStudent").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
-                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
-                    String userType = (String) dataSnapshot1.child("userType").getValue();
-                    String userSchoolType = (String) dataSnapshot1.child("userSchoolType").getValue();
-                    Long lastOnlineDate = (Long) dataSnapshot1.child("lastOnlineDate/time").getValue();
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        User user = new User();
+                        String points = "";
+                        boolean admin = false, online = false;
+                        String name = (String) document.getString("userName");
+                        String email = (String) document.getString("userEmail");
+                        String uid = document.getId();
+                        if (document.getLong("points") != null)
+                            points = document.getLong("points").toString();
+                        if(document.getBoolean("admin") != null)
+                            admin = (boolean) document.getBoolean("admin");
+                        String imageUrl = (String) document.getString("userImage");
+                        String userType = (String) document.getString("userType");
+                        String userSchoolType = (String) document.getString("userSchoolType");
 
-                    int pointsInt;
-                    try {
-                        pointsInt = Integer.parseInt(points);
-                    } catch (Exception ex) {
-                        Log.v("pointsException", "exception is : " + ex);
-                        pointsInt = 0;
-                    }
+                        int pointsInt;
+                        try {
+                            pointsInt = Integer.parseInt(points);
+                        } catch (Exception ex) {
+                            Log.v("pointsException", "exception is : " + ex);
+                            pointsInt = 0;
+                        }
 
-                    String subjectSchoolType = AddQuestionActivity.getSchoolType(subject);
+                        String subjectSchoolType = AddQuestionActivity.getSchoolType(subject);
 
-                    Log.v("challengesLogging", "user type : " + userType
-                     + " , local uid is : " + localCurrentUserUid
-                     + " , lastOnlineDate is : " + lastOnlineDate
-                     + " , name is : " + name);
 
-                    if (userType != null && userType.equals("طالب")
-                            && !uid.equals(localCurrentUserUid)
-                            && lastOnlineDate != null
-                            && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                        if (userType != null && userType.equals("طالب")
+                                && !uid.equals(localCurrentUserUid)
+                                && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
 
-                        user.setAdmin(admin);
-                        user.setOnline(online);
-                        user.setName(name);
-                        user.setPoints(pointsInt);
-                        user.setImageUrl(imageUrl);
-                        user.setEmail(email);
-                        user.setUid(uid);
+                            user.setAdmin(admin);
+                            user.setOnline(online);
+                            user.setName(name);
+                            user.setPoints(pointsInt);
+                            user.setImageUrl(imageUrl);
+                            user.setEmail(email);
+                            user.setUid(uid);
 
-                        Log.v("usersUIds", "The uid of : " + name + " is " + uid);
 
-                        if(userSchoolType != null && subjectSchoolType.equals("both")
-                                || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
-                                || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
-                            list.add(0, user);
+                            if(userSchoolType != null && subjectSchoolType.equals("both")
+                                    || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
+                                    || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
+                                list.add(0, user);
+                            }
                         }
                     }
+
+
+                } else {
+                    Log.v("TAG", "failed");
                 }
 
                 recyclerAdapter.notifyDataSetChanged();
@@ -219,16 +224,12 @@ public class ChallengersActivity extends AppCompatActivity {
                     noInternetConnectionText.setVisibility(View.GONE);
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         };
 
-        usersReference.orderByChild("lastOnlineDate/time")
-                .limitToLast(15)
-                .addListenerForSingleValueEvent(valueEventListener);
+        fireStoreUsers.orderBy("lastOnlineDay", Query.Direction.DESCENDING)
+                .limit(15)
+                .get()
+                .addOnCompleteListener(usersListener);
     }
 }
 

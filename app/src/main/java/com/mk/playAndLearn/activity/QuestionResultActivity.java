@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
@@ -31,7 +32,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mk.playAndLearn.utils.Firebase.auth;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 
 public class QuestionResultActivity extends AppCompatActivity {
@@ -229,7 +229,7 @@ public class QuestionResultActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(View view) {
-                        String localCurrentEmail = auth.getCurrentUser().getEmail();
+                        String localCurrentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                         SharedPreferences pref = getSharedPreferences("MyPref", 0);
                         String grade = pref.getString("grade", "غير معروف");
                         Map<String, Object> map = new HashMap<>();

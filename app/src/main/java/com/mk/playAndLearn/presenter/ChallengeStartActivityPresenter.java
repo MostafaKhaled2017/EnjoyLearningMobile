@@ -3,27 +3,28 @@ package com.mk.playAndLearn.presenter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.activity.QuestionActivity;
 import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.AdManager;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
-import static com.mk.playAndLearn.utils.sharedPreference.getGradeFromSharedPreferences;
-import static com.mk.playAndLearn.utils.sharedPreference.getNameFromSharedPreferences;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 public class ChallengeStartActivityPresenter {
     View view;
@@ -52,18 +53,18 @@ public class ChallengeStartActivityPresenter {
     }
 
     public void getCurrentPlayerData() {
-        final String player1Name = getNameFromSharedPreferences(context);
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final String player1Name = getSavedName(context);
         final String player1Image = currentUser.getPhotoUrl().toString();
-        usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int player1Points = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                view.showCurrentPlayerData(player1Name, player1Image, player1Points);
-            }
 
+        fireStoreUsers.document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    int player1Points = Integer.parseInt(document.getLong("points").toString());
+                    view.showCurrentPlayerData(player1Name, player1Image, player1Points);
+                }
             }
         });
 
@@ -87,24 +88,22 @@ public class ChallengeStartActivityPresenter {
         if (currentChallenger == 1) {
             view.showOpponentData(opponentName, opponentImage, opponentPoints);
         } else if (currentChallenger == 2) {
-            usersReference.child(opponentUid).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            fireStoreUsers.document(opponentUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        DocumentSnapshot document = task.getResult();
 
-                    String opponentName = (String) dataSnapshot.child("userName").getValue();
-                    String opponentImage = (String) dataSnapshot.child("userImage").getValue();
-                    int opponentPoints = -1;
+                        String opponentName = (String) document.getString("userName");
+                        String opponentImage = (String) document.getString("userImage");
+                        int opponentPoints = -1;
 
-                    if (dataSnapshot.child("points").getValue() != null)
-                        opponentPoints = (int) dataSnapshot.child("points").getValue();
+                        if (document.getLong("points") != null)
+                            opponentPoints = Integer.parseInt(document.getLong("points").toString());
 
-                    view.showOpponentData(opponentName, opponentImage, opponentPoints);
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
+                        view.showOpponentData(opponentName, opponentImage, opponentPoints);
+                    }
                 }
             });
         }
@@ -194,8 +193,9 @@ public class ChallengeStartActivityPresenter {
     void loadQuestionsForChallenger1() {
         String randomId = fireStoreQuestions.document().getId();
 
-        fireStoreQuestions.document(getGradeFromSharedPreferences(context)).collection(subject)
+        fireStoreQuestions.document(getSavedGrade(context)).collection(subject)
                 .whereEqualTo("reviewed", true)
+                //.whereEqualTo("challengeQuestion", false) TODO ADD VIP
                 .whereGreaterThan(FieldPath.documentId(), randomId)
                 .limit(1)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

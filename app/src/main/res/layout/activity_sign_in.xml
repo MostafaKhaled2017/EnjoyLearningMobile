@@ -20,12 +20,13 @@
     android:layout_gravity="center_vertical|center_horizontal"
     android:orientation="vertical">
 
-    <!--<EditText
+    <EditText
         android:id="@+id/etEmailSignIn"
         style="@style/editTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="البريد الالكترونى"
+        android:textDirection="rtl"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -33,7 +34,9 @@
         style="@style/editTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="right|center"
         android:hint="كلمة المرور"
+        android:textDirection="rtl"
         android:inputType="textPassword" />
 
     <Button
@@ -54,7 +57,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="15dp"
         android:text="نسيت كلمة السر؟"
-        android:textSize="16sp" /> -->
+        android:textSize="16sp" />
 
 
     <com.google.android.gms.common.SignInButton

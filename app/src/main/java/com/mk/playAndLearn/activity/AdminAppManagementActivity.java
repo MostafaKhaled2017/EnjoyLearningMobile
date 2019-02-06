@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,19 +28,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.utils.DateClass;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -50,12 +45,11 @@ import java.util.TimeZone;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
-import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
-import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class AdminAppManagementActivity extends AppCompatActivity {
 
@@ -69,7 +63,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     CollectionReference arabicQuestionsReference, languagesQuestionsReference;
 
-    int counter;
+    int counter, usersCounter;
 
 
     @Override
@@ -107,9 +101,9 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     public void getSuggestedQuestions() {
         if (!questionsList.isEmpty())
             questionsList.clear();
-        final String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
+        final String[] subjectsArray = getResources().getStringArray(R.array.secondary_subjects_array_with_all_subjects_item);
         for (final String subject : subjectsArray) {
-            fireStoreQuestions.document(subject).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            fireStoreQuestions.document(getSavedGrade(this)).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
                     for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
@@ -202,66 +196,58 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     }
 
     public void doQuery(View view) {
-       /* final String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
-        for (final String subject : subjectsArray) {
-            fireStoreQuestions.document(subject).collection(subject).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot documentSnapshots) {
-                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                        String questionText = document.getString("alQuestion");
-                        String answer1 = document.getString("answer1");
-                        String answer2 = document.getString("answer2");
-                        String answer3 = document.getString("answer3");
-                        String answer4 = document.getString("answer4");
-                        String subject = document.getString("subject");//extra than normal
-                        String writerEmail = document.getString("writerEmail");//extra than normal
-                        String correctAnswer = document.getString("correctAnswer");
-                        String schoolType = document.getString("schoolType");
-                        String writerName = document.getString("writerName");
-                        String dayDate = document.getString("dayDate");
-                        Boolean reviewed = document.getBoolean("reviewed");
-                        Boolean challengeQuestion = document.getBoolean("challengeQuestion");
-                        String writerUid = document.getString("writerUid");
-                        String quesionId = document.getId();
-                        String grade = "الصف الأول الثانوى";
+        Toast.makeText(this, "Query started", Toast.LENGTH_SHORT).show();
 
-                        Map<String, Object> map = new HashMap();
-                        map.put("grade", grade);
-                        map.put("unitNumber", null);//Added
-                        map.put("lessonNumber", null);//Added
-                        map.put("questionType", "choose"); // TODO : edit this when new type of questions added
-                        map.put("reviewed", reviewed);
-                        map.put("schoolType", schoolType);
-                        map.put("subject", subject);
-                        map.put("term", 1);//Added
-                        map.put("writerName", writerName);
-                        map.put("writerEmail", writerEmail);
-                        map.put("writerUid", writerUid);
-                        map.put("dayDate", dayDate);
-                        map.put("challengeQuestion", challengeQuestion);
+      /*  DatabaseReference localUsersReference = FirebaseDatabase.getInstance().getReference("users");
 
-                        map.put("languageBranch", null);
+        usersCounter = 0;
+        localUsersReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshotRoot) {
+                for(DataSnapshot dataSnapshot: dataSnapshotRoot.getChildren()) {
+                    String userId = dataSnapshot.getKey();
+                    long refusedQuestions = (long) dataSnapshot.child("refusedQuestions").getValue();
+                    long acceptedQuestions = (long) dataSnapshot.child("acceptedQuestions").getValue();
+                    String name = (String) dataSnapshot.child("userName").getValue();
+                    String imageUrl = (String) dataSnapshot.child("userImage").getValue();
+                    String email = (String) dataSnapshot.child("userEmail").getValue();
+                    String type = (String) dataSnapshot.child("userType").getValue();
+                    String grade = (String) dataSnapshot.child("grade").getValue();
+                    String gender = (String) dataSnapshot.child("gender").getValue();
+                    String currentUserUid = (String) dataSnapshot.child("uid").getValue();
+                    String schoolType = (String) dataSnapshot.child("userSchoolType").getValue();
+                    long points = (long) dataSnapshot.child("points").getValue();
 
-                        map.put("alQuestion", questionText);
-                        map.put("answer1",answer1);
-                        map.put("answer2", answer2);
-                        map.put("answer3", answer3);
-                        map.put("answer4", answer4);
-                        map.put("correctAnswer", correctAnswer);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("refusedQuestions", refusedQuestions);
+                    map.put("acceptedQuestions", acceptedQuestions);
+                    map.put("userName", name.trim());
+                    map.put("userImage", imageUrl);
+                    map.put("userEmail", email.trim());
+                    map.put("userType", type);
+                    map.put("pointsHistory", "");
+                    map.put("grade", grade);
+                    map.put("gender", gender);
+                    map.put("uid", currentUserUid);
+                    map.put("friends", "users: ");
+                    map.put("points", points);
+                    map.put("userSchoolType", schoolType);
 
-                       // Log.v("transferingQuestions", "documentSnapShot is : " + document.toString());
+                    fireStoreUsers.document(userId).set(map);
 
-                        if(subject != null) {
-                            fireStoreQuestions.document(grade).collection(subject).document(quesionId).set(map);
-                        } else {
-                            Log.v("transferingQuestions", "document is : " + document.getData().toString());
-                        }
-
+                    usersCounter ++;
+                    if(usersCounter == dataSnapshotRoot.getChildrenCount()){
+                        Toast.makeText(AdminAppManagementActivity.this, "Query ended", Toast.LENGTH_SHORT).show();
+                        Log.v("queryLogging", "query ended , user count is : " + usersCounter);
                     }
                 }
-            });
+            }
 
-        }*/
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
     }
 
     public void adjustGeneralChallengeQuestions(View view) {
@@ -360,35 +346,6 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                         languagesQuestionsReference.add(map);
                     }
                 }
-            }
-        });
-    }
-
-    public void countUsers(View view) {
-        studentsCount = 0;
-        allUsersCount = 0;
-
-        usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String userType = "";
-                    if (dataSnapshot1.child("userType").getValue() != null) {
-                        userType = dataSnapshot1.child("userType").getValue().toString();
-                    }
-
-                    allUsersCount++;
-
-                    if (userType.equals("طالب")) {
-                        studentsCount++;
-                    }
-                }
-                Toast.makeText(AdminAppManagementActivity.this, "عدد الطلاب : " + allUsersCount + " (" + studentsCount + ")", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }

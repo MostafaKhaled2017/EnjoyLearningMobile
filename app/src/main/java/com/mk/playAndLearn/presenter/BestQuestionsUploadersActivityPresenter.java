@@ -1,10 +1,18 @@
 package com.mk.playAndLearn.presenter;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.User;
 
 import java.io.IOException;
@@ -12,15 +20,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
-import static com.mk.playAndLearn.utils.Strings.adminEmail;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+
 
 
 public class BestQuestionsUploadersActivityPresenter {
     private User user;
     private View view;
     private ArrayList<User> bestQuestionsUploadersList = new ArrayList();
-    ValueEventListener usersListener;
 
     public BestQuestionsUploadersActivityPresenter(View view) {
         //this.user = new User();
@@ -28,67 +35,64 @@ public class BestQuestionsUploadersActivityPresenter {
     }
 
     private void getBestStudents() {
-        usersReference.orderByChild("acceptedQuestions")
-                .startAt(1)
-                .limitToLast(20)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        fireStoreUsers.orderBy("acceptedQuestions", Query.Direction.DESCENDING)
+                .limit(20)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                usersListener = this;
-                if (!bestQuestionsUploadersList.isEmpty())
-                    bestQuestionsUploadersList.clear();
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    if (!bestQuestionsUploadersList.isEmpty())
+                        bestQuestionsUploadersList.clear();
 
-                view.startRecyclerAdapter(bestQuestionsUploadersList);
+                    view.startRecyclerAdapter(bestQuestionsUploadersList);
+                    for(DocumentSnapshot document:task.getResult()){
+                        user = new User();
+                        boolean admin = false;
+                        int acceptedQuestions = -1000;
+                        String name = (String) document.getString("userName");
+                        if(document.getLong("acceptedQuestions") != null)
+                            acceptedQuestions = Integer.parseInt(document.getLong("acceptedQuestions").toString());
+                        String imageUrl = (String) document.getString("userImage");
+                        String userType = (String) document.getString("userType");
+                        String email = (String) document.getString("userEmail");
+                        if (document.getBoolean("admin") != null)
+                            admin = (boolean) document.getBoolean("admin");
 
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    user = new User();
-                    boolean admin = false;
-                    int acceptedQuestions = -1000;
-                    String name = (String) dataSnapshot1.child("userName").getValue();
-                    if(dataSnapshot1.child("acceptedQuestions").getValue() != null)
-                         acceptedQuestions = Integer.parseInt(dataSnapshot1.child("acceptedQuestions").getValue().toString());
-                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
-                    String userType = (String) dataSnapshot1.child("userType").getValue();
-                    String email = (String) dataSnapshot1.child("userEmail").getValue();
-                    if (dataSnapshot1.child("adminStudent").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
-
-                    if (userType.equals("طالب") && acceptedQuestions != -1000
-                           && email != null) {
-                        user.setAdmin(admin);
-                        user.setName(name);
-                        user.setEmail(email);
-                        user.setAcceptedQuestions(acceptedQuestions);
-                        user.setImageUrl(imageUrl);
-                        bestQuestionsUploadersList.add(0, user);
+                        if (userType.equals("طالب") && acceptedQuestions != -1000
+                                && email != null) {
+                            user.setAdmin(admin);
+                            user.setName(name);
+                            user.setEmail(email);
+                            user.setAcceptedQuestions(acceptedQuestions);
+                            user.setImageUrl(imageUrl);
+                            bestQuestionsUploadersList.add(user);
+                        }
                     }
-                }
 
-                //Adding position to List
-                int position = 1, previousAcceptedQuestions = -1;
-                for (int i = 0; i < bestQuestionsUploadersList.size(); i++) {
-                    User user = bestQuestionsUploadersList.get(i);
-                    if (previousAcceptedQuestions != -1 && previousAcceptedQuestions > user.getAcceptedQuestions()) {
-                        position++;
+                    //Adding position to List
+                    int position = 1, previousAcceptedQuestions = -1;
+                    for (int i = 0; i < bestQuestionsUploadersList.size(); i++) {
+                        User user = bestQuestionsUploadersList.get(i);
+                        if (previousAcceptedQuestions != -1 && previousAcceptedQuestions > user.getAcceptedQuestions()) {
+                            position++;
+                        }
+                        bestQuestionsUploadersList.get(i).setPosition(position);
+                        previousAcceptedQuestions = user.getAcceptedQuestions();
                     }
-                    bestQuestionsUploadersList.get(i).setPosition(position);
-                    previousAcceptedQuestions = user.getAcceptedQuestions();
+
+                    if (bestQuestionsUploadersList.size() == 0) {
+                        view.showNoStudentsText();
+                    } else {
+                        view.hideNoStudentsText();
+                    }
+
+                    view.hideProgressBar();
+                    view.notifyAdapter();
+                    view.hideSwipeRefreshLayout();
                 }
-
-                if (bestQuestionsUploadersList.size() == 0) {
-                    view.showNoStudentsText();
-                } else {
-                    view.hideNoStudentsText();
+                else {
+                    Toast.makeText((Context) view, "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت و أعد المحاولة", Toast.LENGTH_SHORT).show();
                 }
-
-                view.hideProgressBar();
-                view.notifyAdapter();
-                view.hideSwipeRefreshLayout();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                view.hideProgressBar();
             }
         });
     }
@@ -119,11 +123,6 @@ public class BestQuestionsUploadersActivityPresenter {
         };
 
         asyncTask.execute();
-    }
-
-    public void removeListeners() {
-        if (usersListener != null)
-            usersReference.removeEventListener(usersListener);
     }
 
     public interface View {

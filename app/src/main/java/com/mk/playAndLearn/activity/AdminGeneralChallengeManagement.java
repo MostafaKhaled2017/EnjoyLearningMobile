@@ -28,11 +28,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Question;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class AdminGeneralChallengeManagement extends AppCompatActivity {
     DocumentReference generalChallengeDocument;
@@ -71,7 +69,7 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
             }
         });
 
-        usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        /*usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -84,9 +82,9 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
-        String[] subjectsArray = getResources().getStringArray(R.array.subjects_array);
+        String[] subjectsArray = getResources().getStringArray(R.array.secondary_subjects_array_with_all_subjects_item);
         for (final String subject : subjectsArray) {
             fireStoreQuestions.document(subject).collection(subject).whereEqualTo("challengeQuestion", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override

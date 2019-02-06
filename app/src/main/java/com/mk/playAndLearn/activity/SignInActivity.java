@@ -25,18 +25,27 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
+
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 public class SignInActivity extends AppCompatActivity {
     String userName = "", userImage = "", userEmail = "";
@@ -49,12 +58,11 @@ public class SignInActivity extends AppCompatActivity {
     ProgressBar progressBar;
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
-    FirebaseDatabase database;
-    //EditText emailEt, passwordEt;
-    //TextView forgotPasswordTv;
-    DatabaseReference myRef;
+    EditText emailEt, passwordEt;
+    TextView forgotPasswordTv;
     Intent i;
     private final static int RC_SIGN_IN = 2;
+    private final String TAG = "SignInActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,10 +72,49 @@ public class SignInActivity extends AppCompatActivity {
         pref = getSharedPreferences("MyPref", 0);
         progressBar = findViewById(R.id.progressbar);
         button = findViewById(R.id.googleBtn);
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("users");
         mAuth = FirebaseAuth.getInstance();
 
+        emailEt = findViewById(R.id.etEmailSignIn);
+        passwordEt = findViewById(R.id.etPasswordSignIn);
+        forgotPasswordTv = findViewById(R.id.tvForgotPassword);
+
+        initializeGoogleLoginVariables();
+
+        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = emailEt.getText().toString();
+                if (TextUtils.isEmpty(email)) {
+                    emailEt.setText("قم بكتابة بريدك الالكترونى");
+                } else {
+                    mAuth.sendPasswordResetEmail(email)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(SignInActivity.this, "سيتم إرسال رسالة إلى بريدك الالكترونى", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(SignInActivity.this, "برجاء التأكد من بياناتك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInWithGoogle();
+            }
+        });
+
+        mCallbackManager = CallbackManager.Factory.create();
+    }
+
+
+    void initializeGoogleLoginVariables() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -83,45 +130,12 @@ public class SignInActivity extends AppCompatActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signInWithGoogle();
-            }
-        });
-
-     /*   forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = emailEt.getText().toString();
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(SignInActivity.this, "قم بكتابة بريدك الالكترونى", Toast.LENGTH_SHORT).show();
-                } else {
-                    mAuth.sendPasswordResetEmail(email)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(SignInActivity.this, "سيتم ارسال رسالة إلى بريدك الالكترونى", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        Toast.makeText(SignInActivity.this, "برجاء التأكد من بياناتك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-            }
-        });*/
-
-        mCallbackManager = CallbackManager.Factory.create();
     }
 
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,28 +155,38 @@ public class SignInActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     //TODO : edit this and don't make it load all data
-                                    myRef.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    fireStoreUsers.document(mAuth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
-                                        public void onDataChange(final DataSnapshot dataSnapshot) {
-                                            String uid =(String) dataSnapshot.child("uid").getValue();
-                                            if (!dataSnapshot.exists()) {
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            if (!documentSnapshot.exists()) {
                                                 Toast.makeText(SignInActivity.this, "هذا الحساب غير موجود برجاء تسجيل حساب جديد", Toast.LENGTH_SHORT).show();
                                                 mAuth.signOut();
                                                 hideProgressBar();
-                                            }
-                                            else if(uid == null){
-                                                Toast.makeText(SignInActivity.this, "هذا الحساب بياناته غير مكتملة برجاء إضافة هذا الحساب من صفحة الاشتراك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
-                                                mAuth.signOut();
-                                                hideProgressBar();
-                                            }else {
-                                                String grade = (String) dataSnapshot.child("grade").getValue();
-                                                navigate(grade);
+                                            } else {
+                                                String databaseFriends = documentSnapshot.getString("friends");
+
+                                                if (databaseFriends == null) {
+                                                    Toast.makeText(SignInActivity.this, "هذا الحساب بياناته غير مكتملة برجاء إضافة هذا الحساب من صفحة الاشتراك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
+                                                    mAuth.signOut();
+                                                    hideProgressBar();
+                                                } else {
+                                                    String name = documentSnapshot.getString("userName");
+                                                    String grade = documentSnapshot.getString("grade");
+                                                    String schoolType = documentSnapshot.getString("userSchoolType");
+                                                    String type = documentSnapshot.getString("userType");
+                                                    String email = documentSnapshot.getString("userEmail");
+                                                    String image = documentSnapshot.getString("userImage");
+                                                    String lastOnlineDay = documentSnapshot.getString("lastOnlineDay");
+
+                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay);
+                                                    navigate();
+                                                }
                                             }
                                         }
-
+                                    }).addOnFailureListener(new OnFailureListener() {
                                         @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(SignInActivity.this, "فشل تسجيل الدخول برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 } else {
@@ -179,7 +203,7 @@ public class SignInActivity extends AppCompatActivity {
 
                 //Toast.makeText(this, "نجح تسجيل الدخول",Toast.LENGTH_SHORT).show();
             } catch (ApiException e) {
-                progressBar.setVisibility(View.GONE);
+                hideProgressBar();
                 Toast.makeText(SignInActivity.this, "حدثت مشكلة أثناء محاولة التسجيل برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
                 Log.v("Logging", "sign in exception : " + e.toString());
 
@@ -189,65 +213,87 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
-    void hideProgressBar(){
-        if(progressBar.getVisibility() == View.VISIBLE)
-        progressBar.setVisibility(View.GONE);
+    public void signInWithEmailAndPassword(View view) {
+        showProgressBar();
+
+        final String email = emailEt.getText().toString();
+        String password = passwordEt.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            emailEt.setError(getString(R.string.emptyEditText));
+        } else if (TextUtils.isEmpty(password)) {
+            passwordEt.setError(getString(R.string.emptyEditText));
+        } else {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                fireStoreUsers.document(mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if(document.exists()) {
+                                            String name = document.getString("userName");
+                                            String grade = document.getString("grade");
+                                            String schoolType = document.getString("userSchoolType");
+                                            String type = document.getString("userType");
+                                            String email = document.getString("userEmail");
+                                            String image = document.getString("userImage");
+                                            String lastOnlineDay = document.getString("lastOnlineDay");
+
+                                            setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay);
+                                            navigate();
+                                        }
+                                    }
+                                });
+                            } else {
+                                hideProgressBar();
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthInvalidUserException e) {
+                                    String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
+                                    if (errorCode.equals("ERROR_USER_NOT_FOUND")) {
+                                        emailEt.setError("هذا الحساب غيرموجود فى التطبيق");
+                                    }
+                                } catch (FirebaseAuthInvalidCredentialsException e) {
+                                    Toast.makeText(SignInActivity.this, "البيانات التى أدخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
+                                } catch (FirebaseNetworkException e) {
+                                    Toast.makeText(SignInActivity.this, "لا يوجد اتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    Toast.makeText(SignInActivity.this, "فشل التسجيل في التطبيق رجاء إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                }
+
+                                // If sign in fails, display a message to the user.
+                                Log.v("sign in exception :", task.getException().toString());
+                                //updateUI(null);
+                            }
+
+                            // ...
+                        }
+                    });
+        }
     }
 
-    public void navigate(String grade) {
-        FirebaseUser user = mAuth.getCurrentUser();
-        userName = user.getDisplayName();
-        userImage = user.getPhotoUrl().toString();
-        userEmail = user.getEmail();
+    void hideProgressBar() {
+        if (progressBar.getVisibility() == View.VISIBLE)
+            progressBar.setVisibility(View.GONE);
+    }
+
+    void showProgressBar() {
+        if (progressBar.getVisibility() != View.VISIBLE)
+            progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void navigate() {
         i = new Intent(SignInActivity.this, MainActivity.class);
 
-        editor = pref.edit();
-        editor.putString("currentUserName", userName);
-        editor.putString("grade", grade);
-        editor.apply();
         startActivity(i);
-        hideProgressBar();
         finish();
+        // hideProgressBar();
         //Toast.makeText(GeneralSignActivity.this, "data in sharedPrefrences : user name : " , Toast.LENGTH_SHORT).show();
     }
 
-   /* public void signInWithEmailAndPassword(View view) {
-        final String writtenEmail = emailEt.getText().toString();
-        final String writtenPassword = passwordEt.getText().toString();
-
-        mAuth.signInWithEmailAndPassword(writtenEmail, writtenPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            myRef.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    String uid = (String) dataSnapshot.child("uid").getValue();
-
-                                    if(uid == null){
-                                        Toast.makeText(SignInActivity.this, "هذا الحساب بياناته غير مكتملة برجاء إضافة هذا الحساب من صفحة الاشتراك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
-                                        mAuth.signOut();
-                                    }
-                                    else {
-                                        navigate();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        } else {
-                            Toast.makeText(SignInActivity.this, "فشل تسجيل الدخول برجاء التأكد من الببيانات وإعادة المحاولة أو تسجيل الاشتراك إذا لم تكن قد قمت بتحديد كلمة السر قبل ذلك", Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-
-    }*/
 }

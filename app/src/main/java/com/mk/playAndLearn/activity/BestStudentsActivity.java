@@ -91,7 +91,6 @@ public class BestStudentsActivity extends AppCompatActivity implements BestStude
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.removeListeners();
     }
 
     @Override

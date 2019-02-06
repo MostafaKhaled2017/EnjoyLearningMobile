@@ -86,7 +86,6 @@ public class BestQuestionsUploaders extends AppCompatActivity implements BestQue
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.removeListeners();
     }
 
     @Override

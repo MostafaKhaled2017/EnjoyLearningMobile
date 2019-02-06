@@ -1,26 +1,15 @@
 package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,9 +17,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Comment;
-import com.mk.playAndLearn.model.Post;
+import com.mk.playAndLearn.model.Reply;
 import com.mk.playAndLearn.utils.DateClass;
 
 import java.io.IOException;
@@ -44,15 +31,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreReplies;
 
-public class PostsInDetailsActivityPresenter {
-    View view;
+public class RepliesButtonActivityPresenter {
+    RepliesButtonActivityPresenter.View view;
     Context context;
-    ArrayList<Comment> commentsList = new ArrayList();
+    ArrayList<Reply> repliesList = new ArrayList();
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
-    public PostsInDetailsActivityPresenter(View view, Context context) {
+    public RepliesButtonActivityPresenter(View view, Context context) {
         this.view = view;
         this.context = context;
     }
@@ -75,7 +62,7 @@ public class PostsInDetailsActivityPresenter {
             @Override
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
-                    getComments();
+                    getReplies();
                 } else {
                     view.onNoInternetConnection();
                 }
@@ -86,10 +73,11 @@ public class PostsInDetailsActivityPresenter {
     }
 
 
-    public void getComments() {
+    public void getReplies() {
         clearList();
-        view.startRecyclerAdapter(commentsList);
-        fireStoreComments.whereEqualTo("postId", view.getPostId()).orderBy("date", Query.Direction.ASCENDING).addSnapshotListener((new EventListener<QuerySnapshot>() {
+        view.startRecyclerAdapter(repliesList);
+        Log.v("repliesLogging", "getReplies method , commentId is : " + view.getCommentId());
+        fireStoreReplies.whereEqualTo("commentId", view.getCommentId()).orderBy("date", Query.Direction.ASCENDING).addSnapshotListener((new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -97,52 +85,52 @@ public class PostsInDetailsActivityPresenter {
                     Log.w("TAG, listen:error", e);
                     return;
                 }
+                Log.v("repliesLogging", "fireStoreReplies");
 
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    DocumentSnapshot commentDocument = dc.getDocument();
+                    DocumentSnapshot replyDocument = dc.getDocument();
                     format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
                     switch (dc.getType()) {
                         case ADDED: {
                             view.onDataFound();
-                            Comment comment = new Comment();
-                            String userName = commentDocument.getString("userName");
-                            String userEmail = commentDocument.getString("userEmail");
-                            String content = commentDocument.getString("content");
-                            String userImage = commentDocument.getString("userImage");
-                            String date = format.format(commentDocument.get("date"));
-                            String writerUid = commentDocument.getString("writerUid");
-                            long votes = commentDocument.getLong("votes");
-                            boolean posted = commentDocument.getBoolean("posted");
-                            String commentId = commentDocument.getId();
+                            Reply reply = new Reply();
+                            String userName = replyDocument.getString("userName");
+                            String userEmail = replyDocument.getString("userEmail");
+                            String content = replyDocument.getString("content");
+                            String userImage = replyDocument.getString("userImage");
+                            String date = format.format(replyDocument.get("date"));
+                            String writerUid = replyDocument.getString("writerUid");
+                            long votes = replyDocument.getLong("votes");
+                            boolean posted = replyDocument.getBoolean("posted");
+                            String replyId = replyDocument.getId();
 
-                            comment.setVotes(votes);
-                            comment.setPosted(posted);
-                            comment.setUserEmail(userEmail);
-                            comment.setCommentId(commentId);
-                            comment.setWriterUid(writerUid);
-                            comment.setUserName(userName);
-                            comment.setContent(content);
-                            comment.setUserImage(userImage);
-                            comment.setDate(date);
-                            comment.setId(commentId);
-                            if (!existsInCommentsList(commentId)) {
-                                commentsList.add(0, comment);
+                            reply.setVotes(votes);
+                            reply.setPosted(posted);
+                            reply.setUserEmail(userEmail);
+                            reply.setReplyId(replyId);
+                            reply.setWriterUid(writerUid);
+                            reply.setUserName(userName);
+                            reply.setContent(content);
+                            reply.setUserImage(userImage);
+                            reply.setDate(date);
+                            if (!existsInRepliesList(replyId)) {
+                                repliesList.add(0, reply);
                                 view.notifyAdapter();
                             }
                             break;
                         }
                         case MODIFIED:
-                            String content = commentDocument.getString("content");
-                            String date = format.format(commentDocument.get("date"));
-                            long votes = commentDocument.getLong("votes");
-                            boolean posted = commentDocument.getBoolean("posted");
+                            String content = replyDocument.getString("content");
+                            String date = format.format(replyDocument.get("date"));
+                            long votes = replyDocument.getLong("votes");
+                            boolean posted = replyDocument.getBoolean("posted");
 
-                            for (int i = 0; i < commentsList.size(); i++) {
-                                if (commentsList.get(i).getCommentId().equals(commentDocument.getId())) {
-                                    commentsList.get(i).setPosted(posted);
-                                    commentsList.get(i).setDate(date);
-                                    commentsList.get(i).setContent(content);
-                                    commentsList.get(i).setVotes(votes);
+                            for (int i = 0; i < repliesList.size(); i++) {
+                                if (repliesList.get(i).getReplyId().equals(replyDocument.getId())) {
+                                    repliesList.get(i).setPosted(posted);
+                                    repliesList.get(i).setDate(date);
+                                    repliesList.get(i).setContent(content);
+                                    repliesList.get(i).setVotes(votes);
                                     view.notifyAdapter();
                                     break;
                                 }
@@ -152,20 +140,21 @@ public class PostsInDetailsActivityPresenter {
                             startAsynkTask();//TODO : think about removeing the child from the list only                            break;
                     }
                 }
-                if (commentsList.size() == 0) {
-                    view.onNoCommentsFound();
+                if (repliesList.size() == 0) {
+                    Log.v("repliesLogging", "list size is 0");
+                    view.onNoReplyFound();
                 }
             }
         }));
     }
 
     void clearList() {
-        if (!commentsList.isEmpty()) {
-            commentsList.clear();
+        if (!repliesList.isEmpty()) {
+            repliesList.clear();
         }
     }
 
-    public void addComment(String commentText) {
+    public void addReply(String replyText) {
         Date today = new Date();
         final DateClass dateClass = new DateClass();
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
@@ -180,12 +169,12 @@ public class PostsInDetailsActivityPresenter {
 
         Log.v("sharedPreference", " current userName is : " + currentUserName);
 
-        map.put("content", commentText.trim());
+        map.put("content", replyText.trim());
         map.put("date", dateClass.getDate());
         map.put("downVotedUsers", "users: ");
-        map.put("notified", view.getPostWriterUid() + "false");
-        map.put("postId", view.getPostId());
-        map.put("postWriterUid", view.getPostWriterUid());
+        map.put("notified", view.getCommentWriterUid() + "false");
+        map.put("commentId", view.getCommentId());
+        map.put("commentWriterUid", view.getCommentWriterUid());
         map.put("writerUid", localCurrentUserUid);
         map.put("upVotedUsers", "users: ");
         map.put("userName", currentUserName);
@@ -194,21 +183,21 @@ public class PostsInDetailsActivityPresenter {
         map.put("votes", 0);
         map.put("posted", false);
 
-        final DocumentReference currentCommentRef = fireStoreComments.document();
-        currentCommentRef.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final DocumentReference currenReplyRef = fireStoreReplies.document();
+        currenReplyRef.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                currentCommentRef.update("posted", true);
-                currentCommentRef.update("date", dateClass.getDate());
+                currenReplyRef.update("posted", true);
+                currenReplyRef.update("date", dateClass.getDate());
                 view.showToast("تم إضافة التعليق بنجاح");
                 view.notifyAdapter();
             }
         });
     }
 
-    private boolean existsInCommentsList(String commentId) {
-        for (Comment comment : commentsList) {
-            if (comment.getCommentId().equals(commentId)) {
+    private boolean existsInRepliesList(String replyId) {
+        for (Reply reply : repliesList) {
+            if (reply.getReplyId().equals(replyId)) {
                 return true;
             }
         }
@@ -216,13 +205,10 @@ public class PostsInDetailsActivityPresenter {
     }
 
     public interface View {
-        String getPostId();
-
-        String getPostWriterUid();
 
         void retryConnection();
 
-        void startRecyclerAdapter(ArrayList commentsList);
+        void startRecyclerAdapter(ArrayList repliesList);
 
         void onNoInternetConnection();
 
@@ -232,8 +218,12 @@ public class PostsInDetailsActivityPresenter {
 
         void notifyAdapter();
 
-        void onNoCommentsFound();
+        void onNoReplyFound();
 
         void showToast(String value);
+
+        String getCommentId();
+
+        String getCommentWriterUid();
     }
 }

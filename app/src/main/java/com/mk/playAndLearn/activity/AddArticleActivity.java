@@ -1,6 +1,5 @@
 package com.mk.playAndLearn.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -33,7 +31,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Lesson;
-import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.DateClass;
 
 import java.lang.reflect.Field;
@@ -46,7 +43,6 @@ import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
-import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 
 public class AddArticleActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     EditText etArabicPosition, etContent, etUnitPosition, etSubject, etTitle;
@@ -110,7 +106,7 @@ public class AddArticleActivity extends AppCompatActivity implements AdapterView
         }
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
+                R.array.secondary_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 

@@ -14,7 +14,9 @@
     <!-- either live or debug -->
     <string name="ad_mob_used_id">ca-app-pub-1283544791526621~9315704399</string>
 
-    <string-array name="subjects_array">
+
+    <string-array name="secondary_subjects_array_for_upload">
+        <item>اختر المادة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
         <item>جغرافيا</item>
@@ -30,7 +32,23 @@
         <item>Biology</item>
     </string-array>
 
-    <string-array name="subjects_array_with_all_subjects_item">
+    <string-array name="secondary_subjects_array">
+        <item>لغة عربية</item>
+        <item>لغة انجليزية</item>
+        <item>جغرافيا</item>
+        <item>تاريخ</item>
+        <item>فيزياء</item>
+        <item>كيمياء</item>
+        <item>أحياء</item>
+        <item>فلسفة</item>
+        <item>رياضيات</item>
+        <item>Mathematics</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+    </string-array>
+
+    <string-array name="secondary_subjects_array_with_all_subjects_item">
         <item>كل المواد</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -48,7 +66,7 @@
         <item>موضوعات عامة</item>
     </string-array>
 
-    <string-array name="subjects_array_with_general_subjects_item">
+    <string-array name="secondary_subjects_array_with_general_subjects_item">
         <item>اختر المادة</item>
         <item>موضوعات عامة</item>
         <item>لغة عربية</item>
@@ -66,21 +84,16 @@
         <item>Biology</item>
     </string-array>
 
-    <string-array name="subjects_array_for_upload">
+
+    <string-array name="preparatory_subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
-        <item>جغرافيا</item>
-        <item>تاريخ</item>
-        <item>فيزياء</item>
-        <item>كيمياء</item>
-        <item>أحياء</item>
-        <item>فلسفة</item>
+        <item>دراسات اجتماعية</item>
+        <item>علوم</item>
         <item>رياضيات</item>
         <item>Mathematics</item>
-        <item>Physics</item>
-        <item>Chemistry</item>
-        <item>Biology</item>
+        <item>Science</item>
     </string-array>
 
     <string-array name="units_array">
@@ -174,6 +187,7 @@
         <item>أنثى</item>
     </string-array>
     <string-array name="sign_up_grades_array">
+        <item>الصف الثالث الإعدادى</item>
         <item>الصف الأول الثانوى</item>
     </string-array>
     <string-array name="grades_array">

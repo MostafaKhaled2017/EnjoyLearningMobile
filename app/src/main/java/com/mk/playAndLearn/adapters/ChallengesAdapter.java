@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,10 +14,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.model.Challenge;
@@ -29,9 +33,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
@@ -157,7 +160,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
 
                             dateClass.setDate(today);
 
-                            usersReference.child(challenge.getPlayer2Uid()).child("lastChallengeDate").setValue(dateClass.getDate());
+                          //  usersReference.child(challenge.getPlayer2Uid()).child("lastChallengeDate").setValue(dateClass.getDate());
                         }
                     });
 
@@ -184,28 +187,25 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             intent.putExtra("uid", challenge.getOpponentUid());
                             intent.putExtra("subject", challenge.getSubject());
 
-                            usersReference.child(challenge.getOpponentUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            fireStoreUsers.document(challenge.getOpponentUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    String secondPlayerPoints = "-1";
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if(task.isSuccessful()){
+                                        String secondPlayerPoints = "-1";
 
-                                    String secondPlayerName = (String) dataSnapshot.child("userName").getValue();
-                                    String secondPlayerImage = (String) dataSnapshot.child("userImage").getValue();
-                                    String secondPlayerEmail = (String) dataSnapshot.child("userEmail").getValue();
-                                    if (dataSnapshot.child("points").getValue() != null)
-                                        secondPlayerPoints = dataSnapshot.child("points").getValue().toString();
+                                        String secondPlayerName = (String) document.getString("userName");
+                                        String secondPlayerImage = (String) document.getString("userImage");
+                                        String secondPlayerEmail = (String) document.getString("userEmail");
+                                        if (document.getLong("points") != null)
+                                            secondPlayerPoints = document.getLong("points").toString();
 
-                                    intent.putExtra("name", secondPlayerName);
-                                    intent.putExtra("image", secondPlayerImage);
-                                    intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
-                                    intent.putExtra("email", secondPlayerEmail);
-                                    context.startActivity(intent);
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
+                                        intent.putExtra("name", secondPlayerName);
+                                        intent.putExtra("image", secondPlayerImage);
+                                        intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
+                                        intent.putExtra("email", secondPlayerEmail);
+                                        context.startActivity(intent);
+                                    }
                                 }
                             });
 

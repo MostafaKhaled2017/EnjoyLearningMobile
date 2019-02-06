@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -35,9 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
@@ -60,6 +60,7 @@ public class QuestionActivity extends AppCompatActivity {
     String[] correctAnswers;
     int secondPlayerPoints;
     ProgressBar timerProgressBar;
+    FirebaseUser currentUser;
 
     //TODO : change the xml tags to support
     //TODO : handle what happens when internet connection problem occurs in a challenge
@@ -92,6 +93,8 @@ public class QuestionActivity extends AppCompatActivity {
         c4 = findViewById(R.id.checkBox4);
         checkBoxGroup = findViewById(R.id.checkBoxGroup);
         timerProgressBar = findViewById(R.id.timerProgressbar);
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -251,7 +254,7 @@ public class QuestionActivity extends AppCompatActivity {
     public void showDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         if (isGeneralChallenge) {
-            usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+           /* usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
@@ -270,7 +273,7 @@ public class QuestionActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            });*/
         }
         if (currentChallenger == 2) {
             dialog.setMessage("هل أنت متأكد أنك تريد الخروج و عدم إكمال التحدى؟");

@@ -102,6 +102,10 @@ public class HomeFragmentPresenter {
         asyncTask.execute();
     }
 
+    public int getPostsListSize(){
+        return postsList.size();
+    }
+
     public void addPost(String postText, String subject) {
         Date today = new Date();
         final DateClass dateClass = new DateClass();

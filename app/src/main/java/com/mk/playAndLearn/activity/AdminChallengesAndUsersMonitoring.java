@@ -32,7 +32,6 @@ import java.util.TimeZone;
 
 import static com.mk.playAndLearn.service.NotificationsService.adjustSubject;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;

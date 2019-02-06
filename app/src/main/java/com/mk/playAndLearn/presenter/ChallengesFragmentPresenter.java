@@ -1,5 +1,7 @@
 package com.mk.playAndLearn.presenter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -7,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -14,11 +18,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 import com.mk.playAndLearn.model.Challenge;
 import com.mk.playAndLearn.utils.DateClass;
 
@@ -33,12 +39,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class ChallengesFragmentPresenter {
     Challenge challenge;
@@ -49,10 +57,11 @@ public class ChallengesFragmentPresenter {
     boolean initialDataLoaded = false;
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
     String localCurrentUserUid;
+    Context context;
 
-
-    public ChallengesFragmentPresenter(View view) {
+    public ChallengesFragmentPresenter(View view, Context context) {
         this.view = view;
+        this.context = context;
     }
 
     public void startAsynkTask() {
@@ -203,13 +212,19 @@ public class ChallengesFragmentPresenter {
             score = player2Score + " : " + player1Score;
         }
         challenge.setScore(score);
-        if (challenge.getState().equals("اكتمل")) {
+
+        Log.v("challengesPoints", "score1Added value is : " + score1Added
+                +" , player1Points : " + player1Score
+                + " , player2Points : " + player2Score);
+
+            if (challenge.getState().equals("اكتمل")) {
             Log.v("loggingC1", "value is " + !existsInCompletedChallengesList(challengeId));
             if (!existsInCompletedChallengesList(dataSnapshot.getId())) {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(challenge);
-                addScoreToPlayer1(player1Score, player2Score, challengeId, score1Added);
+                if (score1Added != null && !score1Added && currentPlayer == 1)
+                    addScoreToPlayer1(player1Score, player2Score, challengeId);
             }
         } else if (challenge.getState().equals(refusedChallengeText)) {
             Log.v("loggingC2", "value is " + !existsInCompletedChallengesList(challengeId));
@@ -217,7 +232,8 @@ public class ChallengesFragmentPresenter {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(challenge);
-                addScoreToPlayer1(player1Score, player2Score, challengeId, score1Added);
+                if (score1Added != null && !score1Added && currentPlayer == 1)
+                    addScoreToPlayer1(player1Score, player2Score, challengeId);
             }
         } else if (challenge.getState().equals(uncompletedChallengeText)) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getId()));
@@ -294,46 +310,54 @@ public class ChallengesFragmentPresenter {
         }
     }
 
-    void addScoreToPlayer1(long player1Score, long player2Score, final String challengeId, Boolean score1Added) {
-        if (currentPlayer == 1 && score1Added != null && !score1Added) {
-            if (player1Score == player2Score) {
-                usersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long points = (long) dataSnapshot.child("points").getValue();
-                        usersReference.child(localCurrentUserUid).child("points").setValue(points + drawChallengePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                fireStoreChallenges.document(challengeId).update("score1Added", true);
-                            }
-                        });
-                        //usersReference.removeEventListener(this);
-                    }
+    void addScoreToPlayer1(long player1Score, long player2Score, final String challengeId) {
+        final DocumentReference player1Reference = fireStoreUsers.document(localCurrentUserUid);
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+        if (player1Score == player2Score) {
+            fireStore.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(player1Reference);
+                    long newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
+                    transaction.update(player1Reference, "points", newPoints);
+                    return null;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d("TAG", "Transaction success!");
 
-                    }
-                });
-            } else if (player1Score > player2Score) {
-                usersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long points = (long) dataSnapshot.child("points").getValue();
-                        usersReference.child(localCurrentUserUid).child("points").setValue(points + wonChallengePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                fireStoreChallenges.document(challengeId).update("score1Added", true);
-                            }
-                        });
-                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w("TAG", "Transaction failure.", e);
+                }
+            });
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+        } else if (player1Score > player2Score) {
+            fireStore.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(player1Reference);
+                    long newPoints = snapshot.getLong("points") + (long)wonChallengePoints;
+                    transaction.update(player1Reference, "points", newPoints);
+                    return null;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d("TAG", "Transaction success!");
 
-                    }
-                });
-            }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w("TAG", "Transaction failure.", e);
+                }
+            });
         }
     }
 

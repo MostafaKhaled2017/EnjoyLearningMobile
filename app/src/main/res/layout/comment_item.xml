@@ -99,6 +99,16 @@
                 android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
                 android:textColor="@color/black"
                 android:textSize="@dimen/generalTextSize" />
+
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/repliesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/commentContent"
+                android:text="الردود"/>
+
         </RelativeLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

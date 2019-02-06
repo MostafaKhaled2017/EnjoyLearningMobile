@@ -60,6 +60,8 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
+
 //TODO : solve the shared prefrence tutorial
 //TODO : change the app in facebook for developers from in development to live
 //TODO : remove the tradition sign in and sign up and think about removing sign in with facebook
@@ -191,7 +193,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         super.onStart();
         //TODO : note : don't try to update the users data here again
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && getSavedName(this) != null) {
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
         }
     }

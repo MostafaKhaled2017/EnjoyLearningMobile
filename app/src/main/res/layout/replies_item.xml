@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view_of_replies"
     android:layout_width="match_parent"
-    android:layout_marginBottom="5dp"
     android:layout_height="wrap_content"
     android:layoutDirection="ltr"
-    android:id="@+id/card_view_of_posts">
+    android:layout_marginBottom="1dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:background="@color/white">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/postImageInDetails"
+            android:id="@+id/replyImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentRight="true"
@@ -20,28 +20,29 @@
             android:src="@mipmap/app_icon" />
 
         <TextView
+            android:id="@+id/replyUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mostafa Khaled Mostafa"
-            android:layout_toLeftOf="@id/postImageInDetails"
             android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@id/replyImage"
+            android:text="Mostafa Khaled Mostafa"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:id="@+id/postUserNameInDetails"/>
+            android:textSize="20sp" />
+
         <TextView
-            android:id="@+id/postDateInDetails"
-            android:layout_below="@id/postUserNameInDetails"
+            android:id="@+id/replyDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/replyUserName"
+            android:layout_toLeftOf="@id/replyImage"
             android:text="9/8/2018"
-            android:layout_toLeftOf="@id/postImageInDetails"
             android:textColor="@color/grey"
             android:textSize="12sp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/postImageInDetails">
+            android:layout_below="@id/replyImage">
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/votesView"
@@ -85,7 +86,7 @@
             </android.support.v7.widget.LinearLayoutCompat>
 
             <TextView
-                android:id="@+id/postContentInDetails"
+                android:id="@+id/replyContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -98,7 +99,6 @@
                 android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
                 android:textColor="@color/black"
                 android:textSize="@dimen/generalTextSize" />
-
         </RelativeLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

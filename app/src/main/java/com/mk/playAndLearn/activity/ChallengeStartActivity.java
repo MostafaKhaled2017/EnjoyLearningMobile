@@ -2,7 +2,6 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
@@ -16,23 +15,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.presenter.ChallengeStartActivityPresenter;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-
-import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.sharedPreference.getGradeFromSharedPreferences;
 
 public class ChallengeStartActivity extends AppCompatActivity implements ChallengeStartActivityPresenter.View {
     //TODO : make this page loads until all data finished loading by hiding the 4 main views until the data loads

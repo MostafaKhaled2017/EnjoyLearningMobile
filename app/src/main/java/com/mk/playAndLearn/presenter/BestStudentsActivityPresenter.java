@@ -1,11 +1,19 @@
 package com.mk.playAndLearn.presenter;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.User;
 
 import java.io.IOException;
@@ -13,14 +21,13 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
 
 public class BestStudentsActivityPresenter {
     private User user;
     private View view;
     private ArrayList<User> bestStudentsList = new ArrayList();
-    ValueEventListener usersListener;
 
     public BestStudentsActivityPresenter(View view) {
         //this.user = new User();
@@ -28,57 +35,56 @@ public class BestStudentsActivityPresenter {
     }
 
     private void getBestStudents() {
-        usersReference.orderByChild("points").limitToLast(20).addListenerForSingleValueEvent(new ValueEventListener() {
+        fireStoreUsers.orderBy("points", Query.Direction.DESCENDING).limit(20).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int points = -1000;
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    int points = -1000;
 
-                usersListener = this;
-                if (!bestStudentsList.isEmpty())
-                    bestStudentsList.clear();
+                    if (!bestStudentsList.isEmpty())
+                        bestStudentsList.clear();
 
-                view.startRecyclerAdapter(bestStudentsList);
+                    view.startRecyclerAdapter(bestStudentsList);
 
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    user = new User();
-                    boolean admin = false;
-                    Log.v("Logging", "the key is : " + dataSnapshot1.getKey());
-                    String name = (String) dataSnapshot1.child("userName").getValue();
-                    if(dataSnapshot1.child("points").getValue() != null)
-                        points = Integer.parseInt(dataSnapshot1.child("points").getValue().toString());
-                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
-                    String userType = (String) dataSnapshot1.child("userType").getValue();
+                    for (DocumentSnapshot document : task.getResult()) {
+                        user = new User();
+                        boolean admin = false;
+                        Log.v("Logging", "the key is : " + document.getId());
+                        String name = (String) document.getString("userName");
+                        if(document.getLong("points") != null)
+                            points = Integer.parseInt(document.getLong("points").toString());
+                        String imageUrl = document.getString("userImage");
+                        String userType = (String) document.getString("userType");
 
-                    if(dataSnapshot1.child("adminStudent").getValue() != null)
-                         admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
-                    if (userType.equals("طالب") && points != -1000) {
-                        user.setAdmin(admin);
-                        user.setName(name);
-                        user.setPoints(points);
-                        user.setImageUrl(imageUrl);
-                        bestStudentsList.add(0, user);
+                        if(document.getBoolean("admin") != null)
+                            admin = (boolean) document.getBoolean("admin");
+                        if (userType.equals("طالب") && points != -1000) {
+                            user.setAdmin(admin);
+                            user.setName(name);
+                            user.setPoints(points);
+                            user.setImageUrl(imageUrl);
+                            bestStudentsList.add(user);
+                        }
+                    }
+                    //Adding position to List
+                    int position = 1, previousPoints = -1;
+                    for (int i = 0; i < bestStudentsList.size(); i++) {
+                        User user = bestStudentsList.get(i);
+                        if (previousPoints != -1 && previousPoints > user.getPoints()){
+                            position ++;
+                        }
+                        bestStudentsList.get(i).setPosition(position);
+                        previousPoints = user.getPoints();
                     }
 
+                    view.hideProgressBar();
+                    view.notifyAdapter();
+                    view.hideSwipeRefreshLayout();
+                }
+                else {
+                    Toast.makeText((Context) view, "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت و أعد المحاولة", Toast.LENGTH_SHORT).show();
                 }
 
-                //Adding position to List
-                int position = 1, previousPoints = -1;
-                for (int i = 0; i < bestStudentsList.size(); i++) {
-                    User user = bestStudentsList.get(i);
-                    if (previousPoints != -1 && previousPoints > user.getPoints()){
-                        position ++;
-                    }
-                    bestStudentsList.get(i).setPosition(position);
-                    previousPoints = user.getPoints();
-                }
-
-                view.hideProgressBar();
-                view.notifyAdapter();
-                view.hideSwipeRefreshLayout();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
                 view.hideProgressBar();
             }
         });
@@ -110,11 +116,6 @@ public class BestStudentsActivityPresenter {
         };
 
         asyncTask.execute();
-    }
-
-    public void removeListeners() {
-        if (usersListener != null)
-            usersReference.removeEventListener(usersListener);
     }
 
     public interface View {

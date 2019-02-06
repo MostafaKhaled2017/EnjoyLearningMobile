@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +32,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mk.playAndLearn.utils.Firebase.currentUser;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
@@ -42,6 +43,7 @@ public class GeneralChallengesActivityPresenter {
     ArrayList list = new ArrayList<>();
 
     DocumentReference generalChallengeDocument =  fireStoreGeneralChallenge.document("generalChallengeDocument");
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
     public GeneralChallengesActivityPresenter(View view) {

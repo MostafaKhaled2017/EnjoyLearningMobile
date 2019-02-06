@@ -1,23 +1,13 @@
 package com.mk.playAndLearn.model;
 
-public class Comment {
+public class Reply {
     String userName;
     String userEmail;
     String userImage;
     String content;
     String date;
-    String commentId;
+    String replyId;
     String writerUid;
-    String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     long votes;
     boolean posted;
 
@@ -45,12 +35,12 @@ public class Comment {
         this.writerUid = writerUid;
     }
 
-    public String getCommentId() {
-        return commentId;
+    public String getReplyId() {
+        return replyId;
     }
 
-    public void setCommentId(String commentId) {
-        this.commentId = commentId;
+    public void setReplyId(String replyId) {
+        this.replyId = replyId;
     }
 
     public String getDate() {

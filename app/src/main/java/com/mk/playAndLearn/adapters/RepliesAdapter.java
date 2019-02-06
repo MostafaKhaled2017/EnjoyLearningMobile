@@ -21,83 +21,67 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.activity.RepliesActivity;
-import com.mk.playAndLearn.model.Comment;
+import com.mk.playAndLearn.model.Reply;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreReplies;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
-public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHolder> {
-    ArrayList<Comment> list;
+public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder> {
+    ArrayList<Reply> list;
     Context context;
     //used to load the votes number at the first time only
     boolean visied;
     long votes;
     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public CommentsAdapter(ArrayList<Comment> list, Context context, boolean visited) {
+    public RepliesAdapter(ArrayList<Reply> list, Context context, boolean visited) {
         this.list = list;
         this.context = context;
         this.visied = visited;
     }
 
     @Override
-    public CommentsAdapter.MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RepliesAdapter.MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.comment_item, parent, false);
-        CommentsAdapter.MyHolder myHolder = new CommentsAdapter.MyHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.replies_item, parent, false);
+        RepliesAdapter.MyHolder myHolder = new RepliesAdapter.MyHolder(view);
 
         return myHolder;
     }
 
     @Override
-    public void onBindViewHolder(final CommentsAdapter.MyHolder holder, final int position) {
-        final Comment comment = list.get(position);
-        if (comment.getUserName() != null)
-            holder.name.setText(comment.getUserName().trim());
-        if (comment.getContent() != null)
-            holder.content.setText(comment.getContent());
-        if (comment.getDate() != null) {
-            if (comment.isPosted() || !comment.getWriterUid().equals(localCurrentUserUid)) {
-                holder.date.setText(comment.getDate());
+    public void onBindViewHolder(final RepliesAdapter.MyHolder holder, final int position) {
+        final Reply reply = list.get(position);
+        if (reply.getUserName() != null)
+            holder.name.setText(reply.getUserName().trim());
+        if (reply.getContent() != null)
+            holder.content.setText(reply.getContent());
+        if (reply.getDate() != null) {
+            if (reply.isPosted() || !reply.getWriterUid().equals(localCurrentUserUid)) {
+                holder.date.setText(reply.getDate());
             } else {
                 holder.date.setText("جارى النشر ...");
             }
         }
-        if (comment.getUserImage() != null)
-            Picasso.with(context).load(comment.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
+        if (reply.getUserImage() != null)
+            Picasso.with(context).load(reply.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
-        holder.votes.setText(comment.getVotes() + "");
+        holder.votes.setText(reply.getVotes() + "");
 
-
-
-        ((MyHolder) holder).repliesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, RepliesActivity.class);
-                intent.putExtra("commentWriterUid", comment.getWriterUid());
-                if (comment.getId() != null)
-                    intent.putExtra("id", comment.getId());
-                context.startActivity(intent);
-            }
-        });
 
         holder.upArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fireStoreComments.document(comment.getCommentId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                fireStoreReplies.document(reply.getReplyId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        validateVoting(documentSnapshot, comment, holder, "upArrow");
+                        validateVoting(documentSnapshot, reply, holder, "upArrow");
                     }
                 });
             }
@@ -106,11 +90,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         holder.downArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fireStoreComments.document(comment.getCommentId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                fireStoreReplies.document(reply.getReplyId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Log.v("Log83", "down arrow onDataChanged");
-                        validateVoting(documentSnapshot, comment, holder, "downArrow");
+                        validateVoting(documentSnapshot, reply, holder, "downArrow");
                     }
                 });
             }
@@ -122,12 +106,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                 String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
                 //TODO : change this hardcoded way
-                if (comment.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
+                if (reply.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
                     boolean admin = false;
                     if (localCurrentUserEmail.equals(adminEmail))
                         admin = true;
 
-                    showActionsDialog(comment.getCommentId(), holder, comment.getContent(), comment.getUserEmail(), admin, position); //TODO :  search why I need to add one
+                    showActionsDialog(reply.getReplyId(), holder, reply.getContent(), reply.getUserEmail(), admin, position); //TODO :  search why I need to add one
                 }
                 return true;
             }
@@ -156,19 +140,17 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         TextView name, content, date, votes;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
-        Button repliesButton;
 
         MyHolder(View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.commentUserName);
-            content = itemView.findViewById(R.id.commentContent);
-            date = itemView.findViewById(R.id.commentDate);
+            name = itemView.findViewById(R.id.replyUserName);
+            content = itemView.findViewById(R.id.replyContent);
+            date = itemView.findViewById(R.id.replyDate);
             votes = itemView.findViewById(R.id.numberOfVotes);
             upArrow = itemView.findViewById(R.id.upArrow);
             downArrow = itemView.findViewById(R.id.downArrow);
-            imageView = itemView.findViewById(R.id.commentImage);
-            cardView = itemView.findViewById(R.id.card_view_of_comments);
-            repliesButton = itemView.findViewById(R.id.repliesButton);
+            imageView = itemView.findViewById(R.id.replyImage);
+            cardView = itemView.findViewById(R.id.card_view_of_replies);
         }
     }
 
@@ -186,7 +168,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         return false;
     }
 
-    void validateVoting(DocumentSnapshot dataSnapshot, final Comment comment, final CommentsAdapter.MyHolder holder, String tag) {
+    void validateVoting(DocumentSnapshot dataSnapshot, final Reply reply, final RepliesAdapter.MyHolder holder, String tag) {
         String upVotedUsers = dataSnapshot.getString("upVotedUsers");
         String downVotedUsers = dataSnapshot.getString("downVotedUsers");
         votes = dataSnapshot.getLong("votes");
@@ -195,18 +177,18 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
             if (tag.equals("upArrow")) {
                 votes++;
-                fireStoreComments.document(comment.getCommentId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
+                fireStoreReplies.document(reply.getReplyId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
             } else if (tag.equals("downArrow")) {
                 votes--;
-                fireStoreComments.document(comment.getCommentId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
+                fireStoreReplies.document(reply.getReplyId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
 
             }
-            fireStoreComments.document(comment.getCommentId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+            fireStoreReplies.document(reply.getReplyId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Log.v("Logging", "votes : " + votes);
                     holder.votes.setText(votes + "");
-                    comment.setVotes(votes);
+                    reply.setVotes(votes);
                 }
             });
         } else {
@@ -226,7 +208,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                 if (which == 0) {
                     showDialog(id, holder, content, email, admin, position);
                 } else {
-                    fireStoreComments.document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    fireStoreReplies.document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(context, "تم حذف التعليق بنجاح", Toast.LENGTH_SHORT).show();
@@ -243,7 +225,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
     public void showDialog(final String id, final MyHolder holder, final String content, final String email, final boolean admin, final int position) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
-        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
+        View view = layoutInflaterAndroid.inflate(R.layout.dialog, null);
 
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(context);
         alertDialogBuilderUserInput.setView(view);
@@ -258,7 +240,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final String inputText = inputTextEt.getText().toString();
-                fireStoreComments.document(id).update("content", inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                fireStoreReplies.document(id).update("content", inputText).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         list.get(position).setContent(inputText);

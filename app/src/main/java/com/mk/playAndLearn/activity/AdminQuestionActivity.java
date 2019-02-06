@@ -7,10 +7,12 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -21,13 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
@@ -37,7 +42,8 @@ import java.util.Collections;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class AdminQuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
@@ -93,7 +99,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         }
         if (index < list.size()) {
             question = (Question) list.get(index);
-            currentQuestionReference =  fireStoreQuestions.document(question.getSubject()).collection(question.getSubject()).document(question.getQuestionId());
+            currentQuestionReference =  fireStoreQuestions.document(getSavedGrade(this)).collection(question.getSubject()).document(question.getQuestionId());
             correctAnswer = question.getCorrectAnswer();
 
             tvQuestion.setText(question.getAlQuestion());
@@ -114,7 +120,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             } else {
                 subjectTv.append("غير مكتوبة");
             }
-            if (question.getSubject() != null) {
+            if (question.getWriterName() != null) {
                 writerTv.append(question.getWriterName());
             } else {
                 writerTv.append("غير مكتوبة");
@@ -129,19 +135,20 @@ public class AdminQuestionActivity extends AppCompatActivity {
                 skipQuestion();
             }
         });
-        usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        fireStoreUsers.document(question.getWriterUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                writerType = (String) dataSnapshot.child("userType").getValue();
-                if(writerType == null)
-                    writerType = "غير معروف";
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    writerType = document.getString("userType");
+                    if(writerType == null)
+                        writerType = "غير معروف";
 
-                writerTypeTv.append(writerType);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+                    writerTypeTv.append(writerType);
+                }
+                else {
+                    Toast.makeText(AdminQuestionActivity.this, "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت و أعد المحاولة", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -206,28 +213,31 @@ public class AdminQuestionActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                final DocumentReference currentUserReference = fireStoreUsers.document(question.getWriterUid());
+
+                fireStore.runTransaction(new Transaction.Function<Void>() {
+                    @Nullable
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int userRefusedQuestions = Integer.parseInt(dataSnapshot.child("refusedQuestions").getValue().toString());
-                        usersReference.child(question.getWriterUid()).child("refusedQuestions").setValue(userRefusedQuestions + 1);
+                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                        DocumentSnapshot snapshot = transaction.get(currentUserReference);
+                        long newRefusedQuestions = snapshot.getLong("refusedQuestions") + 1;
+                        transaction.update(currentUserReference, "refusedQuestions", newRefusedQuestions);
+                        transaction.delete(currentQuestionReference);
+                        return null;
                     }
-
+                }).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                batch.delete(currentQuestionReference);
-                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TAG", "Transaction success!");
                         composeEmail("تم رفض سؤالك", "تم رفض سؤالك " + "\"" + question.getAlQuestion() + "\"");
                         Toast.makeText(AdminQuestionActivity.this, "تم رفض السؤال", Toast.LENGTH_SHORT).show();
                     }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Transaction failure.", e);
+                    }
                 });
-
             }
         });
         dialog.create();
@@ -238,33 +248,38 @@ public class AdminQuestionActivity extends AppCompatActivity {
         Button button = findViewById(R.id.acceptQuestionBtn);
         button.setClickable(false);
 
-        usersReference.child(question.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        final DocumentReference currentUserReference = fireStoreUsers.document(question.getWriterUid());
+
+        fireStore.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                usersReference.child(question.getWriterUid()).child("points").setValue(userPoints + 5);
-                int userAcceptedQuestions = Integer.parseInt(dataSnapshot.child("acceptedQuestions").getValue().toString());
-                usersReference.child(question.getWriterUid()).child("acceptedQuestions").setValue(userAcceptedQuestions + 1);
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(currentUserReference);
+
+                long newPoints = snapshot.getLong("points") + 5;
+                long newAcceptedQuestions = snapshot.getLong("acceptedQuestions") + 1;
+
+                transaction.update(currentUserReference, "points", newPoints);
+                transaction.update(currentUserReference, "acceptedQuestions", newAcceptedQuestions);
+                transaction.update(currentQuestionReference, "reviewed", true);
+
+                return null;
             }
-
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        batch = fireStore.batch();
-        batch.update(currentQuestionReference, "reviewed", true);
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
+            public void onSuccess(Void aVoid) {
+                Log.d("TAG", "Transaction success!");
                 Toast.makeText(AdminQuestionActivity.this, "تم قبول السؤال", Toast.LENGTH_SHORT).show();
                 if (writerType.equals("طالب")) {
                     composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"" + " وسيتم زيادة نقطك 5 نقاط");
                 } else {
                     composeEmail("تم قبول سؤالك", "تم قبول سؤالك " + "\"" + question.getAlQuestion() + "\"");
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("TAG", "Transaction failure.", e);
             }
         });
 

@@ -12,7 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
 
 public class BestStudentsInGeneralChallengeActivityPresenter {
@@ -27,7 +27,8 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
     }
 
     private void getBestStudents() {
-        usersReference.orderByChild("lastGeneralChallengeScore").startAt(1).addListenerForSingleValueEvent(new ValueEventListener() {
+        //TODO : EDIT THIS
+        /*fireStoreUsers.orderByChild("lastGeneralChallengeScore").startAt(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 usersListener = this;
@@ -83,7 +84,17 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
             public void onCancelled(DatabaseError databaseError) {
                 view.hideProgressBar();
             }
-        });
+        });*/
+
+        if (bestStudentsList.size() == 0) {
+            view.showNoStudentsText();
+        } else {
+            view.hideNoStudentsText();
+        }
+
+        view.hideProgressBar();
+//        view.notifyAdapter();
+        view.hideSwipeRefreshLayout();
     }
 
     public void startAsynkTask() {
@@ -112,11 +123,6 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
         };
 
         asyncTask.execute();
-    }
-
-    public void removeListeners() {
-        if (usersListener != null)
-            usersReference.removeEventListener(usersListener);
     }
 
     public interface View {

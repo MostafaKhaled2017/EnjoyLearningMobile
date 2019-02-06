@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,17 +19,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.ViewPagerAdapter;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
@@ -37,9 +43,18 @@ import com.mk.playAndLearn.fragment.LearnFragment;
 import com.mk.playAndLearn.service.NotificationsService;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedDate;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedDate;
 
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
@@ -48,15 +63,12 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     TabLayout tabLayout;
 
     int tabPosition = 1;
-    boolean newUser;
+    boolean initialDataLoaded = false;
     ArrayList list;
 
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
     FirebaseAuth localAuth;
-    FirebaseAuth.AuthStateListener authListener;
-    FirebaseDatabase localDatabase;
-    DatabaseReference localUsersReference;
     String localCurrentUserUid;
 
     Intent serviceIntent;
@@ -128,13 +140,10 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null){
-                    authListener = this; //TODO : Check this
-                    String localCurrentUserUid = firebaseAuth.getCurrentUser().getUid();
-                    DatabaseReference currentUserReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid);
-                    currentUserReference.keepSynced(true);
-                    setCurrentUserNameToSharedPreferences();
+                if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                    updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
+                    initialDataLoaded = true;
                 }
             }
         });
@@ -304,32 +313,77 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         }
     }
 
-    public void setCurrentUserNameToSharedPreferences() {
+    public void updateLastOnlineDateAndShowRewardsPage() {
         localAuth = FirebaseAuth.getInstance();
-        localDatabase = FirebaseDatabase.getInstance();
-        localUsersReference = localDatabase.getReference("users");
         localCurrentUserUid = localAuth.getCurrentUser().getUid();
 
-        localUsersReference.child(localCurrentUserUid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("signDebug", "dataSnapshot is : " + dataSnapshot);
-                if (dataSnapshot.exists()) {
-                    String currentUserName = (String) dataSnapshot.child("userName").getValue();
-                    editor.putString("currentUserName", currentUserName);
-                    editor.apply();
-                }
+        Calendar calendar = Calendar.getInstance();
+        // Move calendar to yesterday
+        calendar.add(Calendar.DATE, -1);
 
-               /* if(authListener != null){
-                    FirebaseAuth.getInstance().removeAuthStateListener(authListener);
-                }*/ //TODO : think about adding this again
+        // Get current date of calendar which point to the yesterday now
+        Date yesterday = calendar.getTime();
+
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+        final String todayDate = format.format(today);
+        final String yesterdayDate = format.format(yesterday);
+        final String oldSavedDate = getSavedDate(this);
+
+        Log.v("dateLogging", "todayDate : " + todayDate
+        + " , yesterdayDate : " + yesterdayDate
+        + " , oldSavedDate : " + oldSavedDate);
+
+        //update the saved date after storing it in a string
+        setSavedDate(this, todayDate);
+
+        final DocumentReference currentUserReference = fireStoreUsers.document(localCurrentUserUid);
+
+        if(!todayDate.equals(oldSavedDate)) {
+            if(oldSavedDate.equals(yesterdayDate)){
+                fireStore.runTransaction(new Transaction.Function<Long>() {
+                    @Nullable
+                    @Override
+                    public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                        DocumentSnapshot currentUserSnapshot = transaction.get(currentUserReference);
+
+                        long newConsecutiveDays = currentUserSnapshot.getLong("consecutiveDays") + 1;
+
+                        transaction.update(currentUserReference, "consecutiveDays", newConsecutiveDays);
+                        transaction.update(currentUserReference, "lastOnlineDay", todayDate);
+
+                        return newConsecutiveDays;
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<Long>() {
+                    @Override
+                    public void onSuccess(Long aLong) {
+                        Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
+                        i.putExtra("consecutiveDays", aLong);
+                        startActivity(i);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("MainActivity", "Transaction failure.", e);
+                    }
+                });
+            } else {
+                WriteBatch batch = fireStore.batch();
+                batch.update(currentUserReference,"lastOnlineDay", todayDate);
+                batch.update(currentUserReference,"consecutiveDays", 1);
+                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
+                        i.putExtra("consecutiveDays", (long)1);
+                        startActivity(i);
+                    }
+                });
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        }
     }
 
     public void startNotificationService() {
@@ -365,27 +419,6 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             currentUserPresenceReference.setValue(true);
             currentUserPresenceReference.onDisconnect().setValue(false);
         }*/
-    }
-
-    void checkIfOldUser(){
-        localUsersReference.child(localAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String uid = (String) dataSnapshot.child("uid").getValue();
-                Log.v("checkUserLogging", "uid is : " + uid);
-                if(uid == null){
-                    Toast.makeText(MainActivity.this, "يوجد بيانات ناقصة فى حسابك برجاء إعادة تسجيل الاشتراك فى البرنامج", Toast.LENGTH_SHORT).show();
-                    localAuth.signOut();
-                    startActivity(new Intent(MainActivity.this, GeneralSignActivity.class));
-                    finish();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override

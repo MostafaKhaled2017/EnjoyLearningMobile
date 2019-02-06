@@ -87,7 +87,6 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.removeListeners();
     }
 
     @Override

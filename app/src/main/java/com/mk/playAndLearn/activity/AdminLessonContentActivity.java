@@ -37,7 +37,6 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
-import static com.mk.playAndLearn.utils.Firebase.usersReference;
 
 public class AdminLessonContentActivity extends AppCompatActivity {
 
@@ -94,7 +93,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
             lessonTitleEt.setText(lesson.getTitle());
             lessonContentEt.setText(lesson.getContent());
 
-           usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+         /*  usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     writerType = (String) dataSnapshot.child("userType").getValue();
@@ -107,7 +106,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            });*/
 
         } else {
             Toast.makeText(this, "لا يوجد دروس أخري", Toast.LENGTH_SHORT).show();
@@ -173,7 +172,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
         dialog.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+               /* usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int userRefusedLessons = Integer.parseInt(dataSnapshot.child("refusedLessons").getValue().toString());
@@ -184,7 +183,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
+                });*/
 
 
                 batch.delete(currentLessonReference);
@@ -203,7 +202,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
     }
 
     public void acceptLesson(View view) {
-        usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        /*usersReference.child(lesson.getWriterUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
@@ -232,7 +231,7 @@ public class AdminLessonContentActivity extends AppCompatActivity {
                     composeEmail("تم قبول الدرس الذى رفعته", "تم قبول الدرس الذى رفعته " + "\"" + lesson.getTitle() + "\"");
                 }
             }
-        });
+        });*/
   }
 
     public void composeEmail(String subject, String body) {

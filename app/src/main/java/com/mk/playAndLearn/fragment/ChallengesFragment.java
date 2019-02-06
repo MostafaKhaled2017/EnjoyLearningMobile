@@ -2,15 +2,11 @@ package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,13 +20,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengersActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.presenter.ChallengesFragmentPresenter;
-import com.mk.playAndLearn.service.NotificationsService;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.lang.reflect.Field;
@@ -69,6 +63,8 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     RecyclerView completedChallengesRecyclerView, uncompletedChallengesRecyclerView;
     TextView completeChallengesTv, uncompletedChallengesTv, noChallengesTv, noInternetConnectionText;
+
+    boolean initialDataLoaded = false;
 
     private OnFragmentInteractionListener mListener;
 
@@ -130,7 +126,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.subjects_array, android.R.layout.simple_spinner_item);
+                R.array.secondary_subjects_array, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
@@ -152,9 +148,18 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        presenter = new ChallengesFragmentPresenter(this);
+        presenter = new ChallengesFragmentPresenter(this, getActivity());
         if (isVisibleToUser) {
-            presenter.startAsynkTask();
+            FirebaseAuth localAuth = FirebaseAuth.getInstance();
+            localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                        presenter.startAsynkTask();
+                        initialDataLoaded = true;
+                    }
+                }
+            });
         }
     }
 
@@ -210,6 +215,9 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     @Override
     public void navigate() {
+        if(currentSubject.equals("كل المواد")){
+            Toast.makeText(getActivity(), "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
+        }
         Intent i = new Intent(getActivity(), ChallengersActivity.class);
         i.putExtra("subject", currentSubject);
         startActivity(i);

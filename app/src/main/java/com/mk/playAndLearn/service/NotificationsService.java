@@ -36,6 +36,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
 
+import org.w3c.dom.Document;
+
+import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.NotificationID.getID;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
@@ -46,14 +51,10 @@ import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 
 public class NotificationsService extends Service {
     int currentPlayer;
-    ChildEventListener player1Listener, player2Listener, commentsListener;
     String onChildAddedPreviusKey = "", onChildChangedpreviusKey = "";
     //the full number which is coming from the challenges fragment
     String localCurrentUserUid;
 
-    FirebaseFirestore localFireStore;
-    DatabaseReference localUsersReference;
-    CollectionReference localFireStoreChallenges, localFireStoreComments;
     FirebaseAuth localAuth;
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
     //TODO : change the text of notification according to the written and unwritten states in the database like refused, win, lose, draw ...
@@ -74,11 +75,7 @@ public class NotificationsService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         localAuth = FirebaseAuth.getInstance();
-        localFireStore = FirebaseFirestore.getInstance();
-        localFireStoreChallenges = localFireStore.collection("challenges");
-        localFireStoreComments = localFireStore.collection("comments");
         localCurrentUserUid = localAuth.getCurrentUser().getUid();
-        localUsersReference = FirebaseDatabase.getInstance().getReference("users");
         Log.v("notificationsDebug", "onStartCommand" + localCurrentUserUid);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -120,20 +117,18 @@ public class NotificationsService extends Service {
                             final String subject = adjustSubject(challengeDocument.getString("subject"));
                             final String challengeId = challengeDocument.getId();
 
-                            localUsersReference.child(player1Uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            fireStoreUsers.document(player1Uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    currentPlayer = getCurrentPlayer(player1Uid);
-                                    final String player1Name = (String) dataSnapshot.child("userName").getValue();
-                                    if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
-                                        localFireStoreChallenges.document(challengeId).update("player2notified", true);
-                                        showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        DocumentSnapshot document = task.getResult();
+                                        currentPlayer = getCurrentPlayer(player1Uid);
+                                        final String player1Name = (String) document.getString("userName");
+                                        if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
+                                            fireStoreChallenges.document(challengeId).update("player2notified", true);
+                                            showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                        }
                                     }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
                                 }
                             });
 
@@ -151,24 +146,22 @@ public class NotificationsService extends Service {
 
                             final String challengeId = challengeDocument.getId();
 
-                            localUsersReference.child(player2Uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            fireStoreUsers.document(player2Uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    currentPlayer = getCurrentPlayer(player1Uid);
-                                    final String player2Name = (String) dataSnapshot.child("userName").getValue();
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        currentPlayer = getCurrentPlayer(player1Uid);
+                                        final String player2Name = (String) document.getString("userName");
 
-                                    if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
-                                        showNotification("لديك تحدى مكتمل جديد",  "لقد " + state +
-                                                        " تحديك ضد " + player2Name
-                                                /*+ " فى مادة " + subject*/);//TODO : add this
-                                        localFireStoreChallenges.document(challengeId).update("player1notified", true);
-                                        onChildChangedpreviusKey = challengeDocument.getId();
+                                        if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
+                                            showNotification("لديك تحدى مكتمل جديد", "لقد " + state +
+                                                            " تحديك ضد " + player2Name
+                                                    /*+ " فى مادة " + subject*/);//TODO : add this
+                                            fireStoreChallenges.document(challengeId).update("player1notified", true);
+                                            onChildChangedpreviusKey = challengeDocument.getId();
+                                        }
                                     }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
                                 }
                             });
                         case REMOVED:
@@ -179,13 +172,13 @@ public class NotificationsService extends Service {
 
         //this gives the challenges that the current user has started
         Log.v("notificationsDebug", "localCurrentUserUid is : " + localCurrentUserUid);
-         localFireStoreChallenges.whereEqualTo("player1notified",localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
+         fireStoreChallenges.whereEqualTo("player1notified",localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
         //this code gives data where current user is player 2
-        localFireStoreChallenges.whereEqualTo("player2notified", localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
+        fireStoreChallenges.whereEqualTo("player2notified", localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
 
 
         //commentsListener
-         localFireStoreComments.whereEqualTo("notified",localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+         fireStoreComments.whereEqualTo("notified",localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
              @Override
              public void onSuccess(QuerySnapshot documentSnapshots) {
                  for(DocumentSnapshot document : documentSnapshots.getDocuments()){
@@ -195,7 +188,7 @@ public class NotificationsService extends Service {
                      if(!postWriterUid.equals(commentWriterUid) && document.exists()) {//TODO : think about changing the notification text to a shorter one
                          showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
                      }
-                     localFireStoreComments.document(document.getId()).update("notified", true);
+                     fireStoreComments.document(document.getId()).update("notified", true);
                  }
              }
          });

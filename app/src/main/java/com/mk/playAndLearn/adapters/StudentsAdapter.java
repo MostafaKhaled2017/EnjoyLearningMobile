@@ -122,6 +122,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             holder.name.setText(user.getName().trim());
         if (user.getImageUrl() != null)
             Picasso.with(context).load(user.getImageUrl()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
+
         if(user.isAdmin()){
             holder.isAdminImageView.setVisibility(View.VISIBLE);
         }

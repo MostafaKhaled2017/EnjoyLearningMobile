@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,11 +119,11 @@ public class AddQuestionActivity extends AppCompatActivity {
         }
 
         //setSpinners
-        setSubjectsSpinner();
         setUnitOrderSpinner();
         setLessonOrderSpinner(R.array.lessons_array);
         setTermSpinner();
         setGradeSpinner();
+        setSubjectsSpinner(R.array.secondary_subjects_array_for_upload);
 
         ButterKnife.bind(this);
 
@@ -172,9 +171,9 @@ public class AddQuestionActivity extends AppCompatActivity {
         return true;
     }
 
-    void setSubjectsSpinner() {
+    void setSubjectsSpinner(int array) {
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.subjects_array_for_upload, android.R.layout.simple_spinner_item);
+                array, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -297,6 +296,11 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedGrade = adapterView.getItemAtPosition(i).toString();
+                if (selectedGrade.contains("الإعدادى")) {
+                    setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload);
+                } else if (selectedGrade.contains("الثانوى")) {
+                    setSubjectsSpinner(R.array.secondary_subjects_array_for_upload);
+                }
             }
 
             @Override
@@ -426,7 +430,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     map.put("writerEmail", localCurrentUserEmail);
                     map.put("writerUid", localCurrentUserUid);
                     map.put("dayDate", todayDate);
-                    map.put("date", dateClass.getDate());
+                   // map.put("date", dateClass.getDate());
                     map.put("challengeQuestion", false);
 
                     if (currentSubject.equals("لغة عربية") || currentSubject.equals("لغة انجليزية")) {
@@ -487,10 +491,12 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     public void addAnswer(String answer) {
-        if (correctAnswer.length() == 0) {
-            correctAnswer += answer;
-        } else if (correctAnswer.length() > 0) {
-            correctAnswer += "," + answer;
+        if(answer!=null && answer.length() > 0) {
+            if (correctAnswer.length() == 0) {
+                correctAnswer += answer;
+            } else if (correctAnswer.length() > 0) {
+                correctAnswer += "," + answer;
+            }
         }
     }
 
