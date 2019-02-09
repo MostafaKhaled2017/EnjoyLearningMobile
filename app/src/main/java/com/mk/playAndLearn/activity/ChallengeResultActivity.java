@@ -16,16 +16,10 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.presenter.ChallengeResultActivityPresenter;
-import com.mk.playAndLearn.utils.DateClass;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class ChallengeResultActivity extends AppCompatActivity implements ChallengeResultActivityPresenter.View {
     //TODO : think about removing challenge result activity but think well before determine what to do in this
@@ -73,7 +67,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         player2ImageTv = findViewById(R.id.secondPlayerImage);
         player2ScoreTv = findViewById(R.id.secondPlayerScore);
         challengeResultTv = findViewById(R.id.challengeResultText);
-        challengeStateTv = findViewById(R.id.challengeState);
+        challengeStateTv = findViewById(R.id.challengeStateInResultActivity);
         againstTv = findViewById(R.id.againstTextView);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
@@ -109,7 +103,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
                         , score, currentUserName, localCurrentUserImage, secondPlayerName, secondPlayerImage, questionsList, subject);
 
             } else if (currentChallenger == 2) {
-                presenter.uploadPlayer2Data(challengeId, score, playerAnswersList);
+                presenter.uploadPlayer2DataAndAddPoints(challengeId, score, playerAnswersList);
             }
         } else if(isGeneralChallenge){
             challengeResultTv.setVisibility(View.VISIBLE);
@@ -176,15 +170,12 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
     @Override
     public void setChallengeTvText(String text) {
         challengeStateTv.setText(text);
+        challengeStateTv.invalidate();
+        challengeStateTv.clearComposingText();
     }
 
     @Override
     public void setChallengeTvBGColor(int color) {
         challengeStateTv.setBackgroundColor(color);
-    }
-
-    @Override
-    public void setChallengeResultTvText(String text) {
-        challengeResultTv.setText(text);
     }
 }

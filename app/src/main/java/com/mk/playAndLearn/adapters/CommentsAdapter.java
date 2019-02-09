@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.activity.RepliesActivity;
@@ -34,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreReplies;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHolder> {
@@ -80,7 +82,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
 
 
 
-        ((MyHolder) holder).repliesButton.setOnClickListener(new View.OnClickListener() {
+        ((MyHolder) holder).replies.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, RepliesActivity.class);
@@ -153,10 +155,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView name, content, date, votes;
+        TextView name, content, date, votes, replies;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
-        Button repliesButton;
 
         MyHolder(View itemView) {
             super(itemView);
@@ -168,7 +169,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
             downArrow = itemView.findViewById(R.id.downArrow);
             imageView = itemView.findViewById(R.id.commentImage);
             cardView = itemView.findViewById(R.id.card_view_of_comments);
-            repliesButton = itemView.findViewById(R.id.repliesButton);
+            replies = itemView.findViewById(R.id.repliesTv);
         }
     }
 
@@ -232,6 +233,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
                             Toast.makeText(context, "تم حذف التعليق بنجاح", Toast.LENGTH_SHORT).show();
                             if (admin && !email.equals(adminEmail)) {
                                 composeEmail("تم حذف تعليقك", "تم حذف تعليقك " + "\"" + content + "\"", email);
+                            }
+                        }
+                    });
+
+                    fireStoreReplies.whereEqualTo("commentId", id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot documentSnapshots) {
+                            for (DocumentSnapshot dataSnapshot1 : documentSnapshots.getDocuments()) {
+                                fireStoreReplies.document(dataSnapshot1.getId()).delete();
                             }
                         }
                     });

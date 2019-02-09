@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     String oldQuestionId = "";
     WriteBatch batch;
     CheckBox c1, c2, c3, c4;
+    RelativeLayout languageBranchLayout, unitOrderLayout;
     public SharedPreferences pref; // 0 - for private mode
 
 
@@ -95,6 +97,8 @@ public class AddQuestionActivity extends AppCompatActivity {
         languageBranchesSpinner = findViewById(R.id.languageBranchesSpinner);
         languageBranchesTv = findViewById(R.id.languageBranchesTv);
         unitOrderTv = findViewById(R.id.unitOrderTextView);
+        languageBranchLayout = findViewById(R.id.languageBranchLayout);
+        unitOrderLayout = findViewById(R.id.unitOrderLayout);
         editText1 = findViewById(R.id.et1);
         editText2 = findViewById(R.id.et2);
         editText3 = findViewById(R.id.et3);
@@ -124,6 +128,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         setTermSpinner();
         setGradeSpinner();
         setSubjectsSpinner(R.array.secondary_subjects_array_for_upload);
+        setLanguageBranchesSpinner(R.array.arabic_branches_array);
 
         ButterKnife.bind(this);
 
@@ -189,6 +194,8 @@ public class AddQuestionActivity extends AppCompatActivity {
                     setLanguageBranchesSpinner(R.array.english_branches_array);
                 } else {
                     hideLanguageBranchesSpinner();
+                    setLessonOrderSpinner(R.array.lessons_array);
+                    showUnitOrderSpinner();
                 }
             }
 
@@ -311,24 +318,22 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     void showLanguageBranchesSpinner() {
-        languageBranchesTv.setVisibility(View.VISIBLE);
-        languageBranchesSpinner.setVisibility(View.VISIBLE);
+        languageBranchLayout.setVisibility(View.VISIBLE);
+
     }
 
     void hideLanguageBranchesSpinner() {
-        languageBranchesTv.setVisibility(View.GONE);
-        languageBranchesSpinner.setVisibility(View.GONE);
+        languageBranchLayout.setVisibility(View.GONE);
     }
 
     void hideUnitOrderSpinner() {
-        unitOrderSpinner.setVisibility(View.GONE);
-        unitOrderTv.setVisibility(View.GONE);
+        unitOrderLayout.setVisibility(View.GONE);
     }
 
 
     void showUnitOrderSpinner() {
-        unitOrderSpinner.setVisibility(View.VISIBLE);
-        unitOrderTv.setVisibility(View.VISIBLE);
+        unitOrderLayout.setVisibility(View.VISIBLE);
+
     }
 
     public void onRadioButtonClicked(View view) {
@@ -378,7 +383,22 @@ public class AddQuestionActivity extends AppCompatActivity {
             addAnswer(et4.trim());
         }
 
-        if (TextUtils.isEmpty(questionText)) {
+
+        if (selectedGrade.equals("اختر الصف الدراسى")) {
+            Toast.makeText(this, "برجاء تحديد الصف الدراسى", Toast.LENGTH_SHORT).show();
+        } else if (selectedTerm.equals("اختر الفصل الدراسى")) {
+            Toast.makeText(this, "برجاء تحديد الفصل الدراسى", Toast.LENGTH_SHORT).show();
+        } else if (currentSubject.equals("اختر المادة")) {
+            Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
+        } else if (languageBranchLayout.getVisibility() == View.VISIBLE
+                 && selectedLanguageBranch.equals("اختر نوع السؤال")) {
+            Toast.makeText(this, "برجاء تحديد فرع اللغة الذي ينتمى له السؤال", Toast.LENGTH_SHORT).show();
+        }else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE) {
+            Toast.makeText(this, "برجاء تحديد الوحدة الحالية", Toast.LENGTH_SHORT).show();
+        } else if (lessonOrderSpinner.getVisibility() == View.VISIBLE
+                && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس"))) {
+            Toast.makeText(this, "برجاء تحديد ترتيب الدرس", Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty(questionText)) {
             questionEt.setError("من فضلك ادخل عنوان السؤال");
         } else if (TextUtils.isEmpty(et1)) {
             editText1.setError("هذا الحقل إجبارى");
@@ -386,8 +406,6 @@ public class AddQuestionActivity extends AppCompatActivity {
             editText2.setError("هذا الحقل إجبارى");
         } else if (correctAnswer.equals("")) {
             Toast.makeText(this, "من فضلك قم بتحديد الإجابة أو الإجابات الصحيحة", Toast.LENGTH_SHORT).show();
-        } else if (currentSubject.equals("اختر المادة")) {
-            Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
         } else {
             String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -403,19 +421,6 @@ public class AddQuestionActivity extends AppCompatActivity {
                 DateClass dateClass = new DateClass();
                 dateClass.setDate(today);
 
-                if (selectedUnit.equals("الوحدة") && unitOrderSpinner.getVisibility() == View.VISIBLE) {
-                    Toast.makeText(this, "برجاء تحديد الوحدة الحالية", Toast.LENGTH_SHORT).show();
-                } else if (lessonOrderSpinner.getVisibility() == View.VISIBLE
-                        && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس"))) {
-                    Toast.makeText(this, "برجاء تحديد ترتيب الدرس", Toast.LENGTH_SHORT).show();
-                } else if (selectedTerm.equals("اختر الفصل الدراسى")) {
-                    Toast.makeText(this, "برجاء تحديد الفصل الدراسى", Toast.LENGTH_SHORT).show();
-                } else if (languageBranchesSpinner.getVisibility() == View.VISIBLE
-                        && selectedLanguageBranch.equals("اختر نوع السؤال")) {
-                    Toast.makeText(this, "برجاء تحديد فرع اللغة الذي ينتمى له السؤال", Toast.LENGTH_SHORT).show();
-                } else if (selectedGrade.equals("اختر الصف الدراسى")) {
-                    Toast.makeText(this, "برجاء تحديد الصف الدراسى", Toast.LENGTH_SHORT).show();
-                } else {
                     map = new HashMap<>();
 
                     map.put("grade", selectedGrade);
@@ -430,7 +435,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     map.put("writerEmail", localCurrentUserEmail);
                     map.put("writerUid", localCurrentUserUid);
                     map.put("dayDate", todayDate);
-                   // map.put("date", dateClass.getDate());
+                    // map.put("date", dateClass.getDate());
                     map.put("challengeQuestion", false);
 
                     if (currentSubject.equals("لغة عربية") || currentSubject.equals("لغة انجليزية")) {
@@ -466,7 +471,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     alertDialog.create();
                     alertDialog.show();
 
-                }
+
             } else if (oldQuestion) {
                 DocumentReference currentQuestionReference = fireStoreQuestions.document(question.getGrade()).collection(question.getSubject()).document(oldQuestionId);
 
@@ -491,7 +496,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     public void addAnswer(String answer) {
-        if(answer!=null && answer.length() > 0) {
+        if (answer != null && answer.length() > 0) {
             if (correctAnswer.length() == 0) {
                 correctAnswer += answer;
             } else if (correctAnswer.length() > 0) {
@@ -524,6 +529,8 @@ public class AddQuestionActivity extends AppCompatActivity {
         c2.setChecked(false);
         c3.setChecked(false);
         c4.setChecked(false);
+
+        correctAnswer = "";
 
     }
 

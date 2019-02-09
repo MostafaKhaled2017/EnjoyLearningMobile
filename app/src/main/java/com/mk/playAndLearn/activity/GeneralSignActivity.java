@@ -68,9 +68,10 @@ import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 public class GeneralSignActivity extends AppCompatActivity {
     private final String TAG = "Logging";
-    Button signUpActivity, signInActivity;
+    Button signUpActivity;
+    TextView signInActivity;
     DatabaseReference currentUserReference;
-   // Spinner userTypesSpinner, userSchoolTypeSpinner;
+    // Spinner userTypesSpinner, userSchoolTypeSpinner;
     LinearLayout userSchoolTypeLinearLayout;
     TextView unStudentSignAlertText;
 
@@ -105,8 +106,12 @@ public class GeneralSignActivity extends AppCompatActivity {
         });
 
 
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
-       /* */
+        /* */
 
 
 
@@ -143,7 +148,7 @@ public class GeneralSignActivity extends AppCompatActivity {
 
     }
 
-        private void handleFacebookAccessToken(AccessToken token) {
+    private void handleFacebookAccessToken(AccessToken token) {
        /* Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -187,13 +192,12 @@ public class GeneralSignActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
         //TODO : note : don't try to update the users data here again
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null && getSavedName(this) != null) {
+        if (currentUser != null && !getSavedName(this).equals("غير معروف")) {
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
         }
     }
@@ -224,7 +228,6 @@ public class GeneralSignActivity extends AppCompatActivity {
         dialogTitle.setText("اكتب اسم المستخدم الذى تريده");
 
 
-
         alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
@@ -238,17 +241,16 @@ public class GeneralSignActivity extends AppCompatActivity {
                         final String commentText = inputComment.getText().toString();
                         if (TextUtils.isEmpty(commentText.trim())) {
                             inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
-                        }
-                        else {
+                        } else {
                             Toast.makeText(GeneralSignActivity.this, "جارى إعداد حسابك", Toast.LENGTH_SHORT).show();
                             localUsersReference.child(localCurrentUserUid).child("userName").setValue(commentText).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(GeneralSignActivity.this, "تم إضافة حسابك بنجاح", Toast.LENGTH_SHORT).show();
-                                   // editor.putString("currentUserName", commentText.trim());
+                                    // editor.putString("currentUserName", commentText.trim());
                                     //editor.apply();
                                     // i.putExtra("newUser", true);
-                                  //  startActivity(i);
+                                    //  startActivity(i);
 
                                     //alertDialogBuilderUserInput.dismiss();
                                 }

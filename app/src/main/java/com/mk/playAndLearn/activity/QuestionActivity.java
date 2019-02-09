@@ -125,7 +125,7 @@ public class QuestionActivity extends AppCompatActivity {
         Question question = (Question) list.get(questionNo);
         correctAnswer = question.getCorrectAnswer();
 
-        tvQuestion.setText(question.getAlQuestion());
+        tvQuestion.setText(question.getAlQuestion().trim());
 
         correctAnswers = correctAnswer.split(",");
 
@@ -209,15 +209,15 @@ public class QuestionActivity extends AppCompatActivity {
     void setAnswersData(RadioButton v1, RadioButton v2, RadioButton v3, RadioButton v4, ArrayList<String> answers) {
         Log.v("answersLogging","size is : " + answers.size());
 
-        v1.setText(answers.get(0));
-        v2.setText(answers.get(1));
+        v1.setText(answers.get(0).trim());
+        v2.setText(answers.get(1).trim());
         if (answers.size() > 2) {
-            v3.setText(answers.get(2));
+            v3.setText(answers.get(2).trim());
         } else {
             v3.setVisibility(View.GONE);
         }
         if (answers.size() > 3) {
-            v4.setText(answers.get(3));
+            v4.setText(answers.get(3).trim());
         } else {
             v4.setVisibility(View.GONE);
         }
@@ -226,15 +226,15 @@ public class QuestionActivity extends AppCompatActivity {
     void setAnswersData(CheckBox v1, CheckBox v2, CheckBox v3, CheckBox v4, ArrayList<String> answers) {
         Log.v("answersLogging","size is : " + answers.size());
 
-        v1.setText(answers.get(0));
-        v2.setText(answers.get(1));
+        v1.setText(answers.get(0).trim());
+        v2.setText(answers.get(1).trim());
         if (answers.size() > 2) {
-            v3.setText(answers.get(2));
+            v3.setText(answers.get(2).trim());
         } else {
             v3.setVisibility(View.GONE);
         }
         if (answers.size() > 3) {
-            v4.setText(answers.get(3));
+            v4.setText(answers.get(3).trim());
         } else {
             v4.setVisibility(View.GONE);
         }
@@ -340,11 +340,11 @@ public class QuestionActivity extends AppCompatActivity {
         }
 
         if (questionNo < list.size()) {//TODO : check this condition
-            playerAnswersList += getUserAnswers(correctAnswers.length) + "/";
-            correctAnswersList += correctAnswer + "/";
+            playerAnswersList += getUserAnswers(correctAnswers.length).trim() + "/";
+            correctAnswersList += correctAnswer.trim() + "/";
         } else {
-            playerAnswersList += getUserAnswers(correctAnswers.length);
-            correctAnswersList += correctAnswer;
+            playerAnswersList += getUserAnswers(correctAnswers.length).trim();
+            correctAnswersList += correctAnswer.trim();
         }
 
         i.putExtra("questionNo", questionNo);

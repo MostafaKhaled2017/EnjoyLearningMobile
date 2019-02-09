@@ -22,13 +22,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -48,7 +43,7 @@ import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 public class AdminQuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
     Question question;
-    TextView tvQuestion, subjectTv, writerTv, answerTv, writerTypeTv;
+    TextView tvQuestion, subjectTv, writerTv, answerTv, gradeTv;
     RadioGroup rg1;
     Button skipQuestionButton;
     String correctAnswer, selection;
@@ -82,7 +77,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         rg1 = findViewById(R.id.radioGroup);
         skipQuestionButton = findViewById(R.id.skipQuestionButton);
         answerTv = findViewById(R.id.answerTv);
-        writerTypeTv = findViewById(R.id.writerTypeTvInQuestions);
+        gradeTv = findViewById(R.id.gradeTvInQuestions);
         tvQuestion = findViewById(R.id.questionText);
         r1 = findViewById(R.id.radio1);
         r2 = findViewById(R.id.radio2);
@@ -90,7 +85,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         r4 = findViewById(R.id.radio4);
         timerProgressBar = findViewById(R.id.timerProgressbar);
         subjectTv = findViewById(R.id.subjectTv);
-        writerTv = findViewById(R.id.writerNameTv);
+        writerTv = findViewById(R.id.writerNameTvInQuestion);
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -99,7 +94,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         }
         if (index < list.size()) {
             question = (Question) list.get(index);
-            currentQuestionReference =  fireStoreQuestions.document(getSavedGrade(this)).collection(question.getSubject()).document(question.getQuestionId());
+            currentQuestionReference = fireStoreQuestions.document(getSavedGrade(this)).collection(question.getSubject()).document(question.getQuestionId());
             correctAnswer = question.getCorrectAnswer();
 
             tvQuestion.setText(question.getAlQuestion());
@@ -120,6 +115,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
             } else {
                 subjectTv.append("غير مكتوبة");
             }
+
             if (question.getWriterName() != null) {
                 writerTv.append(question.getWriterName());
             } else {
@@ -135,7 +131,10 @@ public class AdminQuestionActivity extends AppCompatActivity {
                 skipQuestion();
             }
         });
-        fireStoreUsers.document(question.getWriterUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+        gradeTv.append(question.getGrade());
+
+       /* fireStoreUsers.document(question.getWriterUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
@@ -144,13 +143,13 @@ public class AdminQuestionActivity extends AppCompatActivity {
                     if(writerType == null)
                         writerType = "غير معروف";
 
-                    writerTypeTv.append(writerType);
+                    gradeTv.append(writerType);
                 }
                 else {
                     Toast.makeText(AdminQuestionActivity.this, "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت و أعد المحاولة", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
 
     @Override

@@ -117,7 +117,7 @@ public class RepliesActivity extends AppCompatActivity implements RepliesButtonA
 
         final EditText inputReply = view.findViewById(R.id.dialog_value);
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText("إضافة تعليق");
+        dialogTitle.setText("إضافة رد");
 
 
 

@@ -189,7 +189,7 @@ public class RepliesButtonActivityPresenter {
             public void onComplete(@NonNull Task<Void> task) {
                 currenReplyRef.update("posted", true);
                 currenReplyRef.update("date", dateClass.getDate());
-                view.showToast("تم إضافة التعليق بنجاح");
+                view.showToast("تم إضافة الرد بنجاح");
                 view.notifyAdapter();
             }
         });

@@ -82,13 +82,13 @@ public class LearnFragment extends Fragment implements LearnFragmentPresenter.Vi
             }
         });
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+     /*   FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), AddArticleActivity.class));
             }
-        });
+        });*/
 
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");

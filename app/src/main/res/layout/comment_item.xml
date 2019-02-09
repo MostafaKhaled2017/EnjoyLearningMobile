@@ -92,7 +92,6 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_centerVertical="true"
                 android:autoLink="all"
                 android:layout_marginBottom="5dp"
                 android:layout_toLeftOf="@id/votesView"
@@ -102,9 +101,14 @@
 
 
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/repliesButton"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/repliesTv"
+                android:layout_toLeftOf="@id/votesView"
+                android:textSize="13sp"
+                android:paddingRight="15dp"
+                android:layout_marginTop="7dp"
+                android:textColor="#0000ff"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/commentContent"
                 android:text="الردود"/>

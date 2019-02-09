@@ -81,14 +81,16 @@ public class SignUpActivityPresenter {
                                 fireStoreUsers.document(currentUserUid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        String email = auth.getCurrentUser().getEmail();
 
                                         if (documentSnapshot.exists()) {
-                                            String databaseFriends = documentSnapshot.getString("friends");
-                                            if (databaseFriends != null) {
+                                            String databaseGender = documentSnapshot.getString("gender");
+                                            if (databaseGender != null) {
                                                 Toast.makeText(context, "هذا الحساب موجود بالفعل برجاء اختيار حساب اخر أو تسجيل الدخول", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                view.setEmailEt(email);
                                             }
-                                        } else {
-                                            String email = auth.getCurrentUser().getEmail();
+                                        } else if(!documentSnapshot.exists()){
                                             view.setEmailEt(email);
                                         }
                                         //  auth.signOut();
@@ -161,8 +163,8 @@ public class SignUpActivityPresenter {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                             if (documentSnapshot.exists()) {
-                                String databaseFriends = (String) documentSnapshot.getString("friends");
-                                if (databaseFriends != null) {
+                                String databaseGender = (String) documentSnapshot.getString("gender");
+                                if (databaseGender != null) {
                                     Toast.makeText(context, "هذا الحساب موجود بالفعل برجاء اختيار حساب اخر أو تسجيل الدخول", Toast.LENGTH_SHORT).show();
                                 } else {
                                     WriteBatch batch = fireStore.batch();

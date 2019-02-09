@@ -16,6 +16,7 @@ public class sharedPreference {
         editor.putString("userEmail", email);
         editor.putString("userImage", imageUrl);
         editor.putString("lastOnlineDay", lastOnlineDay);
+      //  editor.putLong("points", points);
         editor.apply();
     }
 
@@ -26,6 +27,10 @@ public class sharedPreference {
     public static String getSavedGrade(Context context){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         return pref.getString("grade", "غير معروف");
+    }
+    public static long getSavedPoints(Context context){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        return pref.getLong("points", -1);
     }
     public static String getSavedDate(Context context){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
 import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreReplies;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
 public class PostsAdapter extends RecyclerView.Adapter {
@@ -228,7 +229,18 @@ public class PostsAdapter extends RecyclerView.Adapter {
                         @Override
                         public void onSuccess(QuerySnapshot documentSnapshots) {
                             for (DocumentSnapshot dataSnapshot1 : documentSnapshots.getDocuments()) {
-                                fireStoreComments.document(dataSnapshot1.getId()).delete();
+                                String commentId = dataSnapshot1.getId();
+                                fireStoreComments.document(commentId).delete();
+
+
+                                fireStoreReplies.whereEqualTo("commentId", commentId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                                        for (DocumentSnapshot dataSnapshot1 : documentSnapshots.getDocuments()) {
+                                            fireStoreReplies.document(dataSnapshot1.getId()).delete();
+                                        }
+                                    }
+                                });
                             }
                         }
                     });

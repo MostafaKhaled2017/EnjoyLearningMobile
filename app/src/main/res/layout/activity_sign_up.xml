@@ -1,181 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true">
 
-    <ProgressBar
-        android:id="@+id/progressbar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="-15dp"
-        android:layout_marginBottom="15dp"
-        android:indeterminate="true"
-        android:max="100"
-        android:visibility="invisible" />
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layoutDirection="ltr"
-android:layout_gravity="center_vertical|center_horizontal"
-android:orientation="vertical">
+        android:layout_height="match_parent">
 
-<EditText
-    android:id="@+id/etName"
-    style="@style/editTextStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textDirection="rtl"
-    android:hint="الاسم" />
-
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <android.support.v7.widget.AppCompatButton
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="إضافة"
-            android:id="@+id/addEmailButton"
-            style="@style/buttonStyle"/>
-
-<EditText
-    android:id="@+id/etEmail"
-    style="@style/editTextStyle"
-    android:layout_weight="5"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:inputType="none"
-    android:textDirection="rtl"
-    android:focusable="false"
-    android:hint="البريد الالكترونى" />
-
-    </android.support.v7.widget.LinearLayoutCompat>
-
-<EditText
-    android:id="@+id/etPassword"
-    style="@style/editTextStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:inputType="textPassword"
-    android:gravity="right|center"
-    android:textDirection="rtl"
-    android:hint="كلمة السر" />
-
-<EditText
-    android:id="@+id/etRePassword"
-    style="@style/editTextStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:inputType="textPassword"
-    android:gravity="right|center"
-    android:hint="تأكيد كلمة السر"  />
-
-<android.support.v7.widget.LinearLayoutCompat
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="right"
-    android:layout_margin="5dp">
-
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/genderSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="النوع"
-        android:textSize="@dimen/generalTextSize" />
-</android.support.v7.widget.LinearLayoutCompat>
-
-<RadioGroup
-    android:id="@+id/userTypeRadioGroup"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="right"
-    android:layout_margin="5dp"
-    android:orientation="horizontal">
-
-    <android.support.v7.widget.AppCompatRadioButton
-        android:id="@+id/studentRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:onClick="selectUserType"
-        android:text="طالب" />
-
-    <android.support.v7.widget.AppCompatRadioButton
-        android:id="@+id/teacherRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:onClick="selectUserType"
-        android:text="معلم" />
-
-</RadioGroup>
-
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right">
-
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/userGradeSpinner"
+       <FrameLayout
+            android:id="@+id/background"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/backgroundIv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.8"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sign_background"
+                android:adjustViewBounds="true"/>
+
+        </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-15dp"
+            android:layout_marginBottom="5dp"
+            android:indeterminate="true"
+            android:max="100"
+            android:visibility="invisible" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp" />
+            android:layout_centerInParent="true"
+            android:layoutDirection="ltr"
+            android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="المرحلة الدراسية"
-            android:textSize="@dimen/generalTextSize" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColorHint="#000000">
 
-    </android.support.v7.widget.LinearLayoutCompat>
+                <EditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:hint="الاسم"
+                    android:inputType="text"
+                    android:textColor="#000000"
+                    android:textDirection="rtl"
+                    android:textSize="18sp" />
 
-<android.support.v7.widget.LinearLayoutCompat
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="5dp"
-    android:gravity="right">
+            </android.support.design.widget.TextInputLayout>
 
-    <Spinner
-        android:id="@+id/schoolTypeSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/generalTextSize"
-        android:text="نوع المدرسة" />
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-</android.support.v7.widget.LinearLayoutCompat>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/addEmailButton"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/buttonshape"
+                    android:text="إضافة"
+                    android:textColor="@color/white" />
 
-<android.support.v7.widget.AppCompatCheckBox
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/acceptTerms"
-    android:text="اوافق على شروط الاستخدام"
-    android:layout_gravity="right"
-    android:layout_margin="5dp"
-    android:textSize="@dimen/generalTextSize" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColorHint="#110E0E">
 
-<Button
-    android:id="@+id/signUpBtn"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/new_button"
-    android:text="تسجيل"
-    android:onClick="signIn"
-    android:textColor="@color/white"
-    android:textSize="@dimen/textSizeOfButton" />
-</LinearLayout>
-</android.support.v7.widget.LinearLayoutCompat>
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:fontFamily="@font/calibri"
+                        android:hint="البريد الالكترونى"
+                        android:inputType="none"
+                        android:textColor="#000000"
+                        android:textDirection="rtl"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColorHint="#000000">
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:gravity="right|center"
+                    android:hint="كلمة السر"
+                    android:inputType="textPassword"
+                    android:textColor="#000000"
+                    android:textDirection="rtl"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColorHint="#000000">
+
+                <EditText
+                    android:id="@+id/etRePassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:gravity="right|center"
+                    android:hint="تأكيد كلمة السر"
+                    android:inputType="textPassword"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="5dp">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/genderSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="النوع"
+                    android:textSize="@dimen/generalTextSize" />
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <RadioGroup
+                android:id="@+id/userTypeRadioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/studentRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:onClick="selectUserType"
+                    android:text="طالب" />
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/teacherRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:onClick="selectUserType"
+                    android:text="معلم" />
+
+            </RadioGroup>
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/userGradeSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="المرحلة الدراسية"
+                    android:textSize="@dimen/generalTextSize" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingHorizontal="5dp">
+
+                <Spinner
+                    android:id="@+id/schoolTypeSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="نوع المدرسة"
+                    android:textSize="@dimen/generalTextSize" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/acceptTerms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="4dp"
+                android:text="أوافق على شروط الاستخدام"
+                android:textSize="@dimen/generalTextSize" />
+
+
+            <Button
+                android:id="@+id/signUpBtn"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/buttonshape"
+                android:fontFamily="@font/gotham"
+                android:onClick="signIn"
+                android:text="تسجيل"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

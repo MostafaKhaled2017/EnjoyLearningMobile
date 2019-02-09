@@ -192,7 +192,7 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
                 }
             });
         } else {
-            Toast.makeText(context, "لا يمكنك التصويت لنفس التعليق أكثر من مرة", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "لا يمكنك التصويت لنفس الرد أكثر من مرة", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -211,9 +211,9 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
                     fireStoreReplies.document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(context, "تم حذف التعليق بنجاح", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "تم حذف الرد بنجاح", Toast.LENGTH_SHORT).show();
                             if (admin && !email.equals(adminEmail)) {
-                                composeEmail("تم حذف تعليقك", "تم حذف تعليقك " + "\"" + content + "\"", email);
+                                composeEmail("تم حذف ردك", "تم حذف ردك " + "\"" + content + "\"", email);
                             }
                         }
                     });
@@ -233,7 +233,7 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
         final EditText inputTextEt = view.findViewById(R.id.dialog_value);
         inputTextEt.setText(content);
         final TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText("تعديل التعليق");
+        dialogTitle.setText("تعديل الرد");
 
         alertDialogBuilderUserInput.setCancelable(true);
         alertDialogBuilderUserInput.setPositiveButton("تعديل", new DialogInterface.OnClickListener() {
@@ -245,10 +245,10 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
                     public void onComplete(@NonNull Task<Void> task) {
                         list.get(position).setContent(inputText);
                         holder.content.setText(inputText);
-                        Toast.makeText(context, "تم تعديل التعليق بنجاح", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "تم تعديل الرد بنجاح", Toast.LENGTH_SHORT).show();
 
                         if (admin && !email.equals(adminEmail)) {
-                            composeEmail("تم تعديل تعليقك", "تم تعديل تعليقك " + "\"" + content + "\"", email);
+                            composeEmail("تم تعديل ردك", "تم تعديل ردك " + "\"" + content + "\"", email);
                         }
                     }
                 });

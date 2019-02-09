@@ -46,23 +46,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:overScrollMode="never" />
-            <ProgressBar
-                android:id="@+id/repliesProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="85dp" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/noRepliesText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="75dp"
-                android:text="لا يوجد ردود"
-                android:textColor="@color/writingColor"
-                android:textSize="@dimen/nothing_text_size"
-                android:visibility="invisible" />
 
             <include
                 layout="@layout/no_internet_connection_text"
@@ -72,6 +55,25 @@
                 android:layout_marginTop="75dp" />
         </RelativeLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/repliesProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="85dp" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/noRepliesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="75dp"
+        android:text="لا يوجد ردود"
+        android:textColor="@color/writingColor"
+        android:textSize="@dimen/nothing_text_size"
+        android:visibility="invisible" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

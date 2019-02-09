@@ -10,10 +10,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +65,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     ArrayList arabicQuestionsList = new ArrayList(), languagesQuestionsList = new ArrayList();
     final String arabicSchoolType = "arabic";
     final String languagesSchoolType = "languages";
+    String currentSubjectInSpinner = "";
     int studentsCount = 0, allUsersCount = 0;
 
     CollectionReference arabicQuestionsReference, languagesQuestionsReference;
@@ -101,32 +108,123 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     public void getSuggestedQuestions() {
         if (!questionsList.isEmpty())
             questionsList.clear();
-        final String[] subjectsArray = getResources().getStringArray(R.array.secondary_subjects_array_with_all_subjects_item);
-        for (final String subject : subjectsArray) {
-            fireStoreQuestions.document(getSavedGrade(this)).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot documentSnapshots) {
-                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                        addQuestionData(document, null, null);
-                    }
-                    if (subject.equals(subjectsArray[subjectsArray.length - 1])) {
-                        if (questionsList.size() > 0) {
-                            Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(AdminAppManagementActivity.this, AdminQuestionActivity.class);
-                            intent.putParcelableArrayListExtra("questionsList", questionsList);
-                            intent.putExtra("index", 0);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(AdminAppManagementActivity.this, "لا يوجد أسئلة حاليا", Toast.LENGTH_SHORT).show();
+        showSpinnerDialog();
+    }
+
+    public void showSpinnerDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_spinner, null);
+
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton("تم", null)
+                .create();
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
+        dialogTitle.setText("اختر المادة");
+        inputComment.setVisibility(View.GONE);
+
+
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
+                R.array.preparatory_and_secondary_subjects_array_for_upload, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(subjectsAdapter);
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentSubjectInSpinner = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+
+                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(AdminAppManagementActivity.this, "جارى تحميل الاسئلة", Toast.LENGTH_SHORT).show();
+                        final String[] gradesArray = getResources().getStringArray(R.array.grades_array);
+                        for (final String grade : gradesArray) {
+                            if (currentSubjectInSpinner.equals("كل المواد")) {
+                                final String[] subjectsArray = getResources().getStringArray(R.array.preparatory_and_secondary_subjects_array_for_upload);
+                                for (final String subject : subjectsArray) {
+                                    fireStoreQuestions.document(grade).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot documentSnapshots) {
+                                            for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                                                addQuestionData(document, null, null);
+                                            }
+
+                                            if (subject.equals(subjectsArray[subjectsArray.length - 1]) && grade.equals(gradesArray[gradesArray.length - 1])) {
+                                                if (questionsList.size() > 0) {
+                                                    Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
+
+                                                    Intent intent = new Intent(AdminAppManagementActivity.this, AdminQuestionActivity.class);
+                                                    intent.putParcelableArrayListExtra("questionsList", questionsList);
+                                                    intent.putExtra("index", 0);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(AdminAppManagementActivity.this, "لا يوجد أسئلة حاليا", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                }
+                            } else {
+                                fireStoreQuestions.document(grade).collection(currentSubjectInSpinner).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                                        for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                                            addQuestionData(document, null, null);
+                                        }
+
+                                        if (grade.equals(gradesArray[gradesArray.length - 1])) {
+                                            if (questionsList.size() > 0) {
+                                                Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(AdminAppManagementActivity.this, AdminQuestionActivity.class);
+                                                intent.putParcelableArrayListExtra("questionsList", questionsList);
+                                                intent.putExtra("index", 0);
+                                                startActivity(intent);
+                                                finish();
+                                            } else {
+                                                Toast.makeText(AdminAppManagementActivity.this, "لا يوجد أسئلة حاليا", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
-                }
-            });
+                });
 
-        }
-        questionsReady = true;
+            }
+        });
+
+        alertDialogBuilderUserInput.show();
+
     }
 
     public void complaintsQuestionsButton(View view) {
@@ -143,7 +241,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                         final String questionId = document.getString("questionId");
                         final String reportId = document.getId();
                         String subject = document.getString("subject");
-                        counter ++;
+                        counter++;
                         if (subject != null) {
                             fireStoreQuestions.document(subject).collection(subject).document(questionId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
@@ -152,8 +250,8 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                                         DocumentSnapshot document = task2.getResult();
                                         addQuestionData(document, complainantEmail, reportId);
                                         Log.v("contestLogging", "list size : " + questionsList.size()
-                                        + " , counter is : " + counter
-                                        + " , result size : " + task.getResult().size());
+                                                + " , counter is : " + counter
+                                                + " , result size : " + task.getResult().size());
                                         if (counter == task.getResult().size()) {
                                             Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
 
@@ -168,8 +266,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                             });
                         }
                     }
-                }
-                else {
+                } else {
                     Log.v("contestLogging", task.getException().toString());
                 }
             }
@@ -178,7 +275,6 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
 
     public void suggestedQuestionsButton(View view) {
-        Toast.makeText(this, "جارى تحميل الاسئلة", Toast.LENGTH_SHORT).show();
         getSuggestedQuestions();
     }
 
@@ -380,7 +476,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         question.setWriterEmail(writerEmail);//extra than normal
         if (complainantEmail != null)
             question.setComplainantEmail(complainantEmail);
-        if(reportId != null)
+        if (reportId != null)
             question.setReportId(reportId);
 
         questionsList.add(0, question);

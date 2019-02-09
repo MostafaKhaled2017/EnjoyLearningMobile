@@ -11,7 +11,6 @@
         android:id="@+id/appBar"
         layout="@layout/appbar" />
 
-
     <ProgressBar
         android:id="@+id/horizontalProgressbarInChallengeStartActivity"
         style="?android:attr/progressBarStyleHorizontal"
@@ -116,16 +115,15 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/challengeState"
+        android:id="@+id/challengeStateInResultActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="5dp"
-        android:background="@color/gray"
         android:padding="7dp"
-        android:text="جارى التحميل ..."
         android:textColor="@color/white"
         android:textSize="20sp" />
+
 </RelativeLayout>

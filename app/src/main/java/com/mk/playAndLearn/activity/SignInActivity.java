@@ -2,6 +2,8 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,13 +48,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 
+import jp.wasabeef.blurry.Blurry;
+
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 public class SignInActivity extends AppCompatActivity {
     String userName = "", userImage = "", userEmail = "";
     GoogleApiClient mGoogleApiClient;
-    SignInButton button;
+    Button button;
     GoogleSignInOptions gso;
     CallbackManager mCallbackManager;
     private GoogleSignInClient mGoogleSignInClient;
@@ -60,6 +66,7 @@ public class SignInActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     EditText emailEt, passwordEt;
     TextView forgotPasswordTv;
+    ImageView backgroundIv;
     Intent i;
     private final static int RC_SIGN_IN = 2;
     private final String TAG = "SignInActivity";
@@ -77,15 +84,19 @@ public class SignInActivity extends AppCompatActivity {
         emailEt = findViewById(R.id.etEmailSignIn);
         passwordEt = findViewById(R.id.etPasswordSignIn);
         forgotPasswordTv = findViewById(R.id.tvForgotPassword);
+        backgroundIv = findViewById(R.id.backgroundIv);
 
         initializeGoogleLoginVariables();
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.sign_background);
+        Blurry.with(this).from(bitmap).into(backgroundIv);
 
         forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = emailEt.getText().toString();
                 if (TextUtils.isEmpty(email)) {
-                    emailEt.setText("قم بكتابة بريدك الالكترونى");
+                    emailEt.setError("قم بكتابة بريدك الالكترونى");
                 } else {
                     mAuth.sendPasswordResetEmail(email)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -102,6 +113,11 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,9 +179,9 @@ public class SignInActivity extends AppCompatActivity {
                                                 mAuth.signOut();
                                                 hideProgressBar();
                                             } else {
-                                                String databaseFriends = documentSnapshot.getString("friends");
+                                                String databaseGender = documentSnapshot.getString("gender");
 
-                                                if (databaseFriends == null) {
+                                                if (databaseGender == null) {
                                                     Toast.makeText(SignInActivity.this, "هذا الحساب بياناته غير مكتملة برجاء إضافة هذا الحساب من صفحة الاشتراك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
                                                     mAuth.signOut();
                                                     hideProgressBar();

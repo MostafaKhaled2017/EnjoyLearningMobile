@@ -75,7 +75,7 @@ public class ChallengeResultActivityPresenter {
                     fireStoreUsers.document(player1uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 String opponentName = document.getString("userName");
                                 String opponentImage = document.getString("userImage");
@@ -149,7 +149,7 @@ public class ChallengeResultActivityPresenter {
 
     }
 
-    public void uploadPlayer2Data(final String challengeId, final int score, final String playerAnswersList) {
+    public void uploadPlayer2DataAndAddPoints(final String challengeId, final int score, final String playerAnswersList) {
         Date today = new Date();
         final DateClass dateClass = new DateClass();
         dateClass.setDate(today);
@@ -163,7 +163,7 @@ public class ChallengeResultActivityPresenter {
                     fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
                     fireStoreChallenges.document(challengeId).update("state", "اكتمل");
 
-                   // usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
+                    // usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
 
                     addPoints(documentSnapshot, score);
                 }
@@ -175,63 +175,63 @@ public class ChallengeResultActivityPresenter {
         final String player1Uid = dataSnapshot.getString("player1Uid");
         final String player2Uid = dataSnapshot.getString("player2Uid");
 
-        long player1Score = (long) dataSnapshot.getLong("player1score");
-        long player2Score = (long) score;
-
+        final long player1Score = dataSnapshot.getLong("player1score");
+        final long player2Score = (long) score;
 
         if (getCurrentPlayer(player1Uid) == 2) {
 
-            if (player1Score == player2Score) {
-                final DocumentReference player2Reference = fireStoreUsers.document(player2Uid);;
+            final DocumentReference player2Reference = fireStoreUsers.document(player2Uid);
 
-                fireStore.runTransaction(new Transaction.Function<Void>() {
-                    @Nullable
-                    @Override
-                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                        DocumentSnapshot snapshot = transaction.get(player2Reference);
-                        long newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
+            fireStore.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(player2Reference);
+
+
+                    long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0, newPoints = 0;
+
+                    if (snapshot.getLong("noOfWins") != null)
+                        noOfWins = snapshot.getLong("noOfWins");
+                    if (snapshot.getLong("noOfLoses") != null)
+                        noOfLoses = snapshot.getLong("noOfLoses");
+                    if (snapshot.getLong("noOfDraws") != null)
+                        noOfDraws = snapshot.getLong("noOfDraws");
+
+                    if (player1Score == player2Score) {
+                        newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
+                        newNoOfDraws = noOfDraws + (long) 1;
                         transaction.update(player2Reference, "points", newPoints);
+                        transaction.update(player2Reference, "noOfDraws", newNoOfDraws);
+                        return null;
+                    } else if (player2Score > player1Score) {
+                        newPoints = snapshot.getLong("points") + (long) wonChallengePoints;
+                        newNoOfWins = noOfWins + (long) 1;
+                        transaction.update(player2Reference, "points", newPoints);
+                        transaction.update(player2Reference, "noOfWins", newNoOfWins);
                         return null;
                     }
-                }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TAG", "Transaction success!");
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Transaction failure.", e);
-                    }
-                });
-            } else if (player2Score > player1Score) {
-                final DocumentReference player2Reference = fireStoreUsers.document(player2Uid);;
-
-                fireStore.runTransaction(new Transaction.Function<Void>() {
-                    @Nullable
-                    @Override
-                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                        DocumentSnapshot snapshot = transaction.get(player2Reference);
-                        long newPoints = snapshot.getLong("points") + (long)wonChallengePoints;
-                        transaction.update(player2Reference, "points", newPoints);
+                    else {
+                        newNoOfLoses = noOfLoses+ (long) 1;
+                        transaction.update(player2Reference, "noOfLoses", newNoOfLoses);
                         return null;
                     }
-                }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TAG", "Transaction success!");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d("TAG", "Transaction success!");
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Transaction failure.", e);
-                    }
-                });
-            }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w("TAG", "Transaction failure.", e);
+                }
+            });
         }
     }
+
 
     public String getQuestionsId(ArrayList questionsList) {
         String Ids = "";
@@ -252,8 +252,9 @@ public class ChallengeResultActivityPresenter {
         }
     }
 
-    public void uploadGeneralChallengeData(final int score){
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();;
+    public void uploadGeneralChallengeData(final int score) {
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        ;
 
         /*usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -277,13 +278,12 @@ public class ChallengeResultActivityPresenter {
         });*/
     }
 
-    public interface View {
-        void setOpponentData(long opponentScore, String opponentName, String opponentImage);
+public interface View {
+    void setOpponentData(long opponentScore, String opponentName, String opponentImage);
 
-        void setChallengeTvText(String text);
+    void setChallengeTvText(String text);
 
-        void setChallengeTvBGColor(int color);
+    void setChallengeTvBGColor(int color);
 
-        void setChallengeResultTvText(String text);
-    }
+}
 }

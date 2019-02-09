@@ -2,7 +2,6 @@ package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,9 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
@@ -74,7 +70,7 @@ public class AdminReportedQuestionActivity extends AppCompatActivity {
         rg1 = findViewById(R.id.radioGroup);
         skipQuestionButton = findViewById(R.id.skipQuestionButton);
         answerTv = findViewById(R.id.answerTv);
-        writerTypeTv = findViewById(R.id.writerTypeTvInQuestions);
+        writerTypeTv = findViewById(R.id.gradeTvInQuestions);
         tvQuestion = findViewById(R.id.questionText);
         r1 = findViewById(R.id.radio1);
         r2 = findViewById(R.id.radio2);

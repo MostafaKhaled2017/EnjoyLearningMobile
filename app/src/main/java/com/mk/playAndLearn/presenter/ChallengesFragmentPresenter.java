@@ -310,55 +310,55 @@ public class ChallengesFragmentPresenter {
         }
     }
 
-    void addScoreToPlayer1(long player1Score, long player2Score, final String challengeId) {
+    void addScoreToPlayer1(final long player1Score, final long player2Score, final String challengeId) {
         final DocumentReference player1Reference = fireStoreUsers.document(localCurrentUserUid);
 
-        if (player1Score == player2Score) {
-            fireStore.runTransaction(new Transaction.Function<Void>() {
-                @Nullable
-                @Override
-                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot snapshot = transaction.get(player1Reference);
-                    long newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
+        fireStore.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(player1Reference);
+
+                long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0, newPoints = 0;
+
+                if (snapshot.getLong("noOfWins") != null)
+                    noOfWins = snapshot.getLong("noOfWins");
+                if (snapshot.getLong("noOfLoses") != null)
+                    noOfLoses = snapshot.getLong("noOfLoses");
+                if (snapshot.getLong("noOfDraws") != null)
+                    noOfDraws = snapshot.getLong("noOfDraws");
+
+                if (player1Score == player2Score) {
+                    newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
+                    newNoOfDraws = noOfDraws + (long) 1;
                     transaction.update(player1Reference, "points", newPoints);
+                    transaction.update(player1Reference, "noOfDraws", newNoOfDraws);
+                    return null;
+                } else if (player1Score > player2Score) {
+                    newPoints = snapshot.getLong("points") + (long) wonChallengePoints;
+                    newNoOfWins = noOfWins + (long) 1;
+                    transaction.update(player1Reference, "points", newPoints);
+                    transaction.update(player1Reference, "noOfWins", newNoOfWins);
                     return null;
                 }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d("TAG", "Transaction success!");
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w("TAG", "Transaction failure.", e);
-                }
-            });
-
-        } else if (player1Score > player2Score) {
-            fireStore.runTransaction(new Transaction.Function<Void>() {
-                @Nullable
-                @Override
-                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot snapshot = transaction.get(player1Reference);
-                    long newPoints = snapshot.getLong("points") + (long)wonChallengePoints;
-                    transaction.update(player1Reference, "points", newPoints);
+                else {
+                    newNoOfLoses = noOfLoses+ (long) 1;
+                    transaction.update(player1Reference, "noOfLoses", newNoOfLoses);
                     return null;
                 }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d("TAG", "Transaction success!");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("TAG", "Transaction success!");
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w("TAG", "Transaction failure.", e);
-                }
-            });
-        }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("TAG", "Transaction failure.", e);
+            }
+        });
     }
 
     public interface View {

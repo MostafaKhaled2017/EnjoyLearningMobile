@@ -5,28 +5,66 @@
     android:layoutDirection="ltr"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sign_background"
+            android:alpha="0.8"/>
+
+    </FrameLayout>
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="210dp"
+        android:src="@drawable/rocket" />
+
+    <Button
+        android:id="@+id/signUpActivity"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="84dp"
+        android:background="@drawable/buttonshape"
+        android:fontFamily="@font/gotham"
+        android:text="أنشئ حسابا جديدا"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/signInActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        tools:context="com.mk.playAndLearn.activity.GeneralSignActivity">
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="@font/gotham"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:shadowColor="#57000000"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:textStyle="bold"
+        android:shadowRadius="2"
+        android:text="لديك حساب بالفعل؟ سجل الدخول"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="18sp" />
 
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/signUpActivity"
-            style="@style/buttonStyle"
-            android:text="تسجيل اشتراك"/>
-
-        <Button android:layout_width="match_parent"
-            android:id="@+id/signInActivity"
-            android:layout_height="wrap_content"
-            style="@style/buttonStyle"
-            android:text="تسجيل الدخول"
-            />
-
-        <!--<com.facebook.login.widget.LoginButton
+    <!--<com.facebook.login.widget.LoginButton
             android:id="@+id/facebookBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,6 +72,4 @@
             android:layout_margin="5dp"
             android:layout_marginBottom="30dp" />-->
 
-
-    </LinearLayout>
 </RelativeLayout>

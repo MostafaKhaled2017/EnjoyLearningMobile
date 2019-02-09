@@ -137,8 +137,8 @@ public class HomeFragmentPresenter {
        /* final String postId = postsReference.push().getKey();
         final DatabaseReference currentPostRef = postsReference.child(postId);*/
 
-        final DocumentReference currentPostRef = fireStorePosts.document();
-        final String postId = currentPostRef.getId();//TODO : check this
+        final String postId = fireStorePosts.document().getId();
+        final DocumentReference currentPostRef = fireStorePosts.document(postId);
 
         //Add the newly added post to the list
         getPostDataFromMap(map, postId);
@@ -147,8 +147,14 @@ public class HomeFragmentPresenter {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 //TO ensure that the child exists
-                currentPostRef.update("posted", true);
-                currentPostRef.update("date", dateClass.getDate());
+
+                Map<String, Object> updates = new HashMap<>();
+
+                updates.put("posted", true);
+                updates.put("date", dateClass.getDate());
+
+                currentPostRef.update(updates);
+
                 format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
 

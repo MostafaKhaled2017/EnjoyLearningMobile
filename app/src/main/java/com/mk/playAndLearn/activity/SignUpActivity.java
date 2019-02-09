@@ -2,6 +2,8 @@ package com.mk.playAndLearn.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,6 +32,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.AuthCredential;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.SignUpActivityPresenter;
+
+import jp.wasabeef.blurry.Blurry;
 
 public class SignUpActivity extends AppCompatActivity implements SignUpActivityPresenter.View {
     EditText nameEt, emailEt, passwordEt, rePasswordEt;
@@ -49,6 +54,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
 
     String userSchoolType, userType, gender, grade, imageUrl;
 
+    ImageView backgroundIv;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +74,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         progressBar = findViewById(R.id.progressbar);
         acceptTerms = findViewById(R.id.acceptTerms);
         addEmailButton = findViewById(R.id.addEmailButton);
+        backgroundIv = findViewById(R.id.backgroundIv);
 
         presenter = new SignUpActivityPresenter(this, this);
 
@@ -77,10 +85,25 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         setUserGenderSpinner();
         setUserGradeSpinner();
 
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sign_background);
+        Blurry.with(this).from(bitmap).into(backgroundIv);
+
         addEmailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signInWithGoogle(1);
+            }
+        });
+
+        emailEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(SignUpActivity.this, "اضغط على زر إضافة وسيتم كتابة بريدك الالكترونى تلقائيا", Toast.LENGTH_SHORT).show();
             }
         });
 

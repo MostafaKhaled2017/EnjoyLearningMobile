@@ -55,6 +55,7 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedDate;
+import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
 public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
 
         TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabOne.setText("تعلم");
+        tabOne.setText("الدروس");
         tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.learn, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
         TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThree.setText("العب");
+        tabThree.setText("التحديات");
         tabThree.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.challenges, 0, 0);
         tabLayout.getTabAt(2).setCustomView(tabThree);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -247,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.signOut:
                 stopNotificationService();
                 localAuth.signOut();
+                setSharedPreference(this, null, null, null, null, null, null, null);
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -361,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                     public void onSuccess(Long aLong) {
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                         i.putExtra("consecutiveDays", aLong);
-                        startActivity(i);
+                      //  startActivity(i); //TODO : add this
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -378,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                     public void onComplete(@NonNull Task<Void> task) {
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                         i.putExtra("consecutiveDays", (long)1);
-                        startActivity(i);
+                       // startActivity(i); TODO : ADD THIS
                     }
                 });
             }
