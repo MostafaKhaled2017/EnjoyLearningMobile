@@ -193,9 +193,13 @@ public class ChallengeStartActivityPresenter {
     void loadQuestionsForChallenger1() {
         String randomId = fireStoreQuestions.document().getId();
 
-        fireStoreQuestions.document(getSavedGrade(context)).collection(subject)
+        fireStoreQuestions
+                .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                .collection(subject)
                 .whereEqualTo("reviewed", true)
                 //.whereEqualTo("challengeQuestion", false) TODO ADD VIP
+                //.whereEqualTo("term", 2) TODO ADD VIP
+                //.whereEqualTo("questionType", "choose") TODO ADD VIP
                 .whereGreaterThan(FieldPath.documentId(), randomId)
                 .limit(1)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
