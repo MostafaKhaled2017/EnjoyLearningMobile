@@ -1,12 +1,4 @@
 package com.mk.playAndLearn.utils;
-
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeakerLabel;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechAlternative;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechTimestamp;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.Transcript;
-import com.ibm.watson.developer_cloud.util.GsonSingleton;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,92 +11,52 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class SpeakerLabelsDiarization {
-    public static class RecoToken {
+   /* public static class RecoToken {
         private Double startTime;
         private Double endTime;
         private Integer speaker;
         private String word;
         private Boolean spLabelIsFinal;
 
-        /**
-         * Instantiates a new reco token.
-         *
-         * @param speechTimestamp the speech timestamp
-         */
         RecoToken(SpeechTimestamp speechTimestamp) {
             startTime = speechTimestamp.getStartTime();
             endTime = speechTimestamp.getEndTime();
             word = speechTimestamp.getWord();
         }
 
-        /**
-         * Instantiates a new reco token.
-         *
-         * @param speakerLabel the speaker label
-         */
         RecoToken(SpeakerLabel speakerLabel) {
             startTime = speakerLabel.getFrom();
             endTime = speakerLabel.getTo();
             speaker = speakerLabel.getSpeaker();
         }
 
-        /**
-         * Update from.
-         *
-         * @param speechTimestamp the speech timestamp
-         */
         void updateFrom(SpeechTimestamp speechTimestamp) {
             word = speechTimestamp.getWord();
         }
 
-        /**
-         * Update from.
-         *
-         * @param speakerLabel the speaker label
-         */
         void updateFrom(SpeakerLabel speakerLabel) {
             speaker = speakerLabel.getSpeaker();
         }
     }
 
-    /**
-     * The Class Utterance.
-     */
     public static class Utterance {
         private Integer speaker;
         private String transcript = "";
 
-        /**
-         * Instantiates a new utterance.
-         *
-         * @param speaker the speaker
-         * @param transcript the transcript
-         */
         public Utterance(final Integer speaker, final String transcript) {
             this.speaker = speaker;
             this.transcript = transcript;
         }
     }
 
-    /**
-     * The Class RecoTokens.
-     */
     public static class RecoTokens {
 
         private Map<Double, RecoToken> recoTokenMap;
 
-        /**
-         * Instantiates a new reco tokens.
-         */
         public RecoTokens() {
             recoTokenMap = new LinkedHashMap<Double, RecoToken>();
         }
 
-        /**
-         * Adds the.
-         *
-         * @param speechResults the speech results
-         */
         public void add(SpeechResults speechResults) {
             if (speechResults.getResults() != null)
                 for (int i = 0; i < speechResults.getResults().size(); i++) {
@@ -125,11 +77,6 @@ public class SpeakerLabelsDiarization {
 
         }
 
-        /**
-         * Adds the.
-         *
-         * @param speechTimestamp the speech timestamp
-         */
         public void add(SpeechTimestamp speechTimestamp) {
             RecoToken recoToken = recoTokenMap.get(speechTimestamp.getStartTime());
             if (recoToken == null) {
@@ -140,11 +87,6 @@ public class SpeakerLabelsDiarization {
             }
         }
 
-        /**
-         * Adds the.
-         *
-         * @param speakerLabel the speaker label
-         */
         public void add(SpeakerLabel speakerLabel) {
             RecoToken recoToken = recoTokenMap.get(speakerLabel.getFrom());
             if (recoToken == null) {
@@ -170,9 +112,6 @@ public class SpeakerLabelsDiarization {
             }
         }
 
-        /**
-         * Report.
-         */
         public void report() {
             List<Utterance> uttterances = new ArrayList<Utterance>();
             Utterance currentUtterance = new Utterance(0, "");
@@ -202,5 +141,5 @@ public class SpeakerLabelsDiarization {
     }
 
 
-    private static CountDownLatch lock = new CountDownLatch(1);
+    private static CountDownLatch lock = new CountDownLatch(1);*/
 }

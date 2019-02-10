@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,6 +34,7 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
@@ -44,15 +46,15 @@ public class AdminQuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
     Question question;
     TextView tvQuestion, subjectTv, writerTv, answerTv, gradeTv;
-    RadioGroup rg1;
     Button skipQuestionButton;
     String correctAnswer, selection;
     String writerType = "غير معروف";
-    RadioButton r1, r2, r3, r4;
+    CheckBox c1, c2, c3, c4;
     Intent i;
     ProgressBar timerProgressBar;
     WriteBatch batch;
     DocumentReference currentQuestionReference;
+    String[] correctAnswers;
 
     int index;
 
@@ -74,15 +76,14 @@ public class AdminQuestionActivity extends AppCompatActivity {
         batch = fireStore.batch();
 
 
-        rg1 = findViewById(R.id.radioGroup);
         skipQuestionButton = findViewById(R.id.skipQuestionButton);
         answerTv = findViewById(R.id.answerTv);
         gradeTv = findViewById(R.id.gradeTvInQuestions);
         tvQuestion = findViewById(R.id.questionText);
-        r1 = findViewById(R.id.radio1);
-        r2 = findViewById(R.id.radio2);
-        r3 = findViewById(R.id.radio3);
-        r4 = findViewById(R.id.radio4);
+        c1 = findViewById(R.id.checkBox1InAdminQuestion);
+        c2 = findViewById(R.id.checkBox2InAdminQuestion);
+        c3 = findViewById(R.id.checkBox3InAdminQuestion);
+        c4 = findViewById(R.id.checkBox4InAdminQuestion);
         timerProgressBar = findViewById(R.id.timerProgressbar);
         subjectTv = findViewById(R.id.subjectTv);
         writerTv = findViewById(R.id.writerNameTvInQuestion);
@@ -98,17 +99,24 @@ public class AdminQuestionActivity extends AppCompatActivity {
             correctAnswer = question.getCorrectAnswer();
 
             tvQuestion.setText(question.getAlQuestion());
+            //store answers in array
             ArrayList<String> answers = new ArrayList<>();
             answers.add(question.getAnswer1());
             answers.add(question.getAnswer2());
-            answers.add(question.getAnswer3());
-            Collections.shuffle(answers);
-            answers.add(question.getAnswer4());
 
-            r1.setText(answers.get(0));
-            r2.setText(answers.get(1));
-            r3.setText(answers.get(2));
-            r4.setText(answers.get(3));
+            if (question.getAnswer3().length() > 0)
+                answers.add(question.getAnswer3());
+
+            Collections.shuffle(answers);
+
+            if (question.getAnswer4().length() > 0)
+                answers.add(question.getAnswer4());//because some question there last option is things like "all above"
+
+            setAnswersData(c1, c2, c3, c4, answers);
+
+            correctAnswers = correctAnswer.split(",");
+
+
             if (question.getSubject() != null) {
                 subjectTv.append(question.getSubject());
                 Toast.makeText(this, "المادة : " + question.getSubject(), Toast.LENGTH_SHORT).show();
@@ -151,6 +159,24 @@ public class AdminQuestionActivity extends AppCompatActivity {
             }
         });*/
     }
+    void setAnswersData(CheckBox v1, CheckBox v2, CheckBox v3, CheckBox v4, ArrayList<String> answers) {
+        Log.v("answersLogging","size is : " + answers.size());
+
+        v1.setText(answers.get(0).trim());
+        v2.setText(answers.get(1).trim());
+        if (answers.size() > 2) {
+            v3.setText(answers.get(2).trim());
+        } else {
+            v3.setVisibility(View.GONE);
+        }
+        if (answers.size() > 3) {
+            v4.setText(answers.get(3).trim());
+        } else {
+            v4.setVisibility(View.GONE);
+        }
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -188,20 +214,60 @@ public class AdminQuestionActivity extends AppCompatActivity {
     }
 
     public void showAnswer(View view) {
-        if (rg1.getCheckedRadioButtonId() != -1) {
-            int id = rg1.getCheckedRadioButtonId();
-            View radioButton = rg1.findViewById(id);
-            int radioId = rg1.indexOfChild(radioButton);
-            RadioButton btn = (RadioButton) rg1.getChildAt(radioId);
-            selection = (String) btn.getText();
-        }
-        if (selection != null && selection.equals(correctAnswer)) {
-            answerTv.setTextColor(Color.GREEN);
-        } else {
-            answerTv.setTextColor(Color.RED);
-        }
+
+        String[] userAnswers = getUserAnswers(correctAnswers.length).split(",");
+
+        selection = question.getCorrectAnswer();
+
+            if (correctAnswers.length == 1) {
+                if (selection != null && selection.trim().equals(correctAnswer.trim())) {
+                    answerTv.setTextColor(Color.GREEN);
+                } else {
+                    answerTv.setTextColor(Color.RED);
+                }
+            } else if (correctAnswers.length > 1) {
+
+                Arrays.sort(userAnswers);
+                Arrays.sort(correctAnswers);
+
+                if (Arrays.equals(userAnswers, correctAnswers)) {
+                    answerTv.setTextColor(Color.GREEN);
+                } else {
+                    answerTv.setTextColor(Color.RED);
+                }
+            }
+
+
         answerTv.setText("الإجابة : " + correctAnswer);
 
+    }
+
+
+
+    private String getUserAnswers(int length) {
+        String answers = "";
+            if (c1.isChecked()) {
+                answers += addAnswer((String) c1.getText(), answers.length());
+            }
+            if (c2.isChecked()) {
+                answers += addAnswer((String) c2.getText(), answers.length());
+            }
+            if (c3.isChecked()) {
+                answers += addAnswer((String) c3.getText(), answers.length());
+            }
+            if (c4.isChecked()) {
+                answers += addAnswer((String) c4.getText(), answers.length());
+            }
+        return answers;
+    }
+
+
+    public String addAnswer(String answer, int length) {
+        if (length == 0) {
+            return answer;
+        } else {
+            return "," + answer;
+        }
     }
 
     public void refuseQuestion(View view) {

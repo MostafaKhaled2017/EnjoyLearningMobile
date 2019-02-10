@@ -88,66 +88,53 @@
         android:textColor="@color/writingColor"
         android:textSize="22sp"
         android:textStyle="bold" />
-
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/radioGroup"
-        android:layout_width="300dp"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/checkBoxGroup"
+        android:layout_width="@dimen/width_of_answers_group"
         android:layout_height="wrap_content"
         android:layout_below="@id/questionText"
-        android:layout_margin="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="7dp"
-        android:background="@color/white"
-        android:orientation="vertical">
+        style="@style/answersGroupStyle">
 
-        <RadioButton
-            android:id="@+id/radio1"
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox1InAdminQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/addQuestionEditText"
-            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
             android:text="الإجابة الاولي"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle"/>
 
-        <RadioButton
-            android:id="@+id/radio2"
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox2InAdminQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radio1"
-            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
+            android:layout_below="@id/checkBox1InAdminQuestion"
             android:text="الإجابة الثانية"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle" />
 
-        <RadioButton
-            android:id="@+id/radio3"
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox3InAdminQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radio2"
-            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
+            android:layout_below="@id/checkBox2InAdminQuestion"
             android:text="الإجابة الثالثة"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle" />
 
-        <RadioButton
-            android:id="@+id/radio4"
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkBox4InAdminQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radio3"
-            android:padding="@dimen/margin_between_radiobuttons_orCheckBoxes"
+            android:layout_below="@id/checkBox3InAdminQuestion"
             android:text="الإجابة الرابعة"
-            android:textColor="@color/writingColor"
-            android:textSize="22sp" />
+            style="@style/oneAnswerStyle"/>
 
-    </RadioGroup>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/answerTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/radioGroup"
+        android:layout_below="@id/checkBoxGroup"
         android:layout_gravity="right"
         android:layout_marginRight="5dp"
         android:layout_marginTop="15dp"

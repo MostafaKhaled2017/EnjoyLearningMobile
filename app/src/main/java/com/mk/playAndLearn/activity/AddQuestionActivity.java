@@ -48,6 +48,7 @@ import butterknife.OnClick;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 public class AddQuestionActivity extends AppCompatActivity {
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner, termSpinner, languageBranchesSpinner, gradesSpinner;
@@ -391,9 +392,9 @@ public class AddQuestionActivity extends AppCompatActivity {
         } else if (currentSubject.equals("اختر المادة")) {
             Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
         } else if (languageBranchLayout.getVisibility() == View.VISIBLE
-                 && selectedLanguageBranch.equals("اختر نوع السؤال")) {
+                && selectedLanguageBranch.equals("اختر نوع السؤال")) {
             Toast.makeText(this, "برجاء تحديد فرع اللغة الذي ينتمى له السؤال", Toast.LENGTH_SHORT).show();
-        }else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE) {
+        } else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE) {
             Toast.makeText(this, "برجاء تحديد الوحدة الحالية", Toast.LENGTH_SHORT).show();
         } else if (lessonOrderSpinner.getVisibility() == View.VISIBLE
                 && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس"))) {
@@ -421,55 +422,57 @@ public class AddQuestionActivity extends AppCompatActivity {
                 DateClass dateClass = new DateClass();
                 dateClass.setDate(today);
 
-                    map = new HashMap<>();
+                currentUserName = getSavedName(this);
 
-                    map.put("grade", selectedGrade);
-                    map.put("unitNumber", selectedUnit);//Added
-                    map.put("lessonNumber", selectedLesson);//Added
-                    map.put("questionType", "choose"); // TODO : edit this when new type of questions added
-                    map.put("reviewed", false);
-                    map.put("schoolType", schoolType);
-                    map.put("subject", currentSubject);
-                    map.put("term", convertTerm(selectedTerm));//Added
-                    map.put("writerName", currentUserName);
-                    map.put("writerEmail", localCurrentUserEmail);
-                    map.put("writerUid", localCurrentUserUid);
-                    map.put("dayDate", todayDate);
-                    // map.put("date", dateClass.getDate());
-                    map.put("challengeQuestion", false);
+                map = new HashMap<>();
 
-                    if (currentSubject.equals("لغة عربية") || currentSubject.equals("لغة انجليزية")) {
-                        map.put("languageBranch", selectedLanguageBranch);
+                map.put("grade", selectedGrade);
+                map.put("unitNumber", selectedUnit);//Added
+                map.put("lessonNumber", selectedLesson);//Added
+                map.put("questionType", "choose"); // TODO : edit this when new type of questions added
+                map.put("reviewed", false);
+                map.put("schoolType", schoolType);
+                map.put("subject", currentSubject);
+                map.put("term", convertTerm(selectedTerm));//Added
+                map.put("writerName", currentUserName);
+                map.put("writerEmail", localCurrentUserEmail);
+                map.put("writerUid", localCurrentUserUid);
+                map.put("dayDate", todayDate);
+                // map.put("date", dateClass.getDate());
+                map.put("challengeQuestion", false);
+
+                if (currentSubject.equals("لغة عربية") || currentSubject.equals("لغة انجليزية")) {
+                    map.put("languageBranch", selectedLanguageBranch);
+                }
+
+                //TODO : add a condition to add if the question is choose
+                map.put("alQuestion", questionText);
+                map.put("answer1", et1.trim());
+                map.put("answer2", et2.trim());
+                map.put("answer3", et3.trim());
+                map.put("answer4", et4.trim());
+                map.put("correctAnswer", correctAnswer.trim());
+
+                //TODO : add icon to the dialog
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("تنبيه هام!!");
+                alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطلبة بتأليف أسئلة خاصة بهم أو يقوم المدرسون برفع أسئلة من تأليفهم ممنوع نقل الأسئلة من الكتب الخارجية أو استخدام أسئلة خاصة بأى مدرس إلا بعد أخذ موافقته");
+                alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(AddQuestionActivity.this, "جارى رفع السؤال", Toast.LENGTH_SHORT).show();
+                        fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح وسيتم مراجعته قبل ظهوره فى التحديات", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                        clearViews();
                     }
-
-                    //TODO : add a condition to add if the question is choose
-                    map.put("alQuestion", questionText);
-                    map.put("answer1", et1.trim());
-                    map.put("answer2", et2.trim());
-                    map.put("answer3", et3.trim());
-                    map.put("answer4", et4.trim());
-                    map.put("correctAnswer", correctAnswer.trim());
-
-                    //TODO : add icon to the dialog
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                    alertDialog.setTitle("تنبيه هام!!");
-                    alertDialog.setMessage("الهدف من هذه الصفحة أن يقوم الطلبة بتأليف أسئلة خاصة بهم أو يقوم المدرسون برفع أسئلة من تأليفهم ممنوع نقل الأسئلة من الكتب الخارجية أو استخدام أسئلة خاصة بأى مدرس إلا بعد أخذ موافقته");
-                    alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(AddQuestionActivity.this, "جارى رفع السؤال", Toast.LENGTH_SHORT).show();
-                            fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
-                                    Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح وسيتم مراجعته قبل ظهوره فى التحديات", Toast.LENGTH_SHORT).show();
-
-                                }
-                            });
-                            clearViews();
-                        }
-                    });
-                    alertDialog.create();
-                    alertDialog.show();
+                });
+                alertDialog.create();
+                alertDialog.show();
 
 
             } else if (oldQuestion) {
@@ -529,6 +532,13 @@ public class AddQuestionActivity extends AppCompatActivity {
         c2.setChecked(false);
         c3.setChecked(false);
         c4.setChecked(false);
+
+     /*   gradesSpinner.setSelection(0);
+        termSpinner.setSelection(0);
+        subjectsSpinner.setSelection(0);
+        languageBranchesSpinner.setSelection(0);
+        unitOrderSpinner.setSelection(0);
+        lessonOrderSpinner.setSelection(0);*/
 
         correctAnswer = "";
 

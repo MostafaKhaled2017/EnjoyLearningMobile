@@ -476,8 +476,9 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         question.setWriterEmail(writerEmail);//extra than normal
         if (complainantEmail != null)
             question.setComplainantEmail(complainantEmail);
-        if (reportId != null)
-            question.setReportId(reportId);
+
+        Log.v("dataLogging", "question data is : " + document.getData().toString());
+
 
         questionsList.add(0, question);
     }

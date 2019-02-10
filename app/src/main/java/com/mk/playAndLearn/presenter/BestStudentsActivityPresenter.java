@@ -65,6 +65,7 @@ public class BestStudentsActivityPresenter {
                             user.setImageUrl(imageUrl);
                             bestStudentsList.add(user);
                         }
+
                     }
                     //Adding position to List
                     int position = 1, previousPoints = -1;

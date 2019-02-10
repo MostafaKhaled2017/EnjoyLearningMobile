@@ -209,7 +209,6 @@
         <item>أنثى</item>
     </string-array>
     <string-array name="sign_up_grades_array">
-        <item>الصف الثالث الإعدادى</item>
         <item>الصف الأول الثانوى</item>
     </string-array>
     <string-array name="grades_array">
