@@ -4,11 +4,11 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.mk.playAndLearn"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 27
-        versionCode 30338
+        versionCode 30341
         multiDexEnabled true
-        versionName "3.3.38"
+        versionName "3.3.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -110,6 +110,17 @@ public class AddQuestionActivity extends AppCompatActivity {
         c3 = findViewById(R.id.checkbox3);
         c4 = findViewById(R.id.checkbox4);
 
+        //setSpinners
+        setUnitOrderSpinner();
+        setLessonOrderSpinner(R.array.lessons_array);
+        setTermSpinner();
+        setGradeSpinner();
+        setSubjectsSpinner(R.array.secondary_subjects_array_for_upload, "setSubject spinner in onCreate");
+        setLanguageBranchesSpinner(R.array.arabic_branches_array, null);
+
+        ButterKnife.bind(this);
+
+
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
             popup.setAccessible(true);
@@ -122,16 +133,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
         }
-
-        //setSpinners
-        setUnitOrderSpinner();
-        setLessonOrderSpinner(R.array.lessons_array);
-        setTermSpinner();
-        setGradeSpinner();
-        setSubjectsSpinner(R.array.secondary_subjects_array_for_upload);
-        setLanguageBranchesSpinner(R.array.arabic_branches_array);
-
-        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         if (intent.getExtras() != null && intent.getExtras().containsKey("question")) {
@@ -157,13 +158,38 @@ public class AddQuestionActivity extends AppCompatActivity {
                 c4.setChecked(true);
             }
 
+
+            String grade = question.getGrade(); //the value you want the position for
+            ArrayAdapter myAdap = (ArrayAdapter) gradesSpinner.getAdapter(); //cast to an ArrayAdapter
+            int spinnerPosition = myAdap.getPosition(grade);
+            gradesSpinner.setSelection(spinnerPosition);
+
+            String term = convertTermToString(question.getTerm()); //the value you want the position for
+            myAdap = (ArrayAdapter) termSpinner.getAdapter(); //cast to an ArrayAdapter
+            spinnerPosition = myAdap.getPosition(term);
+            termSpinner.setSelection(spinnerPosition);
+
             String subject = question.getSubject(); //the value you want the position for
-
-            ArrayAdapter myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
-
-            int spinnerPosition = myAdap.getPosition(subject);
-
+            myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
+            spinnerPosition = myAdap.getPosition(subject);
             subjectsSpinner.setSelection(spinnerPosition);
+
+            String languageBranch = question.getLanguageBranch(); //the value you want the position for
+            if (subject.equals("لغة عربية")) {
+                setLanguageBranchesSpinner(R.array.arabic_branches_array, languageBranch);
+            } else if (subject.equals("لغة انجليزية")) {
+                setLanguageBranchesSpinner(R.array.english_branches_array, languageBranch);
+            }
+
+            String unitNumber = question.getUnitNumber(); //the value you want the position for
+            myAdap = (ArrayAdapter) unitOrderSpinner.getAdapter(); //cast to an ArrayAdapter
+            spinnerPosition = myAdap.getPosition(unitNumber);
+            unitOrderSpinner.setSelection(spinnerPosition);
+
+            String lessonNumber = question.getLessonNumber(); //the value you want the position for
+            myAdap = (ArrayAdapter) lessonOrderSpinner.getAdapter(); //cast to an ArrayAdapter
+            spinnerPosition = myAdap.getPosition(lessonNumber);
+            lessonOrderSpinner.setSelection(spinnerPosition);
 
             oldQuestion = true;
             oldQuestionId = question.getQuestionId();
@@ -177,7 +203,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         return true;
     }
 
-    void setSubjectsSpinner(int array) {
+    void setSubjectsSpinner(int array, String tag) {
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
                 array, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
@@ -187,16 +213,18 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
-                if (currentSubject.equals("لغة عربية")) {
-                    showLanguageBranchesSpinner();
-                    setLanguageBranchesSpinner(R.array.arabic_branches_array);
-                } else if (currentSubject.equals("لغة انجليزية")) {
-                    showLanguageBranchesSpinner();
-                    setLanguageBranchesSpinner(R.array.english_branches_array);
-                } else {
-                    hideLanguageBranchesSpinner();
-                    setLessonOrderSpinner(R.array.lessons_array);
-                    showUnitOrderSpinner();
+                if (!oldQuestion) {
+                    if (currentSubject.equals("لغة عربية")) {
+                        showLanguageBranchesSpinner();
+                        setLanguageBranchesSpinner(R.array.arabic_branches_array, null);
+                    } else if (currentSubject.equals("لغة انجليزية")) {
+                        showLanguageBranchesSpinner();
+                        setLanguageBranchesSpinner(R.array.english_branches_array, null);
+                    } else {
+                        hideLanguageBranchesSpinner();
+                        setLessonOrderSpinner(R.array.lessons_array);
+                        showUnitOrderSpinner();
+                    }
                 }
             }
 
@@ -264,7 +292,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
     }
 
-    void setLanguageBranchesSpinner(int array) {
+    void setLanguageBranchesSpinner(int array, final String languageBranch) {
         ArrayAdapter<CharSequence> languageBranchesAdapter = ArrayAdapter.createFromResource(this,
                 array, android.R.layout.simple_spinner_item);
         languageBranchesAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
@@ -275,15 +303,21 @@ public class AddQuestionActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedLanguageBranch = adapterView.getItemAtPosition(i).toString();
                 //in the store of arabic and english and in the grammar of arabic only
-                if (selectedLanguageBranch.equals("قصة")) {
-                    setLessonOrderSpinner(R.array.story_chapters_array);
-                    hideUnitOrderSpinner();
-                } else if (selectedLanguageBranch.equals("نحو")) {
-                    setLessonOrderSpinner(R.array.arabic_grammar_array);
-                    hideUnitOrderSpinner();
+                if (!oldQuestion) {
+                    if (selectedLanguageBranch.equals("قصة")) {
+                        setLessonOrderSpinner(R.array.story_chapters_array);
+                        hideUnitOrderSpinner();
+                    } else if (selectedLanguageBranch.equals("نحو")) {
+                        setLessonOrderSpinner(R.array.arabic_grammar_array);
+                        hideUnitOrderSpinner();
+                    } else {
+                        setLessonOrderSpinner(R.array.lessons_array);
+                        showUnitOrderSpinner();
+                    }
                 } else {
-                    setLessonOrderSpinner(R.array.lessons_array);
-                    showUnitOrderSpinner();
+                    ArrayAdapter myAdap = (ArrayAdapter) languageBranchesSpinner.getAdapter(); //cast to an ArrayAdapter
+                    int spinnerPosition = myAdap.getPosition(languageBranch);
+                    languageBranchesSpinner.setSelection(spinnerPosition);
                 }
             }
 
@@ -304,10 +338,12 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedGrade = adapterView.getItemAtPosition(i).toString();
-                if (selectedGrade.contains("الإعدادى")) {
-                    setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload);
-                } else if (selectedGrade.contains("الثانوى")) {
-                    setSubjectsSpinner(R.array.secondary_subjects_array_for_upload);
+                if (!oldQuestion) {
+                    if (selectedGrade.contains("الإعدادى")) {
+                        setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner1");
+                    } else if (selectedGrade.contains("الثانوى")) {
+                        setSubjectsSpinner(R.array.secondary_subjects_array_for_upload, "setGradeSpinner2");
+                    }
                 }
             }
 
@@ -433,7 +469,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("reviewed", false);
                 map.put("schoolType", schoolType);
                 map.put("subject", currentSubject);
-                map.put("term", convertTerm(selectedTerm));//Added
+                map.put("term", convertTermToLong(selectedTerm));//Added
                 map.put("writerName", currentUserName);
                 map.put("writerEmail", localCurrentUserEmail);
                 map.put("writerUid", localCurrentUserUid);
@@ -484,8 +520,13 @@ public class AddQuestionActivity extends AppCompatActivity {
                 batch.update(currentQuestionReference, "answer3", et3.trim());
                 batch.update(currentQuestionReference, "answer4", et4.trim());
                 batch.update(currentQuestionReference, "correctAnswer", correctAnswer.trim());
-                batch.update(currentQuestionReference, "subject", currentSubject);
                 batch.update(currentQuestionReference, "schoolType", schoolType);
+                batch.update(currentQuestionReference, "subject", currentSubject);
+                batch.update(currentQuestionReference, "grade", selectedGrade);
+                batch.update(currentQuestionReference, "unitNumber", selectedUnit);
+                batch.update(currentQuestionReference, "lessonNumber", selectedLesson);
+                batch.update(currentQuestionReference, "languageBranch", selectedLanguageBranch);
+                batch.update(currentQuestionReference, "term", convertTermToLong(selectedTerm));
 
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -508,7 +549,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         }
     }
 
-    long convertTerm(String term) {
+    long convertTermToLong(String term) {
         switch (term) {
             case "الفصل الدراسى الأول":
                 return 1;
@@ -516,6 +557,16 @@ public class AddQuestionActivity extends AppCompatActivity {
                 return 2;
             default:
                 return -1;
+        }
+    }
+
+    String convertTermToString(long term) {
+        if (term == 1) {
+            return "الفصل الدراسى الأول";
+        } else if (term == 2) {
+            return "الفصل الدراسى الثانى";
+        } else {
+            return "غير معروف";
         }
     }
 
@@ -533,7 +584,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         c3.setChecked(false);
         c4.setChecked(false);
 
-     /*   gradesSpinner.setSelection(0);
+     /* gradesSpinner.setSelection(0);
         termSpinner.setSelection(0);
         subjectsSpinner.setSelection(0);
         languageBranchesSpinner.setSelection(0);

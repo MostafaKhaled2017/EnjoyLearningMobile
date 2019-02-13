@@ -40,6 +40,7 @@ import org.w3c.dom.Document;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreReplies;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.NotificationID.getID;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
@@ -189,6 +190,22 @@ public class NotificationsService extends Service {
                          showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
                      }
                      fireStoreComments.document(document.getId()).update("notified", true);
+                 }
+             }
+         });
+
+        //repliesListener
+         fireStoreReplies.whereEqualTo("notified",localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+             @Override
+             public void onSuccess(QuerySnapshot documentSnapshots) {
+                 for(DocumentSnapshot document : documentSnapshots.getDocuments()){
+                     String writerName = document.getString("userName");
+                     String commentWriterUID = document.getString("commentWriterUid");
+                     String replyWriterUID = document.getString("writerUid");
+                     if(!commentWriterUID.equals(replyWriterUID) && document.exists()) {//TODO : think about changing the notification text to a shorter one
+                         showNotification("لديك رد جديد لتعليقك", "تم إضافة رد جديد لتعليقك بواسطة " + writerName);
+                     }
+                     fireStoreReplies.document(document.getId()).update("notified", true);
                  }
              }
          });

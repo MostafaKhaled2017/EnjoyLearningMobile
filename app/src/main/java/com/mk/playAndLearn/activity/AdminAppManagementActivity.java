@@ -10,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,18 +25,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
-import com.mk.playAndLearn.utils.DateClass;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,10 +45,8 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class AdminAppManagementActivity extends AppCompatActivity {
 
@@ -157,7 +148,6 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
             @Override
             public void onShow(final DialogInterface dialogInterface) {
-
                 Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
                 button.setOnClickListener(new View.OnClickListener() {
 
@@ -177,6 +167,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                                             }
 
                                             if (subject.equals(subjectsArray[subjectsArray.length - 1]) && grade.equals(gradesArray[gradesArray.length - 1])) {
+                                                Log.v("subjectsLogging", "subject is : " + subject + " , grade is : " + grade);
                                                 if (questionsList.size() > 0) {
                                                     Toast.makeText(AdminAppManagementActivity.this, "عدد الأسئلة : " + questionsList.size(), Toast.LENGTH_SHORT).show();
 
@@ -431,8 +422,6 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                     map.put("reviewed", reviewed);
                     map.put("correctAnswer", correctAnswer);
 
-                    Log.d("Logginggg", "local school type is : " + schoolType + " , map is : " + map.toString());
-
                     if (localSchoolType.equals(arabicSchoolType)) {
                         arabicQuestionsReference.add(map);
                     } else if (localSchoolType.equals(languagesSchoolType)) {
@@ -460,7 +449,15 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         String writerUid = document.getString("writerUid");
         String grade = document.getString("grade");
         String questionId = document.getId();
+        long term = document.getLong("term");
+        String unitNumber = document.getString("unitNumber");
+        String lessonNumber = document.getString("lessonNumber");
+        String languageBranch = document.getString("languageBranch");
 
+        question.setTerm(term);
+        question.setUnitNumber(unitNumber);
+        question.setLessonNumber(lessonNumber);
+        question.setLanguageBranch(languageBranch);
         question.setGrade(grade);
         question.setAnswer1(answer1);
         question.setAnswer2(answer2);

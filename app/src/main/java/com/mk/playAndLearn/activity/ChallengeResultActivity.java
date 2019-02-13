@@ -66,7 +66,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         player2NameTv = findViewById(R.id.secondPlayerName);
         player2ImageTv = findViewById(R.id.secondPlayerImage);
         player2ScoreTv = findViewById(R.id.secondPlayerScore);
-        challengeResultTv = findViewById(R.id.challengeResultText);
+        challengeResultTv = findViewById(R.id.againstChallengeTv);
         challengeStateTv = findViewById(R.id.challengeStateInResultActivity);
         againstTv = findViewById(R.id.againstTextView);
 
@@ -170,8 +170,6 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
     @Override
     public void setChallengeTvText(String text) {
         challengeStateTv.setText(text);
-        challengeStateTv.invalidate();
-        challengeStateTv.clearComposingText();
     }
 
     @Override

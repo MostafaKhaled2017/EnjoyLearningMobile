@@ -10,6 +10,44 @@ public class Question implements Serializable{
     String answer4;
     String correctAnswer;
     String grade;
+    long term;
+    String subject;
+    String languageBranch;
+    String unitNumber;
+
+    public long getTerm() {
+        return term;
+    }
+
+    public void setTerm(long term) {
+        this.term = term;
+    }
+
+    public String getLanguageBranch() {
+        return languageBranch;
+    }
+
+    public void setLanguageBranch(String languageBranch) {
+        this.languageBranch = languageBranch;
+    }
+
+    public String getUnitNumber() {
+        return unitNumber;
+    }
+
+    public void setUnitNumber(String unitNumber) {
+        this.unitNumber = unitNumber;
+    }
+
+    public String getLessonNumber() {
+        return lessonNumber;
+    }
+
+    public void setLessonNumber(String lessonNumber) {
+        this.lessonNumber = lessonNumber;
+    }
+
+    String lessonNumber;
 
     public String getGrade() {
         return grade;
@@ -39,7 +77,6 @@ public class Question implements Serializable{
 
     String complainantEmail;
 
-    String subject;
     String writerName;
 
     public String getQuestionId() {

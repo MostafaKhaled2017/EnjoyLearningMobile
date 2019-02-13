@@ -180,7 +180,9 @@ public class ChallengeStartActivityPresenter {
             fireStoreQuestions.document(grade).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    addQuestionData(documentSnapshot);
+                    if(documentSnapshot.exists()){
+                        addQuestionData(documentSnapshot);
+                    }
                     if (list.size() == listSize) {
                         navigate();
                     }

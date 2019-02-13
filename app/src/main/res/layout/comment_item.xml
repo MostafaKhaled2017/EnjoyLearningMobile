@@ -3,8 +3,8 @@
     android:id="@+id/card_view_of_comments"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layoutDirection="ltr"
-    android:layout_marginBottom="1dp">
+    android:layout_marginBottom="1dp"
+    android:layoutDirection="ltr">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -50,11 +50,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_margin="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="3dp">
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/upArrow"
@@ -92,26 +89,25 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
-                android:autoLink="all"
                 android:layout_marginBottom="5dp"
                 android:layout_toLeftOf="@id/votesView"
+                android:autoLink="all"
                 android:text="عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير عندي سؤال محير "
                 android:textColor="@color/black"
                 android:textSize="@dimen/generalTextSize" />
 
 
-
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/repliesTv"
-                android:layout_toLeftOf="@id/votesView"
-                android:textSize="13sp"
-                android:paddingRight="15dp"
-                android:layout_marginTop="7dp"
-                android:textColor="#0000ff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/commentContent"
-                android:text="الردود"/>
+                android:layout_marginTop="7dp"
+                android:layout_toLeftOf="@id/votesView"
+                android:paddingRight="15dp"
+                android:text="الردود"
+                android:textColor="#0000ff"
+                android:textSize="13sp" />
 
         </RelativeLayout>
     </RelativeLayout>

@@ -53,7 +53,7 @@
         android:textSize="@dimen/nothing_text_size"
         android:textColor="@color/writingColor"
         android:layout_centerInParent="true"
-        android:text="لا يوجد دروس الآن"
+        android:text="قريبا"
         android:visibility="invisible"/>
 
 <!--

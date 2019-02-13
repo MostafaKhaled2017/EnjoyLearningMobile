@@ -2,8 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layoutDirection="ltr"
+    android:fillViewport="true"
     android:scrollbars="none">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -362,8 +363,8 @@
             android:id="@+id/addQuestionBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/card2"
             android:layout_marginTop="8dp"
+            android:layout_below="@id/card2"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/rectangle_button"
