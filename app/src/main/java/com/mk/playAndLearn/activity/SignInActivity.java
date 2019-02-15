@@ -88,7 +88,7 @@ public class SignInActivity extends AppCompatActivity {
 
         initializeGoogleLoginVariables();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.sign_background);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sign_background);
         Blurry.with(this).from(bitmap).into(backgroundIv);
 
         forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +180,7 @@ public class SignInActivity extends AppCompatActivity {
                                                 hideProgressBar();
                                             } else {
                                                 String databaseGender = documentSnapshot.getString("gender");
+                                                long todayChallengesNo = 0;
 
                                                 if (databaseGender == null) {
                                                     Toast.makeText(SignInActivity.this, "هذا الحساب بياناته غير مكتملة برجاء إضافة هذا الحساب من صفحة الاشتراك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
@@ -193,8 +194,10 @@ public class SignInActivity extends AppCompatActivity {
                                                     String email = documentSnapshot.getString("userEmail");
                                                     String image = documentSnapshot.getString("userImage");
                                                     String lastOnlineDay = documentSnapshot.getString("lastOnlineDay");
+                                                    if (documentSnapshot.getLong("todayChallengesNo") != null)
+                                                        todayChallengesNo = documentSnapshot.getLong("todayChallengesNo");
 
-                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay);
+                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo);
                                                     navigate();
                                                 }
                                             }
@@ -245,12 +248,15 @@ public class SignInActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+
                                 // Sign in success, update UI with the signed-in user's information
                                 fireStoreUsers.document(mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         DocumentSnapshot document = task.getResult();
-                                        if(document.exists()) {
+                                        if (document.exists()) {
+                                            long todayChallengesNo = 0;
+
                                             String name = document.getString("userName");
                                             String grade = document.getString("grade");
                                             String schoolType = document.getString("userSchoolType");
@@ -259,7 +265,10 @@ public class SignInActivity extends AppCompatActivity {
                                             String image = document.getString("userImage");
                                             String lastOnlineDay = document.getString("lastOnlineDay");
 
-                                            setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay);
+                                            if (document.getLong("todayChallengesNo") != null)
+                                                todayChallengesNo = document.getLong("todayChallengesNo");
+
+                                            setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo);
                                             navigate();
                                         }
                                     }

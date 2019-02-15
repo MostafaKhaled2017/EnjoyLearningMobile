@@ -407,6 +407,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         String et4 = editText4.getText().toString();
 
         //setTheCorrectAnswers
+        correctAnswer = ""; // make the correct answer string empty
         if (c1.isChecked()) {
             addAnswer(et1.trim());
         }

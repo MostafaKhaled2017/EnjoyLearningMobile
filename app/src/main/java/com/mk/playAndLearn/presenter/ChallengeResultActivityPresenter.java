@@ -14,15 +14,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.AdminQuestionActivity;
 import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.AdManager;
 import com.mk.playAndLearn.utils.DateClass;
@@ -38,12 +34,13 @@ import java.util.TimeZone;
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
 import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
-import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
 import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallengesNo;
 
 public class ChallengeResultActivityPresenter {
     View view;
@@ -144,92 +141,178 @@ public class ChallengeResultActivityPresenter {
         map.put("term", 2);//TODO : make this dynamic
 
 
-        fireStoreChallenges.document().set(map);
+        final String challengeId = fireStoreChallenges.document().getId();
+
+        fireStoreChallenges.document(challengeId).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                fireStoreChallenges.document(challengeId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            addPointsAndUpdateChallengersData(documentSnapshot, score);
+                        } else {
+                            //TODO
+                        }
+                    }
+                });
+            }
+        });
 
 
     }
 
-    public void uploadPlayer2DataAndAddPoints(final String challengeId, final int score, final String playerAnswersList) {
+    public void uploadPlayer2DataAndUpdateUsersData(final String challengeId, final int score, final String playerAnswersList, final int currentPlayer) {
         Date today = new Date();
         final DateClass dateClass = new DateClass();
         dateClass.setDate(today);
 
-        fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    fireStoreChallenges.document(challengeId).update("player2score", score);
-                    //fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList.trim());
-                    fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
-                    fireStoreChallenges.document(challengeId).update("state", "اكتمل");
+        if(currentPlayer == 2) {
+            fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()) {
+                        fireStoreChallenges.document(challengeId).update("player2score", score);
+                        //fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList.trim());
+                        fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
+                        fireStoreChallenges.document(challengeId).update("state", "اكتمل");
 
-                    // usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
+                        // usersReference.child(documentSnapshot.getString("player2Uid")).child("lastChallengeDate").setValue(dateClass.getDate());
 
-                    addPoints(documentSnapshot, score);
+                        addPointsAndUpdateChallengersData(documentSnapshot, score);
+                    }
+
                 }
-            }
-        });
+            });
+        }
     }
 
-    void addPoints(DocumentSnapshot dataSnapshot, int score) {
+    void addPointsAndUpdateChallengersData(DocumentSnapshot dataSnapshot, int score) {
         final String player1Uid = dataSnapshot.getString("player1Uid");
         final String player2Uid = dataSnapshot.getString("player2Uid");
 
         final long player1Score = dataSnapshot.getLong("player1score");
         final long player2Score = (long) score;
 
-        if (getCurrentPlayer(player1Uid) == 2) {
 
-            final DocumentReference player2Reference = fireStoreUsers.document(player2Uid);
+        final DocumentReference player1Reference = fireStoreUsers.document(player1Uid);
+        final DocumentReference player2Reference = fireStoreUsers.document(player2Uid);
 
-            fireStore.runTransaction(new Transaction.Function<Void>() {
-                @Nullable
-                @Override
-                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot snapshot = transaction.get(player2Reference);
+        fireStore.runTransaction(new Transaction.Function<Long>() {
+            @Nullable
+            @Override
+            public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
 
+                Log.v("limitingChallenges", "begging of transaction");
 
-                    long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0, newPoints = 0;
+                long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0;
+                long newPoints = 0, totalChallengesNo = 0, todayChallengesNo = 0;
 
-                    if (snapshot.getLong("noOfWins") != null)
-                        noOfWins = snapshot.getLong("noOfWins");
-                    if (snapshot.getLong("noOfLoses") != null)
-                        noOfLoses = snapshot.getLong("noOfLoses");
-                    if (snapshot.getLong("noOfDraws") != null)
-                        noOfDraws = snapshot.getLong("noOfDraws");
+                if (getCurrentPlayer(player1Uid) == 2) {
+                    Log.v("limitingChallenges", "current player is 2");
+                    DocumentSnapshot snapshotForPlayer2 = transaction.get(player2Reference);
+
+                    if (snapshotForPlayer2.getLong("totalChallengesNo") != null) {
+                        totalChallengesNo = snapshotForPlayer2.getLong("totalChallengesNo");
+                    }
+
+                    if (snapshotForPlayer2.getLong("todayChallengesNo") != null) {
+                        todayChallengesNo = snapshotForPlayer2.getLong("todayChallengesNo");
+                    }
 
                     if (player1Score == player2Score) {
-                        newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
+                        if (snapshotForPlayer2.getLong("noOfDraws") != null)
+                            noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
+                        
+                        newPoints = snapshotForPlayer2.getLong("points") + (long) drawChallengePoints;
                         newNoOfDraws = noOfDraws + (long) 1;
                         transaction.update(player2Reference, "points", newPoints);
-                        transaction.update(player2Reference, "noOfDraws", newNoOfDraws);
-                        return null;
+                        transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
+                        transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        if (totalChallengesNo != 0) {
+                            transaction.update(player2Reference, "noOfDraws", newNoOfDraws);
+                        } else {
+                            transaction.update(player2Reference, "noOfDraws", 1);
+                            transaction.update(player2Reference, "noOfWins", 0);
+                            transaction.update(player2Reference, "noOfLoses", 0);
+                        }
                     } else if (player2Score > player1Score) {
-                        newPoints = snapshot.getLong("points") + (long) wonChallengePoints;
+                        if (snapshotForPlayer2.getLong("noOfWins") != null)
+                            noOfWins = snapshotForPlayer2.getLong("noOfWins");
+
+                        newPoints = snapshotForPlayer2.getLong("points") + (long) wonChallengePoints;
                         newNoOfWins = noOfWins + (long) 1;
                         transaction.update(player2Reference, "points", newPoints);
-                        transaction.update(player2Reference, "noOfWins", newNoOfWins);
-                        return null;
+                        transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
+                        transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        if (totalChallengesNo != 0) {
+                            transaction.update(player2Reference, "noOfWins", newNoOfWins);
+                        } else {
+                            transaction.update(player2Reference, "noOfDraws", 0);
+                            transaction.update(player2Reference, "noOfWins", 1);
+                            transaction.update(player2Reference, "noOfLoses", 0);
+                        }
+                    } else {
+                        if (snapshotForPlayer2.getLong("noOfLoses") != null)
+                            noOfLoses = snapshotForPlayer2.getLong("noOfLoses");
+
+                        newNoOfLoses = noOfLoses + (long) 1;
+                        transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
+                        transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        if (totalChallengesNo != 0) {
+                            transaction.update(player2Reference, "noOfLoses", newNoOfLoses);
+                        } else {
+                            transaction.update(player2Reference, "noOfDraws", 0);
+                            transaction.update(player2Reference, "noOfWins", 0);
+                            transaction.update(player2Reference, "noOfLoses", 1);
+                        }
                     }
-                    else {
-                        newNoOfLoses = noOfLoses+ (long) 1;
-                        transaction.update(player2Reference, "noOfLoses", newNoOfLoses);
-                        return null;
+                } else if (getCurrentPlayer(player1Uid) == 1) {
+                    DocumentSnapshot snapshotForPlayer1 = transaction.get(player1Reference);
+
+                    if (snapshotForPlayer1.getLong("todayChallengesNo") != null) {
+                        todayChallengesNo = snapshotForPlayer1.getLong("todayChallengesNo");
                     }
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d("TAG", "Transaction success!");
+                    transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
+                    transaction.update(player1Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                    Log.v("limitingChallenges", "current player is 1"
+                            + " , new todayChallengesNo is " + todayChallengesNo + 1);
 
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w("TAG", "Transaction failure.", e);
+
+                Log.v("limitingChallenges", "value is : " + todayChallengesNo + 1);
+
+                return todayChallengesNo + 1;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Long>() {
+            @Override
+            public void onSuccess(Long aLong) {
+                Log.v("limitingChallenges", "aLong is : " + aLong);
+
+                long remainedDailyChallenges = dailyChallengesNumber - aLong;
+                if (remainedDailyChallenges > 3) {
+                    Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحديات فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
+                } else if (remainedDailyChallenges == 2) {
+                    Toast.makeText(context, "يمكنك لعب " + " تحديان فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
+                } else if (remainedDailyChallenges == 1) {
+                    Toast.makeText(context, "يمكنك لعب " + " تحدي واحد فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
+                } else if (remainedDailyChallenges < 1) {
+                    Toast.makeText(context, "لا يمكنك بدء تحديات جديدة هذا اليوم يمكنك العودة غدا للعب تحديات جديدة أو طلب من أصدقائك بدء تحديات ضدك", Toast.LENGTH_LONG).show();
                 }
-            });
-        }
+                setSavedTodayChallengesNo(context, aLong);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("TAG", "Transaction failure.", e);
+                Log.v("limitingChallenges", "onFailure , exception is : " + e.getMessage());
+            }
+        });
     }
 
 
@@ -278,12 +361,12 @@ public class ChallengeResultActivityPresenter {
         });*/
     }
 
-public interface View {
-    void setOpponentData(long opponentScore, String opponentName, String opponentImage);
+    public interface View {
+        void setOpponentData(long opponentScore, String opponentName, String opponentImage);
 
-    void setChallengeTvText(String text);
+        void setChallengeTvText(String text);
 
-    void setChallengeTvBGColor(int color);
+        void setChallengeTvBGColor(int color);
 
-}
+    }
 }

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.activity.ChallengersActivity;
@@ -25,7 +26,8 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     Context context;
 
     private final String TAG, subject;
-    int currentPosition = 0,  lastPoints  = (int)1e9, lastPosition = -1;
+    String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    int currentPosition = 0, lastPoints = (int) 1e9, lastPosition = -1;
 
 
     public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject) {
@@ -60,11 +62,12 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     intent.putExtra("uid", user.getUid());
                     intent.putExtra("subject", subject);
                     context.startActivity(intent);
-                    ((ChallengersActivity)context).finish();
+                    ((ChallengersActivity) context).finish();
                 }
             });
-        }
-        else {
+        } else if (TAG.equals("ChallengersFragment")) {
+            holder.position.setVisibility(View.GONE);
+        } else {
             //TODO
            /* if(position > lastPosition) {
                 //Scroll Down
@@ -107,15 +110,14 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
             holder.position.setText(currentPosition + "");
             lastPosition = position;
             lastPoints = user.getPoints();*/
-           if(user.getPosition() != -1) {
-               holder.position.setText(user.getPosition() + "");
-           }
+            if (user.getPosition() != -1) {
+                holder.position.setText(user.getPosition() + "");
+            }
 
         }
-        if(TAG.equals("BestQuestionsUploadersActivity")){
+        if (TAG.equals("BestQuestionsUploadersActivity")) {
             holder.points.setText("عدد الأسئلة : " + user.getAcceptedQuestions());
-        }
-        else {
+        } else {
             holder.points.setText(user.getPoints() + " XP");
         }
         if (user.getName() != null)
@@ -123,13 +125,15 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
         if (user.getImageUrl() != null)
             Picasso.with(context).load(user.getImageUrl()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             holder.isAdminImageView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             holder.isAdminImageView.setVisibility(View.GONE);
         }
 
+        if (currentUserUid.equals(user.getUid())) {
+            holder.cardView.setBackgroundResource(R.color.lightColor);
+        }
      /*   if(user.isOnline()){
             holder.isOnlineImageView.setVisibility(View.VISIBLE);
         }
@@ -156,7 +160,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     }
 
-   class MyHolder extends RecyclerView.ViewHolder {
+    class MyHolder extends RecyclerView.ViewHolder {
         TextView name, points, position;
         ImageView imageView, isAdminImageView, isOnlineImageView;
         CardView cardView;

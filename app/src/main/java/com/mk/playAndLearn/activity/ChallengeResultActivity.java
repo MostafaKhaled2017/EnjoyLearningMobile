@@ -102,8 +102,8 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
                         correctAnswersList, playerAnswersList, secondPlayerUid
                         , score, currentUserName, localCurrentUserImage, secondPlayerName, secondPlayerImage, questionsList, subject);
 
-            } else if (currentChallenger == 2) {
-                presenter.uploadPlayer2DataAndAddPoints(challengeId, score, playerAnswersList);
+            } else if(currentChallenger == 2){
+                presenter.uploadPlayer2DataAndUpdateUsersData(challengeId, score, playerAnswersList, currentChallenger);
             }
         } else if(isGeneralChallenge){
             challengeResultTv.setVisibility(View.VISIBLE);

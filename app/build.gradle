@@ -6,7 +6,7 @@ android {
         applicationId "com.mk.playAndLearn"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 30341
+        versionCode 30341 // TODO : adjust update type and data
         multiDexEnabled true
         versionName "3.3.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
 //    implementation 'com.ibm.watson.developer_cloud:conversation:4.2.1'
 //    implementation 'com.ibm.watson.developer_cloud:text-to-speech:4.2.1'
 //    implementation 'com.ibm.watson.developer_cloud:speech-to-text:4.2.1'

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -44,6 +45,7 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
+import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
@@ -58,6 +60,8 @@ public class ChallengesFragmentPresenter {
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
     String localCurrentUserUid;
     Context context;
+    DocumentSnapshot snapshot;
+
 
     public ChallengesFragmentPresenter(View view, Context context) {
         this.view = view;
@@ -214,26 +218,21 @@ public class ChallengesFragmentPresenter {
         challenge.setScore(score);
 
         Log.v("challengesPoints", "score1Added value is : " + score1Added
-                +" , player1Points : " + player1Score
+                + " , player1Points : " + player1Score
                 + " , player2Points : " + player2Score);
 
-            if (challenge.getState().equals("اكتمل")) {
-            Log.v("loggingC1", "value is " + !existsInCompletedChallengesList(challengeId));
+        if (challengeState.equals("اكتمل") || challengeState.equals(refusedChallengeText)) {
             if (!existsInCompletedChallengesList(dataSnapshot.getId())) {
                 Log.v("challengesDebug", "completedListItemAdded");
                 view.showCompletedChallengesTv();
                 completedChallengesList.add(challenge);
-                if (score1Added != null && !score1Added && currentPlayer == 1)
+                if (score1Added != null && !score1Added && currentPlayer == 1) {
+                    Log.v("pointsLogginggg", "add to player1, challengeId is : " + challengeId
+                     + " , challengeState is : " + challengeState
+                     + " , score1Added is : " + score1Added);
+
                     addScoreToPlayer1(player1Score, player2Score, challengeId);
-            }
-        } else if (challenge.getState().equals(refusedChallengeText)) {
-            Log.v("loggingC2", "value is " + !existsInCompletedChallengesList(challengeId));
-            if (!existsInCompletedChallengesList(dataSnapshot.getId())) {
-                Log.v("challengesDebug", "completedListItemAdded");
-                view.showCompletedChallengesTv();
-                completedChallengesList.add(challenge);
-                if (score1Added != null && !score1Added && currentPlayer == 1)
-                    addScoreToPlayer1(player1Score, player2Score, challengeId);
+                }
             }
         } else if (challenge.getState().equals(uncompletedChallengeText)) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getId()));
@@ -312,14 +311,16 @@ public class ChallengesFragmentPresenter {
 
     void addScoreToPlayer1(final long player1Score, final long player2Score, final String challengeId) {
         final DocumentReference player1Reference = fireStoreUsers.document(localCurrentUserUid);
+        final DocumentReference currentChallengeReference = fireStoreChallenges.document(challengeId);
 
         fireStore.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                DocumentSnapshot snapshot = transaction.get(player1Reference);
+                snapshot = transaction.get(player1Reference);
+                Log.v("pointsLogginggg", "repeated snapShot is : " + snapshot.getData()); //TODO :ensure that latest updates has been done
 
-                long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0, newPoints = 0;
+                long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0, newPoints = 0, totalChallengesNo = 0;
 
                 if (snapshot.getLong("noOfWins") != null)
                     noOfWins = snapshot.getLong("noOfWins");
@@ -328,29 +329,66 @@ public class ChallengesFragmentPresenter {
                 if (snapshot.getLong("noOfDraws") != null)
                     noOfDraws = snapshot.getLong("noOfDraws");
 
+
+                if (snapshot.getLong("totalChallengesNo") != null) {
+                    totalChallengesNo = snapshot.getLong("totalChallengesNo");
+                }
+
                 if (player1Score == player2Score) {
+                    Log.v("pointsLogginggg", "draw");
+
                     newPoints = snapshot.getLong("points") + (long) drawChallengePoints;
                     newNoOfDraws = noOfDraws + (long) 1;
+                    transaction.update(currentChallengeReference, "score1Added", true);
                     transaction.update(player1Reference, "points", newPoints);
-                    transaction.update(player1Reference, "noOfDraws", newNoOfDraws);
+                    transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
+
+                    if (totalChallengesNo != 0) {
+                        transaction.update(player1Reference, "noOfDraws", newNoOfDraws);
+                    } else {
+                        transaction.update(player1Reference, "noOfDraws", 1);
+                        transaction.update(player1Reference, "noOfWins", 0);
+                        transaction.update(player1Reference, "noOfLoses", 0);
+                    }
                     return null;
                 } else if (player1Score > player2Score) {
+                    Log.v("pointsLogginggg", "win");
+
                     newPoints = snapshot.getLong("points") + (long) wonChallengePoints;
                     newNoOfWins = noOfWins + (long) 1;
+                    transaction.update(currentChallengeReference, "score1Added", true);
                     transaction.update(player1Reference, "points", newPoints);
-                    transaction.update(player1Reference, "noOfWins", newNoOfWins);
+                    transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
+
+                    if (totalChallengesNo != 0) {
+                        transaction.update(player1Reference, "noOfWins", newNoOfWins);
+                    } else {
+                        transaction.update(player1Reference, "noOfDraws", 0);
+                        transaction.update(player1Reference, "noOfWins", 1);
+                        transaction.update(player1Reference, "noOfLoses", 0);
+                    }
                     return null;
-                }
-                else {
-                    newNoOfLoses = noOfLoses+ (long) 1;
-                    transaction.update(player1Reference, "noOfLoses", newNoOfLoses);
+                } else {
+                    Log.v("pointsLogginggg", "lose");
+
+                    newNoOfLoses = noOfLoses + (long) 1;
+                    transaction.update(currentChallengeReference, "score1Added", true);
+                    transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
+
+                    if (totalChallengesNo != 0) {
+                        transaction.update(player1Reference, "noOfLoses", newNoOfLoses);
+                    } else {
+                        transaction.update(player1Reference, "noOfDraws", 0);
+                        transaction.update(player1Reference, "noOfWins", 0);
+                        transaction.update(player1Reference, "noOfLoses", 1);
+                    }
                     return null;
                 }
             }
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d("TAG", "Transaction success!");
+                Log.v("pointsLogginggg", "snapShot is : " + snapshot.getData()); //TODO :ensure that latest updates has been done
 
             }
         }).addOnFailureListener(new OnFailureListener() {

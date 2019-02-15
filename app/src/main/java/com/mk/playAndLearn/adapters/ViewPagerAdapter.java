@@ -2,20 +2,12 @@ package com.mk.playAndLearn.adapters;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
-import com.mk.playAndLearn.fragment.LearnFragment;
+import com.mk.playAndLearn.fragment.ChallengersFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     Context context;
@@ -63,7 +55,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new LearnFragment();
+                return new ChallengersFragment();
             case 1:
                 return new HomeFragment();
             case 2:

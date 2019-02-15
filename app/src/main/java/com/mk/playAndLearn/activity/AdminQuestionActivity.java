@@ -159,8 +159,9 @@ public class AdminQuestionActivity extends AppCompatActivity {
             }
         });*/
     }
+
     void setAnswersData(CheckBox v1, CheckBox v2, CheckBox v3, CheckBox v4, ArrayList<String> answers) {
-        Log.v("answersLogging","size is : " + answers.size());
+        Log.v("answersLogging", "size is : " + answers.size());
 
         v1.setText(answers.get(0).trim());
         v2.setText(answers.get(1).trim());
@@ -175,7 +176,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
             v4.setVisibility(View.GONE);
         }
     }
-
 
 
     @Override
@@ -215,27 +215,25 @@ public class AdminQuestionActivity extends AppCompatActivity {
 
     public void showAnswer(View view) {
 
-        String[] userAnswers = getUserAnswers(correctAnswers.length).split(",");
+        String[] userAnswers = getUserAnswers().split(",");
 
-        selection = question.getCorrectAnswer();
-
-            if (correctAnswers.length == 1) {
-                if (selection != null && selection.trim().equals(correctAnswer.trim())) {
-                    answerTv.setTextColor(Color.GREEN);
-                } else {
-                    answerTv.setTextColor(Color.RED);
-                }
-            } else if (correctAnswers.length > 1) {
-
-                Arrays.sort(userAnswers);
-                Arrays.sort(correctAnswers);
-
-                if (Arrays.equals(userAnswers, correctAnswers)) {
-                    answerTv.setTextColor(Color.GREEN);
-                } else {
-                    answerTv.setTextColor(Color.RED);
-                }
+        if (correctAnswers.length == 1) {
+            if (userAnswers[0] != null && userAnswers[0].trim().equals(correctAnswer.trim())) {
+                answerTv.setTextColor(Color.GREEN);
+            } else {
+                answerTv.setTextColor(Color.RED);
             }
+        } else if (correctAnswers.length > 1) {
+
+            Arrays.sort(userAnswers);
+            Arrays.sort(correctAnswers);
+
+            if (Arrays.equals(userAnswers, correctAnswers)) {
+                answerTv.setTextColor(Color.GREEN);
+            } else {
+                answerTv.setTextColor(Color.RED);
+            }
+        }
 
 
         answerTv.setText("الإجابة : " + correctAnswer);
@@ -243,21 +241,20 @@ public class AdminQuestionActivity extends AppCompatActivity {
     }
 
 
-
-    private String getUserAnswers(int length) {
+    private String getUserAnswers() {
         String answers = "";
-            if (c1.isChecked()) {
-                answers += addAnswer((String) c1.getText(), answers.length());
-            }
-            if (c2.isChecked()) {
-                answers += addAnswer((String) c2.getText(), answers.length());
-            }
-            if (c3.isChecked()) {
-                answers += addAnswer((String) c3.getText(), answers.length());
-            }
-            if (c4.isChecked()) {
-                answers += addAnswer((String) c4.getText(), answers.length());
-            }
+        if (c1.isChecked()) {
+            answers += addAnswer((String) c1.getText(), answers.length());
+        }
+        if (c2.isChecked()) {
+            answers += addAnswer((String) c2.getText(), answers.length());
+        }
+        if (c3.isChecked()) {
+            answers += addAnswer((String) c3.getText(), answers.length());
+        }
+        if (c4.isChecked()) {
+            answers += addAnswer((String) c4.getText(), answers.length());
+        }
         return answers;
     }
 

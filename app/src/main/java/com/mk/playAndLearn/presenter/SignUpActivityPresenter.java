@@ -186,7 +186,7 @@ public class SignUpActivityPresenter {
                                     batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate);
+                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0);
                                             view.navigate();
                                         }
                                     });
@@ -214,7 +214,7 @@ public class SignUpActivityPresenter {
                                     fireStoreUsers.document(currentUserUid).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate);
+                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0);
                                             view.navigate();
                                         }
                                     });

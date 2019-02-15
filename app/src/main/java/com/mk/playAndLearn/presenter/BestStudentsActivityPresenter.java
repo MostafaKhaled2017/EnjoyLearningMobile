@@ -34,63 +34,6 @@ public class BestStudentsActivityPresenter {
         this.view = view;
     }
 
-    private void getBestStudents() {
-        fireStoreUsers.orderBy("points", Query.Direction.DESCENDING).limit(20).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    int points = -1000;
-
-                    if (!bestStudentsList.isEmpty())
-                        bestStudentsList.clear();
-
-                    view.startRecyclerAdapter(bestStudentsList);
-
-                    for (DocumentSnapshot document : task.getResult()) {
-                        user = new User();
-                        boolean admin = false;
-                        Log.v("Logging", "the key is : " + document.getId());
-                        String name = (String) document.getString("userName");
-                        if(document.getLong("points") != null)
-                            points = Integer.parseInt(document.getLong("points").toString());
-                        String imageUrl = document.getString("userImage");
-                        String userType = (String) document.getString("userType");
-
-                        if(document.getBoolean("admin") != null)
-                            admin = (boolean) document.getBoolean("admin");
-                        if (userType.equals("طالب") && points != -1000) {
-                            user.setAdmin(admin);
-                            user.setName(name);
-                            user.setPoints(points);
-                            user.setImageUrl(imageUrl);
-                            bestStudentsList.add(user);
-                        }
-
-                    }
-                    //Adding position to List
-                    int position = 1, previousPoints = -1;
-                    for (int i = 0; i < bestStudentsList.size(); i++) {
-                        User user = bestStudentsList.get(i);
-                        if (previousPoints != -1 && previousPoints > user.getPoints()){
-                            position ++;
-                        }
-                        bestStudentsList.get(i).setPosition(position);
-                        previousPoints = user.getPoints();
-                    }
-
-                    view.hideProgressBar();
-                    view.notifyAdapter();
-                    view.hideSwipeRefreshLayout();
-                }
-                else {
-                    Toast.makeText((Context) view, "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت و أعد المحاولة", Toast.LENGTH_SHORT).show();
-                }
-
-                view.hideProgressBar();
-            }
-        });
-    }
-
     public void startAsynkTask() {
         //TODO : search for a solution to this error
         AsyncTask asyncTask = new AsyncTask() {
@@ -117,6 +60,64 @@ public class BestStudentsActivityPresenter {
         };
 
         asyncTask.execute();
+    }
+
+    private void getBestStudents() {
+        fireStoreUsers.orderBy("points", Query.Direction.DESCENDING).limit(20).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    int points = -1000;
+
+                    if (!bestStudentsList.isEmpty())
+                        bestStudentsList.clear();
+
+                    view.startRecyclerAdapter(bestStudentsList);
+
+                    for (DocumentSnapshot document : task.getResult()) {
+                        user = new User();
+                        boolean admin = false;
+                        Log.v("Logging", "the key is : " + document.getId());
+                        String name = (String) document.getString("userName");
+                        if (document.getLong("points") != null)
+                            points = Integer.parseInt(document.getLong("points").toString());
+                        String imageUrl = document.getString("userImage");
+                        String userType = (String) document.getString("userType");
+                        String uid = (String) document.getId();
+
+                        if (document.getBoolean("admin") != null)
+                            admin = (boolean) document.getBoolean("admin");
+                        if (userType.equals("طالب") && points != -1000) {
+                            user.setAdmin(admin);
+                            user.setName(name);
+                            user.setPoints(points);
+                            user.setImageUrl(imageUrl);
+                            user.setUid(uid);
+                            bestStudentsList.add(user);
+                        }
+
+                    }
+                    //Adding position to List
+                    int position = 1, previousPoints = -1;
+                    for (int i = 0; i < bestStudentsList.size(); i++) {
+                        User user = bestStudentsList.get(i);
+                        if (previousPoints != -1 && previousPoints > user.getPoints()) {
+                            position++;
+                        }
+                        bestStudentsList.get(i).setPosition(position);
+                        previousPoints = user.getPoints();
+                    }
+
+                    view.hideProgressBar();
+                    view.notifyAdapter();
+                    view.hideSwipeRefreshLayout();
+                } else {
+                    Toast.makeText((Context) view, "فشل تحميل البيانات من فضلك تأكد من الاتصال بالانترنت و أعد المحاولة", Toast.LENGTH_SHORT).show();
+                }
+
+                view.hideProgressBar();
+            }
+        });
     }
 
     public interface View {

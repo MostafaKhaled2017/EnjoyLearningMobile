@@ -197,7 +197,7 @@ public class ChallengersActivity extends AppCompatActivity {
                             if(userSchoolType != null && subjectSchoolType.equals("both")
                                     || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
                                     || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
-                                list.add(0, user);
+                                list.add(user);
                             }
                         }
                     }

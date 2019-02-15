@@ -37,7 +37,7 @@ public class ChallengeStartActivityPresenter {
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     String subject, challengeId;
     int firstPlayerPoints = -1, currentChallenger = 1;
-    long secondPlayerPoints = -1;
+    int secondPlayerPoints = -1;
 
     String challengeQuestionsIds, grade;
     String playerAnswersBooleansList = "", playerAnswersList = "", correctAnswersList = "";

@@ -50,6 +50,7 @@ public class BestQuestionsUploadersActivityPresenter {
                         boolean admin = false;
                         int acceptedQuestions = -1000;
                         String name = (String) document.getString("userName");
+                        String uid = (String) document.getId();
                         if(document.getLong("acceptedQuestions") != null)
                             acceptedQuestions = Integer.parseInt(document.getLong("acceptedQuestions").toString());
                         String imageUrl = (String) document.getString("userImage");
@@ -65,6 +66,7 @@ public class BestQuestionsUploadersActivityPresenter {
                             user.setEmail(email);
                             user.setAcceptedQuestions(acceptedQuestions);
                             user.setImageUrl(imageUrl);
+                            user.setUid(uid);
                             bestQuestionsUploadersList.add(user);
                         }
                     }

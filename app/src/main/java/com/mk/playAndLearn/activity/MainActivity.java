@@ -1,14 +1,21 @@
 package com.mk.playAndLearn.activity;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -28,8 +35,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -39,8 +44,12 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.ViewPagerAdapter;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
-import com.mk.playAndLearn.fragment.LearnFragment;
+import com.mk.playAndLearn.fragment.ChallengersFragment;
 import com.mk.playAndLearn.service.NotificationsService;
+
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -58,7 +67,7 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
-public class MainActivity extends AppCompatActivity implements LearnFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements ChallengersFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     ViewPagerAdapter adapter;
     private ViewPager mViewPager;
     TabLayout tabLayout;
@@ -70,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
     FirebaseAuth localAuth;
-    String localCurrentUserUid;
+    String urlOfAppFromPlayStore = "https://play.google.com/store/apps/details?id=com.mk.playAndLearn";
+    String currentVersion, latestVersion, localCurrentUserUid;
+    Dialog dialog;
 
     Intent serviceIntent;
 
@@ -141,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
                     updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
                     initialDataLoaded = true;
@@ -185,6 +196,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             }
         });
 
+
+        getCurrentVersion();
 
             /*try {
                 for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
@@ -248,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             case R.id.signOut:
                 stopNotificationService();
                 localAuth.signOut();
-                setSharedPreference(this, null, null, null, null, null, null, null);
+                setSharedPreference(this, null, null, null, null, null, null, null, -1);
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -268,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = localAuth.getCurrentUser();
-                if(user != null){
+                if (user != null) {
                     if (localAuth.getCurrentUser().getEmail().equals(adminEmail)) {
                         appManagementItem.setVisible(true);
                         chatBotItem.setVisible(true);
@@ -285,6 +298,24 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    private void getCurrentVersion() {
+        Log.v("appVersionValidation", "getCurrentVersion called");
+        PackageManager pm = this.getPackageManager();
+        PackageInfo pInfo = null;
+
+        try {
+            pInfo = pm.getPackageInfo(this.getPackageName(), 0);
+
+        } catch (PackageManager.NameNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        currentVersion = pInfo.versionName;
+
+        new GetLatestVersion().execute();
 
     }
 
@@ -335,16 +366,16 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
         final String oldSavedDate = getSavedDate(this);
 
         Log.v("dateLogging", "todayDate : " + todayDate
-        + " , yesterdayDate : " + yesterdayDate
-        + " , oldSavedDate : " + oldSavedDate);
+                + " , yesterdayDate : " + yesterdayDate
+                + " , oldSavedDate : " + oldSavedDate);
 
         //update the saved date after storing it in a string
         setSavedDate(this, todayDate);
 
         final DocumentReference currentUserReference = fireStoreUsers.document(localCurrentUserUid);
 
-        if(!todayDate.equals(oldSavedDate)) {
-            if(oldSavedDate.equals(yesterdayDate)){
+        if (!todayDate.equals(oldSavedDate)) {
+            if (oldSavedDate.equals(yesterdayDate)) {
                 fireStore.runTransaction(new Transaction.Function<Long>() {
                     @Nullable
                     @Override
@@ -356,6 +387,8 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                         transaction.update(currentUserReference, "consecutiveDays", newConsecutiveDays);
                         transaction.update(currentUserReference, "lastOnlineDay", todayDate);
 
+                        transaction.update(currentUserReference, "todayChallengesNo", 0);
+                        transaction.update(currentUserReference, "todayUploadedQuestionNo", 0);
                         return newConsecutiveDays;
                     }
                 }).addOnSuccessListener(new OnSuccessListener<Long>() {
@@ -363,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                     public void onSuccess(Long aLong) {
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                         i.putExtra("consecutiveDays", aLong);
-                      //  startActivity(i); //TODO : add this
+                        //  startActivity(i); //TODO : add this
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -373,14 +406,17 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
                 });
             } else {
                 WriteBatch batch = fireStore.batch();
-                batch.update(currentUserReference,"lastOnlineDay", todayDate);
-                batch.update(currentUserReference,"consecutiveDays", 1);
+                batch.update(currentUserReference, "lastOnlineDay", todayDate);
+                batch.update(currentUserReference, "consecutiveDays", 1);
+
+                batch.update(currentUserReference, "todayChallengesNo", 0);
+                batch.update(currentUserReference, "todayUploadedQuestionNo", 0);
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
-                        i.putExtra("consecutiveDays", (long)1);
-                       // startActivity(i); TODO : ADD THIS
+                        i.putExtra("consecutiveDays", (long) 1);
+                        // startActivity(i); TODO : ADD THIS
                     }
                 });
             }
@@ -412,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
 
     //The user state becomes online when it opens the app and it changes to offline when the app stop from the background
     //TODO : think about making the user offline when it exit the app from the back arrow by uncommenting the code in onBackPressed
-    public void checkIfUserConnected(){
+    public void checkIfUserConnected() {
        /* FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String localCurrentUserUid = currentUser.getUid();
         DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
@@ -440,4 +476,71 @@ public class MainActivity extends AppCompatActivity implements LearnFragment.OnF
             currentUserPresenceReference.setValue(false);*/
         }
     }
+
+    private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            Log.v("appVersionValidation", "getLatestVersion : doInBackGround");
+            try {
+//It retrieves the latest version by scraping the content of current version from play store at runtime
+                Document doc = Jsoup.connect(urlOfAppFromPlayStore).get();
+                latestVersion = doc.getElementsByClass("htlgb").get(6).text();
+                Log.v("appVersionValidation", "try, latestVersion is : " + latestVersion);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.v("appVersionValidation", "catch, exception is : " + e.toString());
+
+            }
+
+            return new JSONObject();
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            if (latestVersion != null) {
+                Log.v("appVersionValidation", "onPostExcute , currentVersion is : " + currentVersion
+                        + " , latestVersion is : " + latestVersion);
+                if (!currentVersion.equalsIgnoreCase(latestVersion)) {
+                    if (!isFinishing()) { //This would help to prevent Error : BinderProxy@45d459c0 is not valid; is your activity running? error
+                        showUpdateDialog();
+                    }
+                }
+            }
+
+            super.onPostExecute(jsonObject);
+        }
+    }
+
+
+    private void showUpdateDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("يوجد تحديث جديد للتطبيق");
+        builder.setMessage("يجب عليك تحديث التطبيق حتى تستطيع استخدامه");
+        builder.setPositiveButton("تحديث", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
+                        ("market://details?id=com.mk.playAndLearn")));
+            }
+        });
+
+        /*builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                background.start();
+            }
+        });*/
+
+        builder.setCancelable(false);
+        dialog = builder.show();
+    }
 }
+
+

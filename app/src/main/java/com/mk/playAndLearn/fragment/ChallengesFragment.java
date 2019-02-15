@@ -31,6 +31,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
+import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
 
 
 /**
@@ -160,6 +162,8 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
                     }
                 }
             });
+        }else {
+            initialDataLoaded = false;
         }
     }
 
@@ -217,10 +221,13 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     public void navigate() {
         if(currentSubject.equals("كل المواد")){
             Toast.makeText(getActivity(), "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
+        } else if(dailyChallengesNumber - getSavedTodayChallengesNo(getActivity()) < 1){
+            Toast.makeText(getActivity(), "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى", Toast.LENGTH_LONG).show();
+        } else {
+            Intent i = new Intent(getActivity(), ChallengersActivity.class);
+            i.putExtra("subject", currentSubject);
+            startActivity(i);
         }
-        Intent i = new Intent(getActivity(), ChallengersActivity.class);
-        i.putExtra("subject", currentSubject);
-        startActivity(i);
     }
 
     @Override
