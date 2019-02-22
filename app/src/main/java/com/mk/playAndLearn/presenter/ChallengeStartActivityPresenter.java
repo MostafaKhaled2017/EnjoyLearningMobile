@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,7 +25,9 @@ import java.util.ArrayList;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
 
 public class ChallengeStartActivityPresenter {
     View view;
@@ -53,21 +56,11 @@ public class ChallengeStartActivityPresenter {
     }
 
     public void getCurrentPlayerData() {
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         final String player1Name = getSavedName(context);
-        final String player1Image = currentUser.getPhotoUrl().toString();
+        final String player1Image = getSavedImage(context);
+        final int player1Points = (int) getSavedPoints(context);
 
-        fireStoreUsers.document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    int player1Points = Integer.parseInt(document.getLong("points").toString());
-                    view.showCurrentPlayerData(player1Name, player1Image, player1Points);
-                }
-            }
-        });
-
+        view.showCurrentPlayerData(player1Name, player1Image, player1Points);
     }
 
     public void getOpponentData(Intent intent) {
@@ -176,15 +169,22 @@ public class ChallengeStartActivityPresenter {
         //setQuestionsList
         String[] questionsIds = challengeQuestionsIds.split(" ");
         final int listSize = questionsIds.length;
+
+        Log.v("challenges2", "getting questions from string" + " , original list size is : " + listSize
+         + " , grade is : " + grade + " , subject is : " + subject);
+
         for (String questionId : questionsIds) {
             fireStoreQuestions.document(grade).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if(documentSnapshot.exists()){
                         addQuestionData(documentSnapshot);
+                        Log.v("challenges2", "getting new question , list size is : " + list.size()
+                        + " , original size : " + listSize);
                     }
                     if (list.size() == listSize) {
                         navigate();
+                        Log.v("challenges2", "navigate");
                     }
                 }
             });

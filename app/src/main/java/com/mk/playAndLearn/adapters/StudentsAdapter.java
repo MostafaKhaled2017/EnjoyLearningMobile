@@ -4,18 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.activity.ChallengersActivity;
+import com.mk.playAndLearn.fragment.LastChallengersFragment;
 import com.mk.playAndLearn.model.User;
 import com.squareup.picasso.Picasso;
 
@@ -49,7 +48,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     @Override
     public void onBindViewHolder(StudentsAdapter.MyHolder holder, int position) {
         final User user = list.get(position);
-        if (TAG.equals("ChallengersActivity")) {
+        if (TAG.equals("LastChallengersFragment")) {
             holder.position.setVisibility(View.GONE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -65,7 +64,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     ((ChallengersActivity) context).finish();
                 }
             });
-        } else if (TAG.equals("ChallengersFragment")) {
+        } else if (TAG.equals("ChallengersFragment") || TAG.equals("FriendsFragment")) {
             holder.position.setVisibility(View.GONE);
         } else {
             //TODO
@@ -133,6 +132,8 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
         if (currentUserUid.equals(user.getUid())) {
             holder.cardView.setBackgroundResource(R.color.lightColor);
+        } else {
+            holder.cardView.setBackgroundResource(R.color.white);
         }
      /*   if(user.isOnline()){
             holder.isOnlineImageView.setVisibility(View.VISIBLE);

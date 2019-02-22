@@ -51,8 +51,10 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
     Button addEmailButton;
 
     ProgressDialog progressDialog;
+    Button registerBtn;
 
     String userSchoolType, userType, gender, grade, imageUrl;
+    long points = 0;
 
     ImageView backgroundIv;
 
@@ -75,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         acceptTerms = findViewById(R.id.acceptTerms);
         addEmailButton = findViewById(R.id.addEmailButton);
         backgroundIv = findViewById(R.id.backgroundIv);
+        registerBtn = findViewById(R.id.signUpBtn);
 
         presenter = new SignUpActivityPresenter(this, this);
 
@@ -104,6 +107,29 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
             @Override
             public void onClick(View view) {
                 Toast.makeText(SignUpActivity.this, "اضغط على زر إضافة وسيتم كتابة بريدك الالكترونى تلقائيا", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                disableRegisterButton();
+
+                String name = nameEt.getText().toString().trim();
+                String email = emailEt.getText().toString().trim();
+                String password = passwordEt.getText().toString().trim();
+                String rePassword = rePasswordEt.getText().toString().trim();
+                boolean acceptTermsChecked = acceptTerms.isChecked();
+
+                int selectedId = usersTypeRadioGroup.getCheckedRadioButtonId();
+
+                if (selectedId == studentRB.getId()) {
+                    userType = "طالب";
+                } else if (selectedId == teacherRB.getId()) {
+                    userType = "معلم";
+                }
+
+                presenter.validateSignUpAndUploadData(name, email, password, rePassword, gender, userSchoolType, userType, grade, acceptTermsChecked, points);
             }
         });
 
@@ -159,6 +185,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
     @Override
     public void setEmailEt(String text) {
         emailEt.setText(text);
+    }
+
+    @Override
+    public void setPoints(long points) {
+        this.points = points;
     }
 
     public void setUserSchoolTypeSpinner() {
@@ -227,24 +258,16 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
 
     }
 
-    public void selectUserType(View view) {
-        int selectedId = usersTypeRadioGroup.getCheckedRadioButtonId();
-
-        if (selectedId == studentRB.getId()) {
-            userType = "طالب";
-        } else if (selectedId == teacherRB.getId()) {
-            userType = "معلم";
-        }
+    @Override
+    public void disableRegisterButton() {
+        registerBtn.setClickable(false);
+        registerBtn.setEnabled(false);
     }
 
-    public void signIn(View view) {
-        String name = nameEt.getText().toString().trim();
-        String email = emailEt.getText().toString().trim();
-        String password = passwordEt.getText().toString().trim();
-        String rePassword = rePasswordEt.getText().toString().trim();
-        boolean acceptTermsChecked = acceptTerms.isChecked();
-
-        presenter.validateSignUpAndUploadData(name, email, password, rePassword, gender, userSchoolType, userType, grade, acceptTermsChecked);
+    @Override
+    public void enableRegisterButton() {
+        registerBtn.setClickable(true);
+        registerBtn.setEnabled(true);
     }
 
     @Override

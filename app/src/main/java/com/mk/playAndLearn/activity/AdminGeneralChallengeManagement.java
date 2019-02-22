@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Batch;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -27,13 +28,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.Firebase.generalChallengeArabicQuestionsRef;
+import static com.mk.playAndLearn.utils.Firebase.generalChallengeDocument;
 
 public class AdminGeneralChallengeManagement extends AppCompatActivity {
-    DocumentReference generalChallengeDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,6 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText("إدارة التحدى العام");
 
-        generalChallengeDocument = fireStoreGeneralChallenge.document("generalChallengeDocument");
     }
 
     @Override
@@ -69,33 +73,27 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
             }
         });
 
-        /*usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        fireStoreUsers.whereGreaterThan("lastGeneralChallengeScore", 0).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    usersReference.child(dataSnapshot1.getKey()).child("lastGeneralChallengeScore").setValue(0);
-                }
-                Toast.makeText(AdminGeneralChallengeManagement.this, "تم اعادة ضبط النقاط بنجاح", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
-        String[] subjectsArray = getResources().getStringArray(R.array.secondary_subjects_array_with_all_subjects_item);
-        for (final String subject : subjectsArray) {
-            fireStoreQuestions.document(subject).collection(subject).whereEqualTo("challengeQuestion", true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot documentSnapshots) {
-                    for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                        fireStoreQuestions.document(subject).collection(subject).document(document.getId()).update("challengeQuestion", false);//TODO : make sure that this won't cause problems
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    WriteBatch batch = fireStore.batch();
+                    for(DocumentSnapshot documentSnapshot: task.getResult()){
+                        DocumentReference documentReference = fireStoreUsers.document(documentSnapshot.getId());
+                        batch.update(documentReference, "lastGeneralChallengeScore", 0);
                     }
+                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(AdminGeneralChallengeManagement.this, "تم اعادة ضبط النقاط بنجاح", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
                 }
-            });
-        }
-        Toast.makeText(AdminGeneralChallengeManagement.this, "تم الغاء القيمة المميزة لاسئلة التحدى", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
     }
 
@@ -106,6 +104,10 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
                 Toast.makeText(AdminGeneralChallengeManagement.this, "تم إيقاف التحدى بنجاح", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        //TODO : delete the questions list here or add a button to do that
+
     }
 
     public void changeGeneralChallengeText(View view) {

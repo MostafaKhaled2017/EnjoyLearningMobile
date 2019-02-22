@@ -7,7 +7,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
-import com.mk.playAndLearn.presenter.BestStudentsActivityPresenter;
 import com.mk.playAndLearn.presenter.BestStudentsInGeneralChallengeActivityPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
@@ -35,7 +33,7 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
 
     BestStudentsInGeneralChallengeActivityPresenter presenter;
 
-    private final String TAG = "BestStudentsActivity";
+    private final String TAG = "BestStudentsFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -37,10 +37,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static com.mk.playAndLearn.activity.AddQuestionActivity.getSchoolType;
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.Firebase.generalChallengeArabicQuestionsRef;
+import static com.mk.playAndLearn.utils.Firebase.generalChallengeLanguageQuestionsRef;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
 
 public class AdminQuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
@@ -49,7 +54,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
     Button skipQuestionButton;
     String correctAnswer, selection;
     String writerType = "غير معروف";
-    CheckBox c1, c2, c3, c4;
+    CheckBox c1, c2, c3, c4, generalChallengeCheckBox;
     Intent i;
     ProgressBar timerProgressBar;
     WriteBatch batch;
@@ -84,6 +89,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         c2 = findViewById(R.id.checkBox2InAdminQuestion);
         c3 = findViewById(R.id.checkBox3InAdminQuestion);
         c4 = findViewById(R.id.checkBox4InAdminQuestion);
+        generalChallengeCheckBox = findViewById(R.id.generalChallengeCheckBox);
         timerProgressBar = findViewById(R.id.timerProgressbar);
         subjectTv = findViewById(R.id.subjectTv);
         writerTv = findViewById(R.id.writerNameTvInQuestion);
@@ -95,7 +101,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
         }
         if (index < list.size()) {
             question = (Question) list.get(index);
-            currentQuestionReference = fireStoreQuestions.document(getSavedGrade(this)).collection(question.getSubject()).document(question.getQuestionId());
+            currentQuestionReference = fireStoreQuestions.document(question.getGrade()).collection(question.getSubject()).document(question.getQuestionId());
             correctAnswer = question.getCorrectAnswer();
 
             tvQuestion.setText(question.getAlQuestion());
@@ -324,6 +330,23 @@ public class AdminQuestionActivity extends AppCompatActivity {
                 transaction.update(currentUserReference, "points", newPoints);
                 transaction.update(currentUserReference, "acceptedQuestions", newAcceptedQuestions);
                 transaction.update(currentQuestionReference, "reviewed", true);
+
+                setSavedPoints(AdminQuestionActivity.this, newPoints);
+
+                if (generalChallengeCheckBox.isChecked()) {
+                    transaction.update(currentQuestionReference, "challengeQuestion", true);
+
+                    String schoolType = getSchoolType(question.getSubject());
+
+                    if (schoolType.equals("arabic")) {
+                        transaction.set(generalChallengeArabicQuestionsRef.document(question.getQuestionId()), question);
+                    } else if (schoolType.equals("languages")) {
+                        transaction.set(generalChallengeLanguageQuestionsRef.document(question.getQuestionId()), question);
+                    } else {
+                        transaction.set(generalChallengeArabicQuestionsRef.document(question.getQuestionId()), question);
+                        transaction.set(generalChallengeLanguageQuestionsRef.document(question.getQuestionId()), question);
+                    }
+                }
 
                 return null;
             }

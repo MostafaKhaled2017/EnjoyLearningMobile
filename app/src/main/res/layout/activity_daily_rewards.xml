@@ -1,9 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.DailyRewardsActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/color1">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="الجائزة اليومية"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_in_toolbar" />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/numberOfDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/increaseInPointsTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/dayRemainsToCompleteWeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/adviseTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="لزيادة نقاطك سريعا افتح القائمة الموجودة فى الشريط التي فى أعلى التطبيق وقم بإضافة أسئلة بها وستزيد 5 نقاط على كل سؤال ترفعه بعد مراجعته وقبوله"/>
+
+</LinearLayout>

@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class sharedPreference {
     public static void setSharedPreference(Context context, String name, String grade, String schoolType, String userType
-            , String email, String imageUrl, String lastOnlineDay, long todayChallengesNo){
+            , String email, String imageUrl, String lastOnlineDay, long todayChallengesNo, long points){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -17,12 +17,23 @@ public class sharedPreference {
         editor.putString("userImage", imageUrl);
         editor.putString("lastOnlineDay", lastOnlineDay);
         editor.putLong("todayChallengesNo", todayChallengesNo);
+        editor.putLong("points", points);
         editor.apply();
     }
 
     public static String getSavedName(Context context){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         return pref.getString("currentUserName", "غير معروف");
+    }
+
+    public static String getSavedImage(Context context){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        return pref.getString("userImage", "غير معروف");
+    }
+
+    public static long getSavedPoints(Context context){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        return pref.getLong("points", -1);
     }
 
     public static long getSavedTodayChallengesNo(Context context){
@@ -32,10 +43,6 @@ public class sharedPreference {
     public static String getSavedGrade(Context context){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         return pref.getString("grade", "غير معروف");
-    }
-    public static long getSavedPoints(Context context){
-        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
-        return pref.getLong("points", -1);
     }
     public static String getSavedDate(Context context){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
@@ -55,6 +62,14 @@ public class sharedPreference {
         SharedPreferences.Editor editor = pref.edit();
 
         editor.putLong("todayChallengesNo", todayChallengesNo);
+        editor.apply();
+    }
+
+    public static void setSavedPoints(Context context, long points){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putLong("points", points);
         editor.apply();
     }
 

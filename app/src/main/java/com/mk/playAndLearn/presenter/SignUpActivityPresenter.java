@@ -74,7 +74,6 @@ public class SignUpActivityPresenter {
                     .addOnCompleteListener((Activity) view, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> signUpTask) {
-                            view.hideProgressBar();
                             if (signUpTask.isSuccessful()) {
                                 final String currentUserUid = auth.getCurrentUser().getUid();
                                 // Sign in success, update UI with the signed-in user's information
@@ -88,11 +87,14 @@ public class SignUpActivityPresenter {
                                             if (databaseGender != null) {
                                                 Toast.makeText(context, "هذا الحساب موجود بالفعل برجاء اختيار حساب اخر أو تسجيل الدخول", Toast.LENGTH_SHORT).show();
                                             } else {
+                                                long points = documentSnapshot.getLong("points");
                                                 view.setEmailEt(email);
+                                                view.setPoints(points);
                                             }
-                                        } else if(!documentSnapshot.exists()){
+                                        } else if (!documentSnapshot.exists()) {
                                             view.setEmailEt(email);
                                         }
+                                        view.hideProgressBar();
                                         //  auth.signOut();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -106,6 +108,7 @@ public class SignUpActivityPresenter {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(context, "فشل التسجيل في التطبيق من فضلك تأكد من الإتصال بالإنترنت وأعد المحاولة", Toast.LENGTH_SHORT).show();
                                 Log.v("sign in exception :", signUpTask.getException().toString());
+                                view.hideProgressBar();
                                 //updateUI(null);
                             }
                         }
@@ -119,23 +122,31 @@ public class SignUpActivityPresenter {
 
     public void validateSignUpAndUploadData(final String name, final String email, final String password, String rePassword
             , final String gender, final String userSchoolType, final String userType, final String grade
-            , boolean acceptTermsChecked) {
+            , boolean acceptTermsChecked, final long points) {
         if (TextUtils.isEmpty(name)) {
             view.setNameError();
+            view.enableRegisterButton();
         } else if (TextUtils.isEmpty(email)) {
             Toast.makeText(context, "برجاء إضافة البريد الالكترونى الخاص بك", Toast.LENGTH_SHORT).show();
+            view.enableRegisterButton();
         } else if (TextUtils.isEmpty(password)) {
             view.setPasswordError(context.getApplicationContext().getString(R.string.emptyEditText));
+            view.enableRegisterButton();
         } else if (TextUtils.isEmpty(rePassword)) {
             view.setRePasswordError(context.getApplicationContext().getString(R.string.emptyEditText));
+            view.enableRegisterButton();
         } else if (!password.equals(rePassword)) {
             view.setRePasswordError("كلمة السر وتأكيد كلمة السر غير متطابقين");
+            view.enableRegisterButton();
         } else if (password.length() < 6) {
             view.setPasswordError("كلمة المرور يجب ألا تقل عن 6 حروف أو أرقام");
+            view.enableRegisterButton();
         } else if (TextUtils.isEmpty(userType)) {
             view.setUserTypeError();
+            view.enableRegisterButton();
         } else if (!acceptTermsChecked) {
             view.setAcceptTermsCheckedError();
+            view.enableRegisterButton();
         } else {
             view.showProgressBar();
 
@@ -166,6 +177,7 @@ public class SignUpActivityPresenter {
                                 String databaseGender = (String) documentSnapshot.getString("gender");
                                 if (databaseGender != null) {
                                     Toast.makeText(context, "هذا الحساب موجود بالفعل برجاء اختيار حساب اخر أو تسجيل الدخول", Toast.LENGTH_SHORT).show();
+                                    view.hideProgressBar();
                                 } else {
                                     WriteBatch batch = fireStore.batch();
                                     DocumentReference currentUserDocument = fireStoreUsers.document(currentUserUid);
@@ -175,27 +187,26 @@ public class SignUpActivityPresenter {
                                     batch.update(currentUserDocument, "userImage", imageUrl);
                                     batch.update(currentUserDocument, "userEmail", email);
                                     batch.update(currentUserDocument, "userType", userType);
-                                    batch.update(currentUserDocument, "consecutiveDays", 1);
                                     batch.update(currentUserDocument, "pointsHistory", "");
                                     batch.update(currentUserDocument, "grade", grade);
                                     batch.update(currentUserDocument, "gender", gender);
                                     batch.update(currentUserDocument, "friends", "users: ");
-                                    batch.update(currentUserDocument, "lastOnlineDate", dateClass.getDate());
+                                    batch.update(currentUserDocument, "lastOnlineDay", todayDate);
                                     batch.update(currentUserDocument, "userSchoolType", userSchoolType);
+                                    batch.update(currentUserDocument, "consecutiveDays", 1);
 
                                     batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0);
+                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0, points);
                                             view.navigate();
                                         }
                                     });
                                 }
-                            } else {
-                                if (!documentSnapshot.exists()) {
+                            } else if(!documentSnapshot.exists()) {
                                     Map<String, Object> map = new HashMap<>();
-                                    map.put("refusedQuestions", 0);
-                                    map.put("acceptedQuestions", 0);
+                                    map.put("refusedQuestions", 0);//1
+                                    map.put("acceptedQuestions", 0);//2
                                     map.put("userName", name.trim());
                                     map.put("admin", false);
                                     map.put("userEmail", email.trim());
@@ -206,7 +217,7 @@ public class SignUpActivityPresenter {
                                     map.put("gender", gender);
                                     map.put("friends", "users: ");
                                     map.put("lastOnlineDay", todayDate);
-                                    map.put("points", 0);
+                                    map.put("points", 0);//3
                                     map.put("consecutiveDays", 1);
                                     map.put("userSchoolType", userSchoolType);
 
@@ -214,17 +225,19 @@ public class SignUpActivityPresenter {
                                     fireStoreUsers.document(currentUserUid).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0);
+                                            setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0, 0);
                                             view.navigate();
                                         }
                                     });
-                                }
+
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(context, "فشل إنشاء الحساب برجاء إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                            view.hideProgressBar();
+                           // Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -232,8 +245,10 @@ public class SignUpActivityPresenter {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(context, "فشل إنشاء الحساب برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "فشل إنشاء الحساب برجاء إعادة إضافة بريدك الالكترونى و المحاولة مرة أخرى", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                     view.hideProgressBar();
+                    view.enableRegisterButton();
                     Log.v("signUpLinking", "exception is : " + e.getMessage());
                 }
             });
@@ -260,5 +275,10 @@ public class SignUpActivityPresenter {
 
         void setEmailEt(String text);
 
+        void setPoints(long points);
+
+        void disableRegisterButton();
+
+        void enableRegisterButton();
     }
 }

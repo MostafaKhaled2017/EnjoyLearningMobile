@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layoutDirection="ltr"
     android:orientation="vertical">
+
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/backgroundIv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.8"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sign_background" />
+
+    </FrameLayout>
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -17,19 +32,6 @@
         android:max="100"
         android:visibility="invisible" />
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/backgroundIv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/sign_background"
-            android:alpha="0.8"/>
-
-    </FrameLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -51,13 +53,10 @@
                 android:hint="البريد الالكترونى"
                 android:inputType="textEmailAddress"
                 android:textColor="#000000"
-                android:textDirection="rtl"
+                android:textDirection="anyRtl"
                 android:textSize="18sp" />
 
         </android.support.design.widget.TextInputLayout>
-
-
-
 
 
         <android.support.design.widget.TextInputLayout
@@ -71,15 +70,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/calibri"
-                android:hint="كلمة المرور"
                 android:gravity="right|center"
+                android:hint="كلمة المرور"
                 android:inputType="textPassword"
-                android:textDirection="rtl"
                 android:textColor="#000000"
+                android:textDirection="anyRtl"
                 android:textSize="18sp" />
 
         </android.support.design.widget.TextInputLayout>
-
 
 
         <TextView
@@ -92,32 +90,31 @@
             android:layout_marginBottom="10dp"
             android:text="هل نسيت كلمة السر؟"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Button
+            android:id="@+id/signInWithEmailAndPasswordBtn"
             android:layout_width="210dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/buttonshape"
             android:fontFamily="@font/gotham"
             android:text="تسجيل الدخول"
-            android:layout_gravity="center"
             android:textAllCaps="false"
             android:textColor="#ffffff"
-            android:textSize="18sp"
-            android:onClick="signInWithEmailAndPassword"
-            android:layout_marginBottom="16dp"
             android:textDirection="anyRtl"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:text="أو سجل الدخول باستخدام جوجل"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_margin="5dp" />
-
+            android:textStyle="bold" />
 
 
         <!--<com.google.android.gms.common.SignInButton
@@ -128,18 +125,18 @@
             android:layout_marginBottom="15dp" />-->
 
         <com.shaishavgandhi.loginbuttons.GoogleButton
+            android:id="@+id/googleBtn"
             android:layout_width="75dp"
-            android:layout_weight="1"
-            app:roundedCorner="true"
-            android:layout_margin="5dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
             android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:layout_marginTop="25dp"
+            android:layout_weight="1"
             android:textAlignment="center"
             app:iconSize="30dp"
-            app:roundedCornerRadius="75dp"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/googleBtn"
-            android:layout_height="75dp"/>
+            app:roundedCorner="true"
+            app:roundedCornerRadius="75dp" />
 
     </LinearLayout>
 </RelativeLayout>

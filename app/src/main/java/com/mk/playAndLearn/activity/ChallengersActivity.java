@@ -1,61 +1,25 @@
 package com.mk.playAndLearn.activity;
 
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.adapters.StudentsAdapter;
-import com.mk.playAndLearn.model.User;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.EventListener;
-
-import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
-
+import com.mk.playAndLearn.adapters.ChallengersViewPagerAdapter;
+import com.mk.playAndLearn.adapters.LeaderBoardViewPagerAdapter;
 
 public class ChallengersActivity extends AppCompatActivity {
-    ArrayList<User> list = new ArrayList();
-    StudentsAdapter recyclerAdapter;
-
-    ProgressBar progressBar;
-    RecyclerView recyclerView;
-    String subject, userId;
-    TextView noInternetConnectionText, noStudentsTv;
-    SwipeRefreshLayout swipeRefreshLayout;
-
-    private final String TAG = "ChallengersActivity";
+    ChallengersViewPagerAdapter adapter;
+    private ViewPager mViewPager;
+    TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,42 +35,29 @@ public class ChallengersActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            subject = intent.getStringExtra("subject");
+        mViewPager = findViewById(R.id.viewpager_in_challengers);
+        adapter = new ChallengersViewPagerAdapter(getSupportFragmentManager(), this);
+        tabLayout = findViewById(R.id.tablayout_in_challengers);
+
+        mViewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        tabOne.setText("كل الطلبة");
+        tabLayout.getTabAt(0).setCustomView(tabOne);
+
+        TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        tabTwo.setText("الأصدقاء");
+        tabLayout.getTabAt(1).setCustomView(tabTwo);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mViewPager.getCurrentItem() != 0) {
+            mViewPager.setCurrentItem(0);
+        } else {
+            super.onBackPressed();
         }
-        recyclerView = findViewById(R.id.challengersRecyclerView);
-        progressBar = findViewById(R.id.challengersProgressBar);
-        swipeRefreshLayout = findViewById(R.id.challengersSwipeRefreshLayout);
-        noStudentsTv = findViewById(R.id.noActiveStudentsTv);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                startAsynkTask();
-            }
-        });
-
-        recyclerAdapter = new StudentsAdapter(list, this, TAG, subject);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerAdapter.notifyDataSetChanged();
-
-        noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
-        noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                noInternetConnectionText.setVisibility(View.GONE);
-                noStudentsTv.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-                startAsynkTask();
-            }
-        });
-        noInternetConnectionText.setText("لا يوجد اتصال بالانترنت");
-
-        startAsynkTask();
     }
 
     @Override
@@ -114,122 +65,4 @@ public class ChallengersActivity extends AppCompatActivity {
         finish();
         return true;
     }
-
-    public void startAsynkTask() {
-        //TODO : search for a solution to this error
-        AsyncTask asyncTask = new AsyncTask() {
-            @Override
-            protected Boolean doInBackground(Object[] objects) {
-                try {
-                    Socket sock = new Socket();
-                    sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
-                    sock.close();
-                    return true;
-                } catch (IOException e) {
-                    return false;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                if ((boolean) o) {
-                    getStudents();
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    swipeRefreshLayout.setRefreshing(false);
-                    noInternetConnectionText.setVisibility(View.VISIBLE);
-                }
-            }
-        };
-
-        asyncTask.execute();
-    }
-
-    public void getStudents() {
-        if (!list.isEmpty()) {
-            list.clear();
-        }
-
-        OnCompleteListener usersListener = new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
-                String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult()) {
-                        User user = new User();
-                        String points = "";
-                        boolean admin = false, online = false;
-                        String name = (String) document.getString("userName");
-                        String email = (String) document.getString("userEmail");
-                        String uid = document.getId();
-                        if (document.getLong("points") != null)
-                            points = document.getLong("points").toString();
-                        if(document.getBoolean("admin") != null)
-                            admin = (boolean) document.getBoolean("admin");
-                        String imageUrl = (String) document.getString("userImage");
-                        String userType = (String) document.getString("userType");
-                        String userSchoolType = (String) document.getString("userSchoolType");
-
-                        int pointsInt;
-                        try {
-                            pointsInt = Integer.parseInt(points);
-                        } catch (Exception ex) {
-                            Log.v("pointsException", "exception is : " + ex);
-                            pointsInt = 0;
-                        }
-
-                        String subjectSchoolType = AddQuestionActivity.getSchoolType(subject);
-
-
-                        if (userType != null && userType.equals("طالب")
-                                && !uid.equals(localCurrentUserUid)
-                                && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
-
-                            user.setAdmin(admin);
-                            user.setOnline(online);
-                            user.setName(name);
-                            user.setPoints(pointsInt);
-                            user.setImageUrl(imageUrl);
-                            user.setEmail(email);
-                            user.setUid(uid);
-
-
-                            if(userSchoolType != null && subjectSchoolType.equals("both")
-                                    || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
-                                    || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
-                                list.add(user);
-                            }
-                        }
-                    }
-
-
-                } else {
-                    Log.v("TAG", "failed");
-                }
-
-                recyclerAdapter.notifyDataSetChanged();
-
-                if (progressBar.getVisibility() != View.GONE)
-                    progressBar.setVisibility(View.GONE);
-
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-
-                if (list.size() == 0) {
-                    noStudentsTv.setVisibility(View.VISIBLE);
-                    noInternetConnectionText.setVisibility(View.GONE);
-                } else {
-                    noStudentsTv.setVisibility(View.INVISIBLE);
-                    noInternetConnectionText.setVisibility(View.GONE);
-                }
-            }
-        };
-
-        fireStoreUsers.orderBy("lastOnlineDay", Query.Direction.DESCENDING)
-                .limit(15)
-                .get()
-                .addOnCompleteListener(usersListener);
-    }
 }
-

@@ -119,9 +119,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
                     }
                 });
 
-                if(initialDataLoaded){
-                    loadData();
-                }
             }
 
             @Override

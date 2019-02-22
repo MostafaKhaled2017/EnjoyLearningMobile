@@ -126,6 +126,88 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+        Button signWithEmailAndPasswordBtn = findViewById(R.id.signInWithEmailAndPasswordBtn);
+        signWithEmailAndPasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String email = emailEt.getText().toString();
+                String password = passwordEt.getText().toString();
+
+                if (TextUtils.isEmpty(email)) {
+                    emailEt.setError(getString(R.string.emptyEditText));
+                } else if (TextUtils.isEmpty(password)) {
+                    passwordEt.setError(getString(R.string.emptyEditText));
+                } else {
+                    showProgressBar();
+                    mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+
+                                        // Sign in success, update UI with the signed-in user's information
+                                        fireStoreUsers.document(mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot document = task.getResult();
+                                                if (document.exists()) {
+                                                    long todayChallengesNo = 0, points = 0;
+
+                                                    String name = document.getString("userName");
+                                                    String grade = document.getString("grade");
+                                                    String schoolType = document.getString("userSchoolType");
+                                                    String type = document.getString("userType");
+                                                    String email = document.getString("userEmail");
+                                                    String image = document.getString("userImage");
+                                                    String lastOnlineDay = document.getString("lastOnlineDay");
+
+                                                    if (document.getLong("todayChallengesNo") != null)
+                                                        todayChallengesNo = document.getLong("todayChallengesNo");
+
+                                                    if (document.getLong("points") != null)
+                                                        points = document.getLong("points");
+
+                                                    Log.v("todayChallengesNo", "todayChallengesNo in sign in activity : " + todayChallengesNo);
+
+                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email
+                                                            , image, lastOnlineDay, todayChallengesNo, points);
+                                                    navigate();
+                                                } else {
+                                                    Toast.makeText(SignInActivity.this, "يوجد مشكلة فى هذا الحساب برجاء التواصل مع إدارة التطبيق", Toast.LENGTH_SHORT).show();
+                                                    hideProgressBar();
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        hideProgressBar();
+                                        try {
+                                            throw task.getException();
+                                        } catch (FirebaseAuthInvalidUserException e) {
+                                            String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
+                                            if (errorCode.equals("ERROR_USER_NOT_FOUND")) {
+                                                emailEt.setError("هذا الحساب غيرموجود فى التطبيق");
+                                            }
+                                        } catch (FirebaseAuthInvalidCredentialsException e) {
+                                            Toast.makeText(SignInActivity.this, "البيانات التى أدخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
+                                        } catch (FirebaseNetworkException e) {
+                                            Toast.makeText(SignInActivity.this, "لا يوجد اتصال بالانترنت", Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            Toast.makeText(SignInActivity.this, "فشل التسجيل في التطبيق رجاء إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                                            e.printStackTrace();
+                                        }
+
+                                        // If sign in fails, display a message to the user.
+                                        Log.v("sign in exception :", task.getException().toString());
+                                        //updateUI(null);
+                                    }
+
+                                    // ...
+                                }
+                            });
+                }
+            }
+        });
+
         mCallbackManager = CallbackManager.Factory.create();
     }
 
@@ -160,6 +242,7 @@ public class SignInActivity extends AppCompatActivity {
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            showProgressBar();
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -180,7 +263,7 @@ public class SignInActivity extends AppCompatActivity {
                                                 hideProgressBar();
                                             } else {
                                                 String databaseGender = documentSnapshot.getString("gender");
-                                                long todayChallengesNo = 0;
+                                                long todayChallengesNo = 0, points = 0;
 
                                                 if (databaseGender == null) {
                                                     Toast.makeText(SignInActivity.this, "هذا الحساب بياناته غير مكتملة برجاء إضافة هذا الحساب من صفحة الاشتراك وإعادة المحاولة", Toast.LENGTH_SHORT).show();
@@ -196,8 +279,12 @@ public class SignInActivity extends AppCompatActivity {
                                                     String lastOnlineDay = documentSnapshot.getString("lastOnlineDay");
                                                     if (documentSnapshot.getLong("todayChallengesNo") != null)
                                                         todayChallengesNo = documentSnapshot.getLong("todayChallengesNo");
+                                                    if (documentSnapshot.getLong("points") != null)
+                                                        points = documentSnapshot.getLong("points");
 
-                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo);
+                                                    Log.v("todayChallengesNo", "todayChallengesNo in sign in activity : " + todayChallengesNo);
+
+                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo, points);
                                                     navigate();
                                                 }
                                             }
@@ -228,78 +315,9 @@ public class SignInActivity extends AppCompatActivity {
 
             }
         }//TODO
+
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
-    }
-
-    public void signInWithEmailAndPassword(View view) {
-        showProgressBar();
-
-        final String email = emailEt.getText().toString();
-        String password = passwordEt.getText().toString();
-
-        if (TextUtils.isEmpty(email)) {
-            emailEt.setError(getString(R.string.emptyEditText));
-        } else if (TextUtils.isEmpty(password)) {
-            passwordEt.setError(getString(R.string.emptyEditText));
-        } else {
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-
-                                // Sign in success, update UI with the signed-in user's information
-                                fireStoreUsers.document(mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        DocumentSnapshot document = task.getResult();
-                                        if (document.exists()) {
-                                            long todayChallengesNo = 0;
-
-                                            String name = document.getString("userName");
-                                            String grade = document.getString("grade");
-                                            String schoolType = document.getString("userSchoolType");
-                                            String type = document.getString("userType");
-                                            String email = document.getString("userEmail");
-                                            String image = document.getString("userImage");
-                                            String lastOnlineDay = document.getString("lastOnlineDay");
-
-                                            if (document.getLong("todayChallengesNo") != null)
-                                                todayChallengesNo = document.getLong("todayChallengesNo");
-
-                                            setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo);
-                                            navigate();
-                                        }
-                                    }
-                                });
-                            } else {
-                                hideProgressBar();
-                                try {
-                                    throw task.getException();
-                                } catch (FirebaseAuthInvalidUserException e) {
-                                    String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
-                                    if (errorCode.equals("ERROR_USER_NOT_FOUND")) {
-                                        emailEt.setError("هذا الحساب غيرموجود فى التطبيق");
-                                    }
-                                } catch (FirebaseAuthInvalidCredentialsException e) {
-                                    Toast.makeText(SignInActivity.this, "البيانات التى أدخلتها غير صحيحة", Toast.LENGTH_SHORT).show();
-                                } catch (FirebaseNetworkException e) {
-                                    Toast.makeText(SignInActivity.this, "لا يوجد اتصال بالانترنت", Toast.LENGTH_SHORT).show();
-                                } catch (Exception e) {
-                                    Toast.makeText(SignInActivity.this, "فشل التسجيل في التطبيق رجاء إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                }
-
-                                // If sign in fails, display a message to the user.
-                                Log.v("sign in exception :", task.getException().toString());
-                                //updateUI(null);
-                            }
-
-                            // ...
-                        }
-                    });
-        }
     }
 
     void hideProgressBar() {

@@ -14,6 +14,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -36,10 +39,13 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
 import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
+import static com.mk.playAndLearn.utils.Integers.generalChallengeScoreMultiply;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
 import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallengesNo;
 
 public class ChallengeResultActivityPresenter {
@@ -54,7 +60,6 @@ public class ChallengeResultActivityPresenter {
     public void showAd() {
         AdManager adManager = AdManager.getInstance();
         InterstitialAd ad = adManager.getAd();
-        Log.v("contestLogging", "ad is : " + ad + " , ad loaded is : " + ad.isLoaded());
         if (ad != null && ad.isLoaded()) {
             ad.show();
         }
@@ -149,7 +154,7 @@ public class ChallengeResultActivityPresenter {
                 fireStoreChallenges.document(challengeId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             DocumentSnapshot documentSnapshot = task.getResult();
                             addPointsAndUpdateChallengersData(documentSnapshot, score);
                         } else {
@@ -168,7 +173,7 @@ public class ChallengeResultActivityPresenter {
         final DateClass dateClass = new DateClass();
         dateClass.setDate(today);
 
-        if(currentPlayer == 2) {
+        if (currentPlayer == 2) {
             fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -224,12 +229,16 @@ public class ChallengeResultActivityPresenter {
                     if (player1Score == player2Score) {
                         if (snapshotForPlayer2.getLong("noOfDraws") != null)
                             noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
-                        
+
                         newPoints = snapshotForPlayer2.getLong("points") + (long) drawChallengePoints;
                         newNoOfDraws = noOfDraws + (long) 1;
                         transaction.update(player2Reference, "points", newPoints);
                         transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
                         transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        setSavedPoints(context, newPoints);
+
+                        Log.v("sfPoints", "new SavedPoints is : " + getSavedPoints(context));
 
                         if (totalChallengesNo != 0) {
                             transaction.update(player2Reference, "noOfDraws", newNoOfDraws);
@@ -247,6 +256,10 @@ public class ChallengeResultActivityPresenter {
                         transaction.update(player2Reference, "points", newPoints);
                         transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
                         transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        setSavedPoints(context, newPoints);
+
+                        Log.v("sfPoints", "new SavedPoints is : " + getSavedPoints(context));
 
                         if (totalChallengesNo != 0) {
                             transaction.update(player2Reference, "noOfWins", newNoOfWins);
@@ -271,6 +284,8 @@ public class ChallengeResultActivityPresenter {
                             transaction.update(player2Reference, "noOfLoses", 1);
                         }
                     }
+
+                    return todayChallengesNo + 1;
                 } else if (getCurrentPlayer(player1Uid) == 1) {
                     DocumentSnapshot snapshotForPlayer1 = transaction.get(player1Reference);
 
@@ -282,12 +297,12 @@ public class ChallengeResultActivityPresenter {
 
                     Log.v("limitingChallenges", "current player is 1"
                             + " , new todayChallengesNo is " + todayChallengesNo + 1);
-
+                    return todayChallengesNo + 1;
                 }
-
                 Log.v("limitingChallenges", "value is : " + todayChallengesNo + 1);
 
                 return todayChallengesNo + 1;
+
             }
         }).addOnSuccessListener(new OnSuccessListener<Long>() {
             @Override
@@ -335,30 +350,39 @@ public class ChallengeResultActivityPresenter {
         }
     }
 
-    public void uploadGeneralChallengeData(final int score) {
+    public void uploadGeneralChallengeData(final int score, final int size) {
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        ;
+        final int finalChallengePoints = score * generalChallengeScoreMultiply;
 
-        /*usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Log.v("generalChallengePoints", "list size : " + size + " , finalChallengePoints : " + finalChallengePoints);
+
+        view.setChallengeResultTvText("نتيجة التحدى : " + 100 + " / " + finalChallengePoints); //TODO : edit this to (questionsList.size() * generalChallengeScoreMultiply)
+
+        fireStoreUsers.document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
-                int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                int finalChallengePoints = score * generalChallengeScoreMultiply;
-                view.setChallengeResultTvText("نتيجة التحدى : " + 100 + " / " + finalChallengePoints); //TODO : edit this to (questionsList.size() * generalChallengeScoreMultiply)
-                if (lastGeneralChallengePoints == 0) {
-                    usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
-                    usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
-                } else {
-                    Toast.makeText(context, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    long lastGeneralChallengePoints = 0, userPoints;
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.getLong("lastGeneralChallengeScore") != null)
+                        lastGeneralChallengePoints = documentSnapshot.getLong("lastGeneralChallengeScore");
+                    userPoints = documentSnapshot.getLong("points");
+                    if (lastGeneralChallengePoints == 0) {
+                        long newPoints = userPoints + finalChallengePoints;
+
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("lastGeneralChallengeScore", finalChallengePoints);
+                        updates.put("points", newPoints);
+
+                        setSavedPoints(context, newPoints);
+
+                        fireStoreUsers.document(currentUser.getUid()).update(updates);
+                    } else {
+                        Toast.makeText(context, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
+        });
     }
 
     public interface View {
@@ -367,6 +391,8 @@ public class ChallengeResultActivityPresenter {
         void setChallengeTvText(String text);
 
         void setChallengeTvBGColor(int color);
+
+        void setChallengeResultTvText(String text);
 
     }
 }

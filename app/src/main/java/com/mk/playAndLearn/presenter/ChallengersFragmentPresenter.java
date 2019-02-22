@@ -26,18 +26,23 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
 
 public class ChallengersFragmentPresenter {
     private Lesson lesson;
     private View view;
+    private Context context;
 
     final String TAG = "ChallengersFragmentPresenter";
 
     ArrayList<User> studentsList = new ArrayList();
     ChildEventListener lessonsListener;
 
-    public ChallengersFragmentPresenter(View view) {
+    public ChallengersFragmentPresenter(View view, Context context) {
         this.view = view;
+        this.context = context;
     }
 
     public void startAsynkTask() {
@@ -150,6 +155,14 @@ public class ChallengersFragmentPresenter {
         }
     }
 
+    public void getUserData(){
+        String name = getSavedName(context);
+        String imageUrl = getSavedImage(context);
+        long points = getSavedPoints(context);
+
+        view.setUserData(name, imageUrl, points);
+    }
+
     public interface View {
         void hideProgressBar();
 
@@ -166,6 +179,8 @@ public class ChallengersFragmentPresenter {
         void showNoStudentsText();
 
         void hideNoStudentsText();
+
+        void setUserData(String name, String imageUrl, long points);
 
     }
 }

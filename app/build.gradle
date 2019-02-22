@@ -6,9 +6,9 @@ android {
         applicationId "com.mk.playAndLearn"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 30341 // TODO : adjust update type and data
+        versionCode 30344
         multiDexEnabled true
-        versionName "3.3.41"
+        versionName "3.3.44"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -63,6 +63,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.shaishavgandhi:login-buttons:1.0.0'
     implementation 'jp.wasabeef:blurry:3.0.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

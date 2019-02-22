@@ -1,7 +1,6 @@
 package com.mk.playAndLearn.activity;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -41,7 +42,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.adapters.ViewPagerAdapter;
+import com.mk.playAndLearn.adapters.MainViewPagerAdapter;
+import com.mk.playAndLearn.fragment.BestStudentsFragment;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.ChallengersFragment;
@@ -64,11 +66,12 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedDate;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallengesNo;
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
 public class MainActivity extends AppCompatActivity implements ChallengersFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
-    ViewPagerAdapter adapter;
+    MainViewPagerAdapter adapter;
     private ViewPager mViewPager;
     TabLayout tabLayout;
 
@@ -141,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
         serviceIntent = new Intent(this, NotificationsService.class);
 
         mViewPager = findViewById(R.id.viewpager);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(), this);
+        adapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
         tabLayout = findViewById(R.id.tablayout);
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
                 if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
                     updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
+                    getCurrentVersion();
                     initialDataLoaded = true;
                 }
             }
@@ -197,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
         });
 
 
-        getCurrentVersion();
 
             /*try {
                 for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
@@ -229,11 +232,8 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
             case R.id.contactUs:
                 startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
                 return true;
-            case R.id.bestStudents:
-                startActivity(new Intent(MainActivity.this, BestStudentsActivity.class));
-                return true;
-            case R.id.bestQuestionsUploaders:
-                startActivity(new Intent(MainActivity.this, BestQuestionsUploaders.class));
+            case R.id.leaderboard:
+                startActivity(new Intent(MainActivity.this, LeaderBoardActivity.class));
                 return true;
             /*case R.id.myAccount:
                 //showHelp();
@@ -260,8 +260,7 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
                 return true;}*/
             case R.id.signOut:
                 stopNotificationService();
-                localAuth.signOut();
-                setSharedPreference(this, null, null, null, null, null, null, null, -1);
+                setSharedPreference(this, null, null, null, null, null, null, null, -1, -1);
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -389,14 +388,17 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
 
                         transaction.update(currentUserReference, "todayChallengesNo", 0);
                         transaction.update(currentUserReference, "todayUploadedQuestionNo", 0);
+
                         return newConsecutiveDays;
                     }
                 }).addOnSuccessListener(new OnSuccessListener<Long>() {
                     @Override
                     public void onSuccess(Long aLong) {
+                        setSavedTodayChallengesNo(MainActivity.this, 0);
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                         i.putExtra("consecutiveDays", aLong);
-                        //  startActivity(i); //TODO : add this
+                        i.putExtra("userUid", localCurrentUserUid);
+                         startActivity(i);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -415,12 +417,13 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
+                        setSavedTodayChallengesNo(MainActivity.this, 0);
                         i.putExtra("consecutiveDays", (long) 1);
-                        // startActivity(i); TODO : ADD THIS
+                        i.putExtra("userUid", localCurrentUserUid);
+                        startActivity(i);
                     }
                 });
             }
-
         }
     }
 
@@ -507,7 +510,8 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
             if (latestVersion != null) {
                 Log.v("appVersionValidation", "onPostExcute , currentVersion is : " + currentVersion
                         + " , latestVersion is : " + latestVersion);
-                if (!currentVersion.equalsIgnoreCase(latestVersion)) {
+                String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                if (!currentVersion.equalsIgnoreCase(latestVersion) && !currentUserEmail.equals(adminEmail)) {
                     if (!isFinishing()) { //This would help to prevent Error : BinderProxy@45d459c0 is not valid; is your activity running? error
                         showUpdateDialog();
                     }
@@ -520,26 +524,31 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
 
 
     private void showUpdateDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("يوجد تحديث جديد للتطبيق");
-        builder.setMessage("يجب عليك تحديث التطبيق حتى تستطيع استخدامه");
-        builder.setPositiveButton("تحديث", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("يوجد تحديث جديد للتطبيق")
+                .setMessage("يجب عليك تحديث التطبيق حتى تستطيع استخدامه")
+                .setPositiveButton("تحديث", null)
+                .setCancelable(false)
+                .create();
+
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
-                        ("market://details?id=com.mk.playAndLearn")));
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mk.playAndLearn")));
+                    }
+                });
             }
         });
 
-        /*builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                background.start();
-            }
-        });*/
-
-        builder.setCancelable(false);
-        dialog = builder.show();
+        dialog.show();
     }
 }
 

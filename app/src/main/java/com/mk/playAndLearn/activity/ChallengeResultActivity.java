@@ -66,9 +66,9 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         player2NameTv = findViewById(R.id.secondPlayerName);
         player2ImageTv = findViewById(R.id.secondPlayerImage);
         player2ScoreTv = findViewById(R.id.secondPlayerScore);
-        challengeResultTv = findViewById(R.id.againstChallengeTv);
+        challengeResultTv = findViewById(R.id.resultChallengeTv);
         challengeStateTv = findViewById(R.id.challengeStateInResultActivity);
-        againstTv = findViewById(R.id.againstTextView);
+        againstTv = findViewById(R.id.againstTextViewInChallengeResult);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -109,7 +109,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
             challengeResultTv.setVisibility(View.VISIBLE);
             hideAllViews();
 
-            presenter.uploadGeneralChallengeData(score);
+            presenter.uploadGeneralChallengeData(score, questionsList.size());
         }
     }
 
@@ -175,5 +175,10 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
     @Override
     public void setChallengeTvBGColor(int color) {
         challengeStateTv.setBackgroundColor(color);
+    }
+
+    @Override
+    public void setChallengeResultTvText(String text) {
+        challengeResultTv.setText(text);
     }
 }

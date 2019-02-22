@@ -110,6 +110,22 @@ public class AddQuestionActivity extends AppCompatActivity {
         c3 = findViewById(R.id.checkbox3);
         c4 = findViewById(R.id.checkbox4);
 
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(unitOrderSpinner);
+
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(300);
+
+            Log.v("spinnerHeight", "try");
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+            Log.v("spinnerHeight", "catch , exception is : " + e);
+        }
+
         //setSpinners
         setUnitOrderSpinner();
         setLessonOrderSpinner(R.array.lessons_array);
@@ -373,31 +389,6 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     }
 
-    public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
-
-        // Check which radio button was clicked
-        switch (view.getId()) {
-            case R.id.radio1:
-                if (checked)
-                    currentCheckedRadioButton = 1;
-                break;
-            case R.id.radio2:
-                if (checked)
-                    currentCheckedRadioButton = 2;
-                break;
-            case R.id.radio3:
-                if (checked)
-                    currentCheckedRadioButton = 3;
-                break;
-            case R.id.radio4:
-                if (checked)
-                    currentCheckedRadioButton = 4;
-                break;
-        }
-    }
-
     @OnClick(R.id.addQuestionBtn)
     public void addQuestion(View view) {
         String questionText = questionEt.getText().toString().trim();
@@ -475,7 +466,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("writerEmail", localCurrentUserEmail);
                 map.put("writerUid", localCurrentUserUid);
                 map.put("dayDate", todayDate);
-                // map.put("date", dateClass.getDate());
+                map.put("date", dateClass.getDate());
                 map.put("challengeQuestion", false);
 
                 if (currentSubject.equals("لغة عربية") || currentSubject.equals("لغة انجليزية")) {
@@ -598,10 +589,12 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     public static String getSchoolType(String subject) {
         if (subject.equals("فيزياء") || subject.equals("كيمياء")
-                || subject.equals("أحياء") || subject.equals("رياضيات")) {
+                || subject.equals("أحياء") || subject.equals("رياضيات")
+                || subject.equals("علوم")) {
             return "arabic";
         } else if (subject.equals("Physics") || subject.equals("Chemistry")
-                || subject.equals("Biology") || subject.equals("Mathematics")) {
+                || subject.equals("Biology") || subject.equals("Mathematics")
+                || subject.equals("Science")) {
             return "languages";
         } else {
             return "both";

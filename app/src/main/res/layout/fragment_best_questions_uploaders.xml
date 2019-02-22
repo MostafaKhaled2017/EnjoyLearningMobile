@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
+    android:background="@color/color3">
+
+    <include
+        android:id="@+id/noInternetConnectionTextInBestStudents"
+        layout="@layout/no_internet_connection_text"/>
+
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/noStudentsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="لا يوجد طلبة الآن"
+        android:textSize="@dimen/nothing_text_size"
+        android:textColor="@color/writingColor"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/bestStudentsSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBar">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bestStudentsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/bestStudentsProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
+</RelativeLayout>

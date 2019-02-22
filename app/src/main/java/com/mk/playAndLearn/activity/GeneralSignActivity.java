@@ -60,6 +60,7 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 //TODO : solve the shared prefrence tutorial
@@ -197,8 +198,12 @@ public class GeneralSignActivity extends AppCompatActivity {
         super.onStart();
         //TODO : note : don't try to update the users data here again
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null && !getSavedName(this).equals("غير معروف")) {
+        if (currentUser != null && !getSavedGrade(this).equals("غير معروف")) {
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+        } else {
+            if (currentUser != null) {
+                FirebaseAuth.getInstance().signOut();
+            }
         }
     }
 

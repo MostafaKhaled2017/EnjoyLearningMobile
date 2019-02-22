@@ -173,7 +173,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:onClick="selectUserType"
                     android:text="طالب" />
 
                 <android.support.v7.widget.AppCompatRadioButton
@@ -181,7 +180,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:onClick="selectUserType"
                     android:text="معلم" />
 
             </RadioGroup>
@@ -244,7 +242,6 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/buttonshape"
                 android:fontFamily="@font/gotham"
-                android:onClick="signIn"
                 android:text="تسجيل"
                 android:textAllCaps="false"
                 android:textColor="#ffffff"

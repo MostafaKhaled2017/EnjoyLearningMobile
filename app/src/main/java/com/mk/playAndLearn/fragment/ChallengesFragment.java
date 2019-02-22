@@ -79,6 +79,19 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deleteCache(getActivity());
+
+        presenter = new ChallengesFragmentPresenter(this, getActivity());
+
+        FirebaseAuth localAuth = FirebaseAuth.getInstance();
+        localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                    presenter.startAsynkTask();
+                    initialDataLoaded = true;
+                }
+            }
+        });
     }
 
     @Override
@@ -147,26 +160,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         return view;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        presenter = new ChallengesFragmentPresenter(this, getActivity());
-        if (isVisibleToUser) {
-            FirebaseAuth localAuth = FirebaseAuth.getInstance();
-            localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
-                        presenter.startAsynkTask();
-                        initialDataLoaded = true;
-                    }
-                }
-            });
-        }else {
-            initialDataLoaded = false;
-        }
-    }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -219,6 +212,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
     @Override
     public void navigate() {
+        Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(getActivity()));
         if(currentSubject.equals("كل المواد")){
             Toast.makeText(getActivity(), "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
         } else if(dailyChallengesNumber - getSavedTodayChallengesNo(getActivity()) < 1){

@@ -1,46 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
-    android:background="@color/color3">
+    android:fillViewport="true">
 
-    <include
-        android:id="@+id/noInternetConnectionTextInFragment"
-        layout="@layout/no_internet_connection_text"/>
-
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/noStudentsTextInFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="لا يوجد طلبة الآن"
-        android:textSize="@dimen/nothing_text_size"
-        android:textColor="@color/writingColor"
-        android:layout_centerInParent="true"
-        android:visibility="invisible" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/bestStudentsSwipeRefreshLayoutInFragment"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appBar">
+        android:layout_height="match_parent"
+        android:background="@color/color3"
+        android:layoutDirection="ltr">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bestStudentsRecyclerViewInFragment"
+        <include
+            android:id="@+id/noInternetConnectionTextInFragment"
+            layout="@layout/no_internet_connection_text" />
+
+
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_in_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/appBar"
-            android:overScrollMode="never"
-            android:scrollbars="none" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_marginBottom="0.5dp"
+            android:layoutDirection="ltr">
 
-    <ProgressBar
-        android:id="@+id/bestStudentsProgressBarInFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible" />
-</RelativeLayout>
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/userImageInFragment"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="10dp"
+                    android:src="@color/gray" />
+
+
+                <TextView
+                    android:id="@+id/userNameInFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_toLeftOf="@id/userImageInFragment"
+                    android:text=""
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/pointsInFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/userNameInFragment"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@id/userImageInFragment"
+                    android:text=""
+                    android:textSize="16sp" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/leaderboardBtn"
+                    style="@style/rectangleButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_below="@id/userNameInFragment"
+                    android:text="قائمة المتصدرين"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/card_view_in_fragment">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/nearstChallengersTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:padding="7dp"
+                android:text="أقرب المنافسين"
+                android:textColor="@color/writingColor"
+                android:textSize="19sp"
+                android:textStyle="bold"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/studentsRecyclerViewInFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/nearstChallengersTv"
+                    android:overScrollMode="never"
+                    android:scrollbars="none" />
+
+            <ProgressBar
+                android:id="@+id/bestStudentsProgressBarInFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="35dp"
+                android:visibility="visible" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/noStudentsTextInFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="لا يوجد طلبة الآن"
+                android:textColor="@color/writingColor"
+                android:textSize="@dimen/nothing_text_size"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

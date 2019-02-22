@@ -16,15 +16,9 @@
          android:title="حسابي"
          app:showAsAction="ifRoom" />-->
     <item
-        android:id="@+id/bestStudents"
-        android:title="أفضل الطلاب"
+        android:id="@+id/leaderboard"
+        android:title="قائمة المتصدرين"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/bestQuestionsUploaders"
-        android:title="أفضل رافعى الأسئلة"
-        app:showAsAction="never" />
-
     <item
         android:id="@+id/generalChallenges"
         android:title="التحدى العام"

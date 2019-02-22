@@ -1,12 +1,8 @@
 package com.mk.playAndLearn.utils;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 //TODO : note that general sign activity and main activity use other variables
 public class Firebase {
@@ -21,4 +17,8 @@ public class Firebase {
     public static CollectionReference fireStoreGeneralChallenge = fireStore.collection("generalChallenge");
     public static CollectionReference fireStoreComplaintsQuestions = fireStore.collection("complaintsQuestions");
 
+    public static DocumentReference generalChallengeDocument =  fireStoreGeneralChallenge.document("generalChallengeDocument");
+
+    public static CollectionReference generalChallengeArabicQuestionsRef = generalChallengeDocument.collection("arabicQuestions");
+    public static CollectionReference generalChallengeLanguageQuestionsRef = generalChallengeDocument.collection("languageQuestions");
 }

@@ -90,6 +90,7 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
         });
 
         presenter.startAsynkTask();
+        presenter.prepareAd();
     }
 
     @Override

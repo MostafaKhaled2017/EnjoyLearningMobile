@@ -1,10 +1,16 @@
 package com.mk.playAndLearn.presenter;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.playAndLearn.model.User;
 
 import java.io.IOException;
@@ -27,74 +33,63 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
     }
 
     private void getBestStudents() {
-        //TODO : EDIT THIS
-        /*fireStoreUsers.orderByChild("lastGeneralChallengeScore").startAt(1).addListenerForSingleValueEvent(new ValueEventListener() {
+        fireStoreUsers.orderBy("lastGeneralChallengeScore", Query.Direction.DESCENDING).endAt(1).limit(25).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                usersListener = this;
-                if (!bestStudentsList.isEmpty())
-                    bestStudentsList.clear();
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    if (!bestStudentsList.isEmpty())
+                        bestStudentsList.clear();
 
-                view.startRecyclerAdapter(bestStudentsList);
+                    view.startRecyclerAdapter(bestStudentsList);
+                    
+                    for(DocumentSnapshot documentSnapshot: task.getResult()){
+                        if(documentSnapshot.exists()){
+                            user = new User();
+                            boolean admin = false;
+                            int generalChallengePoints = -1000;
+                            String name =  documentSnapshot.getString("userName");
+                            if(documentSnapshot.getLong("lastGeneralChallengeScore") != null)
+                                generalChallengePoints = Integer.parseInt(documentSnapshot.getLong("lastGeneralChallengeScore").toString());
+                            String imageUrl =  documentSnapshot.getString("userImage");
+                            String userType =  documentSnapshot.getString("userType");
+                            if (documentSnapshot.getBoolean("adminStudent") != null)
+                                admin = documentSnapshot.getBoolean("adminStudent");
 
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    user = new User();
-                    boolean admin = false;
-                    int generalChallengePoints = -1000;
-                    String name = (String) dataSnapshot1.child("userName").getValue();
-                    if(dataSnapshot1.child("lastGeneralChallengeScore").getValue() != null)
-                         generalChallengePoints = Integer.parseInt(dataSnapshot1.child("lastGeneralChallengeScore").getValue().toString());
-                    String imageUrl = (String) dataSnapshot1.child("userImage").getValue();
-                    String userType = (String) dataSnapshot1.child("userType").getValue();
-                    if (dataSnapshot1.child("adminStudent").getValue() != null)
-                        admin = (boolean) dataSnapshot1.child("adminStudent").getValue();
-
-                    if (userType.equals("طالب") && generalChallengePoints != -1000) {
-                        user.setAdmin(admin);
-                        user.setName(name);
-                        user.setPoints(generalChallengePoints);
-                        user.setImageUrl(imageUrl);
-                        bestStudentsList.add(0, user);
+                            if (userType.equals("طالب") && generalChallengePoints != -1000) {
+                                user.setAdmin(admin);
+                                user.setName(name);
+                                user.setPoints(generalChallengePoints);
+                                user.setImageUrl(imageUrl);
+                                bestStudentsList.add(user);
+                            } 
+                        }
                     }
-                }
 
-                //Adding position to List
-                int position = 1, previousPoints = -1;
-                for (int i = 0; i < bestStudentsList.size(); i++) {
-                    User user = bestStudentsList.get(i);
-                    if (previousPoints != -1 && previousPoints > user.getPoints()) {
-                        position++;
+
+                    //Adding position to List
+                    int position = 1, previousPoints = -1;
+                    for (int i = 0; i < bestStudentsList.size(); i++) {
+                        User user = bestStudentsList.get(i);
+                        if (previousPoints != -1 && previousPoints > user.getPoints()) {
+                            position++;
+                        }
+                        bestStudentsList.get(i).setPosition(position);
+                        previousPoints = user.getPoints();
                     }
-                    bestStudentsList.get(i).setPosition(position);
-                    previousPoints = user.getPoints();
+
+                    if (bestStudentsList.size() == 0) {
+                        view.showNoStudentsText();
+                    } else {
+                        view.hideNoStudentsText();
+                        view.notifyAdapter();
+                    }
+
+                    view.hideProgressBar();
+                    view.hideSwipeRefreshLayout();
+                    
                 }
-
-                if (bestStudentsList.size() == 0) {
-                    view.showNoStudentsText();
-                } else {
-                    view.hideNoStudentsText();
-                }
-
-                view.hideProgressBar();
-                view.notifyAdapter();
-                view.hideSwipeRefreshLayout();
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                view.hideProgressBar();
-            }
-        });*/
-
-        if (bestStudentsList.size() == 0) {
-            view.showNoStudentsText();
-        } else {
-            view.hideNoStudentsText();
-        }
-
-        view.hideProgressBar();
-//        view.notifyAdapter();
-        view.hideSwipeRefreshLayout();
+        });
     }
 
     public void startAsynkTask() {

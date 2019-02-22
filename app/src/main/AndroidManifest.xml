@@ -24,8 +24,10 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-
-        <activity android:name="com.mk.playAndLearn.activity.RepliesActivity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.SearchActivity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.ChallengersActivity" />
+        <activity android:name="com.mk.playAndLearn.activity.LeaderBoardActivity" />
+        <activity android:name="com.mk.playAndLearn.activity.RepliesActivity" />
         <activity android:name="com.mk.playAndLearn.activity.DailyRewardsActivity" />
         <activity
             android:name="com.mk.playAndLearn.activity.MainActivity"
@@ -94,7 +96,7 @@
             android:name="com.mk.playAndLearn.activity.ContactUsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.mk.playAndLearn.activity.BestStudentsActivity"
+            android:name="com.mk.playAndLearn.fragment.BestStudentsFragment"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.PostInDetailsActivity"
@@ -110,7 +112,7 @@
             android:name="com.mk.playAndLearn.activity.ChallengeResultActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.mk.playAndLearn.activity.ChallengersActivity"
+            android:name="com.mk.playAndLearn.fragment.LastChallengersFragment"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.ChallengeStartActivity"
@@ -162,7 +164,7 @@
         <activity
             android:name="com.mk.playAndLearn.activity.ChatbotActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.mk.playAndLearn.activity.BestQuestionsUploaders" />
+        <activity android:name="com.mk.playAndLearn.fragment.BestQuestionsUploadersFragment" />
     </application>
 
 </manifest>

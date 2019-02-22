@@ -49,6 +49,7 @@ import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
 
 public class ChallengesFragmentPresenter {
     Challenge challenge;
@@ -343,6 +344,8 @@ public class ChallengesFragmentPresenter {
                     transaction.update(player1Reference, "points", newPoints);
                     transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
 
+                    setSavedPoints(context, newPoints);
+
                     if (totalChallengesNo != 0) {
                         transaction.update(player1Reference, "noOfDraws", newNoOfDraws);
                     } else {
@@ -359,6 +362,8 @@ public class ChallengesFragmentPresenter {
                     transaction.update(currentChallengeReference, "score1Added", true);
                     transaction.update(player1Reference, "points", newPoints);
                     transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
+
+                    setSavedPoints(context, newPoints);
 
                     if (totalChallengesNo != 0) {
                         transaction.update(player1Reference, "noOfWins", newNoOfWins);
