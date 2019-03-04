@@ -200,7 +200,7 @@ public class ChallengeStartActivityPresenter {
                 .collection(subject)
                 .whereEqualTo("reviewed", true)
                 .whereEqualTo("challengeQuestion", false)
-                .whereEqualTo("term", 1) //TODO ADD VIP
+                .whereEqualTo("term", 2) //TODO ADD VIP
                 .whereEqualTo("questionType", "choose")
                 .whereGreaterThan(FieldPath.documentId(), randomId)
                 .limit(1)

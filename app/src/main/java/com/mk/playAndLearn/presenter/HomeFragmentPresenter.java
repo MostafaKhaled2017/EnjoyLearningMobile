@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.model.Post;
 import com.mk.playAndLearn.utils.DateClass;
 
@@ -171,6 +172,7 @@ public class HomeFragmentPresenter {
 
                 view.showToast("تم إضافة المنشور بنجاح");
                 view.notifyAdapter();
+                view.hideNoPostsText();
             }
         });
     }
@@ -189,6 +191,8 @@ public class HomeFragmentPresenter {
                     for (DocumentSnapshot document : task.getResult()) {
                         getPostData(document);
                     }
+
+                    ((MainActivity)context).updateLastOnlineDateAndShowRewardsPage();
 
                     if (postsList.size() == 0) {
                         view.onNoPostsExists();

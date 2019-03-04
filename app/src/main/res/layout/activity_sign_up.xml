@@ -222,15 +222,29 @@
                     android:textSize="@dimen/generalTextSize" />
 
             </android.support.v7.widget.LinearLayoutCompat>
-
-            <android.support.v7.widget.AppCompatCheckBox
-                android:id="@+id/acceptTerms"
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_margin="4dp"
-                android:text="أوافق على شروط الاستخدام"
-                android:textSize="@dimen/generalTextSize" />
+                android:layout_marginRight="5dp">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/termsTv"
+                android:textSize="@dimen/generalTextSize"
+                android:text="أوافق على شروط الإستخدام"
+                android:layout_gravity="center_vertical"
+                android:textColorLink="#0000ff"/>
+
+                <android.support.v7.widget.AppCompatCheckBox
+                    android:id="@+id/acceptTerms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_margin="2dp"
+                    android:textSize="@dimen/generalTextSize" />
+            </android.support.v7.widget.LinearLayoutCompat>
 
 
             <Button

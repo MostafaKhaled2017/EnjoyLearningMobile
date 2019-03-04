@@ -230,16 +230,19 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                     for (DocumentSnapshot document : task.getResult().getDocuments()) {
                         final String complainantEmail = document.getString("ComplainantEmail");
                         final String questionId = document.getString("questionId");
+                        final String grade = document.getString("grade");
                         final String reportId = document.getId();
                         String subject = document.getString("subject");
                         counter++;
-                        if (subject != null) {
-                            fireStoreQuestions.document(subject).collection(subject).document(questionId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        if (subject != null && grade != null) {
+                            fireStoreQuestions.document(grade).collection(subject).document(questionId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                                     if (task2.isSuccessful()) {
                                         DocumentSnapshot document = task2.getResult();
-                                        addQuestionData(document, complainantEmail, reportId);
+                                        if(document.exists()) {
+                                            addQuestionData(document, complainantEmail, reportId);
+                                        }
                                         Log.v("contestLogging", "list size : " + questionsList.size()
                                                 + " , counter is : " + counter
                                                 + " , result size : " + task.getResult().size());
@@ -469,6 +472,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         question.setWriterUid(writerUid);
         question.setAlQuestion(questionText);
         question.setQuestionId(document.getId());
+        question.setReportId(reportId);
         question.setSubject(subject);//extra than normal
         question.setWriterEmail(writerEmail);//extra than normal
         if (complainantEmail != null)

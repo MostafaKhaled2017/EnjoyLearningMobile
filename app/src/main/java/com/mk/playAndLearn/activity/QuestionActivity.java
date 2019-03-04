@@ -122,6 +122,9 @@ public class QuestionActivity extends AppCompatActivity {
             }
         }
 
+        hideRadioGroup();
+        hideCheckBoxesGroup();
+
         Question question = (Question) list.get(questionNo);
         correctAnswer = question.getCorrectAnswer();
 

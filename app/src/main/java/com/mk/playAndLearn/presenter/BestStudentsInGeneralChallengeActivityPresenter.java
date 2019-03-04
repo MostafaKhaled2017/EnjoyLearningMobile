@@ -33,7 +33,10 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
     }
 
     private void getBestStudents() {
-        fireStoreUsers.orderBy("lastGeneralChallengeScore", Query.Direction.DESCENDING).endAt(1).limit(25).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        fireStoreUsers.orderBy("lastGeneralChallengeScore", Query.Direction.DESCENDING)
+                .endAt(1)
+                //.limit(25) TODO :think about re-adding this.
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){

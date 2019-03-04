@@ -89,7 +89,7 @@ public class BestStudentsFragmentPresenter {
 
                         if (document.getBoolean("admin") != null)
                             admin = (boolean) document.getBoolean("admin");
-                        if (userType.equals("طالب") && points != -1000) {
+                        if (points != -1000) {
                             user.setAdmin(admin);
                             user.setName(name);
                             user.setPoints(points);

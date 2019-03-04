@@ -1,7 +1,11 @@
 package com.mk.playAndLearn.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,8 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.activity.ChallengersActivity;
@@ -19,6 +28,9 @@ import com.mk.playAndLearn.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
 public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHolder> {
     ArrayList<User> list;
@@ -48,7 +60,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     @Override
     public void onBindViewHolder(StudentsAdapter.MyHolder holder, int position) {
         final User user = list.get(position);
-        if (TAG.equals("LastChallengersFragment")) {
+        if (TAG.equals("LastChallengersFragment")|| TAG.equals("FriendsFragment")) {
             holder.position.setVisibility(View.GONE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,7 +76,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     ((ChallengersActivity) context).finish();
                 }
             });
-        } else if (TAG.equals("ChallengersFragment") || TAG.equals("FriendsFragment")) {
+        } else if (TAG.equals("ChallengersFragment") || TAG.equals("SearchActivity")) {
             holder.position.setVisibility(View.GONE);
         } else {
             //TODO
@@ -135,12 +147,77 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
         } else {
             holder.cardView.setBackgroundResource(R.color.white);
         }
+
+        if(TAG.equals("SearchActivity")){
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showConfirmationDialog(user);
+                }
+            });
+        }
+
      /*   if(user.isOnline()){
             holder.isOnlineImageView.setVisibility(View.VISIBLE);
         }
         else {
             holder.isOnlineImageView.setVisibility(View.GONE);
         }*/
+    }
+
+    public void showConfirmationDialog(final User user){
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setTitle("إضافة صديق");
+        dialog.setMessage("هل تريد إضافة هذا الطالب إلى أصدقائك");
+        dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialog.setNegativeButton("نعم", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(context, "جارى إضافة الطالب", Toast.LENGTH_SHORT).show();
+                fireStoreUsers.document(currentUserUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            String friendsList = documentSnapshot.getString("friends");
+                            String friendUid = user.getUid();
+
+                            if(!isFriend(friendUid, friendsList)){
+                                fireStoreUsers.document(currentUserUid).update("friends", friendsList + friendUid + " ").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(context, "تم إضافة الطالب بنجاح", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(context, "هذا الطالب من أصدقائك بالفعل", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } else {
+                            Toast.makeText(context, "حدثت مشكلة أثناء محاولة الإضافة برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+
+        dialog.create();
+        dialog.show();
+    }
+
+    private boolean isFriend(String friendUid, String friendsList) {
+        String[] friendsListArray = friendsList.split(" ");
+        for (String id : friendsListArray) {
+            if (id.equals(friendUid)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

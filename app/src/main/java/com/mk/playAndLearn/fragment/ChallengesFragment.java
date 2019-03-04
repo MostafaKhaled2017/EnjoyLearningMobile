@@ -216,7 +216,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         if(currentSubject.equals("كل المواد")){
             Toast.makeText(getActivity(), "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
         } else if(dailyChallengesNumber - getSavedTodayChallengesNo(getActivity()) < 1){
-            Toast.makeText(getActivity(), "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
         } else {
             Intent i = new Intent(getActivity(), ChallengersActivity.class);
             i.putExtra("subject", currentSubject);

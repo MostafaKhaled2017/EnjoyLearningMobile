@@ -1,33 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color1">
+        <TextView
+            android:id="@+id/dailyRewardTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الجائزة اليومية"
+            android:textSize="35sp"
+            android:textColor="@color/green"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"/>
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="الجائزة اليومية"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_in_toolbar" />
-        </android.support.v7.widget.Toolbar>
+        <ImageView
+            android:layout_below="@id/dailyRewardTv"
+            android:src="@drawable/trophie"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:id="@+id/trophyImage"/>
 
-    </android.support.design.widget.AppBarLayout>
+        <TextView
+            android:id="@+id/pointsTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+5XP"
+            android:textSize="30sp"
+            android:textColor="@color/green"
+            android:layout_below="@id/trophyImage"
+            android:layout_centerHorizontal="true" />
 
-    <android.support.v7.widget.AppCompatTextView
+    </RelativeLayout>
+
+  <!--  <android.support.v7.widget.AppCompatTextView
         android:id="@+id/numberOfDays"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +60,6 @@
         android:id="@+id/adviseTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="لزيادة نقاطك سريعا افتح القائمة الموجودة فى الشريط التي فى أعلى التطبيق وقم بإضافة أسئلة بها وستزيد 5 نقاط على كل سؤال ترفعه بعد مراجعته وقبوله"/>
+        android:text="لزيادة نقاطك سريعا افتح القائمة الموجودة فى الشريط التي فى أعلى التطبيق وقم بإضافة أسئلة بها وستزيد 5 نقاط على كل سؤال ترفعه بعد مراجعته وقبوله"/>-->
 
-</LinearLayout>
+</RelativeLayout>

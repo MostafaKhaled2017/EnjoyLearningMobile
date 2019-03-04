@@ -29,6 +29,7 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
+import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
 
 public class ChallengersFragmentPresenter {
     private Lesson lesson;
@@ -125,6 +126,8 @@ public class ChallengersFragmentPresenter {
 
     //the boolean is to reverse the order of students
     void addUserData(DocumentSnapshot document, boolean reverse) {
+        String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         User user = new User();
         boolean admin = false;
         int points = -1000;
@@ -152,6 +155,11 @@ public class ChallengersFragmentPresenter {
             } else {
                 studentsList.add(user);
             }
+        }
+
+        if (uid.equals(currentUserUid)){
+            setSavedPoints(context, (long) points);
+            view.updateUserPoints(points);
         }
     }
 
@@ -181,6 +189,8 @@ public class ChallengersFragmentPresenter {
         void hideNoStudentsText();
 
         void setUserData(String name, String imageUrl, long points);
+
+        void updateUserPoints(int points);
 
     }
 }

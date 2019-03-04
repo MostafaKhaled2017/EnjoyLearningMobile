@@ -129,6 +129,7 @@ public class LastChallengersFragmentPresenter {
 
                 if (list.size() == 0) {
                     view.showNoStudentTv();
+                    view.hideProgressBar();
                     view.hideNoInternetConnectionText();
                 } else {
                     view.hideNoStudentTv();

@@ -419,7 +419,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             Toast.makeText(this, "برجاء تحديد الفصل الدراسى", Toast.LENGTH_SHORT).show();
         } else if (currentSubject.equals("اختر المادة")) {
             Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
-        } else if (languageBranchLayout.getVisibility() == View.VISIBLE
+        } else if ((currentSubject.equals("لغة عربية") || currentSubject.equals("لغة انجليزية"))
                 && selectedLanguageBranch.equals("اختر نوع السؤال")) {
             Toast.makeText(this, "برجاء تحديد فرع اللغة الذي ينتمى له السؤال", Toast.LENGTH_SHORT).show();
         } else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE) {

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +36,7 @@ import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.drawChallengeText;
 import static com.mk.playAndLearn.utils.Strings.loseChallengeText;
@@ -43,6 +45,7 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.waitingChallengeText;
 import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 import static com.mk.playAndLearn.utils.Strings.yourTurnChallengeText;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
 
 public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.MyHolder> {
     ArrayList<Challenge> list;
@@ -175,54 +178,59 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
             holder.challengeView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO : adjust this dialog content
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                    dialog.setTitle("تحدى جديد");
-                    dialog.setMessage("هل تريد إعادة تحدى هذا الطالب؟");
-                    dialog.setNegativeButton("نعم", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            final Intent intent = new Intent(context, ChallengeStartActivity.class);
 
-                            intent.putExtra("uid", challenge.getOpponentUid());
-                            intent.putExtra("subject", challenge.getSubject());
+                        //TODO : adjust this dialog content
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                        dialog.setTitle("تحدى جديد");
+                        dialog.setMessage("هل تريد إعادة تحدى هذا الطالب؟");
+                        dialog.setNegativeButton("نعم", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                final Intent intent = new Intent(context, ChallengeStartActivity.class);
 
-                            fireStoreUsers.document(challenge.getOpponentUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if(task.isSuccessful()){
-                                        String secondPlayerPoints = "-1";
+                                intent.putExtra("uid", challenge.getOpponentUid());
+                                intent.putExtra("subject", challenge.getSubject());
 
-                                        String secondPlayerName = (String) document.getString("userName");
-                                        String secondPlayerImage = (String) document.getString("userImage");
-                                        String secondPlayerEmail = (String) document.getString("userEmail");
-                                        if (document.getLong("points") != null)
-                                            secondPlayerPoints = document.getLong("points").toString();
+                                if (dailyChallengesNumber - getSavedTodayChallengesNo(context) < 1) {
+                                    Toast.makeText(context, "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
+                                } else {
+                                    fireStoreUsers.document(challenge.getOpponentUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (task.isSuccessful()) {
+                                                String secondPlayerPoints = "-1";
 
-                                        intent.putExtra("name", secondPlayerName);
-                                        intent.putExtra("image", secondPlayerImage);
-                                        intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
-                                        intent.putExtra("email", secondPlayerEmail);
-                                        context.startActivity(intent);
-                                    }
+                                                String secondPlayerName = (String) document.getString("userName");
+                                                String secondPlayerImage = (String) document.getString("userImage");
+                                                String secondPlayerEmail = (String) document.getString("userEmail");
+                                                if (document.getLong("points") != null)
+                                                    secondPlayerPoints = document.getLong("points").toString();
+
+                                                intent.putExtra("name", secondPlayerName);
+                                                intent.putExtra("image", secondPlayerImage);
+                                                intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
+                                                intent.putExtra("email", secondPlayerEmail);
+                                                context.startActivity(intent);
+                                            }
+                                        }
+                                    });
+
                                 }
-                            });
-
-                        }
-                    });
-                    dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
+                            }
+                        });
+                        dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
 
 
-                    dialog.create();
+                        dialog.create();
 
-                    dialog.show();
-                }
+                        dialog.show();
+                    }
             });
         }
 

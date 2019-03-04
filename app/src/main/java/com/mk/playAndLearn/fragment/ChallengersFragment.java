@@ -193,6 +193,11 @@ public class ChallengersFragment extends Fragment implements ChallengersFragment
     }
 
     @Override
+    public void updateUserPoints(int points) {
+        pointsTv.setText(points + "");
+    }
+
+    @Override
     public void hideProgressBar() {
         if (progressBar.getVisibility() != android.view.View.GONE)
             progressBar.setVisibility(android.view.View.GONE);

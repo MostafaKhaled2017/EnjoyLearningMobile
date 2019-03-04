@@ -51,6 +51,9 @@ public class FriendsFragmentPresenter {
                 if ((boolean) o) {
                     getStudents(subject);
                 } else {
+                    if(!list.isEmpty()){
+                        list.clear();
+                    }
                     view.handleNoInternetConnection();
                 }
             }
@@ -63,12 +66,13 @@ public class FriendsFragmentPresenter {
         if (!list.isEmpty()) {
             list.clear();
         }
+        view.showProgressBar();
+        view.startRecyclerAdapter(list);
 
         final OnCompleteListener usersListener = new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull final Task<DocumentSnapshot> task) {
                 String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                view.startRecyclerAdapter(list);
                 String uid = "";
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
@@ -112,7 +116,9 @@ public class FriendsFragmentPresenter {
                         if (userSchoolType != null && subjectSchoolType.equals("both")
                                 || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
                                 || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
-                            list.add(user);
+                            if(!existsInList(user, list)) {
+                                list.add(user);
+                            }
                         }
                     }
 
@@ -120,11 +126,13 @@ public class FriendsFragmentPresenter {
                         view.notifyAdapter();
                         view.hideProgressBar();
                         view.hideSwipeRefreshLayout();
+                        view.hideNoInternetConnectionText();
                     }
                 } else {
                     Log.v("TAG", "failed");
                     view.hideProgressBar();
                     view.hideSwipeRefreshLayout();
+                    view.hideNoInternetConnectionText();
                 }
             }
         };
@@ -145,6 +153,7 @@ public class FriendsFragmentPresenter {
                             view.hideNoInternetConnectionText();
                             view.hideSwipeRefreshLayout();
                             view.showNoFriendsTv();
+                            view.hideProgressBar();
                         } else {
                             view.hideNoFriendsTv();
 
@@ -163,6 +172,15 @@ public class FriendsFragmentPresenter {
 
     }
 
+    private boolean existsInList(User user, ArrayList<User> list) {
+        for(User user2: list){
+            if(user.getUid().equals(user2.getUid())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public interface View {
         void handleNoInternetConnection();
 
@@ -173,6 +191,8 @@ public class FriendsFragmentPresenter {
         void notifyAdapter();
 
         void hideProgressBar();
+
+        void showProgressBar();
 
         void hideNoInternetConnectionText();
 

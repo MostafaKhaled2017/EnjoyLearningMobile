@@ -331,8 +331,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
                 transaction.update(currentUserReference, "acceptedQuestions", newAcceptedQuestions);
                 transaction.update(currentQuestionReference, "reviewed", true);
 
-                setSavedPoints(AdminQuestionActivity.this, newPoints);
-
                 if (generalChallengeCheckBox.isChecked()) {
                     transaction.update(currentQuestionReference, "challengeQuestion", true);
 

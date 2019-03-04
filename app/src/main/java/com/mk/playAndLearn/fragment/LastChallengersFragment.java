@@ -113,7 +113,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
 
     @Override
     public void handleNoInternetConnection() {
-        progressBar.setVisibility(android.view.View.GONE);
+        hideProgressBar();
         noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
         hideSwipeRefreshLayout();
     }

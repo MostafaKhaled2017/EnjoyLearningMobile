@@ -1,5 +1,6 @@
 package com.mk.playAndLearn.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +75,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
         progressBar = view.findViewById(R.id.friendsProgressBar);
         swipeRefreshLayout = view.findViewById(R.id.friendsSwipeRefreshLayout);
         noFriendsTv = view.findViewById(R.id.noActiveStudentsTv);
+        noInternetConnectionText = view.findViewById(R.id.noInternetConnectionText);
 
         presenter = new FriendsFragmentPresenter(this, getActivity());
 
@@ -83,7 +86,6 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
             }
         });
 
-        noInternetConnectionText = view.findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +97,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
         });
         noInternetConnectionText.setText("لا يوجد اتصال بالانترنت");
 
-        presenter.startAsynkTask(subject);
+        //presenter.startAsynkTask(subject); it's called in onResume
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +186,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
     public void handleNoInternetConnection() {
         progressBar.setVisibility(View.GONE);
         noInternetConnectionText.setVisibility(View.VISIBLE);
+        hideNoFriendsTv();
         hideSwipeRefreshLayout();
     }
 
@@ -191,6 +194,12 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
     public void hideProgressBar() {
         if (progressBar.getVisibility() == View.VISIBLE)
             progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showProgressBar() {
+        if (progressBar.getVisibility() != View.VISIBLE)
+            progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -207,5 +216,6 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
     public void hideNoFriendsTv() {
         noFriendsTv.setVisibility(View.GONE);
     }
+
 }
 

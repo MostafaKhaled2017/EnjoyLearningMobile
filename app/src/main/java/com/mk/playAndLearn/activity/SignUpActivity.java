@@ -4,11 +4,17 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -37,6 +44,7 @@ import jp.wasabeef.blurry.Blurry;
 
 public class SignUpActivity extends AppCompatActivity implements SignUpActivityPresenter.View {
     EditText nameEt, emailEt, passwordEt, rePasswordEt;
+    TextView termsTv;
     RadioGroup usersTypeRadioGroup;
     RadioButton studentRB, teacherRB;
     Spinner genderSpinner, schoolTypeSpinner, userGradeSpinner;
@@ -63,6 +71,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        termsTv = findViewById(R.id.termsTv);
         nameEt = findViewById(R.id.etName);
         emailEt = findViewById(R.id.etEmail);
         passwordEt = findViewById(R.id.etPassword);
@@ -132,6 +141,24 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
                 presenter.validateSignUpAndUploadData(name, email, password, rePassword, gender, userSchoolType, userType, grade, acceptTermsChecked, points);
             }
         });
+
+        SpannableString ss = new SpannableString("أوافق على شروط الإستخدام");
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                startActivity(new Intent(SignUpActivity.this, TermsActivity.class));
+            }
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(clickableSpan, 10, 24, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        termsTv.setText(ss);
+        termsTv.setMovementMethod(LinkMovementMethod.getInstance());
+        termsTv.setHighlightColor(Color.TRANSPARENT);
 
     }
 

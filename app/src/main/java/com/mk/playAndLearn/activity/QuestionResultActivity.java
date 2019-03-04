@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
@@ -231,7 +232,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         String localCurrentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                         SharedPreferences pref = getSharedPreferences("MyPref", 0);
-                        String grade = pref.getString("grade", "غير معروف");
+                        String grade = getSavedGrade(QuestionResultActivity.this);
                         Map<String, Object> map = new HashMap<>();
                         map.put("ComplainantEmail", localCurrentEmail);
                         map.put("complaintResolved", false);

@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements ChallengersFragme
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
-                    updateLastOnlineDateAndShowRewardsPage();
+                   // updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
                     getCurrentVersion();
                     initialDataLoaded = true;

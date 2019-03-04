@@ -61,7 +61,7 @@ public class BestQuestionsUploadersFragmentPresenter {
                         if (document.getBoolean("admin") != null)
                             admin = (boolean) document.getBoolean("admin");
 
-                        if (userType.equals("طالب") && acceptedQuestions != -1000
+                        if (acceptedQuestions != -1000
                                 && email != null) {
                             user.setAdmin(admin);
                             user.setName(name);
