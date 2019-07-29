@@ -9,13 +9,24 @@
 
     <include
         android:id="@+id/noInternetConnectionTextInBestStudents"
-        layout="@layout/no_internet_connection_text"/>
+        layout="@layout/no_internet_connection_text" />
+
+    <Spinner
+        android:id="@+id/typeSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="right"
+        android:layout_alignParentRight="true"
+        android:scrollbars="none"
+        android:layout_below="@id/appBar"/>
+
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/bestStudentsSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/appBar">
+        android:layout_below="@id/typeSpinner">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/bestStudentsRecyclerView"
@@ -32,4 +43,16 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="visible" />
+
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/noStudentsTextInBestStudents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="لا يوجد طلبة الآن"
+        android:textColor="@color/writingColor"
+        android:textSize="@dimen/nothing_text_size"
+        android:visibility="invisible" />
+
 </RelativeLayout>

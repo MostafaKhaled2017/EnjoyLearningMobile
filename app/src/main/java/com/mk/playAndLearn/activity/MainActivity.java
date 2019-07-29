@@ -43,10 +43,9 @@ import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.MainViewPagerAdapter;
-import com.mk.playAndLearn.fragment.BestStudentsFragment;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
-import com.mk.playAndLearn.fragment.ChallengersFragment;
+import com.mk.playAndLearn.fragment.LessonsFragment;
 import com.mk.playAndLearn.service.NotificationsService;
 
 import org.json.JSONObject;
@@ -70,7 +69,7 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallenges
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
-public class MainActivity extends AppCompatActivity implements ChallengersFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements LessonsFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
     MainViewPagerAdapter adapter;
     private ViewPager mViewPager;
     TabLayout tabLayout;

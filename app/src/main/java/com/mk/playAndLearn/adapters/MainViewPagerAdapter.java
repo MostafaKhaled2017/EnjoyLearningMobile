@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
-import com.mk.playAndLearn.fragment.ChallengersFragment;
+import com.mk.playAndLearn.fragment.LessonsFragment;
 
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
     Context context;
@@ -55,7 +55,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new ChallengersFragment();
+                return new LessonsFragment();
             case 1:
                 return new HomeFragment();
             case 2:

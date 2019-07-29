@@ -31,17 +31,17 @@ import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
 
-public class ChallengersFragmentPresenter {
+public class LessonsFragmentPresenter {
     private Lesson lesson;
     private View view;
     private Context context;
 
-    final String TAG = "ChallengersFragmentPresenter";
+    final String TAG = "LessonsFragmentPresenter";
 
     ArrayList<User> studentsList = new ArrayList();
     ChildEventListener lessonsListener;
 
-    public ChallengersFragmentPresenter(View view, Context context) {
+    public LessonsFragmentPresenter(View view, Context context) {
         this.view = view;
         this.context = context;
     }

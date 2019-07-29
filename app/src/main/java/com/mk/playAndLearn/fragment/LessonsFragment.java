@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,20 +15,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.LeaderBoardActivity;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
-import com.mk.playAndLearn.presenter.ChallengersFragmentPresenter;
+import com.mk.playAndLearn.presenter.LessonsFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ChallengersFragment extends Fragment implements ChallengersFragmentPresenter.View {
+public class LessonsFragment extends Fragment implements LessonsFragmentPresenter.View {
     //TODO : adjust colors of fonts and colors of the app
     //TODO : think about remove fragments presenter
 
@@ -48,32 +46,32 @@ public class ChallengersFragment extends Fragment implements ChallengersFragment
     ImageView userImageIv;
     Button leaderboardBtn;
 
-    ChallengersFragmentPresenter presenter;
+    LessonsFragmentPresenter presenter;
 
     boolean initialDataLoaded = false;
 
-    private final String TAG = "ChallengersFragment";
+    private final String TAG = "LessonsFragment";
 
     private OnFragmentInteractionListener mListener;
 
     TextView noStudentsTv, noInternetConnectionText;
    // SwipeRefreshLayout swipeRefreshLayout;
 
-    public ChallengersFragment() {
+    public LessonsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new ChallengersFragmentPresenter(this, getActivity());//TODO : check that this is correct
+        presenter = new LessonsFragmentPresenter(this, getActivity());//TODO : check that this is correct
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_challengers, container, false);
+        view = inflater.inflate(R.layout.fragment_lessons, container, false);
         recyclerView = view.findViewById(R.id.studentsRecyclerViewInFragment);
         progressBar = view.findViewById(R.id.bestStudentsProgressBarInFragment);
         nameTv = view.findViewById(R.id.userNameInFragment);

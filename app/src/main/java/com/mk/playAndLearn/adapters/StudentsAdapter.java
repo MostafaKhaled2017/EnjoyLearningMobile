@@ -60,7 +60,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     @Override
     public void onBindViewHolder(StudentsAdapter.MyHolder holder, int position) {
         final User user = list.get(position);
-        if (TAG.equals("LastChallengersFragment")|| TAG.equals("FriendsFragment")) {
+        if (TAG.equals("LastChallengers")|| TAG.equals("FriendsFragment")) {
             holder.position.setVisibility(View.GONE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -76,7 +76,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     ((ChallengersActivity) context).finish();
                 }
             });
-        } else if (TAG.equals("ChallengersFragment") || TAG.equals("SearchActivity")) {
+        } else if (TAG.equals("LessonsFragment") || TAG.equals("SearchActivity")) {
             holder.position.setVisibility(View.GONE);
         } else {
             //TODO

@@ -48,6 +48,11 @@
         <item>Biology</item>
     </string-array>
 
+    <string-array name="leaderboard_options_array">
+        <item>طوال الوقت</item>
+        <item>أقرب المنافسين</item>
+    </string-array>
+
     <string-array name="secondary_subjects_array_with_all_subjects_item">
         <item>كل المواد</item>
         <item>لغة عربية</item>
