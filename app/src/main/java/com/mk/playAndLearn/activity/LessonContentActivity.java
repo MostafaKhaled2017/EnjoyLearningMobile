@@ -42,8 +42,8 @@ public class LessonContentActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            String lessonTitle = intent.getStringExtra("lessonTitle");
-            String lessonContent = intent.getStringExtra("lessonContent");
+            String lessonTitle = intent.getStringExtra("title");
+            String lessonContent = intent.getStringExtra("content");
             tvContent.setText(lessonContent);//TODO think about changing the font to the custom font in tahrir lounge app
             title.setText(lessonTitle);
 

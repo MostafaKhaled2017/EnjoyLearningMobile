@@ -1,52 +1,61 @@
 package com.mk.playAndLearn.presenter;
 
-import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
+import android.widget.AbsListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.model.Lesson;
-import com.mk.playAndLearn.model.User;
-import com.mk.playAndLearn.utils.Firebase;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
-import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
-import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 
 public class LessonsFragmentPresenter {
-    private Lesson lesson;
-    private View view;
-    private Context context;
+    Lesson lesson;
+    View view;
+    Context context;
+    DocumentSnapshot lastVisible;
+    int lastPosition;
+    Map<String, Object> map;
+    ArrayList<Lesson> lessonsList = new ArrayList();
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
-    final String TAG = "LessonsFragmentPresenter";
-
-    ArrayList<User> studentsList = new ArrayList();
-    ChildEventListener lessonsListener;
+    SharedPreferences pref;
+    String currentUserName;
+    String grade;
+    int limit = 5;
+    Query firstQuery;
+    private boolean isScrolling = false;
+    private boolean isLastItemReached = false;
 
     public LessonsFragmentPresenter(View view, Context context) {
         this.view = view;
         this.context = context;
+        pref = context.getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check thisg
+        currentUserName = pref.getString("currentUserName", "غير معروف");
+        grade = pref.getString("grade", "غير معروف");
+
     }
 
-    public void startAsynkTask() {
+    public void startAsynkTask(final String currentSubject) {
         //TODO : search for a solution to this error
         AsyncTask asyncTask = new AsyncTask() {
             @Override
@@ -64,13 +73,9 @@ public class LessonsFragmentPresenter {
             @Override
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
-                    if (!studentsList.isEmpty()) {
-                        studentsList.clear();
-                        view.notifyAdapter();
-                    }
-                    getNearestChallengers();
+                    getLessons(currentSubject);
                 } else {
-                    view.handleNoInternetConnection();
+                    view.onNoInternetConnection();
                 }
             }
         };
@@ -78,119 +83,182 @@ public class LessonsFragmentPresenter {
         asyncTask.execute();
     }
 
-    public void getNearestChallengers() {
-        view.startRecyclerAdapter(studentsList);
+    public void getLessons(final String currentSubject) {
+        lessonsList = new ArrayList<>();
+        view.startRecyclerAdapter(lessonsList);
+        view.showProgressBar();
+        view.hideNoLessonsText();
+        view.notifyAdapter();
 
-        String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        fireStoreUsers.document(currentUserUid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        OnCompleteListener lessonsListener = new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(final DocumentSnapshot currentUserSnapshot) {
-                //To get the highest user in the required query
-                fireStoreUsers.orderBy("points").startAt(currentUserSnapshot).limit(4).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot lastUser = task.getResult().getDocuments().get(task.getResult().size() - 1);
-                            fireStoreUsers.orderBy("points", Query.Direction.DESCENDING).startAt(lastUser).limit(7).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (DocumentSnapshot documentSnapshot : task.getResult()) {
-                                            addUserData(documentSnapshot, false);
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.v("lessonsLogging", "task is successful");
+                    for (DocumentSnapshot document : task.getResult()) {
+                        getLessonData(document);
+                    }
+
+                    ((MainActivity) context).updateLastOnlineDateAndShowRewardsPage();
+
+                    if (lessonsList.size() == 0) {
+                        view.onNoLessonsExists();
+                    } else {
+                        view.onDataFound();
+                    }
+
+                    if (task.getResult().size() > 0) {
+                        lastVisible = task.getResult().getDocuments().get(task.getResult().size() - 1);
+                        lastPosition = task.getResult().size() - 1;
+                    }
+
+
+                    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                isScrolling = true;
+                            }
+                        }
+
+                        @Override
+                        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+
+                            LinearLayoutManager linearLayoutManager = ((LinearLayoutManager) recyclerView.getLayoutManager());
+                            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+                            int visibleItemCount = linearLayoutManager.getChildCount();
+                            int totalItemCount = linearLayoutManager.getItemCount();
+
+                            if (isScrolling && (firstVisibleItemPosition + visibleItemCount == totalItemCount) && !isLastItemReached) {
+                                isScrolling = false;
+
+                                OnCompleteListener secondQueryCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> t) {
+                                        if (t.isSuccessful()) {
+                                            for (DocumentSnapshot d : t.getResult()) {
+                                                getLessonData(d);
+                                            }
+                                            view.notifyAdapter();
+
+                                            if (t.getResult().size() > 0) {
+                                                lastVisible = t.getResult().getDocuments().get(t.getResult().size() - 1);
+                                                lastPosition += 5;
+                                            }
+
+                                            Log.v("LoggingPosition", "last position is : " + lastPosition);
+
+                                            if (t.getResult().size() < limit) {
+                                                isLastItemReached = true;
+                                            }
                                         }
                                     }
+                                };
 
-                                    if (studentsList.size() == 0) {
-                                        view.showNoStudentsText();
-                                    } else {
-                                        view.hideNoStudentsText();
-                                        view.notifyAdapter();
-                                    }
 
-                                    view.hideProgressBar();
-                                    view.hideSwipeRefreshLayout();
+                                if (currentSubject.equals("كل المواد")) {
+                                    Query nextQuery = fireStoreLessons.whereEqualTo("grade", grade).orderBy("date", Query.Direction.ASCENDING)
+                                            .startAfter(lastVisible).limit(limit);
+                                    nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
+                                } else {
+                                    Query nextQuery = fireStoreLessons.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
+                                            .orderBy("date", Query.Direction.DESCENDING).startAfter(lastVisible).limit(limit);
+                                    nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
                                 }
-                            });
+                            }
                         }
-                    }
-                });
+                    };
+                    view.setOnScrollListener(onScrollListener);
+
+
+                } else {
+                    Log.v("TAG", "failed");
+                    Log.v("lessonsLogging", "task failed , "
+                            + "exception is : " + task.getException().toString());
+                }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(((Fragment) view).getActivity(), "حدثت مشكلة أثناء تحميل البيانات برجاء إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
-            }
-        });
+        };
 
-    }
-
-    //the boolean is to reverse the order of students
-    void addUserData(DocumentSnapshot document, boolean reverse) {
-        String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        User user = new User();
-        boolean admin = false;
-        int points = -1000;
-        String name = (String) document.getString("userName");
-        String uid = (String) document.getId();
-        if (document.getLong("points") != null)
-            points = Integer.parseInt(document.getLong("points").toString());
-        String imageUrl = (String) document.getString("userImage");
-        String userType = (String) document.getString("userType");
-        String email = (String) document.getString("userEmail");
-        if (document.getBoolean("admin") != null)
-            admin = (boolean) document.getBoolean("admin");
-
-        if (userType.equals("طالب") && points != -1000
-                && email != null) {
-            user.setAdmin(admin);
-            user.setName(name);
-            user.setEmail(email);
-            user.setPoints(points);
-            user.setImageUrl(imageUrl);
-            user.setUid(uid);
-
-            if (reverse) {
-                studentsList.add(0, user);
-            } else {
-                studentsList.add(user);
-            }
-        }
-
-        if (uid.equals(currentUserUid)){
-            setSavedPoints(context, (long) points);
-            view.updateUserPoints(points);
+        if (currentSubject.equals("كل المواد")) {
+            firstQuery = fireStoreLessons.whereEqualTo("grade", grade).orderBy("date", Query.Direction.DESCENDING).limit(limit);
+            firstQuery.get().addOnCompleteListener(lessonsListener);
+        } else {
+            firstQuery = fireStoreLessons.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
+                    .orderBy("date", Query.Direction.DESCENDING).limit(limit);
+            firstQuery.get().addOnCompleteListener(lessonsListener);
         }
     }
 
-    public void getUserData(){
-        String name = getSavedName(context);
-        String imageUrl = getSavedImage(context);
-        long points = getSavedPoints(context);
+    private boolean existsInLessonsList(String lessonId) {
+        for (Lesson lesson : lessonsList) {
+            if (lesson.getId().equals(lessonId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        view.setUserData(name, imageUrl, points);
+    void getLessonData(DocumentSnapshot lessonDocument) {
+        Log.v("lessonsLogging", "get LessonData is called");
+
+        format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+        String lessonDate;
+
+        lesson = new Lesson();
+        String lessonContent = lessonDocument.getString("content");
+        String lessonTitle = lessonDocument.getString("title");
+        lessonDate = format.format(lessonDocument.get("date"));
+        String lessonWriter = lessonDocument.getString("writerName");
+        String lessonWriterEmail = lessonDocument.getString("writerEmail");
+        String lessonId = lessonDocument.getId();
+        String writerUid = lessonDocument.getString("writerUid");
+
+        if (writerUid != null)
+            lesson.setWriterUid(writerUid);
+        if (lessonWriterEmail != null)
+            lesson.setWriterEmail(lessonWriterEmail);
+        if (lessonContent != null)
+            lesson.setContent(lessonContent);
+        if (lessonDate != null)
+            lesson.setDate(lessonDate);
+        if (lessonWriter != null)
+            lesson.setWriterName(lessonWriter);
+        if (lessonTitle != null)
+            lesson.setTitle(lessonTitle);
+        if (lessonId != null)
+            lesson.setId(lessonId);
+
+
+        if (!existsInLessonsList(lessonId)) {
+            lessonsList.add(lesson);
+            view.notifyAdapter();
+        }
     }
 
     public interface View {
-        void hideProgressBar();
+        void retryConnection();
 
-        void hideSwipeRefreshLayout();
+        void startRecyclerAdapter(ArrayList lessonsList);
+
+        void onNoInternetConnection();
+
+        void showToast(String value);
 
         void notifyAdapter();
 
-        void startRecyclerAdapter(ArrayList list);
+        void onDataFound();
 
-        void handleNoInternetConnection();
+        void hideProgressBar();
 
-        void retryConnection();
+        void hideNoLessonsText();
 
-        void showNoStudentsText();
+        void showProgressBar();
 
-        void hideNoStudentsText();
+        void onNoLessonsExists();
 
-        void setUserData(String name, String imageUrl, long points);
-
-        void updateUserPoints(int points);
+        void setOnScrollListener(RecyclerView.OnScrollListener onScrollListener);
 
     }
 }

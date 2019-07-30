@@ -1,7 +1,6 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,51 +10,53 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.LeaderBoardActivity;
-import com.mk.playAndLearn.adapters.StudentsAdapter;
+import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.presenter.LessonsFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
-import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class LessonsFragment extends Fragment implements LessonsFragmentPresenter.View {
-    //TODO : adjust colors of fonts and colors of the app
-    //TODO : think about remove fragments presenter
+import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link LessonsFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * create an instance of this fragment.
+ */
+public class LessonsFragment extends Fragment implements LessonsFragmentPresenter.View {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    View view;
-
-    StudentsAdapter recyclerAdapter;
-    String currentSubject;
     ProgressBar progressBar;
-    RecyclerView recyclerView;
-    TextView nameTv, pointsTv;
-    ImageView userImageIv;
-    Button leaderboardBtn;
 
-    LessonsFragmentPresenter presenter;
-
-    boolean initialDataLoaded = false;
-
-    private final String TAG = "LessonsFragment";
+    // TODO: Rename and change types of parameters
 
     private OnFragmentInteractionListener mListener;
 
-    TextView noStudentsTv, noInternetConnectionText;
-   // SwipeRefreshLayout swipeRefreshLayout;
+    LessonsFragmentPresenter presenter;
+
+    LessonsAdapter recyclerAdapter;
+    TextView noLessonsText, noInternetConnectionText;
+
+    RecyclerView recyclerView;
+    Spinner spinner;
+
+    String currentSubject = "", internalCurrentSubject = "";
 
     public LessonsFragment() {
         // Required empty public constructor
@@ -64,26 +65,62 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new LessonsFragmentPresenter(this, getActivity());//TODO : check that this is correct
-
+        deleteCache(getActivity());
+        presenter = new LessonsFragmentPresenter(this, getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_lessons, container, false);
-        recyclerView = view.findViewById(R.id.studentsRecyclerViewInFragment);
-        progressBar = view.findViewById(R.id.bestStudentsProgressBarInFragment);
-        nameTv = view.findViewById(R.id.userNameInFragment);
-        pointsTv = view.findViewById(R.id.pointsInFragment);
-        userImageIv = view.findViewById(R.id.userImageInFragment);
-        leaderboardBtn = view.findViewById(R.id.leaderboardBtn);
-        //swipeRefreshLayout = view.findViewById(R.id.bestStudentsSwipeRefreshLayoutInFragment);
-        noStudentsTv = view.findViewById(R.id.noStudentsTextInFragment);
+        final View myView = inflater.inflate(R.layout.fragment_lessons, container, false);
+        recyclerView = myView.findViewById(R.id.lessonsRecyclerView);
+        progressBar = myView.findViewById(R.id.lessonsProgressBar);
+        noLessonsText = myView.findViewById(R.id.noLessonsText);
 
-        recyclerView.setNestedScrollingEnabled(false);
+        spinner = myView.findViewById(R.id.subjectsSpinnerInLessonsFragment);
 
-        noInternetConnectionText = view.findViewById(R.id.noInternetConnectionTextInFragment);
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinner);
+
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
+
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.secondary_subjects_array_with_all_subjects_item, R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(subjectsAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+                FirebaseAuth localAuth = FirebaseAuth.getInstance();
+                localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        if(firebaseAuth.getCurrentUser() != null && !currentSubject.equals(internalCurrentSubject)){
+                            loadData();
+                            internalCurrentSubject = currentSubject;
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        noInternetConnectionText = myView.findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,41 +128,18 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
             }
         });
 
-        leaderboardBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), LeaderBoardActivity.class));
-            }
-        });
+        return myView;
 
-/*        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenter.startAsynkTask();
-            }
-        });*/
-
-        return view;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            presenter.getUserData();
-            FirebaseAuth auth = FirebaseAuth.getInstance();//TODO : remove repeating this
-            auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                    if (currentUser != null && !initialDataLoaded) {
-                        presenter.startAsynkTask();
-                        initialDataLoaded = true;
-                    }
-                }
-            });
-        } else {
-            initialDataLoaded = false;
+    public void loadData() {
+        presenter.startAsynkTask(currentSubject);
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
         }
     }
 
@@ -146,11 +160,6 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
         mListener = null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -167,32 +176,69 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        deleteCache(getActivity());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void showProgressBar() {
+        if (progressBar.getVisibility() != View.VISIBLE) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public void retryConnection() {
         noInternetConnectionText.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        presenter.startAsynkTask();
+        loadData();
     }
 
     @Override
-    public void showNoStudentsText() {
-        noStudentsTv.setVisibility(View.VISIBLE);
+    public void startRecyclerAdapter(final ArrayList list) {
+        RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        recyclerAdapter = new LessonsAdapter(recyclerView, list, getActivity(), this, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        recyclerView.setAdapter(recyclerAdapter);
     }
 
     @Override
-    public void hideNoStudentsText() {
-        noStudentsTv.setVisibility(View.INVISIBLE);
+    public void onNoInternetConnection() {
+        progressBar.setVisibility(android.view.View.GONE);
+        noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+        noLessonsText.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    public void setUserData(String name, String imageUrl, long points) {
-        nameTv.setText(name);
-        pointsTv.setText(points + "");
-        Picasso.with(getActivity()).load(imageUrl).into(userImageIv);
+    public void showToast(String value) {
+        Toast.makeText(getActivity(), value, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void updateUserPoints(int points) {
-        pointsTv.setText(points + "");
+    public void notifyAdapter() {
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setOnScrollListener(RecyclerView.OnScrollListener onScrollListener) {
+        recyclerView.addOnScrollListener(onScrollListener);
+    }
+
+    @Override
+    public void onDataFound() {
+        hideProgressBar();
+        noLessonsText.setVisibility(android.view.View.GONE);
+        noInternetConnectionText.setVisibility(android.view.View.GONE);
     }
 
     @Override
@@ -202,32 +248,13 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
     }
 
     @Override
-    public void notifyAdapter() {
-        recyclerView.removeAllViews();
-        recyclerAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, null);
-        RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void handleNoInternetConnection() {
+    public void onNoLessonsExists() {
         progressBar.setVisibility(android.view.View.GONE);
-        noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
-        hideSwipeRefreshLayout();
+        noLessonsText.setVisibility(android.view.View.VISIBLE);
     }
 
     @Override
-    public void hideSwipeRefreshLayout() {
-       /* if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }*/
+    public void hideNoLessonsText() {
+        noLessonsText.setVisibility(View.GONE);
     }
 }

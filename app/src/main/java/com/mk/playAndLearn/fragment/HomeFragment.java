@@ -61,9 +61,8 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     RecyclerView recyclerView;
     Spinner spinner;
-    boolean initialDataLoaded = false;
 
-    String currentSubject = "";
+    String currentSubject = "", internalCurrentSubject = "";
 
     public HomeFragment() {
         // Required empty public constructor
@@ -82,7 +81,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         final View myView = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = myView.findViewById(R.id.postsRecyclerView);
         progressBar = myView.findViewById(R.id.postsProgressBar);
-        noPostsText = myView.findViewById(R.id.noPostsText);
+        noPostsText = myView.findViewById(R.id.noLessonsText);
 
         spinner = myView.findViewById(R.id.subjectsSpinnerInHomeFragment);
 
@@ -112,9 +111,9 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
                 localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
                     @Override
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                        if(firebaseAuth.getCurrentUser() != null && !currentSubject.equals(internalCurrentSubject)){
                             loadData();
-                            initialDataLoaded = true;
+                            internalCurrentSubject = currentSubject;
                         }
                     }
                 });

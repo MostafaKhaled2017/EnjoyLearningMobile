@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
 
         TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabOne.setText("المنافسون");
+        tabOne.setText("الدروس");
         tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.learn, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 

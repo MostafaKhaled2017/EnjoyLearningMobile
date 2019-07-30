@@ -5,38 +5,59 @@ import java.io.Serializable;
 public class Lesson implements Serializable {
     String content;
     String title;
-    String position;
-    String arabicPosition;
+    String date;
+    String grade;
     String subject;
     String writerName;
     String writerEmail;
-    String writerUid;
-    String lessonId;
+    String id;
 
-    public String getLessonId() {
-        return lessonId;
+    public String getId() {
+        return id;
     }
 
-    public void setLessonId(String lessonId) {
-        this.lessonId = lessonId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    long unitNo, lessonNo;
-
-    public long getUnitNo() {
-        return unitNo;
+    public String getContent() {
+        return content;
     }
 
-    public void setUnitNo(long unitNo) {
-        this.unitNo = unitNo;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public long getLessonNo() {
-        return lessonNo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setLessonNo(long lessonNo) {
-        this.lessonNo = lessonNo;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public String getWriterName() {
@@ -63,45 +84,60 @@ public class Lesson implements Serializable {
         this.writerUid = writerUid;
     }
 
-    public String getPosition() {
-        return position;
+    public String getLessonId() {
+        return lessonId;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setLessonId(String lessonId) {
+        this.lessonId = lessonId;
     }
 
-    public String getArabicPosition() {
-        return arabicPosition;
+    public String getSchoolType() {
+        return schoolType;
     }
 
-    public void setArabicPosition(String arabicPosition) {
-        this.arabicPosition = arabicPosition;
+    public void setSchoolType(String schoolType) {
+        this.schoolType = schoolType;
     }
 
-    public String getSubject() {
-        return subject;
+    public long getUnitNo() {
+        return unitNo;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setUnitNo(long unitNo) {
+        this.unitNo = unitNo;
     }
 
-    public String getTitle() {
-
-        return title;
+    public long getLessonNo() {
+        return lessonNo;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setLessonNo(long lessonNo) {
+        this.lessonNo = lessonNo;
     }
 
-
-    public String getContent() {
-        return content;
+    public long getTerm() {
+        return term;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTerm(long term) {
+        this.term = term;
     }
+
+    public boolean isReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
+
+    String writerUid;
+    String lessonId;
+    String schoolType;
+
+    long unitNo, lessonNo, term;
+
+    boolean reviewed;
+
 }
