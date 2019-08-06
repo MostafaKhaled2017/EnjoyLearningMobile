@@ -127,7 +127,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.preparatory_and_secondary_subjects_array_for_upload, android.R.layout.simple_spinner_item);
+                R.array.preparatory_subjects_array_for_upload, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
@@ -157,7 +157,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                         final String[] gradesArray = getResources().getStringArray(R.array.grades_array);
                         for (final String grade : gradesArray) {
                             if (currentSubjectInSpinner.equals("كل المواد")) {
-                                final String[] subjectsArray = getResources().getStringArray(R.array.preparatory_and_secondary_subjects_array_for_upload);
+                                final String[] subjectsArray = getResources().getStringArray(R.array.preparatory_subjects_array_for_upload);
                                 for (final String subject : subjectsArray) {
                                     fireStoreQuestions.document(grade).collection(subject).whereEqualTo("reviewed", false).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                         @Override

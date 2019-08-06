@@ -39,7 +39,7 @@
          app:showAsAction="never" />-->
     <item
         android:id="@+id/studyTips"
-        android:title="نصائح للمذاكرة"
+        android:title="نصائح المذاكرة"
         app:showAsAction="never" />
     <item
         android:id="@+id/contactUs"

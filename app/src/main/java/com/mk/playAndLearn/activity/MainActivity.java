@@ -240,9 +240,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             case R.id.appManagement:
                 startActivity(new Intent(this, AdminAppManagementActivity.class));
                 return true;
-          /*  case R.id.studyTips:
+            case R.id.studyTips:
                 startActivity(new Intent(this, StudyTipsActivity.class));
-                return true;*/
+                return true;
 
             case R.id.generalChallenges:
                 startActivity(new Intent(this, GeneralChallengesActivity.class));

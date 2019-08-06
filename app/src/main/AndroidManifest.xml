@@ -27,7 +27,8 @@
         <activity
             android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
             android:label="@string/title_activity_study_tips"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.mk.playAndLearn.activity.TermsActivity"
             android:screenOrientation="portrait" />

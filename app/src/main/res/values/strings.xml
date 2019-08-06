@@ -15,7 +15,7 @@
     <string name="ad_mob_used_id">ca-app-pub-1283544791526621~9315704399</string>
 
 
-    <string-array name="secondary_subjects_array_for_upload">
+  <!--  <string-array name="secondary_subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -46,49 +46,35 @@
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
-    </string-array>
+    </string-array> -->
 
     <string-array name="leaderboard_options_array">
         <item>طوال الوقت</item>
         <item>أقرب المنافسين</item>
     </string-array>
 
-    <string-array name="secondary_subjects_array_with_all_subjects_item">
+    <string-array name="preparatory_subjects_array_with_all_subjects_item">
         <item>كل المواد</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
-        <item>جغرافيا</item>
-        <item>تاريخ</item>
-        <item>فيزياء</item>
-        <item>كيمياء</item>
-        <item>أحياء</item>
-        <item>فلسفة</item>
+        <item>لغة عربية -نحو-</item>
+        <item>لغة انجليزية</item>
+        <item>دراسات اجتماعية</item>
+        <item>علوم</item>
         <item>رياضيات</item>
-        <item>Mathematics</item>
-        <item>Physics</item>
-        <item>Chemistry</item>
-        <item>Biology</item>
         <item>موضوعات عامة</item>
     </string-array>
 
-    <string-array name="secondary_subjects_array_with_general_subjects_item">
+    <string-array name="preparatory_subjects_array_with_general_subjects_item">
         <item>اختر المادة</item>
         <item>موضوعات عامة</item>
         <item>لغة عربية</item>
+        <item>لغة عربية -نحو-</item>
         <item>لغة انجليزية</item>
-        <item>جغرافيا</item>
-        <item>تاريخ</item>
-        <item>فيزياء</item>
-        <item>كيمياء</item>
-        <item>أحياء</item>
-        <item>فلسفة</item>
+        <item>دراسات اجتماعية</item>
+        <item>علوم</item>
         <item>رياضيات</item>
-        <item>Mathematics</item>
-        <item>Physics</item>
-        <item>Chemistry</item>
-        <item>Biology</item>
     </string-array>
-
 
     <string-array name="preparatory_subjects_array_for_upload">
         <item>اختر المادة</item>
@@ -101,7 +87,7 @@
     </string-array>
 
 
-    <string-array name="preparatory_and_secondary_subjects_array_for_upload">
+   <!-- <string-array name="preparatory_and_secondary_subjects_array_for_upload">
         <item>كل المواد</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -119,7 +105,7 @@
         <item>Physics</item>
         <item>Chemistry</item>
         <item>Biology</item>
-    </string-array>
+    </string-array>-->
 
     <string-array name="units_array">
         <item>الوحدة</item>
@@ -237,4 +223,28 @@
     <string name="signUpFailed">فشل الاشتراك فى التطبيق برجاء إعادة المحاولة لاحقا واستخدام كلمة سر قوية</string>
     <string name="sign_up">تسجيل اشتراك</string>
     <string name="title_activity_study_tips">StudyTipsActivity</string>
+
+    <string name="studyTips">
+         <b>خطوات مذاكرة الدروس :\n\n</b>
+1- في اليوم الذي يتم الشرح فيه بعد العودة من المدرسة قراءة الدرس جيدا بتركيز في 10 دقائق(قراءة فقط) \n
+2- في اليوم التالي مذاكرة الدرس بصورة كاملة. \n
+3- إعادة مراجعة هذا الدرس بعد أسبوع \n
+4- مراجعة الدرس بعد أسبوعين \n
+5- مراجعة الدرس بعد شهر \n\n
+<b> صفات المكان المناسب للمذاكرة:\n\n</b>
+1- تكون إضاءته قوية \n
+2- يكون مكان هادئ بعيد عن أي مصدر للضوضاء \n\n
+<b> أثناء المذاكرة:\n\n</b>
+1- لبس هدوم مريحة أثناء المذاكرة \n
+2- قم بغلق هاتفك أو اجعله صامت. \n
+3- قم بترديد ما تذاكره بصوت عالي \n
+4- قم بأخذ راحات مستمرة أثناء المذاكرة ويفضل 10 دقائق كل 50 دقيقة مذاكرة \n
+5- لا تقوم بأي مجهود ذهني فى وقت الراحة. \n\n
+<b> نصائح أخرى للمساعدة في المذاكرة:\n\n</b>
+1- أكل خضروات وفواكه باستمرار \n
+2- عدم المذاكرة بعد الأكل مباشرة \n
+3- قم بشرب مياه باستمرار أثناء المذاكرة وفى الراحات \n
+4- قم بعمل جدول يومي وأسبوعي وحاول الالتزام به قدر الإمكان. \n
+5- قم بتلخيص الدروس باستخدام الخرائط الذهنية \n
+</string>
 </resources>

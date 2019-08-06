@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         }
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.secondary_subjects_array_with_all_subjects_item, R.layout.simple_spinner_item);
+                R.array.preparatory_subjects_array_with_all_subjects_item, R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
@@ -174,7 +174,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.secondary_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
+                R.array.preparatory_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 

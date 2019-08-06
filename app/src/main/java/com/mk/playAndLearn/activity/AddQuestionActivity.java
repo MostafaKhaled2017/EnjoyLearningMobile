@@ -128,7 +128,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         setLessonOrderSpinner(R.array.lessons_array);
         setTermSpinner();
         setGradeSpinner();
-        setSubjectsSpinner(R.array.secondary_subjects_array_for_upload, "setSubject spinner in onCreate");
+        setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setSubject spinner in onCreate");
 
         ButterKnife.bind(this);
 
@@ -326,7 +326,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     if (selectedGrade.contains("الإعدادى")) {
                         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner1");
                     } else if (selectedGrade.contains("الثانوى")) {
-                        setSubjectsSpinner(R.array.secondary_subjects_array_for_upload, "setGradeSpinner2");
+                        setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner2");
                     }
                 }
             }
