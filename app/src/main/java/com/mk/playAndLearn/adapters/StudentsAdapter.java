@@ -36,16 +36,18 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     ArrayList<User> list;
     Context context;
 
-    private final String TAG, subject;
+    private final String TAG, subject, unit, lesson;
     String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     int currentPosition = 0, lastPoints = (int) 1e9, lastPosition = -1;
 
 
-    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject) {
+    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject, String unit, String lesson) {
         this.list = list;
         this.context = context;
         this.TAG = TAG;
         this.subject = subject;
+        this.unit = unit;
+        this.lesson = lesson;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     @Override
     public void onBindViewHolder(StudentsAdapter.MyHolder holder, int position) {
         final User user = list.get(position);
-        if (TAG.equals("LastChallengers")|| TAG.equals("FriendsFragment")) {
+        if (TAG.equals("LastChallengersFragment")|| TAG.equals("FriendsFragment")) {
             holder.position.setVisibility(View.GONE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -72,6 +74,8 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     intent.putExtra("email", user.getEmail());
                     intent.putExtra("uid", user.getUid());
                     intent.putExtra("subject", subject);
+                    intent.putExtra("unit", unit);
+                    intent.putExtra("lesson", lesson);
                     context.startActivity(intent);
                     ((ChallengersActivity) context).finish();
                 }

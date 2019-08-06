@@ -33,19 +33,23 @@
         android:id="@+id/chatBot"
         android:title="روبوت الدردشة"
         app:showAsAction="never" />
-   <!-- <item
-        android:id="@+id/editAccoutData"
-        android:title="تعديل بيانات الحساب"
-        app:showAsAction="never" />-->
+    <!-- <item
+         android:id="@+id/editAccoutData"
+         android:title="تعديل بيانات الحساب"
+         app:showAsAction="never" />-->
+    <item
+        android:id="@+id/studyTips"
+        android:title="نصائح للمذاكرة"
+        app:showAsAction="never" />
     <item
         android:id="@+id/contactUs"
         android:title="تواصل معنا"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/signOut"
         android:title="تسجيل الخروج"
         app:showAsAction="never" />
-
 
     <item
         android:id="@+id/appManagement"

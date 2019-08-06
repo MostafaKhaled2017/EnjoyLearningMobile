@@ -1,13 +1,17 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -53,12 +58,10 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     // TODO : think about making when an image clicked it opens in a full activity like other programs
 
     View view;
-    Button startChallengeButton;
     ChallengesFragmentPresenter presenter;
 
-    String currentSubject;
+    String currentSubject, currentUnit, currentLesson;
 
-    Spinner spinner;
     ProgressBar progressBar;
 
     ChallengesAdapter completedChallengeRecyclerAdapter, uncompletedChallengeRecyclerAdapter;
@@ -101,14 +104,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_challenges, container, false);
 
-        startChallengeButton = view.findViewById(R.id.startChallengeButton);
-        startChallengeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigate();
-            }
-        });
-
         progressBar = view.findViewById(R.id.challengesProgressBar);
         noChallengesTv = view.findViewById(R.id.loadingText);
 
@@ -125,35 +120,11 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         completedChallengesRecyclerView = view.findViewById(R.id.completedChallengesRecyclerView);
         uncompletedChallengesRecyclerView = view.findViewById(R.id.uncompletedChallengesRecyclerView);
 
-        spinner = view.findViewById(R.id.subjectsSpinnerInChallengesFragment);
-
-        try {
-            Field popup = Spinner.class.getDeclaredField("mPopup");
-            popup.setAccessible(true);
-
-            // Get private mPopup member variable and try cast to ListPopupWindow
-            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinner);
-
-            // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
-        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            // silently fail...
-        }
-
-        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.secondary_subjects_array, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(subjectsAdapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentSubject = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onClick(View view) {
+                showSpinnerDialog();
             }
         });
 
@@ -165,6 +136,134 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public void showSpinnerDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());//TODO : check this
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.challenges_dialog, null);
+
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setCancelable(false)
+                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton("بدء", null)
+                .create();
+
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        Spinner subjectsSpinner = view.findViewById(R.id.subjectsSpinnerInDialog);
+        final Spinner unitOrderSpinner = view.findViewById(R.id.unitSpinnerInDialog);
+        final Spinner lessonOrderSpinner = view.findViewById(R.id.lessonSpinnerInDialog);
+        dialogTitle.setText("بدء التحدى");
+
+        ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.preparatory_subjects_array_for_upload, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        subjectsSpinner.setAdapter(subjectsAdapter);
+
+        subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+                    switch (currentSubject) {
+                        case "لغة انجليزية":
+                            unitOrderSpinner.setEnabled(true);
+                            unitOrderSpinner.setClickable(true);
+                            lessonOrderSpinner.setEnabled(false);
+                            lessonOrderSpinner.setClickable(false);
+                            lessonOrderSpinner.setSelection(0);
+                            unitOrderSpinner.setSelection(0);
+                            break;
+                        case "لغة عربية -نحو-":
+                            lessonOrderSpinner.setEnabled(true);
+                            lessonOrderSpinner.setClickable(true);
+                            unitOrderSpinner.setEnabled(false);
+                            unitOrderSpinner.setClickable(false);
+                            unitOrderSpinner.setSelection(0);
+                            lessonOrderSpinner.setSelection(0);
+                            break;
+                        default:
+                            unitOrderSpinner.setEnabled(true);
+                            unitOrderSpinner.setClickable(true);
+                            lessonOrderSpinner.setEnabled(true);
+                            lessonOrderSpinner.setClickable(true);
+                            unitOrderSpinner.setSelection(0);
+                            lessonOrderSpinner.setSelection(0);
+                            break;
+                    }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        ArrayAdapter<CharSequence> unitOrderAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.units_array, android.R.layout.simple_spinner_item);
+        unitOrderAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        unitOrderSpinner.setAdapter(unitOrderAdapter);
+
+        unitOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentUnit = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        ArrayAdapter<CharSequence> lessonsOrderAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.lessons_array, android.R.layout.simple_spinner_item);
+        lessonsOrderAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        lessonOrderSpinner.setAdapter(lessonsOrderAdapter);
+
+        lessonOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentLesson = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+
+                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        if (currentSubject.equals("اختر المادة")) {
+                            Toast.makeText(getActivity(), "قم باختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
+                        } else if(currentUnit.equals("الوحدة") && unitOrderSpinner.isEnabled()){
+                            Toast.makeText(getActivity(), "قم باختيار الوحدة ", Toast.LENGTH_SHORT).show();
+                        } else if(currentLesson.equals("الدرس") && lessonOrderSpinner.isEnabled()){
+                            Toast.makeText(getActivity(), "قم باختيار الدرس", Toast.LENGTH_SHORT).show();
+                        } else {
+                            navigate();
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilderUserInput.show();
+
     }
 
     @Override
@@ -220,6 +319,8 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         } else {
             Intent i = new Intent(getActivity(), ChallengersActivity.class);
             i.putExtra("subject", currentSubject);
+            i.putExtra("unit", currentUnit);
+            i.putExtra("lesson", currentLesson);
             startActivity(i);
         }
     }

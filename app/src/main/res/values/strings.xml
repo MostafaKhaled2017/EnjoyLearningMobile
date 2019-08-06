@@ -93,12 +93,11 @@
     <string-array name="preparatory_subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
+        <item>لغة عربية -نحو-</item>
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
         <item>رياضيات</item>
-        <item>Mathematics</item>
-        <item>Science</item>
     </string-array>
 
 
@@ -152,6 +151,9 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
     </string-array>
 
     <string-array name="story_chapters_array">
@@ -174,18 +176,6 @@
         <item>16</item>
         <item>17</item>
         <item>18</item>
-    </string-array>
-
-    <string-array name="arabic_grammar_array">
-        <item>ترتيب الدرس</item>
-        <item>سؤال تراكمي</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
     </string-array>
 
     <string-array name="term_array">
@@ -226,14 +216,15 @@
         <item>أنثى</item>
     </string-array>
     <string-array name="sign_up_grades_array">
-        <item>الصف الأول الثانوى</item>
+        <item>الصف الأول الإعدادى</item>
+        <item>الصف الثانى الإعدادى</item>
+        <item>الصف الثالث الإعدادى</item>
     </string-array>
     <string-array name="grades_array">
         <item>اختر الصف الدراسى</item>
         <item>الصف الأول الإعدادى</item>
         <item>الصف الثانى الإعدادى</item>
         <item>الصف الثالث الإعدادى</item>
-        <item>الصف الأول الثانوى</item>
     </string-array>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
@@ -245,4 +236,5 @@
     <string name="isSignedInUser">هذا الحساب موجود بالفعل برجاء تسجيل الدخول</string>
     <string name="signUpFailed">فشل الاشتراك فى التطبيق برجاء إعادة المحاولة لاحقا واستخدام كلمة سر قوية</string>
     <string name="sign_up">تسجيل اشتراك</string>
+    <string name="title_activity_study_tips">StudyTipsActivity</string>
 </resources>

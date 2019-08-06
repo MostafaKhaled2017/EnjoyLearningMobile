@@ -51,10 +51,10 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 public class AddQuestionActivity extends AppCompatActivity {
-    Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner, termSpinner, languageBranchesSpinner, gradesSpinner;
+    Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner, termSpinner, gradesSpinner;
     String correctAnswer = "";
     EditText editText1, editText2, editText3, editText4, questionEt;
-    TextView languageBranchesTv, unitOrderTv;
+    TextView unitOrderTv;
     Question question;
     String currentSubject = "", currentUserName, selectedUnit, selectedLesson, selectedTerm, selectedLanguageBranch, selectedGrade;
     Map<String, Object> map;
@@ -63,7 +63,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     String oldQuestionId = "";
     WriteBatch batch;
     CheckBox c1, c2, c3, c4;
-    RelativeLayout languageBranchLayout, unitOrderLayout;
+    RelativeLayout unitOrderLayout;
     public SharedPreferences pref; // 0 - for private mode
 
 
@@ -95,10 +95,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         unitOrderSpinner = findViewById(R.id.unitOrderSpinner);
         lessonOrderSpinner = findViewById(R.id.lessonOrderSpinner);
         termSpinner = findViewById(R.id.termSpinner);
-        languageBranchesSpinner = findViewById(R.id.languageBranchesSpinner);
-        languageBranchesTv = findViewById(R.id.languageBranchesTv);
         unitOrderTv = findViewById(R.id.unitOrderTextView);
-        languageBranchLayout = findViewById(R.id.languageBranchLayout);
         unitOrderLayout = findViewById(R.id.unitOrderLayout);
         editText1 = findViewById(R.id.et1);
         editText2 = findViewById(R.id.et2);
@@ -132,7 +129,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         setTermSpinner();
         setGradeSpinner();
         setSubjectsSpinner(R.array.secondary_subjects_array_for_upload, "setSubject spinner in onCreate");
-        setLanguageBranchesSpinner(R.array.arabic_branches_array, null);
 
         ButterKnife.bind(this);
 
@@ -145,7 +141,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(subjectsSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
+            popupWindow.setHeight(500);
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
         }
@@ -190,13 +186,6 @@ public class AddQuestionActivity extends AppCompatActivity {
             spinnerPosition = myAdap.getPosition(subject);
             subjectsSpinner.setSelection(spinnerPosition);
 
-            String languageBranch = question.getLanguageBranch(); //the value you want the position for
-            if (subject.equals("لغة عربية")) {
-                setLanguageBranchesSpinner(R.array.arabic_branches_array, languageBranch);
-            } else if (subject.equals("لغة انجليزية")) {
-                setLanguageBranchesSpinner(R.array.english_branches_array, languageBranch);
-            }
-
             String unitNumber = question.getUnitNumber(); //the value you want the position for
             myAdap = (ArrayAdapter) unitOrderSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(unitNumber);
@@ -230,16 +219,31 @@ public class AddQuestionActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 if (!oldQuestion) {
-                    if (currentSubject.equals("لغة عربية")) {
-                        showLanguageBranchesSpinner();
-                        setLanguageBranchesSpinner(R.array.arabic_branches_array, null);
-                    } else if (currentSubject.equals("لغة انجليزية")) {
-                        showLanguageBranchesSpinner();
-                        setLanguageBranchesSpinner(R.array.english_branches_array, null);
-                    } else {
-                        hideLanguageBranchesSpinner();
-                        setLessonOrderSpinner(R.array.lessons_array);
-                        showUnitOrderSpinner();
+                    setLessonOrderSpinner(R.array.lessons_array);
+                    switch (currentSubject) {
+                        case "لغة انجليزية":
+                            unitOrderSpinner.setEnabled(true);
+                            unitOrderSpinner.setClickable(true);
+                            lessonOrderSpinner.setEnabled(false);
+                            lessonOrderSpinner.setClickable(false);
+                            setLessonOrderSpinner(R.array.lessons_array);
+                            break;
+                        case "لغة عربية -نحو-":
+                            lessonOrderSpinner.setEnabled(true);
+                            lessonOrderSpinner.setClickable(true);
+                            unitOrderSpinner.setEnabled(false);
+                            unitOrderSpinner.setClickable(false);
+                            setUnitOrderSpinner();
+                            setLessonOrderSpinner(R.array.lessons_array);
+                            break;
+                        default:
+                            unitOrderSpinner.setEnabled(true);
+                            unitOrderSpinner.setClickable(true);
+                            lessonOrderSpinner.setEnabled(true);
+                            lessonOrderSpinner.setClickable(true);
+                            setUnitOrderSpinner();
+                            setLessonOrderSpinner(R.array.lessons_array);
+                            break;
                     }
                 }
             }
@@ -308,42 +312,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
     }
 
-    void setLanguageBranchesSpinner(int array, final String languageBranch) {
-        ArrayAdapter<CharSequence> languageBranchesAdapter = ArrayAdapter.createFromResource(this,
-                array, android.R.layout.simple_spinner_item);
-        languageBranchesAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        languageBranchesSpinner.setAdapter(languageBranchesAdapter);
-
-        languageBranchesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedLanguageBranch = adapterView.getItemAtPosition(i).toString();
-                //in the store of arabic and english and in the grammar of arabic only
-                if (!oldQuestion) {
-                    if (selectedLanguageBranch.equals("قصة")) {
-                        setLessonOrderSpinner(R.array.story_chapters_array);
-                        hideUnitOrderSpinner();
-                    } else if (selectedLanguageBranch.equals("نحو")) {
-                        setLessonOrderSpinner(R.array.arabic_grammar_array);
-                        hideUnitOrderSpinner();
-                    } else {
-                        setLessonOrderSpinner(R.array.lessons_array);
-                        showUnitOrderSpinner();
-                    }
-                } else {
-                    ArrayAdapter myAdap = (ArrayAdapter) languageBranchesSpinner.getAdapter(); //cast to an ArrayAdapter
-                    int spinnerPosition = myAdap.getPosition(languageBranch);
-                    languageBranchesSpinner.setSelection(spinnerPosition);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-    }
-
     void setGradeSpinner() {
         ArrayAdapter<CharSequence> gradesAdapter = ArrayAdapter.createFromResource(this,
                 R.array.grades_array, android.R.layout.simple_spinner_item);
@@ -368,25 +336,6 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    void showLanguageBranchesSpinner() {
-        languageBranchLayout.setVisibility(View.VISIBLE);
-
-    }
-
-    void hideLanguageBranchesSpinner() {
-        languageBranchLayout.setVisibility(View.GONE);
-    }
-
-    void hideUnitOrderSpinner() {
-        unitOrderLayout.setVisibility(View.GONE);
-    }
-
-
-    void showUnitOrderSpinner() {
-        unitOrderLayout.setVisibility(View.VISIBLE);
-
     }
 
     @OnClick(R.id.addQuestionBtn)

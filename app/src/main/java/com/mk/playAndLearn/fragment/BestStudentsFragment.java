@@ -123,7 +123,7 @@ public class BestStudentsFragment extends Fragment implements BestStudentsFragme
 
     @Override
     public void startRecyclerAdapter(ArrayList list, String Tag) {
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), Tag, null);
+        recyclerAdapter = new StudentsAdapter(list, getActivity(), Tag, null, null , null);
         RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

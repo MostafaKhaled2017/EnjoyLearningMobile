@@ -3,44 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layoutDirection="ltr"
     tools:context="com.mk.playAndLearn.fragment.ChallengesFragment"
     android:background="@color/color3">
 
-    <LinearLayout
-        android:id="@+id/startChallengeView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/startChallengeButton"
-            android:layout_width="45dp"
-            android:layout_height="35dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/rectangle_button"
-            android:text="ابدأ"
-            android:textColor="@color/white" />
-
-        <Spinner
-            android:id="@+id/subjectsSpinnerInChallengesFragment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_margin="3dp"
-            android:gravity="right" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:text="المادة : "
-            android:textSize="18sp" />
-    </LinearLayout>
-        <include layout="@layout/no_internet_connection_text"/>
+    <include layout="@layout/no_internet_connection_text"/>
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/loadingText"
             android:layout_width="wrap_content"
@@ -60,7 +28,6 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/startChallengeView"
         android:scrollbars="none"
         android:overScrollMode="never">
 
@@ -111,4 +78,16 @@
 
         </RelativeLayout>
     </ScrollView>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        app:backgroundTint="@color/color1"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@color/white" />
 </RelativeLayout>

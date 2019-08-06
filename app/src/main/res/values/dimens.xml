@@ -27,5 +27,6 @@
     <dimen name="margin_bottom_of_answers_group">5dp</dimen>
     <dimen name="margin_top_of_answers_group">5dp</dimen>
     <dimen name="margin_horizontal_of_add_question">15dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

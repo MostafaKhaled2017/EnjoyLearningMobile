@@ -24,8 +24,13 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-        <activity android:name="com.mk.playAndLearn.activity.TermsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
+            android:label="@string/title_activity_study_tips"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.mk.playAndLearn.activity.TermsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.SearchActivity"
             android:screenOrientation="portrait" />

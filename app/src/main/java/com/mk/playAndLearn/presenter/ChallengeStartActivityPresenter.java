@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +39,7 @@ public class ChallengeStartActivityPresenter {
     ArrayList list = new ArrayList<>();
 
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
-    String subject, challengeId;
+    String subject, challengeId, unit, lesson;
     int firstPlayerPoints = -1, currentChallenger = 1;
     int secondPlayerPoints = -1;
 
@@ -85,7 +86,7 @@ public class ChallengeStartActivityPresenter {
             fireStoreUsers.document(opponentUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
 
                         String opponentName = (String) document.getString("userName");
@@ -102,11 +103,13 @@ public class ChallengeStartActivityPresenter {
         }
     }
 
-    public void setQuestionsListAndNavigate(Intent intent){
+    public void setQuestionsListAndNavigate(Intent intent) {
 
         if (intent.getExtras() != null) {
             currentChallenger = intent.getIntExtra("currentChallenger", 1);
             subject = intent.getStringExtra("subject");
+            unit = intent.getStringExtra("unit");
+            lesson = intent.getStringExtra("lesson");
             secondPlayerUid = intent.getStringExtra("uid");
 
             if (currentChallenger == 2) {
@@ -157,30 +160,29 @@ public class ChallengeStartActivityPresenter {
         }
     }
 
-    void clearList(){
+    void clearList() {
         //TO clear the listBefore start filling data by recursion
         if (!list.isEmpty())
             list.clear();
     }
 
 
-
-    void setQuestionListFromIdsForPlayer2(){
+    void setQuestionListFromIdsForPlayer2() {
         //setQuestionsList
         String[] questionsIds = challengeQuestionsIds.split(" ");
         final int listSize = questionsIds.length;
 
         Log.v("challenges2", "getting questions from string" + " , original list size is : " + listSize
-         + " , grade is : " + grade + " , subject is : " + subject);
+                + " , grade is : " + grade + " , subject is : " + subject);
 
         for (String questionId : questionsIds) {
             fireStoreQuestions.document(grade).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if(documentSnapshot.exists()){
+                    if (documentSnapshot.exists()) {
                         addQuestionData(documentSnapshot);
                         Log.v("challenges2", "getting new question , list size is : " + list.size()
-                        + " , original size : " + listSize);
+                                + " , original size : " + listSize);
                     }
                     if (list.size() == listSize) {
                         navigate();
@@ -195,30 +197,90 @@ public class ChallengeStartActivityPresenter {
     void loadQuestionsForChallenger1() {
         String randomId = fireStoreQuestions.document().getId();
 
-        fireStoreQuestions
-                .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
-                .collection(subject)
-                .whereEqualTo("reviewed", true)
-                .whereEqualTo("challengeQuestion", false)
-                .whereEqualTo("term", 2) //TODO ADD VIP
-                .whereEqualTo("questionType", "choose")
-                .whereGreaterThan(FieldPath.documentId(), randomId)
-                .limit(1)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot documentSnapshots) {
-                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
-                    addQuestionData(document);
-                    if (list.size() < 5) {
-                        loadQuestionsForChallenger1();
-                    } else {
-                        navigate();
-                    }
+        if (subject.equals("لغة انجليزية")) {
+
+            fireStoreQuestions
+                    .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                    .collection(subject)
+                    .whereEqualTo("reviewed", true)
+                    .whereEqualTo("challengeQuestion", false)
+                    .whereEqualTo("term", 2) //TODO ADD VIP
+                    .whereEqualTo("unitNumber", unit)
+                    .whereEqualTo("questionType", "choose")
+                    .whereGreaterThan(FieldPath.documentId(), randomId)
+                    .limit(1)
+                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    Log.v("qEx","succeeded");
+                    getQuestionsForChallenger1(documentSnapshots);
                 }
-            }
-        });
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.v("qEx", e.toString());
+                }
+            });
+        } else if (subject.equals("لغة عربية -نحو-")) {
+            fireStoreQuestions
+                    .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                    .collection(subject)
+                    .whereEqualTo("reviewed", true)
+                    .whereEqualTo("challengeQuestion", false)
+                    .whereEqualTo("term", 2) //TODO ADD VIP
+                    .whereEqualTo("lessonNumber", lesson)
+                    .whereEqualTo("questionType", "choose")
+                    .whereGreaterThan(FieldPath.documentId(), randomId)
+                    .limit(1)
+                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    Log.v("qEx","succeeded");
+                    getQuestionsForChallenger1(documentSnapshots);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.v("qEx", e.toString());
+                }
+            });
+        } else {
+            fireStoreQuestions
+                    .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                    .collection(subject)
+                    .whereEqualTo("reviewed", true)
+                    .whereEqualTo("challengeQuestion", false)
+                    .whereEqualTo("term", 2) //TODO ADD VIP
+                    .whereEqualTo("unitNumber", unit)
+                    .whereEqualTo("lessonNumber", lesson)
+                    .whereEqualTo("questionType", "choose")
+                    .whereGreaterThan(FieldPath.documentId(), randomId)
+                    .limit(1)
+                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    Log.v("qEx","succeeded");
+                    getQuestionsForChallenger1(documentSnapshots);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.v("qEx", e.toString());
+                }
+            });
+        }
     }
 
+    void getQuestionsForChallenger1(QuerySnapshot documentSnapshots) {
+        for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+            addQuestionData(document);
+            if (list.size() < 5) {
+                loadQuestionsForChallenger1();
+            } else {
+                navigate();
+            }
+        }
+    }
 
 
     public void addQuestionData(DocumentSnapshot document) {
@@ -256,9 +318,9 @@ public class ChallengeStartActivityPresenter {
         return false;
     }
 
-    public void navigate(){
+    public void navigate() {
         context.startActivity(i);
-        ((Activity)context).finish();
+        ((Activity) context).finish();
     }
 
     public interface View {

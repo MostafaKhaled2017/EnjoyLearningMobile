@@ -115,35 +115,6 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/languageBranchLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white"
-                    android:paddingBottom="7dp"
-                    android:visibility="visible">
-
-                    <TextView
-                        android:id="@+id/languageBranchesTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="4dp"
-                        android:text="فرع السؤال :       "
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/languageBranchesSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_toLeftOf="@id/languageBranchesTv"
-                        android:scrollbars="none" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
                     android:id="@+id/unitOrderLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -118,7 +118,7 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, this, TAG, null);
+        recyclerAdapter = new StudentsAdapter(list, this, TAG, null, null, null);
         RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
