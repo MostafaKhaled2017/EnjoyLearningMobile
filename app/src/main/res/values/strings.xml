@@ -56,8 +56,17 @@
     <string-array name="preparatory_subjects_array_with_all_subjects_item">
         <item>كل المواد</item>
         <item>لغة عربية</item>
+        <item>لغة عربية: نحو</item>
         <item>لغة انجليزية</item>
-        <item>لغة عربية -نحو-</item>
+        <item>دراسات اجتماعية</item>
+        <item>علوم</item>
+        <item>رياضيات</item>
+        <item>موضوعات عامة</item>
+    </string-array>
+
+    <string-array name="preparatory_subjects_array">
+        <item>لغة عربية</item>
+        <item>لغة عربية: نحو</item>
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
@@ -69,7 +78,7 @@
         <item>اختر المادة</item>
         <item>موضوعات عامة</item>
         <item>لغة عربية</item>
-        <item>لغة عربية -نحو-</item>
+        <item>لغة عربية: نحو</item>
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
@@ -79,7 +88,7 @@
     <string-array name="preparatory_subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
-        <item>لغة عربية -نحو-</item>
+        <item>لغة عربية: نحو</item>
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>

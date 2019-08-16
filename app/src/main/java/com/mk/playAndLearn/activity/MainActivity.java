@@ -228,6 +228,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             case R.id.addQuestion:
                 startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
                 return true;
+            case R.id.addLesson:
+                startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
+                return true;
             case R.id.contactUs:
                 startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
                 return true;

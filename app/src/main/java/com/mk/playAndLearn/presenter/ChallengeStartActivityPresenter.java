@@ -40,6 +40,7 @@ public class ChallengeStartActivityPresenter {
 
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     String subject, challengeId, unit, lesson;
+    long term;
     int firstPlayerPoints = -1, currentChallenger = 1;
     int secondPlayerPoints = -1;
 
@@ -110,6 +111,7 @@ public class ChallengeStartActivityPresenter {
             subject = intent.getStringExtra("subject");
             unit = intent.getStringExtra("unit");
             lesson = intent.getStringExtra("lesson");
+            term = intent.getLongExtra("term", -1);
             secondPlayerUid = intent.getStringExtra("uid");
 
             if (currentChallenger == 2) {
@@ -204,7 +206,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 2) //TODO ADD VIP
+                    .whereEqualTo("term", term)
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -221,13 +223,13 @@ public class ChallengeStartActivityPresenter {
                     Log.v("qEx", e.toString());
                 }
             });
-        } else if (subject.equals("لغة عربية -نحو-")) {
+        } else if (subject.equals("لغة عربية: نحو")) {
             fireStoreQuestions
                     .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 2) //TODO ADD VIP
+                    .whereEqualTo("term", term)
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -250,7 +252,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 2) //TODO ADD VIP
+                    .whereEqualTo("term", term)
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")

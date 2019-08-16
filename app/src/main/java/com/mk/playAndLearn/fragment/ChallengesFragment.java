@@ -25,7 +25,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengersActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
@@ -36,7 +40,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
+import static com.mk.playAndLearn.utils.Strings.adminEmail;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
 
 
@@ -61,6 +68,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     ChallengesFragmentPresenter presenter;
 
     String currentSubject, currentUnit, currentLesson;
+    long currentTerm;
 
     ProgressBar progressBar;
 
@@ -158,7 +166,28 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         Spinner subjectsSpinner = view.findViewById(R.id.subjectsSpinnerInDialog);
         final Spinner unitOrderSpinner = view.findViewById(R.id.unitSpinnerInDialog);
         final Spinner lessonOrderSpinner = view.findViewById(R.id.lessonSpinnerInDialog);
+        final Spinner termSpinner = view.findViewById(R.id.termSpinner);
         dialogTitle.setText("بدء التحدى");
+
+
+
+        ArrayAdapter<CharSequence> termAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.term_array, android.R.layout.simple_spinner_item);
+        termAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        termSpinner.setAdapter(termAdapter);
+        termSpinner.setSelection(1);
+
+        termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentTerm = convertTermToLong(adapterView.getItemAtPosition(i).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.preparatory_subjects_array_for_upload, android.R.layout.simple_spinner_item);
@@ -247,7 +276,82 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
 
                     @Override
                     public void onClick(View view) {
-                        if (currentSubject.equals("اختر المادة")) {
+                        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                        if(currentUserEmail.equals(adminEmail)){
+
+                            if (currentSubject.equals("لغة انجليزية")) {
+
+                                fireStoreQuestions
+                                        .document(getSavedGrade(getActivity()))
+                                        .collection(currentSubject)
+                                        .whereEqualTo("reviewed", true)
+                                        .whereEqualTo("challengeQuestion", false)
+                                        .whereEqualTo("term", currentTerm)
+                                        .whereEqualTo("unitNumber", currentUnit)
+                                        .whereEqualTo("questionType", "choose")
+                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                                        Log.v("qEx","succeeded");
+                                        Toast.makeText(getActivity(), "Questions number is : " + documentSnapshots.size(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.v("qEx", e.toString());
+                                    }
+                                });
+                            } else if (currentSubject.equals("لغة عربية: نحو")) {
+                                fireStoreQuestions
+                                        .document(getSavedGrade(getActivity()))
+                                        .collection(currentSubject)
+                                        .whereEqualTo("reviewed", true)
+                                        .whereEqualTo("challengeQuestion", false)
+                                        .whereEqualTo("term", currentTerm)
+                                        .whereEqualTo("lessonNumber", currentLesson)
+                                        .whereEqualTo("questionType", "choose")
+                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                                        Log.v("qEx","succeeded");
+                                        Toast.makeText(getActivity(), "Questions number is : " + documentSnapshots.size(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.v("qEx", e.toString());
+                                    }
+                                });
+                            } else {
+                                fireStoreQuestions
+                                        .document(getSavedGrade(getActivity()))
+                                        .collection(currentSubject)
+                                        .whereEqualTo("reviewed", true)
+                                        .whereEqualTo("challengeQuestion", false)
+                                        .whereEqualTo("term", currentTerm)
+                                        .whereEqualTo("unitNumber", currentUnit)
+                                        .whereEqualTo("lessonNumber", currentLesson)
+                                        .whereEqualTo("questionType", "choose")
+                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                                        Log.v("qEx","succeeded");
+                                        Toast.makeText(getActivity(), "Questions number is : " + documentSnapshots.size(), Toast.LENGTH_SHORT).show();                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.v("qEx", e.toString());
+                                    }
+                                });
+                            }
+
+                        } else {
+                            Toast.makeText(getActivity(), "لا يمكنك دخول تحديات الان", Toast.LENGTH_SHORT).show();
+                        } // TODO : edit after the event
+
+                        /*if (currentTerm == -1) {
+                            Toast.makeText(getActivity(), "قم باختيار الفصل الدراسى", Toast.LENGTH_SHORT).show();
+                        }else if (currentSubject.equals("اختر المادة")) {
                             Toast.makeText(getActivity(), "قم باختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
                         } else if(currentUnit.equals("الوحدة") && unitOrderSpinner.isEnabled()){
                             Toast.makeText(getActivity(), "قم باختيار الوحدة ", Toast.LENGTH_SHORT).show();
@@ -256,7 +360,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
                         } else {
                             navigate();
                             dialogInterface.dismiss();
-                        }
+                        }*/ //TODO : edit after the event
                     }
                 });
             }
@@ -309,6 +413,17 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         super.onDestroy();
     }
 
+    long convertTermToLong(String term) {
+        switch (term) {
+            case "الفصل الدراسى الأول":
+                return 1;
+            case "الفصل الدراسى الثانى":
+                return 2;
+            default:
+                return -1;
+        }
+    }
+
     @Override
     public void navigate() {
         Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(getActivity()));
@@ -319,6 +434,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         } else {
             Intent i = new Intent(getActivity(), ChallengersActivity.class);
             i.putExtra("subject", currentSubject);
+            i.putExtra("term", currentTerm);
             i.putExtra("unit", currentUnit);
             i.putExtra("lesson", currentLesson);
             startActivity(i);

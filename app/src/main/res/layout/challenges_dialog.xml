@@ -19,6 +19,29 @@
         android:layout_gravity="right"/>
 
     <LinearLayout
+        android:id="@+id/termView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:gravity="right">
+
+        <Spinner
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:id="@+id/termSpinner"
+            android:gravity="right"/>
+
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="الفصل : "/>
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/selectSubjectView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

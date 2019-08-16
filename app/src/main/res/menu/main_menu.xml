@@ -9,6 +9,11 @@
         android:title="إضافة سؤال"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/addLesson"
+        android:title="إضافة درس"
+        app:showAsAction="never" />
+
     <!-- TODO : add this item if possible -->
     <!-- <item
          android:id="@+id/myAccount"

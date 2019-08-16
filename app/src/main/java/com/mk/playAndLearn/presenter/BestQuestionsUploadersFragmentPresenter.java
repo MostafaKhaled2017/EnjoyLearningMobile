@@ -37,7 +37,9 @@ public class BestQuestionsUploadersFragmentPresenter {
     }
 
     private void getBestStudents() {
-        fireStoreUsers.orderBy("acceptedQuestions", Query.Direction.DESCENDING)
+        fireStoreUsers
+                .whereGreaterThan("acceptedQuestions", 0)
+                .orderBy("acceptedQuestions", Query.Direction.DESCENDING)
                 .limit(20)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

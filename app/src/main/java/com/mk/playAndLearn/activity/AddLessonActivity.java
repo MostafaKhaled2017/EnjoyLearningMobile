@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,24 +19,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.model.Question;
+import com.mk.playAndLearn.model.Lesson;
 import com.mk.playAndLearn.utils.DateClass;
 
 import java.lang.reflect.Field;
@@ -53,23 +46,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
-import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
-public class AddQuestionActivity extends AppCompatActivity {
+public class AddLessonActivity extends AppCompatActivity {
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner, termSpinner, gradesSpinner;
     String correctAnswer = "";
-    EditText editText1, editText2, editText3, editText4, questionEt;
+    EditText lessonTitleET, lessonContentEt;
     TextView unitOrderTv;
-    Question question;
+    Lesson lesson;
     String currentSubject = "", currentUserName, selectedUnit, selectedLesson, selectedTerm, selectedGrade;
     Map<String, Object> map;
-    int currentCheckedRadioButton;
-    boolean oldQuestion = false;
-    String oldQuestionId = "";
+    boolean oldLesson = false;
+    String oldLessonId = "";
     WriteBatch batch;
-    CheckBox c1, c2, c3, c4;
     RelativeLayout unitOrderLayout;
     public SharedPreferences pref; // 0 - for private mode
 
@@ -80,7 +70,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_question);
+        setContentView(R.layout.activity_add_lesson);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -91,7 +81,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("إضافة سؤال");
+        toolbarTitle.setText("إضافة درس");
 
         batch = fireStore.batch();
 
@@ -104,15 +94,8 @@ public class AddQuestionActivity extends AppCompatActivity {
         termSpinner = findViewById(R.id.termSpinner);
         unitOrderTv = findViewById(R.id.unitOrderTextView);
         unitOrderLayout = findViewById(R.id.unitOrderLayout);
-        editText1 = findViewById(R.id.et1);
-        editText2 = findViewById(R.id.et2);
-        editText3 = findViewById(R.id.et3);
-        editText4 = findViewById(R.id.et4);
-        questionEt = findViewById(R.id.addQuestionEditText);
-        c1 = findViewById(R.id.checkbox1);
-        c2 = findViewById(R.id.checkbox2);
-        c3 = findViewById(R.id.checkbox3);
-        c4 = findViewById(R.id.checkbox4);
+        lessonTitleET = findViewById(R.id.lessonTitleEditText);
+        lessonContentEt = findViewById(R.id.lessonContentEditText);
 
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
@@ -154,57 +137,39 @@ public class AddQuestionActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-        if (intent.getExtras() != null && intent.getExtras().containsKey("question")) {
-            question = (Question) intent.getSerializableExtra("question");
-            questionEt.setText(question.getAlQuestion());
-            editText1.setText(question.getAnswer1());
-            editText2.setText(question.getAnswer2());
-            editText3.setText(question.getAnswer3());
-            editText4.setText(question.getAnswer4());
-
-            String correctAnswer = question.getCorrectAnswer();
-            String[] correctAnswersArray = correctAnswer.split(",");
-            if (Arrays.asList(correctAnswersArray).contains(question.getAnswer1())) {
-                c1.setChecked(true);
-            }
-            if (Arrays.asList(correctAnswersArray).contains(question.getAnswer2())) {
-                c2.setChecked(true);
-            }
-            if (Arrays.asList(correctAnswersArray).contains(question.getAnswer3())) {
-                c3.setChecked(true);
-            }
-            if (Arrays.asList(correctAnswersArray).contains(question.getAnswer4())) {
-                c4.setChecked(true);
-            }
+        if (intent.getExtras() != null && intent.getExtras().containsKey("lesson")) {
+            lesson = (Lesson) intent.getSerializableExtra("lesson");
+            lessonTitleET.setText(lesson.getTitle());
+            lessonContentEt.setText(lesson.getContent());
 
 
-            String grade = question.getGrade(); //the value you want the position for
+            String grade = lesson.getGrade(); //the value you want the position for
             ArrayAdapter myAdap = (ArrayAdapter) gradesSpinner.getAdapter(); //cast to an ArrayAdapter
             int spinnerPosition = myAdap.getPosition(grade);
             gradesSpinner.setSelection(spinnerPosition);
 
-            String term = convertTermToString(question.getTerm()); //the value you want the position for
+            String term = convertTermToString(lesson.getTerm()); //the value you want the position for
             myAdap = (ArrayAdapter) termSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(term);
             termSpinner.setSelection(spinnerPosition);
 
-            String subject = question.getSubject(); //the value you want the position for
+            String subject = lesson.getSubject(); //the value you want the position for
             myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(subject);
             subjectsSpinner.setSelection(spinnerPosition);
 
-            String unitNumber = question.getUnitNumber(); //the value you want the position for
+            String unitNumber = lesson.getUnitNo(); //the value you want the position for
             myAdap = (ArrayAdapter) unitOrderSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(unitNumber);
             unitOrderSpinner.setSelection(spinnerPosition);
 
-            String lessonNumber = question.getLessonNumber(); //the value you want the position for
+            String lessonNumber = lesson.getLessonNo(); //the value you want the position for
             myAdap = (ArrayAdapter) lessonOrderSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(lessonNumber);
             lessonOrderSpinner.setSelection(spinnerPosition);
 
-            oldQuestion = true;
-            oldQuestionId = question.getQuestionId();
+            oldLesson = true;
+            oldLessonId = lesson.getLessonId();
         }
 
     }
@@ -225,7 +190,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
-                if (!oldQuestion) {
+                if (!oldLesson) {
                     setLessonOrderSpinner(R.array.lessons_array);
                     switch (currentSubject) {
                         case "لغة انجليزية":
@@ -329,7 +294,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedGrade = adapterView.getItemAtPosition(i).toString();
-                if (!oldQuestion) {
+                if (!oldLesson) {
                     if (selectedGrade.contains("الإعدادى")) {
                         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner1");
                     } else if (selectedGrade.contains("الثانوى")) {
@@ -345,31 +310,10 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick(R.id.addQuestionBtn)
-    public void addQuestion(View view) {
-        String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        final String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        String questionText = questionEt.getText().toString().trim();
-        String et1 = editText1.getText().toString();
-        String et2 = editText2.getText().toString();
-        String et3 = editText3.getText().toString();
-        String et4 = editText4.getText().toString();
-
-        //setTheCorrectAnswers
-        correctAnswer = ""; // make the correct answer string empty
-        if (c1.isChecked()) {
-            addAnswer(et1.trim());
-        }
-        if (c2.isChecked()) {
-            addAnswer(et2.trim());
-        }
-        if (c3.isChecked()) {
-            addAnswer(et3.trim());
-        }
-        if (c4.isChecked()) {
-            addAnswer(et4.trim());
-        }
+    @OnClick(R.id.addLessonButton)
+    public void addLesson(View view) {
+        String lessonTitle = lessonTitleET.getText().toString().trim();
+        String lessonContent = lessonContentEt.getText().toString().trim();
 
 
         if (selectedGrade.equals("اختر الصف الدراسى")) {
@@ -377,26 +321,23 @@ public class AddQuestionActivity extends AppCompatActivity {
         } else if (selectedTerm.equals("اختر الفصل الدراسى")) {
             Toast.makeText(this, "برجاء تحديد الفصل الدراسى", Toast.LENGTH_SHORT).show();
         } else if (currentSubject.equals("اختر المادة")) {
-            Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا الدرس", Toast.LENGTH_SHORT).show();
         } else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE && !currentSubject.equals("لغة عربية: نحو")) {
             Toast.makeText(this, "برجاء تحديد الوحدة الحالية", Toast.LENGTH_SHORT).show();
         } else if (lessonOrderSpinner.getVisibility() == View.VISIBLE
-                && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس"))
-                && !currentSubject.equals("لغة انجليزية")) {
+                && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس")) && !currentSubject.equals("لغة انجليزية")) {
             Toast.makeText(this, "برجاء تحديد ترتيب الدرس", Toast.LENGTH_SHORT).show();
-        } else if (TextUtils.isEmpty(questionText)) {
-            questionEt.setError("من فضلك ادخل عنوان السؤال");
-        } else if (TextUtils.isEmpty(et1)) {
-            editText1.setError("هذا الحقل إجبارى");
-        } else if (TextUtils.isEmpty(et2)) {
-            editText2.setError("هذا الحقل إجبارى");
-        } else if (correctAnswer.equals("")) {
-            Toast.makeText(this, "من فضلك قم بتحديد الإجابة أو الإجابات الصحيحة", Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty(lessonContent)) {
+            lessonTitleET.setError("من فضلك ادخل عنوان الدرس");
+        } else if (TextUtils.isEmpty(lessonContent)) {
+            lessonContentEt.setError("هذا الحقل إجبارى");
         } else {
+            String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             String schoolType = getSchoolType(currentSubject);
 
-            if (!oldQuestion) {
+            if (!oldLesson) {
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
                 format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
@@ -412,8 +353,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("grade", selectedGrade);
                 map.put("unitNumber", selectedUnit);//Added
                 map.put("lessonNumber", selectedLesson);//Added
-                map.put("questionType", "choose"); // TODO : edit this when new type of questions added
-                map.put("reviewed", true); // //TODO : edit after the event
+                map.put("reviewed", false);
                 map.put("schoolType", schoolType);
                 map.put("subject", currentSubject);
                 map.put("term", convertTermToLong(selectedTerm));//Added
@@ -422,90 +362,40 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("writerUid", localCurrentUserUid);
                 map.put("dayDate", todayDate);
                 map.put("date", dateClass.getDate());
-                map.put("challengeQuestion", false);
+                map.put("title", lessonTitle);
+                map.put("content", lessonContent);
 
-                //TODO : add a condition to add if the question is choose
-                map.put("alQuestion", questionText);
-                map.put("answer1", et1.trim());
-                map.put("answer2", et2.trim());
-                map.put("answer3", et3.trim());
-                map.put("answer4", et4.trim());
-                map.put("correctAnswer", correctAnswer.trim());
-
-                //TODO : add icon to the dialog
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle("تنبيه هام");
-                alertDialog.setMessage("برجاء مراجعة السؤال جيدا قبل رفعه والتأكد من عدم وجود أي أخطاء إملائية به");
-                alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
+                Toast.makeText(AddLessonActivity.this, "جارى رفع الدرس", Toast.LENGTH_SHORT).show();
+                fireStoreLessons.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(AddQuestionActivity.this, "جارى رفع السؤال", Toast.LENGTH_SHORT).show();
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(AddLessonActivity.this, "تم رفع الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(AddLessonActivity.this, "فشلت محاولة إضافة الدرس برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                            Log.v("lessonUpload", task.getException().toString());
+                        }
 
-                        final DocumentReference currentUserReference = fireStoreUsers.document(localCurrentUserUid);
-
-                        fireStore.runTransaction(new Transaction.Function<Void>() {
-                            @Nullable
-                            @Override
-                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                                DocumentSnapshot snapshot = transaction.get(currentUserReference);
-
-                                long newPoints = snapshot.getLong("points") + 5;
-                                long newAcceptedQuestions = snapshot.getLong("acceptedQuestions") + 1;
-
-                                transaction.update(currentUserReference, "points", newPoints);
-                                transaction.update(currentUserReference, "acceptedQuestions", newAcceptedQuestions);
-                                transaction.set(fireStoreQuestions.document(selectedGrade).collection(currentSubject).document(), map);
-
-                                return null;
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("TAG", "Transaction success!");
-                                Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("TAG", "Transaction failure.", e);
-                                Toast.makeText(AddQuestionActivity.this, "لم يتم رفع السؤال برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
-                            }
-                        });//TODO : Edit after the event
-
-
-                    /*    fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح وسيتم مراجعته قبل ظهوره فى التحديات", Toast.LENGTH_SHORT).show();
-                            }
-                        });*/
-                        clearViews();
                     }
                 });
-                alertDialog.create();
-                alertDialog.show();
+                clearViews();
 
+            } else if (oldLesson) {
+                DocumentReference currentLessonReference = fireStoreLessons.document(lesson.getGrade()).collection(lesson.getSubject()).document(oldLessonId);
 
-            } else if (oldQuestion) {
-                DocumentReference currentQuestionReference = fireStoreQuestions.document(question.getGrade()).collection(question.getSubject()).document(oldQuestionId);
-
-                batch.update(currentQuestionReference, "alQuestion", questionText);
-                batch.update(currentQuestionReference, "answer1", et1.trim());
-                batch.update(currentQuestionReference, "answer2", et2.trim());
-                batch.update(currentQuestionReference, "answer3", et3.trim());
-                batch.update(currentQuestionReference, "answer4", et4.trim());
-                batch.update(currentQuestionReference, "correctAnswer", correctAnswer.trim());
-                batch.update(currentQuestionReference, "schoolType", schoolType);
-                batch.update(currentQuestionReference, "subject", currentSubject);
-                batch.update(currentQuestionReference, "grade", selectedGrade);
-                batch.update(currentQuestionReference, "unitNumber", selectedUnit);
-                batch.update(currentQuestionReference, "lessonNumber", selectedLesson);
-                batch.update(currentQuestionReference, "term", convertTermToLong(selectedTerm));
+                batch.update(currentLessonReference, "title", lessonTitle.trim());
+                batch.update(currentLessonReference, "content", lessonContent.trim());
+                batch.update(currentLessonReference, "schoolType", schoolType);
+                batch.update(currentLessonReference, "subject", currentSubject);
+                batch.update(currentLessonReference, "grade", selectedGrade);
+                batch.update(currentLessonReference, "unitNumber", selectedUnit);
+                batch.update(currentLessonReference, "lessonNumber", selectedLesson);
+                batch.update(currentLessonReference, "term", convertTermToLong(selectedTerm));
 
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(AddQuestionActivity.this, "تم تحديث السؤال بنجاح", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddLessonActivity.this, "تم تحديث الدرس بنجاح", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -546,17 +436,8 @@ public class AddQuestionActivity extends AppCompatActivity {
 
 
     void clearViews() {
-        questionEt.setText("");
-
-        editText1.setText("");
-        editText2.setText("");
-        editText3.setText("");
-        editText4.setText("");
-
-        c1.setChecked(false);
-        c2.setChecked(false);
-        c3.setChecked(false);
-        c4.setChecked(false);
+        lessonTitleET.setText("");
+        lessonContentEt.setText("");
 
      /* gradesSpinner.setSelection(0);
         termSpinner.setSelection(0);

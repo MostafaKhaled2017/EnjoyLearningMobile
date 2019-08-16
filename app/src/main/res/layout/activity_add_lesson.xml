@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color3"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <include
+            android:id="@+id/appBar"
+            layout="@layout/appbar" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar"
+            android:layout_marginLeft="@dimen/margin_horizontal_of_add_question"
+            android:layout_marginRight="@dimen/margin_horizontal_of_add_question">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color3"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="7dp">
+
+                    <TextView
+                        android:id="@+id/gradeTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="4dp"
+                        android:text=" الصف الدراسى : "
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/gradeSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_toLeftOf="@id/gradeTv"
+                        android:scrollbars="none" />
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="7dp">
+
+                    <TextView
+                        android:id="@+id/termTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="4dp"
+                        android:text="الفصل الدراسى : "
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/termSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_toLeftOf="@id/termTv"
+                        android:scrollbars="none" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="7dp">
+
+                    <TextView
+                        android:id="@+id/subjectsTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="4dp"
+                        android:text=" المادة الدراسية : "
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/subjectsSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_toLeftOf="@id/subjectsTextView"
+                        android:scrollbars="none" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/unitOrderLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="7dp">
+
+
+                    <TextView
+                        android:id="@+id/unitOrderTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="4dp"
+                        android:text="ترتيب الوحدة :    "
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/unitOrderSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_toLeftOf="@id/unitOrderTextView"
+                        android:scrollbars="none" />
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="7dp">
+
+                    <TextView
+                        android:id="@+id/lessonOrderTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="4dp"
+                        android:text="ترتيب الدرس :     "
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/lessonOrderSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_toLeftOf="@id/lessonOrderTv"
+                        android:scrollbars="none" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card1"
+            android:layout_marginLeft="@dimen/margin_horizontal_of_add_question"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="@dimen/margin_horizontal_of_add_question"
+            android:background="@color/color3">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color3">
+
+                <EditText
+                    android:id="@+id/lessonTitleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/new_et"
+                    android:hint="عنوان الدرس"
+                    android:inputType="textCapSentences"
+                    android:paddingRight="5dp" />
+
+                <EditText
+                    android:id="@+id/lessonContentEditText"
+                    android:layout_below="@id/lessonTitleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/new_et"
+                    android:hint="الدرس"
+                    android:gravity="right"
+                    android:inputType="textCapSentences"
+                    android:paddingRight="5dp" />
+
+
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <Button
+            android:id="@+id/addLessonButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:layout_below="@id/card2"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/rectangle_button"
+            android:paddingRight="5dp"
+            android:text="رفع الدرس"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+</ScrollView>

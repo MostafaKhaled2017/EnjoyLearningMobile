@@ -35,6 +35,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
     ProgressBar progressBar;
     RecyclerView recyclerView;
     String subject, unit, lesson;
+    long term;
     TextView noInternetConnectionText, noStudentsTv;
     SwipeRefreshLayout swipeRefreshLayout;
     LastChallengersFragmentPresenter presenter;
@@ -50,6 +51,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
             subject = intent.getStringExtra("subject");
             unit = intent.getStringExtra("unit");
             lesson = intent.getStringExtra("lesson");
+            term = intent.getLongExtra("term", -1);
         }
 
     }
@@ -99,7 +101,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson);
+        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

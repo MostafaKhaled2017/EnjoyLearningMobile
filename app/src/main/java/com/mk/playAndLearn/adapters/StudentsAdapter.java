@@ -37,17 +37,19 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     Context context;
 
     private final String TAG, subject, unit, lesson;
+    long term;
     String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     int currentPosition = 0, lastPoints = (int) 1e9, lastPosition = -1;
 
 
-    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject, String unit, String lesson) {
+    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject, String unit, String lesson, long term) {
         this.list = list;
         this.context = context;
         this.TAG = TAG;
         this.subject = subject;
         this.unit = unit;
         this.lesson = lesson;
+        this.term = term;
     }
 
     @Override
@@ -76,6 +78,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     intent.putExtra("subject", subject);
                     intent.putExtra("unit", unit);
                     intent.putExtra("lesson", lesson);
+                    intent.putExtra("term", term);
                     context.startActivity(intent);
                     ((ChallengersActivity) context).finish();
                 }

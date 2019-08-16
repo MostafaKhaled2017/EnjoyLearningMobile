@@ -108,7 +108,7 @@ public class BestQuestionsUploadersFragment extends Fragment implements BestQues
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, null, null, null);
+        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, null, null, null, -1);
         RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

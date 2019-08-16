@@ -100,19 +100,19 @@ public class Lesson implements Serializable {
         this.schoolType = schoolType;
     }
 
-    public long getUnitNo() {
+    public String getUnitNo() {
         return unitNo;
     }
 
-    public void setUnitNo(long unitNo) {
+    public void setUnitNo(String unitNo) {
         this.unitNo = unitNo;
     }
 
-    public long getLessonNo() {
+    public String getLessonNo() {
         return lessonNo;
     }
 
-    public void setLessonNo(long lessonNo) {
+    public void setLessonNo(String lessonNo) {
         this.lessonNo = lessonNo;
     }
 
@@ -136,7 +136,8 @@ public class Lesson implements Serializable {
     String lessonId;
     String schoolType;
 
-    long unitNo, lessonNo, term;
+    String unitNo, lessonNo;
+    long term;
 
     boolean reviewed;
 

@@ -45,6 +45,7 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 
@@ -287,6 +288,20 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void doQuery(View view) {
         Toast.makeText(this, "Query started", Toast.LENGTH_SHORT).show();
+
+        fireStoreUsers.whereGreaterThan("acceptedQuestions", 0).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(DocumentSnapshot documentSnapshot:task.getResult()){
+                        String uid = documentSnapshot.getId();
+                        fireStoreUsers.document(uid).update("acceptedQuestions", 0);
+                    }
+                } else {
+                    Toast.makeText(AdminAppManagementActivity.this, "task failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
       /*  DatabaseReference localUsersReference = FirebaseDatabase.getInstance().getReference("users");
 

@@ -79,21 +79,8 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
 
         spinner = myView.findViewById(R.id.subjectsSpinnerInLessonsFragment);
 
-        try {
-            Field popup = Spinner.class.getDeclaredField("mPopup");
-            popup.setAccessible(true);
-
-            // Get private mPopup member variable and try cast to ListPopupWindow
-            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinner);
-
-            // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
-        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            // silently fail...
-        }
-
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.preparatory_subjects_array_with_all_subjects_item, R.layout.simple_spinner_item);
+                R.array.preparatory_subjects_array, R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 

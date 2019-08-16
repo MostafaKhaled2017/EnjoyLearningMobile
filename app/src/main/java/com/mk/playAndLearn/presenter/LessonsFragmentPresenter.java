@@ -8,9 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -52,7 +54,6 @@ public class LessonsFragmentPresenter {
         pref = context.getSharedPreferences("MyPref", 0); // 0 - for private mode //TODO : check thisg
         currentUserName = pref.getString("currentUserName", "غير معروف");
         grade = pref.getString("grade", "غير معروف");
-
     }
 
     public void startAsynkTask(final String currentSubject) {
@@ -90,11 +91,15 @@ public class LessonsFragmentPresenter {
         view.hideNoLessonsText();
         view.notifyAdapter();
 
+        Log.v("lessonsLogging", "getLessonsCalled");
+
         OnCompleteListener lessonsListener = new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                Log.v("lessonsLogging", "onComplete, grade is : " + grade
+                + " , current user UId is : " + FirebaseAuth.getInstance().getCurrentUser().getUid());
                 if (task.isSuccessful()) {
-                    Log.v("lessonsLogging", "task is successful");
+                    Log.v("lessonsLogging", "task is successful , result is : " + task.getResult().toString());
                     for (DocumentSnapshot document : task.getResult()) {
                         getLessonData(document);
                     }
@@ -153,42 +158,41 @@ public class LessonsFragmentPresenter {
                                             if (t.getResult().size() < limit) {
                                                 isLastItemReached = true;
                                             }
+                                        } else {
+                                            Toast.makeText(context, "برجاء المحاولة فى وقت لاحق", Toast.LENGTH_SHORT).show();
+                                            Log.v("lessonUpload", "exception is : " + task.getException().toString());
                                         }
                                     }
                                 };
 
+                                Query nextQuery = fireStoreLessons.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
+                                        .orderBy("date", Query.Direction.DESCENDING).startAfter(lastVisible).limit(limit);
+                                nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
 
-                                if (currentSubject.equals("كل المواد")) {
-                                    Query nextQuery = fireStoreLessons.whereEqualTo("grade", grade).orderBy("date", Query.Direction.ASCENDING)
-                                            .startAfter(lastVisible).limit(limit);
-                                    nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
-                                } else {
-                                    Query nextQuery = fireStoreLessons.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
-                                            .orderBy("date", Query.Direction.DESCENDING).startAfter(lastVisible).limit(limit);
-                                    nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
-                                }
                             }
                         }
                     };
                     view.setOnScrollListener(onScrollListener);
 
-
                 } else {
                     Log.v("TAG", "failed");
-                    Log.v("lessonsLogging", "task failed , "
-                            + "exception is : " + task.getException().toString());
+                    Log.v("lessonsLogging", ( ("task failed , "
+                            + "exception is : " + task.getException().getMessage()
+                            + " , " + task.getException().getCause().toString())));
                 }
             }
         };
 
-        if (currentSubject.equals("كل المواد")) {
-            firstQuery = fireStoreLessons.whereEqualTo("grade", grade).orderBy("date", Query.Direction.DESCENDING).limit(limit);
-            firstQuery.get().addOnCompleteListener(lessonsListener);
-        } else {
-            firstQuery = fireStoreLessons.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
-                    .orderBy("date", Query.Direction.DESCENDING).limit(limit);
-            firstQuery.get().addOnCompleteListener(lessonsListener);
-        }
+        firstQuery = fireStoreLessons
+                .document(grade)//TODO : change this to getSavedGrade(context)
+                .collection(currentSubject)
+                .whereEqualTo("reviewed", true)
+                .whereEqualTo("term", 1) //TODO ADD VIP
+                .whereEqualTo("grade", grade)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .limit(limit);
+
+        firstQuery.get().addOnCompleteListener(lessonsListener);
     }
 
     private boolean existsInLessonsList(String lessonId) {

@@ -42,6 +42,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
     ProgressBar progressBar;
     RecyclerView recyclerView;
     String subject, unit, lesson;
+    long term;
     TextView noInternetConnectionText, noFriendsTv;
     SwipeRefreshLayout swipeRefreshLayout;
     FriendsFragmentPresenter presenter;
@@ -57,6 +58,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
             subject = intent.getStringExtra("subject");
             unit = intent.getStringExtra("unit");
             lesson = intent.getStringExtra("lesson");
+            term = intent.getLongExtra("lesson", -1);
         }
 
     }
@@ -170,7 +172,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson);
+        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
