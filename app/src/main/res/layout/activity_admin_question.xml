@@ -99,7 +99,6 @@
             android:id="@+id/checkBox1InAdminQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/addQuestionEditText"
             android:text="الإجابة الاولي"
             style="@style/oneAnswerStyle"/>
 
