@@ -236,7 +236,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         progressBar.setVisibility(View.VISIBLE);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
