@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/appbar" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImage"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_below="@id/appBar"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/backgroud_splash"
+        android:layout_marginBottom="20dp"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userImage"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="الأسم : "
+        android:textSize="@dimen/generalTextSize" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="الصف الدراسي : "
+        android:textSize="@dimen/generalTextSize" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/grade"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="النقاط : "
+        android:textSize="@dimen/generalTextSize" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/schoolType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/points"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="نوع المدرسة : "
+        android:textSize="@dimen/generalTextSize" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/challenges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/schoolType"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="التحديات : الإنتصارات والهزائم والتعادلات"
+        android:textSize="@dimen/generalTextSize" />
+
+</RelativeLayout>

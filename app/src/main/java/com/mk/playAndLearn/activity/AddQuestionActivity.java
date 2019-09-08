@@ -413,7 +413,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("unitNumber", selectedUnit);//Added
                 map.put("lessonNumber", selectedLesson);//Added
                 map.put("questionType", "choose"); // TODO : edit this when new type of questions added
-                map.put("reviewed", true); // //TODO : edit after the event
+                map.put("reviewed", false); // //TODO : edit after the event
                 map.put("schoolType", schoolType);
                 map.put("subject", currentSubject);
                 map.put("term", convertTermToLong(selectedTerm));//Added
@@ -473,12 +473,12 @@ public class AddQuestionActivity extends AppCompatActivity {
                         });//TODO : Edit after the event
 
 
-                    /*    fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                       fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح وسيتم مراجعته قبل ظهوره فى التحديات", Toast.LENGTH_SHORT).show();
                             }
-                        });*/
+                        });
                         clearViews();
                     }
                 });

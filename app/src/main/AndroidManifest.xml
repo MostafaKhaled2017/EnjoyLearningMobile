@@ -24,6 +24,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
+        <activity android:name="com.mk.playAndLearn.activity.ProfileActivity"></activity>
         <activity
             android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
             android:label="@string/title_activity_study_tips"

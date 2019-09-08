@@ -57,6 +57,7 @@ public class NotificationsService extends Service {
     String localCurrentUserUid;
 
     FirebaseAuth localAuth;
+
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
     //TODO : change the text of notification according to the written and unwritten states in the database like refused, win, lose, draw ...
     //TODO : know why the app shows notifications for the uncompleted challenges when it is started and solve this problem
@@ -67,10 +68,6 @@ public class NotificationsService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.v("notificationsDebug", "onCreate" + localCurrentUserUid);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startMyOwnForegroundForOreoAndPie();
-        }
     }
 
     @Override
@@ -78,10 +75,6 @@ public class NotificationsService extends Service {
         localAuth = FirebaseAuth.getInstance();
         localCurrentUserUid = localAuth.getCurrentUser().getUid();
         Log.v("notificationsDebug", "onStartCommand" + localCurrentUserUid);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startMyOwnForegroundForOreoAndPie();
-        }
 
         /*//start of media player(used for debug)
 
@@ -112,7 +105,7 @@ public class NotificationsService extends Service {
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     final DocumentSnapshot challengeDocument = dc.getDocument();
                     switch (dc.getType()) {
-                        case ADDED:{
+                        case ADDED: {
                             final String challengeState = challengeDocument.getString("state");
                             final String player1Uid = challengeDocument.getString("player1Uid");
                             final String subject = adjustSubject(challengeDocument.getString("subject"));
@@ -121,7 +114,7 @@ public class NotificationsService extends Service {
                             fireStoreUsers.document(player1Uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
                                         currentPlayer = getCurrentPlayer(player1Uid);
                                         final String player1Name = (String) document.getString("userName");
@@ -150,7 +143,7 @@ public class NotificationsService extends Service {
                             fireStoreUsers.document(player2Uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()) {
+                                    if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
                                         currentPlayer = getCurrentPlayer(player1Uid);
                                         final String player2Name = (String) document.getString("userName");
@@ -165,7 +158,9 @@ public class NotificationsService extends Service {
                                     }
                                 }
                             });
+                            break;
                         case REMOVED:
+                            break;
                     }
                 }
             }
@@ -173,42 +168,42 @@ public class NotificationsService extends Service {
 
         //this gives the challenges that the current user has started
         Log.v("notificationsDebug", "localCurrentUserUid is : " + localCurrentUserUid);
-         fireStoreChallenges.whereEqualTo("player1notified",localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
+        fireStoreChallenges.whereEqualTo("player1notified", localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
         //this code gives data where current user is player 2
         fireStoreChallenges.whereEqualTo("player2notified", localCurrentUserUid + "false").addSnapshotListener(generalSnapShotListener);
 
 
         //commentsListener
-         fireStoreComments.whereEqualTo("notified",localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-             @Override
-             public void onSuccess(QuerySnapshot documentSnapshots) {
-                 for(DocumentSnapshot document : documentSnapshots.getDocuments()){
-                     String writerName = document.getString("userName");
-                     String postWriterUid = document.getString("postWriterUid");
-                     String commentWriterUid = document.getString("writerUid");
-                     if(!postWriterUid.equals(commentWriterUid) && document.exists()) {//TODO : think about changing the notification text to a shorter one
-                         showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
-                     }
-                     fireStoreComments.document(document.getId()).update("notified", true);
-                 }
-             }
-         });
+        fireStoreComments.whereEqualTo("notified", localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                    String writerName = document.getString("userName");
+                    String postWriterUid = document.getString("postWriterUid");
+                    String commentWriterUid = document.getString("writerUid");
+                    if (!postWriterUid.equals(commentWriterUid) && document.exists()) {//TODO : think about changing the notification text to a shorter one
+                        showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
+                    }
+                    fireStoreComments.document(document.getId()).update("notified", true);
+                }
+            }
+        });
 
         //repliesListener
-         fireStoreReplies.whereEqualTo("notified",localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-             @Override
-             public void onSuccess(QuerySnapshot documentSnapshots) {
-                 for(DocumentSnapshot document : documentSnapshots.getDocuments()){
-                     String writerName = document.getString("userName");
-                     String commentWriterUID = document.getString("commentWriterUid");
-                     String replyWriterUID = document.getString("writerUid");
-                     if(!commentWriterUID.equals(replyWriterUID) && document.exists()) {//TODO : think about changing the notification text to a shorter one
-                         showNotification("لديك رد جديد لتعليقك", "تم إضافة رد جديد لتعليقك بواسطة " + writerName);
-                     }
-                     fireStoreReplies.document(document.getId()).update("notified", true);
-                 }
-             }
-         });
+        fireStoreReplies.whereEqualTo("notified", localCurrentUserUid + "false").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+                    String writerName = document.getString("userName");
+                    String commentWriterUID = document.getString("commentWriterUid");
+                    String replyWriterUID = document.getString("writerUid");
+                    if (!commentWriterUID.equals(replyWriterUID) && document.exists()) {//TODO : think about changing the notification text to a shorter one
+                        showNotification("لديك رد جديد لتعليقك", "تم إضافة رد جديد لتعليقك بواسطة " + writerName);
+                    }
+                    fireStoreReplies.document(document.getId()).update("notified", true);
+                }
+            }
+        });
 
         return START_STICKY;
     }
@@ -220,25 +215,21 @@ public class NotificationsService extends Service {
         long player1Score = (long) dataSnapshot.getLong("player1score");
         long player2Score = (long) dataSnapshot.getLong("player2score");
 
-        if (challengeState.equals(completedChallengeText)){
-            if(player1Score == player2Score){
-                 return  drawChallengeText + " فى";
-            }
-            else {
-               currentPlayer = getCurrentPlayer(player1Uid);
-                if(currentPlayer == 1){
-                    if(player1Score > player2Score){
+        if (challengeState.equals(completedChallengeText)) {
+            if (player1Score == player2Score) {
+                return drawChallengeText + " فى";
+            } else {
+                currentPlayer = getCurrentPlayer(player1Uid);
+                if (currentPlayer == 1) {
+                    if (player1Score > player2Score) {
                         return wonChallengeText;
-                    }
-                    else {
+                    } else {
                         return loseChallengeText;
                     }
-                }
-                else if(currentPlayer == 2){
-                    if(player2Score > player1Score){
+                } else if (currentPlayer == 2) {
+                    if (player2Score > player1Score) {
                         return wonChallengeText;
-                    }
-                    else {
+                    } else {
                         return loseChallengeText;
                     }
                 }
@@ -249,7 +240,7 @@ public class NotificationsService extends Service {
 
     public static String adjustSubject(String subject) {
 
-        switch (subject){
+        switch (subject) {
             case "لغة عربية":
                 subject = "اللغة العربية";
                 break;
@@ -277,7 +268,8 @@ public class NotificationsService extends Service {
             case "فلسفة":
                 subject = "الفلسفة";
                 break;
-            default:  subject =  "ال " + subject;//TODO : check this and make this code a method returns the new subject
+            default:
+                subject = "ال " + subject;//TODO : check this and make this code a method returns the new subject
         }
         return subject;
     }
@@ -289,50 +281,40 @@ public class NotificationsService extends Service {
     }
 
     public void showNotification(String title, String content) {
+        final String NOTIFICATION_CHANNEL_ID = "1";
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("default",
-                    "CHANNEL_NAME",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("NOTIFICATION_CHANNEL_DISCRIPTION");
-            mNotificationManager.createNotificationChannel(channel);
-        }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.mipmap.app_icon) //TODO : add setLargeIcon
                 .setContentTitle(title) // title for notification
                 .setContentText(content)// message for notification
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)) // set alarm sound for notification
                 .setAutoCancel(true); // clear notification after click
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
+        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pi);
         mNotificationManager.notify(getID(), mBuilder.build());
         //TODO : edit the id if needed
         //TODO : think about making the notification opens the challenges fragment directly
-    }
-
-    private void startMyOwnForegroundForOreoAndPie(){
-        NotificationChannel chan = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            chan = new NotificationChannel("default",
-                    "العب .. تعلم",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            chan.setLightColor(Color.BLUE);
-            chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            assert manager != null;
-            manager.createNotificationChannel(chan);
-        }
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "default");
-        Notification notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.icon)
-                .setContentTitle("التطبيق يعمل فى الخلفية")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build();
-        startForeground(getID(), notification);
     }
 
     @Override

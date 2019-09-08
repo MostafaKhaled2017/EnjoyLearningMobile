@@ -25,6 +25,10 @@
         android:title="قائمة المتصدرين"
         app:showAsAction="never" />
     <item
+        android:id="@+id/profile"
+        android:title="الصفحة الشخصية"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/generalChallenges"
         android:title="التحدى العام"
         app:showAsAction="never" />

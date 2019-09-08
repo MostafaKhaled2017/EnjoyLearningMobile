@@ -231,6 +231,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             case R.id.addLesson:
                 startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
                 return true;
+            case R.id.profile:
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                return true;
             case R.id.contactUs:
                 startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
                 return true;
@@ -306,20 +309,21 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     }
 
     private void getCurrentVersion() {
-        Log.v("appVersionValidation", "getCurrentVersion called");
-        PackageManager pm = this.getPackageManager();
-        PackageInfo pInfo = null;
+        String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            Log.v("appVersionValidation", "getCurrentVersion called");
+            PackageManager pm = this.getPackageManager();
+            PackageInfo pInfo = null;
 
-        try {
-            pInfo = pm.getPackageInfo(this.getPackageName(), 0);
+            try {
+                pInfo = pm.getPackageInfo(this.getPackageName(), 0);
 
-        } catch (PackageManager.NameNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        currentVersion = pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            currentVersion = pInfo.versionName;
 
-        new GetLatestVersion().execute();
+            new GetLatestVersion().execute();
 
     }
 
@@ -436,22 +440,15 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         //TODO : add timer if needed
         //TODO : remove this method and use firebase function instead
         Log.v("notificationsDebug", "Service started");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
-            startForegroundService(serviceIntent);// TODO : check this after solving its errors
-        } else {
-            startService(serviceIntent);
-        }
+
+        startService(serviceIntent);
     }
 
     public void stopNotificationService() {
         //TODO : add timer if needed
         //TODO : remove this method and use firebase function instead
         Log.v("notificationsDebug", "Service stopped");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//TODO :check this
-            //ForegroundService(serviceIntent);// TODO : check this after solving its errors
-        } else {
-            stopService(serviceIntent);
-        }
+        stopService(serviceIntent);
     }
 
     //The user state becomes online when it opens the app and it changes to offline when the app stop from the background
@@ -513,11 +510,13 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             if (latestVersion != null) {
-                Log.v("appVersionValidation", "onPostExcute , currentVersion is : " + currentVersion
-                        + " , latestVersion is : " + latestVersion);
                 String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                Log.v("appVersionValidation", "onPostExcute , currentVersion is : " + currentVersion
+                        + " , latestVersion is : " + latestVersion
+                 + " , currentUserEmail : " + currentUserEmail
+                        + " , adminEmail : " + adminEmail);
                 if (!currentVersion.equalsIgnoreCase(latestVersion) && !currentUserEmail.equals(adminEmail)) {
-                    if (!isFinishing()) { //This would help to prevent Error : BinderProxy@45d459c0 is not valid; is your activity running? error
+                    if (!isFinishing()) {//This would help to prevent Error : BinderProxy@45d459c0 is not valid; is your activity running? error
                         showUpdateDialog();
                     }
                 }

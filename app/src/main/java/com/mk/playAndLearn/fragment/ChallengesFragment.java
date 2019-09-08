@@ -207,7 +207,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
                             lessonOrderSpinner.setSelection(0);
                             unitOrderSpinner.setSelection(0);
                             break;
-                        case "لغة عربية -نحو-":
+                        case "لغة عربية: نحو":
                             lessonOrderSpinner.setEnabled(true);
                             lessonOrderSpinner.setClickable(true);
                             unitOrderSpinner.setEnabled(false);

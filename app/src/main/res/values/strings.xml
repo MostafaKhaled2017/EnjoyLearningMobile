@@ -15,7 +15,7 @@
     <string name="ad_mob_used_id">ca-app-pub-1283544791526621~9315704399</string>
 
 
-  <!--  <string-array name="secondary_subjects_array_for_upload">
+    <!--  <string-array name="secondary_subjects_array_for_upload">
         <item>اختر المادة</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -83,6 +83,8 @@
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
         <item>رياضيات</item>
+        <item>Science</item>
+        <item>Mathematics</item>
     </string-array>
 
     <string-array name="preparatory_subjects_array_for_upload">
@@ -96,7 +98,7 @@
     </string-array>
 
 
-   <!-- <string-array name="preparatory_and_secondary_subjects_array_for_upload">
+    <!-- <string-array name="preparatory_and_secondary_subjects_array_for_upload">
         <item>كل المواد</item>
         <item>لغة عربية</item>
         <item>لغة انجليزية</item>
@@ -256,4 +258,6 @@
 4- قم بعمل جدول يومي وأسبوعي وحاول الالتزام به قدر الإمكان. \n
 5- قم بتلخيص الدروس باستخدام الخرائط الذهنية \n
 </string>
+    <string name="channel_name">إشعارات التطبيق</string>
+    <string name="channel_description">هذا الجزء خاص بإشعارات التطبيق</string>
 </resources>
