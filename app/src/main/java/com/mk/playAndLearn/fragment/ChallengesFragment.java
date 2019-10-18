@@ -97,7 +97,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null && !initialDataLoaded){
+                if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
                     presenter.startAsynkTask();
                     initialDataLoaded = true;
                 }
@@ -170,12 +170,13 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         dialogTitle.setText("بدء التحدى");
 
 
-
         ArrayAdapter<CharSequence> termAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.term_array, android.R.layout.simple_spinner_item);
         termAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        termSpinner.setAdapter(termAdapter);
         termSpinner.setSelection(1);
+        termSpinner.setEnabled(false);
+        termSpinner.setClickable(false);
+        termSpinner.setAdapter(termAdapter);
 
         termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -198,32 +199,32 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentSubject = adapterView.getItemAtPosition(i).toString();
-                    switch (currentSubject) {
-                        case "لغة انجليزية":
-                            unitOrderSpinner.setEnabled(true);
-                            unitOrderSpinner.setClickable(true);
-                            lessonOrderSpinner.setEnabled(false);
-                            lessonOrderSpinner.setClickable(false);
-                            lessonOrderSpinner.setSelection(0);
-                            unitOrderSpinner.setSelection(0);
-                            break;
-                        case "لغة عربية: نحو":
-                            lessonOrderSpinner.setEnabled(true);
-                            lessonOrderSpinner.setClickable(true);
-                            unitOrderSpinner.setEnabled(false);
-                            unitOrderSpinner.setClickable(false);
-                            unitOrderSpinner.setSelection(0);
-                            lessonOrderSpinner.setSelection(0);
-                            break;
-                        default:
-                            unitOrderSpinner.setEnabled(true);
-                            unitOrderSpinner.setClickable(true);
-                            lessonOrderSpinner.setEnabled(true);
-                            lessonOrderSpinner.setClickable(true);
-                            unitOrderSpinner.setSelection(0);
-                            lessonOrderSpinner.setSelection(0);
-                            break;
-                    }
+                switch (currentSubject) {
+                    case "لغة انجليزية":
+                        unitOrderSpinner.setEnabled(true);
+                        unitOrderSpinner.setClickable(true);
+                        lessonOrderSpinner.setEnabled(false);
+                        lessonOrderSpinner.setClickable(false);
+                        lessonOrderSpinner.setSelection(0);
+                        unitOrderSpinner.setSelection(0);
+                        break;
+                    case "لغة عربية: نحو":
+                        lessonOrderSpinner.setEnabled(true);
+                        lessonOrderSpinner.setClickable(true);
+                        unitOrderSpinner.setEnabled(false);
+                        unitOrderSpinner.setClickable(false);
+                        unitOrderSpinner.setSelection(0);
+                        lessonOrderSpinner.setSelection(0);
+                        break;
+                    default:
+                        unitOrderSpinner.setEnabled(true);
+                        unitOrderSpinner.setClickable(true);
+                        lessonOrderSpinner.setEnabled(true);
+                        lessonOrderSpinner.setClickable(true);
+                        unitOrderSpinner.setSelection(0);
+                        lessonOrderSpinner.setSelection(0);
+                        break;
+                }
             }
 
             @Override
@@ -277,90 +278,19 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
                     @Override
                     public void onClick(View view) {
                         String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                        if(currentUserEmail.equals(adminEmail)){
-
-                            if (currentSubject.equals("لغة انجليزية")) {
-
-                                fireStoreQuestions
-                                        .document(getSavedGrade(getActivity()))
-                                        .collection(currentSubject)
-                                        .whereEqualTo("reviewed", true)
-                                        .whereEqualTo("challengeQuestion", false)
-                                        .whereEqualTo("term", currentTerm)
-                                        .whereEqualTo("unitNumber", currentUnit)
-                                        .whereEqualTo("questionType", "choose")
-                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                                        Log.v("qEx","succeeded");
-                                        Toast.makeText(getActivity(), "Questions number is : " + documentSnapshots.size(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.v("qEx", e.toString());
-                                    }
-                                });
-                            } else if (currentSubject.equals("لغة عربية: نحو")) {
-                                fireStoreQuestions
-                                        .document(getSavedGrade(getActivity()))
-                                        .collection(currentSubject)
-                                        .whereEqualTo("reviewed", true)
-                                        .whereEqualTo("challengeQuestion", false)
-                                        .whereEqualTo("term", currentTerm)
-                                        .whereEqualTo("lessonNumber", currentLesson)
-                                        .whereEqualTo("questionType", "choose")
-                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                                        Log.v("qEx","succeeded");
-                                        Toast.makeText(getActivity(), "Questions number is : " + documentSnapshots.size(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.v("qEx", e.toString());
-                                    }
-                                });
-                            } else {
-                                fireStoreQuestions
-                                        .document(getSavedGrade(getActivity()))
-                                        .collection(currentSubject)
-                                        .whereEqualTo("reviewed", true)
-                                        .whereEqualTo("challengeQuestion", false)
-                                        .whereEqualTo("term", currentTerm)
-                                        .whereEqualTo("unitNumber", currentUnit)
-                                        .whereEqualTo("lessonNumber", currentLesson)
-                                        .whereEqualTo("questionType", "choose")
-                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                                        Log.v("qEx","succeeded");
-                                        Toast.makeText(getActivity(), "Questions number is : " + documentSnapshots.size(), Toast.LENGTH_SHORT).show();                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.v("qEx", e.toString());
-                                    }
-                                });
-                            }
-
-                        } else {
-                            Toast.makeText(getActivity(), "لا يمكنك دخول تحديات الان", Toast.LENGTH_SHORT).show();
-                        } // TODO : edit after the event
-
-                        /*if (currentTerm == -1) {
+                        if (currentTerm == -1) {
                             Toast.makeText(getActivity(), "قم باختيار الفصل الدراسى", Toast.LENGTH_SHORT).show();
-                        }else if (currentSubject.equals("اختر المادة")) {
+                        } else if (currentSubject.equals("اختر المادة")) {
                             Toast.makeText(getActivity(), "قم باختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
-                        } else if(currentUnit.equals("الوحدة") && unitOrderSpinner.isEnabled()){
+                        } else if (currentUnit.equals("الوحدة") && unitOrderSpinner.isEnabled()) {
                             Toast.makeText(getActivity(), "قم باختيار الوحدة ", Toast.LENGTH_SHORT).show();
-                        } else if(currentLesson.equals("الدرس") && lessonOrderSpinner.isEnabled()){
+                        } else if (currentLesson.equals("الدرس") && lessonOrderSpinner.isEnabled()) {
                             Toast.makeText(getActivity(), "قم باختيار الدرس", Toast.LENGTH_SHORT).show();
                         } else {
                             navigate();
-                            dialogInterface.dismiss();
-                        }*/ //TODO : edit after the event
+                        }
+
+                        /**/ //TODO : edit after the event
                     }
                 });
             }
@@ -427,11 +357,12 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void navigate() {
         Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(getActivity()));
-        if(currentSubject.equals("كل المواد")){
+        if (currentSubject.equals("كل المواد")) {
             Toast.makeText(getActivity(), "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
-        } else if(dailyChallengesNumber - getSavedTodayChallengesNo(getActivity()) < 1){
+        } else if (dailyChallengesNumber - getSavedTodayChallengesNo(getActivity()) < 1) {
             Toast.makeText(getActivity(), "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
         } else {
+            Log.v("termLogging", "term in challengeStart is : " + currentTerm);
             Intent i = new Intent(getActivity(), ChallengersActivity.class);
             i.putExtra("subject", currentSubject);
             i.putExtra("term", currentTerm);

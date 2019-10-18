@@ -498,6 +498,10 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
         questionsList.add(0, question);
     }
+
+    public void leaderBoard(View view) {
+            startActivity(new Intent(this, TestLeaderboardActivity.class));
+    }
 }
 
 

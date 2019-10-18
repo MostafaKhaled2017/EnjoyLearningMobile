@@ -91,6 +91,8 @@ public class ChallengesFragmentPresenter {
                     recreatingLists();
                     view.showMainViews();
 
+                    Log.v("infiniteLoading", "onPostExcute");
+
                     EventListener generalSnapShotListener = new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -132,6 +134,7 @@ public class ChallengesFragmentPresenter {
                             //TODO : add this
 
                             view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData2");
+                            Log.v("infiniteLoading", "Adapter Notified");
 
                         }
                     };
@@ -309,7 +312,7 @@ public class ChallengesFragmentPresenter {
             Collections.reverse(uncompletedChallengesList);
         }
     }
-
+   // Remove this after finishing
     void addScoreToPlayer1(final long player1Score, final long player2Score, final String challengeId) {
         final DocumentReference player1Reference = fireStoreUsers.document(localCurrentUserUid);
         final DocumentReference currentChallengeReference = fireStoreChallenges.document(challengeId);

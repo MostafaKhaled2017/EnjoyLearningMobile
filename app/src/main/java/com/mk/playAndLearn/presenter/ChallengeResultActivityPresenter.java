@@ -120,6 +120,8 @@ public class ChallengeResultActivityPresenter {
         final DateClass dateClass = new DateClass();
         dateClass.setDate(today);
 
+        final String challengeId = fireStoreChallenges.document().getId();
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         final String todayDate = format.format(today);
@@ -136,6 +138,7 @@ public class ChallengeResultActivityPresenter {
         map.put("player1Uid", localCurrentUserUid);
         map.put("player2Uid", secondPlayerUid);
         map.put("player1Name", currentUserName);
+        map.put("challengeId", challengeId);
         map.put("player1Image", localCurrentUserImage);
         map.put("player2Name", secondPlayerName);
         map.put("player2Image", secondPlayerImage);
@@ -146,7 +149,6 @@ public class ChallengeResultActivityPresenter {
         map.put("term", 2);//TODO : make this dynamic
 
 
-        final String challengeId = fireStoreChallenges.document().getId();
 
         fireStoreChallenges.document(challengeId).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

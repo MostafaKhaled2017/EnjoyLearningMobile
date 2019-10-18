@@ -86,7 +86,7 @@ public class QuestionResultActivity extends AppCompatActivity {
             }
         }
 
-        if (correct) {
+        if (correct){
             resultText.setText("إجابة صحيحة");
             resultText.setTextColor(Color.GREEN);
             playerAnswersBooleansList += true + " ";//TODO
@@ -232,6 +232,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         String localCurrentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                         SharedPreferences pref = getSharedPreferences("MyPref", 0);
+                        String questionId = ((ArrayList<Question>)list).get(questionNo).getQuestionId();
                         String grade = getSavedGrade(QuestionResultActivity.this);
                         Map<String, Object> map = new HashMap<>();
                         map.put("ComplainantEmail", localCurrentEmail);
@@ -239,12 +240,16 @@ public class QuestionResultActivity extends AppCompatActivity {
                         map.put("subject", subject);
                         map.put("grade", grade);
                         map.put("date", dateClass.getDate());
-                        map.put("questionId", ((ArrayList<Question>)list).get(questionNo).getQuestionId());
-                        fireStoreComplaintsQuestions.add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        map.put("questionId", questionId);
+                        fireStoreComplaintsQuestions.document(questionId).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                Toast.makeText(QuestionResultActivity.this, "تم إستقبال شكوتك وسيتم مراجعة السؤال", Toast.LENGTH_SHORT).show();
-                                navigate();
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(QuestionResultActivity.this, "تم إستقبال شكوتك وسيتم مراجعة السؤال", Toast.LENGTH_SHORT).show();
+                                    navigate();
+                                } else {
+                                    Toast.makeText(QuestionResultActivity.this, "لم يتم إرسال الشكوى", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     }

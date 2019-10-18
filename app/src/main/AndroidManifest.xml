@@ -24,14 +24,23 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-        <activity android:name="com.mk.playAndLearn.activity.ProfileActivity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.SignUp2Activity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.ProfileActivity" />
         <activity
             android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
             android:label="@string/title_activity_study_tips"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/game_app_id" />
+
         <activity
             android:name="com.mk.playAndLearn.activity.TermsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.TestLeaderboardActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.SearchActivity"

@@ -160,6 +160,8 @@ public class SignInActivity extends AppCompatActivity {
                                                     String email = document.getString("userEmail");
                                                     String image = document.getString("userImage");
                                                     String lastOnlineDay = document.getString("lastOnlineDay");
+                                                    String phoneNo = document.getString("phoneNo");
+                                                    String governorate = document.getString("governorate");
 
                                                     if (document.getLong("todayChallengesNo") != null)
                                                         todayChallengesNo = document.getLong("todayChallengesNo");
@@ -170,7 +172,7 @@ public class SignInActivity extends AppCompatActivity {
                                                     Log.v("todayChallengesNo", "todayChallengesNo in sign in activity : " + todayChallengesNo);
 
                                                     setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email
-                                                            , image, lastOnlineDay, todayChallengesNo, points);
+                                                            , image, lastOnlineDay, todayChallengesNo, points, phoneNo, governorate);
                                                     navigate();
                                                 } else {
                                                     Toast.makeText(SignInActivity.this, "يوجد مشكلة فى هذا الحساب برجاء التواصل مع إدارة التطبيق", Toast.LENGTH_SHORT).show();
@@ -277,6 +279,8 @@ public class SignInActivity extends AppCompatActivity {
                                                     String email = documentSnapshot.getString("userEmail");
                                                     String image = documentSnapshot.getString("userImage");
                                                     String lastOnlineDay = documentSnapshot.getString("lastOnlineDay");
+                                                    String phoneNo = documentSnapshot.getString("phoneNo");
+                                                    String governorate = documentSnapshot.getString("governorate");
                                                     if (documentSnapshot.getLong("todayChallengesNo") != null)
                                                         todayChallengesNo = documentSnapshot.getLong("todayChallengesNo");
                                                     if (documentSnapshot.getLong("points") != null)
@@ -284,7 +288,7 @@ public class SignInActivity extends AppCompatActivity {
 
                                                     Log.v("todayChallengesNo", "todayChallengesNo in sign in activity : " + todayChallengesNo);
 
-                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo, points);
+                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo, points, phoneNo, governorate);
                                                     navigate();
                                                 }
                                             }

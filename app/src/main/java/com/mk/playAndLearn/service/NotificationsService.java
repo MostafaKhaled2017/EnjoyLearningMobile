@@ -247,6 +247,15 @@ public class NotificationsService extends Service {
             case "لغة انجليزية":
                 subject = "اللغة الإنجليزية";
                 break;
+            case "دراسات اجتماعية":
+                subject = "الدراسات اجتماعية";
+                break;
+            case "علوم":
+                subject = "العلوم";
+                break;
+            case "لغة عربية: نحو":
+                subject = "اللغة العربية";//TODO : Think About editing this
+                break;
             case "جغرافيا":
                 subject = "الجغرافيا";
                 break;

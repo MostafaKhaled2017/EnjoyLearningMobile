@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class sharedPreference {
     public static void setSharedPreference(Context context, String name, String grade, String schoolType, String userType
-            , String email, String imageUrl, String lastOnlineDay, long todayChallengesNo, long points){
+            , String email, String imageUrl, String lastOnlineDay, long todayChallengesNo, long points, String phoneNo, String governorate){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -18,6 +18,8 @@ public class sharedPreference {
         editor.putString("lastOnlineDay", lastOnlineDay);
         editor.putLong("todayChallengesNo", todayChallengesNo);
         editor.putLong("points", points);
+        editor.putString("phoneNo", phoneNo);
+        editor.putString("governorate", governorate);
         editor.apply();
     }
 

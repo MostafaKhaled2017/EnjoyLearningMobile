@@ -13,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +41,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
     SwipeRefreshLayout swipeRefreshLayout;
     LastChallengersFragmentPresenter presenter;
 
-    private final String TAG = "LastChallengersFragment";
+    private final String TAG = "LastChallengers";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
+        Log.v("termLogging", "term in last challengers is : " + term);
         recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);

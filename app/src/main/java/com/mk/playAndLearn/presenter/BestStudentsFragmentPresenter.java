@@ -127,7 +127,6 @@ public class BestStudentsFragmentPresenter {
 
     private void getStudentsData(@NonNull Task<QuerySnapshot> task) {
         if (task.isSuccessful()) {
-            int points = -1000;
 
             if (!usersList.isEmpty())
                 usersList.clear();

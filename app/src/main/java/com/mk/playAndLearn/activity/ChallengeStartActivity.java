@@ -88,6 +88,11 @@ public class ChallengeStartActivity extends AppCompatActivity implements Challen
         horizontalProgressBar.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void hideProgressBar() {
+        horizontalProgressBar.setVisibility(View.GONE);
+    }
+
 
     @Override
     public void showCurrentPlayerData(String currentPlayerName, String currentPlayerImage, int currentPlayerPoints) {

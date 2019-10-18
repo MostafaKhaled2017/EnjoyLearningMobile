@@ -98,6 +98,18 @@
             android:text="حذف التحديات القديمة"/>
 
         <android.support.v7.widget.AppCompatButton
+            android:id="@+id/leaderboard"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/adjustGeneralChallengeQuestions"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="leaderBoard"
+            android:padding="10dp"
+            android:text="قائمة المتصدرين"/>
+
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/countUsersButton"
             style="@style/buttonStyle"
             android:layout_width="match_parent"

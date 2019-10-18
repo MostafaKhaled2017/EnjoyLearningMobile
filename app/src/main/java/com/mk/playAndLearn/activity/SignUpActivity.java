@@ -1,20 +1,16 @@
 package com.mk.playAndLearn.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +22,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -35,34 +30,43 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.SignUpActivityPresenter;
 
 import jp.wasabeef.blurry.Blurry;
 
-public class SignUpActivity extends AppCompatActivity implements SignUpActivityPresenter.View {
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+
+public class SignUpActivity extends AppCompatActivity {
     EditText nameEt, emailEt, passwordEt, rePasswordEt;
-    TextView termsTv;
     RadioGroup usersTypeRadioGroup;
     RadioButton studentRB, teacherRB;
-    Spinner genderSpinner, schoolTypeSpinner, userGradeSpinner;
+    Spinner genderSpinner;
     CheckBox acceptTerms;
     ProgressBar progressBar;
-    private GoogleSignInClient mGoogleSignInClient;
-    GoogleApiClient mGoogleApiClient;
-    GoogleSignInOptions gso;
     AuthCredential credential;
 
-    SignUpActivityPresenter presenter;
     Button addEmailButton;
 
     ProgressDialog progressDialog;
-    Button registerBtn;
+    Button nextBtn;
 
-    String userSchoolType, userType, gender, grade, imageUrl;
+    String userType, gender, imageUrl;
     long points = 0;
+    private GoogleSignInClient mGoogleSignInClient;
+    GoogleApiClient mGoogleApiClient;
+    GoogleSignInOptions gso;
 
     ImageView backgroundIv;
 
@@ -71,7 +75,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        termsTv = findViewById(R.id.termsTv);
         nameEt = findViewById(R.id.etName);
         emailEt = findViewById(R.id.etEmail);
         passwordEt = findViewById(R.id.etPassword);
@@ -80,22 +83,15 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         studentRB = findViewById(R.id.studentRadioButton);
         teacherRB = findViewById(R.id.teacherRadioButton);
         genderSpinner = findViewById(R.id.genderSpinner);
-        schoolTypeSpinner = findViewById(R.id.schoolTypeSpinner);
-        userGradeSpinner = findViewById(R.id.userGradeSpinner);
         progressBar = findViewById(R.id.progressbar);
-        acceptTerms = findViewById(R.id.acceptTerms);
         addEmailButton = findViewById(R.id.addEmailButton);
         backgroundIv = findViewById(R.id.backgroundIv);
-        registerBtn = findViewById(R.id.signUpBtn);
-
-        presenter = new SignUpActivityPresenter(this, this);
+        nextBtn = findViewById(R.id.nextBtn);
 
         initializeGoogleLoginVariables();
 
         //set spinners
-        setUserSchoolTypeSpinner();
         setUserGenderSpinner();
-        setUserGradeSpinner();
 
         View decorView = getWindow().getDecorView();
 // Hide the status bar.
@@ -119,16 +115,13 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
             }
         });
 
-        registerBtn.setOnClickListener(new View.OnClickListener() {
+        nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                disableRegisterButton();
-
                 String name = nameEt.getText().toString().trim();
                 String email = emailEt.getText().toString().trim();
                 String password = passwordEt.getText().toString().trim();
                 String rePassword = rePasswordEt.getText().toString().trim();
-                boolean acceptTermsChecked = acceptTerms.isChecked();
 
                 int selectedId = usersTypeRadioGroup.getCheckedRadioButtonId();
 
@@ -138,28 +131,40 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
                     userType = "معلم";
                 }
 
-                presenter.validateSignUpAndUploadData(name, email, password, rePassword, gender, userSchoolType, userType, grade, acceptTermsChecked, points);
+                if (TextUtils.isEmpty(name)) {
+                    setNameError();
+                } else if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(SignUpActivity.this, "برجاء إضافة البريد الالكترونى الخاص بك", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(password)) {
+                    setPasswordError(SignUpActivity.this.getApplicationContext().getString(R.string.emptyEditText));
+                } else if (TextUtils.isEmpty(rePassword)) {
+                    setRePasswordError(SignUpActivity.this.getApplicationContext().getString(R.string.emptyEditText));
+                } else if (!password.equals(rePassword)) {
+                    setRePasswordError("كلمة السر وتأكيد كلمة السر غير متطابقين");
+                } else if (password.length() < 6) {
+                    setPasswordError("كلمة المرور يجب ألا تقل عن 6 حروف أو أرقام");
+                } else if (TextUtils.isEmpty(userType)) {
+                   setUserTypeError();
+                } else {
+
+                    Intent intent = new Intent(SignUpActivity.this, SignUp2Activity.class);
+                    intent.putExtra("name", name);
+                    intent.putExtra("email", email);
+                    intent.putExtra("password", password);
+                    intent.putExtra("gender", gender);
+                    intent.putExtra("userType", userType);
+                    intent.putExtra("points", points);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
-        SpannableString ss = new SpannableString("أوافق على شروط الإستخدام");
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View textView) {
-                startActivity(new Intent(SignUpActivity.this, TermsActivity.class));
-            }
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setUnderlineText(false);
-            }
-        };
-        ss.setSpan(clickableSpan, 10, 24, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
 
-        termsTv.setText(ss);
-        termsTv.setMovementMethod(LinkMovementMethod.getInstance());
-        termsTv.setHighlightColor(Color.TRANSPARENT);
-
+    public void signInWithGoogle(final int RC_SIGN_IN) {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     void initializeGoogleLoginVariables() {
@@ -180,63 +185,76 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
-    public void signInWithGoogle(final int RC_SIGN_IN) {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == 1 && resultCode == RESULT_OK) { //1 for adding email
-            presenter.addEmailAddress(data);
+            addEmailAddress(data);
         } else {
             Toast.makeText(this, "فشل إضافة الحساب برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    @Override
-    public void showProgressBar() {
-        if (progressBar.getVisibility() != View.VISIBLE)
-            progressBar.setVisibility(View.VISIBLE);
-    }
+    public void addEmailAddress(Intent data) {
+        showProgressBar();
+        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+        try {
 
-    @Override
-    public void hideProgressBar() {
-        if (progressBar.getVisibility() == View.VISIBLE)
-            progressBar.setVisibility(View.GONE);
-    }
+            final FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    @Override
-    public void setEmailEt(String text) {
-        emailEt.setText(text);
-    }
+            // Google Sign In was successful, authenticate with Firebase
+            final GoogleSignInAccount account = task.getResult(ApiException.class);
+            final AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            auth.signInWithCredential(credential)
+                    .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> signUpTask) {
+                            if (signUpTask.isSuccessful()) {
+                                final String currentUserUid = auth.getCurrentUser().getUid();
+                                // Sign in success, update UI with the signed-in user's information
+                                fireStoreUsers.document(currentUserUid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        String email = auth.getCurrentUser().getEmail();
 
-    @Override
-    public void setPoints(long points) {
-        this.points = points;
-    }
-
-    public void setUserSchoolTypeSpinner() {
-        ArrayAdapter<CharSequence> userSchoolTypesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.user_school_types_array, android.R.layout.simple_spinner_item);
-        userSchoolTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        schoolTypeSpinner.setAdapter(userSchoolTypesAdapter);
-
-        schoolTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                userSchoolType = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
+                                        if (documentSnapshot.exists()) {
+                                            String databaseGender = documentSnapshot.getString("gender");
+                                            if (databaseGender != null) {
+                                                Toast.makeText(SignUpActivity.this, "هذا الحساب موجود بالفعل برجاء اختيار حساب اخر أو تسجيل الدخول", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                long points = documentSnapshot.getLong("points");
+                                                setEmailEt(email);
+                                                setPoints(points);
+                                            }
+                                        } else if (!documentSnapshot.exists()) {
+                                            setEmailEt(email);
+                                        }
+                                        hideProgressBar();
+                                        //  auth.signOut();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(SignUpActivity.this, "فشل إضافة الحساب برجاء التأكد من الاتصال بالانترنت و إعادة المحاولة", Toast.LENGTH_SHORT).show();
+                                        Log.v("signUpException", "exception is : " + e.getMessage());
+                                    }
+                                });
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(SignUpActivity.this, "فشل التسجيل في التطبيق من فضلك تأكد من الإتصال بالإنترنت وأعد المحاولة", Toast.LENGTH_SHORT).show();
+                                Log.v("sign in exception :", signUpTask.getException().toString());
+                                hideProgressBar();
+                                //updateUI(null);
+                            }
+                        }
+                    });
+        } catch (ApiException e) {
+            Toast.makeText(SignUpActivity.this, "حدثت مشكلة أثناء محاولة التسجيل برجاء التأكد من الإتصال بالانترنت وإعادة المحاولة", Toast.LENGTH_SHORT).show();
+            Log.v("Logging", "sign in exception : " + e.toString());
+            hideProgressBar();
+        }
     }
 
     public void setUserGenderSpinner() {
@@ -264,70 +282,39 @@ public class SignUpActivity extends AppCompatActivity implements SignUpActivityP
 
     }
 
-
-    public void setUserGradeSpinner() {
-        ArrayAdapter<CharSequence> userGradeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.sign_up_grades_array, android.R.layout.simple_spinner_item);
-        userGradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userGradeSpinner.setAdapter(userGradeAdapter);
-
-        userGradeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                grade = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
+    public void showProgressBar() {
+        if (progressBar.getVisibility() != View.VISIBLE)
+            progressBar.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void disableRegisterButton() {
-        registerBtn.setClickable(false);
-        registerBtn.setEnabled(false);
+    public void hideProgressBar() {
+        if (progressBar.getVisibility() == View.VISIBLE)
+            progressBar.setVisibility(View.GONE);
     }
 
-    @Override
-    public void enableRegisterButton() {
-        registerBtn.setClickable(true);
-        registerBtn.setEnabled(true);
-    }
-
-    @Override
-    public void navigate() {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
-    }
-
-    @Override
     public void setNameError() {
         nameEt.setError(getString(R.string.emptyEditText));
         nameEt.requestFocus();
     }
 
-    @Override
+    public void setEmailEt(String text) {
+        emailEt.setText(text);
+    }
+
     public void setPasswordError(String message) {
         passwordEt.setError(message);
         passwordEt.requestFocus();
     }
 
-    @Override
     public void setRePasswordError(String message) {
         rePasswordEt.setError(message);
         rePasswordEt.requestFocus();
     }
 
-
-    @Override
-    public void setAcceptTermsCheckedError() {
-        acceptTerms.setError("يجب تعليم هذا الحقل للمتابعة");
+    public void setPoints(long points) {
+        this.points = points;
     }
 
-    @Override
     public void setUserTypeError() {
         Toast.makeText(this, "برجاء تحديد إذا كنت طالب أم معلم", Toast.LENGTH_SHORT).show();
     }

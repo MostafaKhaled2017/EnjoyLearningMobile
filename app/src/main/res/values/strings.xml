@@ -60,9 +60,7 @@
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
-        <item>رياضيات</item>
         <item>Science</item>
-        <item>Mathematics</item>
         <item>موضوعات عامة</item>
     </string-array>
 
@@ -72,9 +70,7 @@
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
-        <item>رياضيات</item>
         <item>Science</item>
-        <item>Mathematics</item>
         <item>موضوعات عامة</item>
     </string-array>
 
@@ -86,9 +82,7 @@
         <item>لغة انجليزية</item>
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
-        <item>رياضيات</item>
         <item>Science</item>
-        <item>Mathematics</item>
     </string-array>
 
     <string-array name="preparatory_subjects_array_for_upload">
@@ -103,6 +97,39 @@
         <item>Mathematics</item>
     </string-array>
 
+    <string-array name="governorates">
+        <item>المحافظة</item>
+        <item>القاهرة</item>
+        <item>الجيزة</item>
+        <item>الإسكندرية</item>
+        <item>الإسماعيلية</item>
+        <item>أسوان</item>
+        <item>أسيوط</item>
+        <item>الأقصر</item>
+        <item>البحر الأحمر</item>
+        <item>البحيرة</item>
+        <item>بني سويف</item>
+        <item>بورسعيد</item>
+        <item>جنوب سيناء</item>
+        <item>الدقهلية</item>
+        <item>دمياط</item>
+        <item>سوهاج</item>
+        <item>السويس</item>
+        <item>الشرقية</item>
+        <item>شمال سيناء</item>
+        <item>الغربية</item>
+        <item>الفيوم</item>
+        <item>القليوبية</item>
+        <item>قنا</item>
+        <item>كفر الشيخ</item>
+        <item>مطروح</item>
+        <item>المنوفية</item>
+        <item>المنيا</item>
+        <item>الوادى الجديد</item>
+    </string-array>
+
+    <string name="game_app_id">697151736213</string>
+    <string name="leaderboard_id">CgkIlZPti6UUEAIQAQ</string>
 
     <!-- <string-array name="preparatory_and_secondary_subjects_array_for_upload">
         <item>كل المواد</item>
@@ -182,7 +209,7 @@
     </string-array>
 
     <string-array name="term_array">
-        <item>اختر الفصل الدراسى</item>
+        <!-- <item>اختر الفصل الدراسى</item> -->
         <item>الفصل الدراسى الأول</item>
         <item>الفصل الدراسى الثانى</item>
     </string-array>
@@ -219,6 +246,7 @@
         <item>أنثى</item>
     </string-array>
     <string-array name="sign_up_grades_array">
+        <item>اختر الصف الدراسى</item>
         <item>الصف الأول الإعدادى</item>
         <item>الصف الثانى الإعدادى</item>
         <item>الصف الثالث الإعدادى</item>

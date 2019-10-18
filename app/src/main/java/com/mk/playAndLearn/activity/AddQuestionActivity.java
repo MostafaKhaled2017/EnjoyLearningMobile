@@ -413,7 +413,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("unitNumber", selectedUnit);//Added
                 map.put("lessonNumber", selectedLesson);//Added
                 map.put("questionType", "choose"); // TODO : edit this when new type of questions added
-                map.put("reviewed", false); // //TODO : edit after the event
+                map.put("reviewed", false);
                 map.put("schoolType", schoolType);
                 map.put("subject", currentSubject);
                 map.put("term", convertTermToLong(selectedTerm));//Added
@@ -470,7 +470,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                                 Log.w("TAG", "Transaction failure.", e);
                                 Toast.makeText(AddQuestionActivity.this, "لم يتم رفع السؤال برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
                             }
-                        });//TODO : Edit after the event
+                        });
 
 
                        fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

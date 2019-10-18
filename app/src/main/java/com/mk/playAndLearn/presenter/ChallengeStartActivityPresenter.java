@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,6 +36,7 @@ public class ChallengeStartActivityPresenter {
     Context context;
 
     Intent i;
+    int failedRetries = 0;
 
     ArrayList list = new ArrayList<>();
 
@@ -198,15 +200,16 @@ public class ChallengeStartActivityPresenter {
 
     void loadQuestionsForChallenger1() {
         String randomId = fireStoreQuestions.document().getId();
+        Log.v("startingChallenge", "method called");
 
         if (subject.equals("لغة انجليزية")) {
 
             fireStoreQuestions
-                    .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                    .document(getSavedGrade(context))//TODO : change this to getSavedGrade(context)
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", term)
+                    .whereEqualTo("term", 1) //TODO : edit
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -214,22 +217,30 @@ public class ChallengeStartActivityPresenter {
                     .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
-                    Log.v("qEx","succeeded");
-                    getQuestionsForChallenger1(documentSnapshots);
+
+                    if (failedRetries == 5){
+                        view.hideProgressBar();
+                        Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
+                    }else if(documentSnapshots.size() == 0){
+                        loadQuestionsForChallenger1();
+                        failedRetries ++;
+                    } else {
+                        getQuestionsForChallenger1(documentSnapshots);
+                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.v("qEx", e.toString());
+                    Log.v("startingChallenge", "Failed");
                 }
             });
         } else if (subject.equals("لغة عربية: نحو")) {
             fireStoreQuestions
-                    .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                    .document(getSavedGrade(context))//TODO : change this to getSavedGrade(context)
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", term)
+                    .whereEqualTo("term", 1)  //TODO : edit
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -237,8 +248,16 @@ public class ChallengeStartActivityPresenter {
                     .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
-                    Log.v("qEx","succeeded");
-                    getQuestionsForChallenger1(documentSnapshots);
+                    Log.v("qEx", "succeeded");
+                    if (failedRetries == 5){
+                        view.hideProgressBar();
+                        Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
+                }else if(documentSnapshots.size() == 0){
+                        loadQuestionsForChallenger1();
+                        failedRetries ++;
+                    } else {
+                        getQuestionsForChallenger1(documentSnapshots);
+                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -248,11 +267,11 @@ public class ChallengeStartActivityPresenter {
             });
         } else {
             fireStoreQuestions
-                    .document("الصف الأول الثانوى")//TODO : change this to getSavedGrade(context)
+                    .document(getSavedGrade(context))//TODO : change this to getSavedGrade(context)
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", term)
+                    .whereEqualTo("term", 1)  //TODO : edit
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
@@ -262,8 +281,15 @@ public class ChallengeStartActivityPresenter {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
                     Log.v("qEx","succeeded");
-                    getQuestionsForChallenger1(documentSnapshots);
-                }
+                    if (failedRetries == 5){
+                        view.hideProgressBar();
+                        Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
+                    }else if(documentSnapshots.size() == 0){
+                        loadQuestionsForChallenger1();
+                        failedRetries ++;
+                    } else {
+                        getQuestionsForChallenger1(documentSnapshots);
+                    }                }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
@@ -274,10 +300,13 @@ public class ChallengeStartActivityPresenter {
     }
 
     void getQuestionsForChallenger1(QuerySnapshot documentSnapshots) {
+        Log.v("startingChallenge", "Method called , snapShot is : " + documentSnapshots.getDocuments().toString());
         for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+            Log.v("startingChallenge", "Question Added");
             addQuestionData(document);
             if (list.size() < 5) {
                 loadQuestionsForChallenger1();
+                Log.v("startingChallenge", "List Size : " + list.size());
             } else {
                 navigate();
             }
@@ -331,5 +360,7 @@ public class ChallengeStartActivityPresenter {
         void showOpponentData(String opponentName, String opponentImage, int opponentPoints);
 
         void showProgressBar();
+
+        void hideProgressBar();
     }
 }

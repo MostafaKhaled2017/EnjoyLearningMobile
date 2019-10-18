@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +38,8 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     Context context;
 
     private final String TAG, subject, unit, lesson;
-    long term;
+    long term = -2;
     String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    int currentPosition = 0, lastPoints = (int) 1e9, lastPosition = -1;
-
 
     public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject, String unit, String lesson, long term) {
         this.list = list;
@@ -50,6 +49,9 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
         this.unit = unit;
         this.lesson = lesson;
         this.term = term;
+
+        Log.v("termLogging", "term in adapter constructor is : " + term
+        + " , unit is : " + unit);
     }
 
     @Override
@@ -64,11 +66,13 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
     @Override
     public void onBindViewHolder(StudentsAdapter.MyHolder holder, int position) {
         final User user = list.get(position);
-        if (TAG.equals("LastChallengersFragment")|| TAG.equals("FriendsFragment")) {
+        if (TAG.equals("LastChallengers")|| TAG.equals("FriendsFragment")) {
             holder.position.setVisibility(View.GONE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.v("termLogging", "term in adapter is : " + term
+                    + " , unit is : " + unit);
                     Intent intent = new Intent(context, ChallengeStartActivity.class);
                     intent.putExtra("name", user.getName());
                     intent.putExtra("image", user.getImageUrl());

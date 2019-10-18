@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillViewport="true">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-       <FrameLayout
+        <FrameLayout
             android:id="@+id/background"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -17,10 +17,10 @@
                 android:id="@+id/backgroundIv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:adjustViewBounds="true"
                 android:alpha="0.8"
                 android:scaleType="fitXY"
-                android:src="@drawable/sign_background"
-                android:adjustViewBounds="true"/>
+                android:src="@drawable/sign_background" />
 
         </FrameLayout>
 
@@ -184,71 +184,8 @@
 
             </RadioGroup>
 
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right">
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/userGradeSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="المرحلة الدراسية"
-                    android:textSize="@dimen/generalTextSize" />
-
-            </android.support.v7.widget.LinearLayoutCompat>
-
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:paddingHorizontal="5dp">
-
-                <Spinner
-                    android:id="@+id/schoolTypeSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp" />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="نوع المدرسة"
-                    android:textSize="@dimen/generalTextSize" />
-
-            </android.support.v7.widget.LinearLayoutCompat>
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="5dp">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/termsTv"
-                android:textSize="@dimen/generalTextSize"
-                android:text="أوافق على شروط الإستخدام"
-                android:layout_gravity="center_vertical"
-                android:textColorLink="#0000ff"/>
-
-                <android.support.v7.widget.AppCompatCheckBox
-                    android:id="@+id/acceptTerms"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_margin="2dp"
-                    android:textSize="@dimen/generalTextSize" />
-            </android.support.v7.widget.LinearLayoutCompat>
-
-
             <Button
-                android:id="@+id/signUpBtn"
+                android:id="@+id/nextBtn"
                 android:layout_width="210dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -256,7 +193,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/buttonshape"
                 android:fontFamily="@font/gotham"
-                android:text="تسجيل"
+                android:text="التالى"
                 android:textAllCaps="false"
                 android:textColor="#ffffff"
                 android:textSize="18sp"

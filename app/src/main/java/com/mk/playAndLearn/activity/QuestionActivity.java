@@ -137,10 +137,11 @@ public class QuestionActivity extends AppCompatActivity {
         answers.add(question.getAnswer1());
         answers.add(question.getAnswer2());
 
+        //To shuffle Answers but we have disabled this feature
+       // Collections.shuffle(answers);
+
         if (question.getAnswer3().length() > 0)
             answers.add(question.getAnswer3());
-
-        Collections.shuffle(answers);
 
         if (question.getAnswer4().length() > 0)
             answers.add(question.getAnswer4());//because some question there last option is things like "all above"
@@ -169,8 +170,8 @@ public class QuestionActivity extends AppCompatActivity {
             countDownInterval = 3000;//3 seconds
             totalSeconds = millisInFuture / 1000;
         } else {
-            millisInFuture = 31000;
-            countDownInterval = 300;
+            millisInFuture = 11000;
+            countDownInterval = 100;
             totalSeconds = millisInFuture / 1000;
         }
 

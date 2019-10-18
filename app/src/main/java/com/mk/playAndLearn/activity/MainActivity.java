@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 return true;}*/
             case R.id.signOut:
                 stopNotificationService();
-                setSharedPreference(this, null, null, null, null, null, null, null, -1, -1);
+                setSharedPreference(this, null, null, null, null, null, null, null, -1, -1, null, null);
                 Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
