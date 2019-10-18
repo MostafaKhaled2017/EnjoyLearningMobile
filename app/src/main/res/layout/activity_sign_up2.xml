@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/background"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/backgroundIv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:alpha="0.8"
+                android:scaleType="fitXY"
+                android:src="@drawable/sign_background" />
+
+        </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/progressbarOfSignUp2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-15dp"
+            android:layout_marginBottom="5dp"
+            android:indeterminate="true"
+            android:max="100"
+            android:visibility="invisible" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layoutDirection="ltr"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/userGradeSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="المرحلة الدراسية"
+                    android:textSize="@dimen/generalTextSize" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingHorizontal="5dp">
+
+                <Spinner
+                    android:id="@+id/schoolTypeSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="نوع المدرسة"
+                    android:textSize="@dimen/generalTextSize" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColorHint="#000000">
+
+                <EditText
+                    android:id="@+id/phoneNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:hint="رقم الهاتف"
+                    android:inputType="number"
+                    android:textColor="#000000"
+                    android:textDirection="rtl"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingHorizontal="5dp">
+
+                <Spinner
+                    android:id="@+id/governorateName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="اسم المحافظة"
+                    android:textSize="@dimen/generalTextSize" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColorHint="#000000">
+
+                <EditText
+                    android:id="@+id/invitingFriend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:hint="كود الصديق الذى دعاك(اختيارى)"
+                    android:inputType="text"
+                    android:textColor="#000000"
+                    android:textDirection="rtl"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="5dp">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/termsTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="أوافق على شروط الإستخدام"
+                    android:textColorLink="#0000ff"
+                    android:textSize="@dimen/generalTextSize" />
+
+                <android.support.v7.widget.AppCompatCheckBox
+                    android:id="@+id/acceptTerms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_margin="2dp"
+                    android:textSize="@dimen/generalTextSize" />
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <Button
+                android:id="@+id/signUpBtn"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/buttonshape"
+                android:fontFamily="@font/gotham"
+                android:text="تسجيل"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>
