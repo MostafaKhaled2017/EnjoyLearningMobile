@@ -149,7 +149,6 @@ public class ChallengeResultActivityPresenter {
         map.put("term", 2);//TODO : make this dynamic
 
 
-
         fireStoreChallenges.document(challengeId).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

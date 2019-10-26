@@ -1,74 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view_of_student"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layoutDirection="rtl"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layoutDirection="ltr"
-    android:layout_marginBottom="0.5dp">
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view_of_student"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        card_view:cardBackgroundColor="@color/white"
+        card_view:cardCornerRadius="10dp"
+        card_view:cardElevation="5dp"
+        android:paddingStart="@dimen/_20sdp"
+        card_view:cardUseCompatPadding="true">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/userImageInBest"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentRight="true"
-            android:layout_margin="10dp"
-            android:src="@mipmap/app_icon" />
+        <RelativeLayout
+            android:padding="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80sdp"
+            >
 
 
-        <TextView
-            android:id="@+id/userNameInBest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_toLeftOf="@id/userImageInBest"
-            android:text="Mostafa"
-            android:textSize="18sp" />
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/isOnlineImageView"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="18dp"
-            android:layout_toLeftOf="@id/userNameInBest"
-            android:scaleType="fitXY"
-            android:src="@drawable/online_dot"
-            android:visibility="invisible" />
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/userImageInBest"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:src="@drawable/man"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_alignParentStart="true"
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/isAdminImageView"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="13dp"
-            android:layout_toLeftOf="@id/isOnlineImageView"
-            android:scaleType="fitXY"
-            android:src="@drawable/star"
-            android:visibility="invisible" />
+                />
+          <ImageView
+              android:id="@+id/isOnlineImageView"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_11sdp"
+              android:visibility="gone"
+                android:background="@drawable/selected"
+                />
+            <ImageView
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_11sdp"
+                android:background="@drawable/default_selected"
+                android:visibility="gone"
+                />
 
-        <TextView
-            android:id="@+id/pointsInBest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/userNameInBest"
-            android:layout_margin="3dp"
-            android:layout_toLeftOf="@id/userImageInBest"
-            android:text="15xp"
-            android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/positionInBest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="5dp"
-            android:text="1"
-            android:textSize="21sp" />
+            <TextView
+                android:id="@+id/userNameInBest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Mostafa khaled"
+                android:fontFamily="@font/el_messiri"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_toEndOf="@+id/userImageInBest"/>
 
-    </RelativeLayout>
-</android.support.v7.widget.CardView>
+            <ImageView
+                android:id="@+id/isAdminImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/userNameInBest"
+                app:srcCompat="@drawable/startcircle"
+                android:layout_marginStart="@dimen/_5sdp"
+                />
+
+
+
+            <TextView
+                android:id="@+id/positionInBest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="1"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/el_messiri"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_19sdp"
+                android:layout_margin="@dimen/_7sdp"
+                android:layout_alignParentEnd="true"/>
+
+
+            <TextView
+                android:id="@+id/pointsInBest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="15 XP"
+                android:fontFamily="@font/el_messiri"
+                android:textSize="@dimen/_10sdp"
+                android:visibility="visible"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_below="@+id/userNameInBest"
+                android:layout_toEndOf="@+id/userImageInBest"/>
+         <!--   <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="14-10-2019"
+                android:fontFamily="@font/el_messiri"
+                android:textSize="@dimen/_10sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                /> -->
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

@@ -16,13 +16,11 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
 import com.mk.playAndLearn.presenter.BestStudentsFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class BestStudentsFragment extends Fragment implements BestStudentsFragmentPresenter.View {
@@ -53,9 +51,9 @@ public class BestStudentsFragment extends Fragment implements BestStudentsFragme
         final View view = inflater.inflate(R.layout.fragment_best_students, container, false);
 
 
-        recyclerView = view.findViewById(R.id.bestStudentsRecyclerView);
-        progressBar = view.findViewById(R.id.bestStudentsProgressBar);
-        swipeRefreshLayout = view.findViewById(R.id.bestStudentsSwipeRefreshLayout);
+        recyclerView = view.findViewById(R.id.bestStudentsInGeneralChallengeRecyclerView);
+        progressBar = view.findViewById(R.id.bestStudentsInGeneralChallengeProgressBar);
+        swipeRefreshLayout = view.findViewById(R.id.bestStudentsInGeneralChallengeSwipeRefreshLayout);
         spinner = view.findViewById(R.id.typeSpinner);
         noStudentsTv = view.findViewById(R.id.noStudentsTextInBestStudents);
 

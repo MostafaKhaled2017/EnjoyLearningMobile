@@ -26,8 +26,6 @@ public class StudyTipsActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("نصائح المذاكرة");
 
     }
 

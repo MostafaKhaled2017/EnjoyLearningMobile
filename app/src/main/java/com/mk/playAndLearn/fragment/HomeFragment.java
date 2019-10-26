@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,10 +30,8 @@ import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
 
 /**
@@ -71,7 +70,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deleteCache(getActivity());
         presenter = new HomeFragmentPresenter(this, getActivity());
     }
 
@@ -139,18 +137,11 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     public void showSpinnerDialog() {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());//TODO : check this
-        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_spinner, null);
+        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
 
         final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .setCancelable(false)
-                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setNegativeButton("إضافة", null)
                 .create();
 
         final EditText inputComment = view.findViewById(R.id.dialog_value);
@@ -159,6 +150,13 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         dialogTitle.setText("إضافة منشور");
         inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
 
+        ImageView closeIcon = view.findViewById(R.id.closeIcon);
+        closeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialogBuilderUserInput.dismiss();
+            }
+        });
 
         final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.preparatory_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
@@ -183,7 +181,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
             @Override
             public void onShow(final DialogInterface dialogInterface) {
 
-                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
+                Button button = view.findViewById(R.id.addPostBtn);
                 button.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -248,7 +246,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     @Override
     public void onResume() {
         super.onResume();
-        deleteCache(getActivity());
     }
 
     @Override

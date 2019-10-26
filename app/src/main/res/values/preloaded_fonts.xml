@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/acme</item>
+        <item>@font/allerta</item>
+        <item>@font/almendra</item>
+        <item>@font/cagliostro</item>
+        <item>@font/cairo</item>
+        <item>@font/cairo_extralight</item>
+        <item>@font/cairo_semibold</item>
+        <item>@font/changa_semibold</item>
+        <item>@font/el_messiri</item>
+    </array>
+</resources>

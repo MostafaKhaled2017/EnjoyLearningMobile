@@ -2,7 +2,6 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,11 +15,7 @@ import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
 
-import java.net.URI;
-
 public class ContactUsActivity extends AppCompatActivity {
-    TextView phoneNumer, email;
-    Intent i;
     //TODO : add facebook page to the activity but I prefer to wait for some time
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,27 +30,6 @@ public class ContactUsActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-
-        phoneNumer = findViewById(R.id.phoneNumber);
-        email = findViewById(R.id.email);
-
-        phoneNumer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                i = new Intent(Intent.ACTION_DIAL, Uri.fromParts(
-                        "tel", "01010079193", null));
-                startActivity(i);
-            }
-        });
-
-        email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "playandlearn123456@gmail.com", null));
-                startActivity(Intent.createChooser(i, "send email..."));
-            }
-        });
     }
 
     @Override

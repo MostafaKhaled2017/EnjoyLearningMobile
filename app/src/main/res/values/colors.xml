@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#0b9da0</color>
-    <color name="colorPrimaryDark">#076b6d</color>
-    <color name="colorAccent">#0b9da0</color>
-    <color name="white">#FFF</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="colorPrimary">#138AF2</color>
+    <color name="colorPrimaryDark">#138AF2</color>
+    <color name="colorAccent">#D81B60</color>
     <color name="color1">#0b9da0</color>
     <color name="color2">#9FB7B9</color>
     <color name="color3">#f0f5f5</color>
@@ -11,16 +10,20 @@
     <!--TODO : think about changing this color -->
     <color name="writingColor">#838383</color>
     <color name="color4">#46B1C9</color>
-    <color name="black">#000</color>
     <color name="grey">#beb7b7</color>
     <color name="green">#4d9900</color>
     <color name="red">#df3030</color>
     <color name="fabColor">#94b937</color>
     <color name="hint_enter_note">#89c3c3c3</color>
-    <color name="gray">#b6b5b5</color>
     <color name="bg_bubble_self">#62caa6</color>
     <color name="bg_bubble_watbot">#ecf0f1</color>
-
+    <color name="gray" tools:ignore="MissingDefaultResource">#cccccc</color>
+    <color name="blueDark">#033F73</color>
+    <color name="white">#FFFF</color>
+    <color name="black">#000000</color>
+    <color name="blue_white">#80BDF2</color>
+    <color name="grayone">#8098B9</color>
+    <color name="graywhite">#f2f2f2</color>
     <color name="black_overlay">#66000000</color>
 
 </resources>

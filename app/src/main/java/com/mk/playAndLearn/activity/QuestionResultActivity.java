@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.DateClass;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +36,8 @@ import java.util.Map;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
@@ -45,6 +49,10 @@ public class QuestionResultActivity extends AppCompatActivity {
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     int secondPlayerPoints, currentChallenger, sleepTime = 1000;
     boolean isGeneralChallenge, reported = false;
+
+    ImageView player1ImageIv, player2Image;
+    TextView player1NameTv, player1PointsTv, player2Name, player2Points;
+
     Intent i;
 
     @Override
@@ -59,6 +67,11 @@ public class QuestionResultActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
         resultText = findViewById(R.id.resultText);
+
+        player1NameTv = findViewById(R.id.firstPlayerName);
+        player1ImageIv = findViewById(R.id.firstPlayerImage);
+        player2Name = findViewById(R.id.secondPlayerName);
+        player2Image = findViewById(R.id.secondPlayerImage);
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -83,6 +96,13 @@ public class QuestionResultActivity extends AppCompatActivity {
                 } else if (currentChallenger == 2) {
                     challengeId = intent.getStringExtra("challengeId");
                 }
+
+                player1NameTv.setText(getSavedName(this));
+                Picasso.with(this).load(getSavedImage(this)).placeholder(R.drawable.picasso_placeholder).into(player1ImageIv);
+
+                player2Name.setText(secondPlayerName);
+                Picasso.with(this).load(secondPlayerImage).placeholder(R.drawable.picasso_placeholder).into(player2Image);
+
             }
         }
 

@@ -37,7 +37,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
 
     public SharedPreferences pref; // 0 - for private mode
 
-    ImageView player1ImageTv, player2ImageTv;
+    ImageView player1ImageTv, player2ImageTv, againstIv;
     TextView player1NameTv, player1ScoreTv, player2NameTv, player2ScoreTv;
     TextView challengeResultTv, challengeStateTv, againstTv;
 
@@ -50,7 +50,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
@@ -66,9 +66,10 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         player2NameTv = findViewById(R.id.secondPlayerName);
         player2ImageTv = findViewById(R.id.secondPlayerImage);
         player2ScoreTv = findViewById(R.id.secondPlayerScore);
-        challengeResultTv = findViewById(R.id.resultChallengeTv);
+        challengeResultTv = findViewById(R.id.challengeResultTv);
         challengeStateTv = findViewById(R.id.challengeStateInResultActivity);
         againstTv = findViewById(R.id.againstTextViewInChallengeResult);
+        againstIv = findViewById(R.id.againstIv);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -158,6 +159,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         player2ScoreTv.setVisibility(View.GONE);
         challengeStateTv.setVisibility(View.GONE);
         againstTv.setVisibility(View.GONE);
+        againstIv.setVisibility(View.GONE);
     }
 
     @Override

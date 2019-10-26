@@ -408,7 +408,6 @@ public class ChallengesFragmentPresenter {
     }
 
     public interface View {
-        void navigate();
 
         void retryConnection();
 

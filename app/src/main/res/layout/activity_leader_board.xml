@@ -2,47 +2,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layoutDirection="ltr"
+    android:layoutDirection="rtl"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color1">
+            android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/toolbar_title"
+                android:id="@+id/tahadi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/cairo"
+                android:gravity="center"
                 android:text="قائمة المتصدرين"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_in_toolbar" />
-        </android.support.v7.widget.Toolbar>
+                android:textColor="#FFFF"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                tools:fontFamily="@font/el_messiri" />
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tablayout_in_leader_board"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/color1"
-            app:tabIndicatorColor="@color/white">
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
 
-        </android.support.design.widget.TabLayout>
-    </android.support.design.widget.AppBarLayout>
-
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout_in_leader_board"
+        app:tabMode="fixed"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="6dp"
+        app:tabSelectedTextColor="@color/black"
+        app:tabIndicatorColor="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_in_leader_board"
+        android:layout_below="@+id/tablayout_in_leader_board"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1"
-        android:background="@android:color/white" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

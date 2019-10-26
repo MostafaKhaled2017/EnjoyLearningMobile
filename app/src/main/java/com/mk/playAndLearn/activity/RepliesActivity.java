@@ -32,7 +32,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
 
 public class RepliesActivity extends AppCompatActivity implements RepliesButtonActivityPresenter.View {
@@ -87,7 +86,7 @@ public class RepliesActivity extends AppCompatActivity implements RepliesButtonA
 //        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
 //        //set the color filter, you can use also Mode.SRC_ATOP
 //        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-//        //set it to your fab button initialized before
+//        //set it to your fab googleBtnIv initialized before
 //        fab.setImageDrawable(willBeWhite);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,12 +151,6 @@ public class RepliesActivity extends AppCompatActivity implements RepliesButtonA
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        deleteCache(this);
     }
 
     @Override

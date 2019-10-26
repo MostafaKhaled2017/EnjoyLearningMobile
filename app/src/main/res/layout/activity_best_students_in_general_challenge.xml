@@ -4,34 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color3"
     android:layoutDirection="ltr"
-    tools:context=".activity.BestStudents">
+    android:background="@color/color3">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginBottom="8dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" >
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color1">
+            android:layout_height="wrap_content">
+
 
             <TextView
-                android:id="@+id/toolbar_title"
+                android:id="@+id/addcourse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:fontFamily="@font/cairo"
+                android:gravity="center"
                 android:text="أوائل التحدى العام"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_in_toolbar" />
-        </android.support.v7.widget.Toolbar>
+                android:textColor="#FFFF"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
 
-    </android.support.design.widget.AppBarLayout>
+        </RelativeLayout>
 
-    <include layout="@layout/no_internet_connection_text" />
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <include
+        android:id="@+id/noInternetConnectionText"
+        layout="@layout/no_internet_connection_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/noStudentsText"
@@ -46,8 +70,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/bestStudentsInGeneralChallengeSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_below="@id/appBar"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/bestStudentsInGeneralChallengeRecyclerView"

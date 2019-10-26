@@ -85,7 +85,6 @@ public class SignUpActivity extends AppCompatActivity {
         genderSpinner = findViewById(R.id.genderSpinner);
         progressBar = findViewById(R.id.progressbar);
         addEmailButton = findViewById(R.id.addEmailButton);
-        backgroundIv = findViewById(R.id.backgroundIv);
         nextBtn = findViewById(R.id.nextBtn);
 
         initializeGoogleLoginVariables();
@@ -97,10 +96,6 @@ public class SignUpActivity extends AppCompatActivity {
 // Hide the status bar.
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sign_background);
-        Blurry.with(this).from(bitmap).into(backgroundIv);
-
         addEmailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,344 +1,371 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layoutDirection="ltr"
-    android:fillViewport="true"
-    android:scrollbars="none">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:background="@color/white">
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color3"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        tools:context=".activity.AddQuestionActivity">
+        tools:context=".Addign.AddQuestions">
 
-        <include
-            android:id="@+id/appBar"
-            layout="@layout/appbar" />
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card1"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_marginBottom="8dp"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/addcourse"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/appBar"
-            android:layout_marginLeft="@dimen/margin_horizontal_of_add_question"
-            android:layout_marginRight="@dimen/margin_horizontal_of_add_question">
+            android:fontFamily="@font/cairo"
+            android:gravity="center"
+            android:text="إضافة سؤال "
+            android:textColor="#FFFF"
+            android:textSize="@dimen/_18sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/color3"
-                android:orientation="vertical">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.025" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white"
-                    android:paddingBottom="7dp">
-
-                    <TextView
-                        android:id="@+id/gradeTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="4dp"
-                        android:text=" الصف الدراسى : "
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/gradeSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_toLeftOf="@id/gradeTv"
-                        android:scrollbars="none" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white"
-                    android:paddingBottom="7dp">
-
-                    <TextView
-                        android:id="@+id/termTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="4dp"
-                        android:text="الفصل الدراسى : "
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/termSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_toLeftOf="@id/termTv"
-                        android:scrollbars="none" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white"
-                    android:paddingBottom="7dp">
-
-                    <TextView
-                        android:id="@+id/subjectsTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="4dp"
-                        android:text=" المادة الدراسية : "
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/subjectsSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_toLeftOf="@id/subjectsTextView"
-                        android:scrollbars="none" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/unitOrderLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white"
-                    android:paddingBottom="7dp">
-
-
-                    <TextView
-                        android:id="@+id/unitOrderTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="4dp"
-                        android:text="ترتيب الوحدة :    "
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/unitOrderSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_toLeftOf="@id/unitOrderTextView"
-                        android:scrollbars="none" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white"
-                    android:paddingBottom="7dp">
-
-                    <TextView
-                        android:id="@+id/lessonOrderTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="4dp"
-                        android:text="ترتيب الدرس :     "
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/lessonOrderSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_toLeftOf="@id/lessonOrderTv"
-                        android:scrollbars="none" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card2"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/lessonContent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/card1"
-            android:layout_marginLeft="@dimen/margin_horizontal_of_add_question"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="@dimen/margin_horizontal_of_add_question"
-            android:background="@color/color3">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/color3">
-
-                <EditText
-                    android:id="@+id/addQuestionEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@drawable/new_et"
-                    android:hint="السؤال"
-                    android:inputType="textCapSentences"
-                    android:paddingRight="5dp" />
-
-                <!--<TextView
-                    android:id="@+id/answerText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/addQuestionEditText"
-                    android:layout_alignParentRight="true"
-                    android:layout_margin="6dp"
-                    android:text="الإجابات"
-                    android:textColor="@color/writingColor"
-                    android:textSize="22sp" />
-
-                <TextView
-                    android:id="@+id/instuctionsText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/answerText"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="قم بكتابة اختيارين على الأقل للسؤال وعلم الإجابة أو الإجابات الصحيحة "
-                    android:textSize="18sp" />-->
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:fontFamily="@font/el_messiri"
+            android:text=" اختر المادة الدراسية "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addcourse"
+            app:layout_constraintVertical_bias="0.052" />
 
 
-                <RelativeLayout
-                    android:id="@+id/answer1Layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/addQuestionEditText"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white">
+        <Spinner
+            android:id="@+id/subjectsSpinner"
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/gradient_spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addcourse"
+            app:layout_constraintVertical_bias="0.052" />
 
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/checkbox1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp" />
 
-                    <EditText
-                        android:id="@+id/et1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/checkbox1"
-                        android:background="@drawable/new_et"
-                        android:hint="الإختيار الأول"
-                        android:inputType="text"
-                        android:paddingRight="5dp" />
+        <Spinner
+            android:id="@+id/gradeSpinner"
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/gradient_spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.036"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subjectsSpinner"
+            app:layout_constraintVertical_bias="0.045" />
 
-                </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/answer2Layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/answer1Layout"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white">
 
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/checkbox2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp" />
 
-                    <EditText
-                        android:id="@+id/et2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/checkbox2"
-                        android:background="@drawable/new_et"
-                        android:hint="الإختيار الثاني"
-                        android:inputType="text"
-                        android:paddingRight="5dp" />
 
-                </RelativeLayout>
+        <Spinner
+            android:id="@+id/termSpinner"
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/gradient_spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/gradeSpinner"
+            app:layout_constraintTop_toBottomOf="@+id/subjectsSpinner"
+            app:layout_constraintVertical_bias="0.045" />
 
-                <RelativeLayout
-                    android:id="@+id/answer3Layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/answer2Layout"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white">
 
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/checkbox3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp" />
 
-                    <EditText
-                        android:id="@+id/et3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/checkbox3"
-                        android:background="@drawable/new_et"
-                        android:hint="الإختيار الثالث(اختياري)"
-                        android:inputType="text"
-                        android:paddingRight="5dp" />
-                </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/answer4Layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/answer3Layout"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/white">
+        <Spinner
+            android:id="@+id/unitOrderSpinner"
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/gradient_spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.004"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gradeSpinner"
+            app:layout_constraintVertical_bias="0.049" />
 
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/checkbox4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp" />
 
-                    <EditText
-                        android:id="@+id/et4"
-                        android:paddingRight="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/checkbox4"
-                        android:background="@drawable/new_et"
-                        android:hint="الإختيار الرابع(اختياري)"
-                        android:inputType="text" />
+        <Spinner
+            android:id="@+id/lessonOrderSpinner"
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/gradient_spinner"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/unitOrderSpinner"
+            app:layout_constraintTop_toBottomOf="@+id/termSpinner"
+            app:layout_constraintVertical_bias="0.045" />
 
-                </RelativeLayout>
 
-            </RelativeLayout>
 
-        </android.support.v7.widget.CardView>
+        <EditText
+            android:id="@+id/addQuestionEditText"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:inputType="textPersonName"
+            android:hint="اكتب سؤالك هنا"
+            android:padding="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.042"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/unitOrderSpinner"
+            app:layout_constraintVertical_bias="0.072" />
+
+
+        <TextView
+            android:id="@+id/addlessonname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="اكتب  خيارات السؤال هنا"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.053"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addQuestionEditText"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <EditText
+            android:id="@+id/et1"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="الاختيار الأول"
+            android:fontFamily="@font/el_messiri"
+            android:textSize="@dimen/_11sdp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.242"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addlessonname" />
+
+        <CheckBox
+
+            android:id="@+id/checkbox1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/et1"
+            app:layout_constraintTop_toBottomOf="@+id/addlessonname"
+            app:layout_constraintVertical_bias="0.016" />
+
+
+
+
+        <CheckBox
+
+            android:id="@+id/checkbox2"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/et2"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox1"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <EditText
+            android:id="@+id/et2"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:hint="الاختيار الثاني"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:textSize="@dimen/_11sdp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.228"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et1"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <CheckBox
+
+            android:id="@+id/checkbox3"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/et3"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox2"
+            app:layout_constraintVertical_bias="0.035" />
+
+        <EditText
+            android:id="@+id/et3"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:textSize="@dimen/_11sdp"
+            android:gravity="center"
+            android:hint="الإختيار الثالث "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.228"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et2"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <CheckBox
+
+            android:id="@+id/checkbox4"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/addQuestionBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/et3"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox3" />
+
+        <EditText
+            android:id="@+id/et4"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:textSize="@dimen/_11sdp"
+            android:gravity="center"
+            android:hint="الإختيار الرابع "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.148"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et3"
+            app:layout_constraintVertical_bias="0.0" />
+
 
         <Button
             android:id="@+id/addQuestionBtn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:layout_below="@id/card2"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/rectangle_button"
-            android:paddingRight="5dp"
-            android:text="رفع السؤال"
-            android:textColor="@color/white" />
-    </RelativeLayout>
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@drawable/shape_dark"
+            android:fontFamily="@font/cairo_semibold"
+            android:text="اضف السؤال"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </ScrollView>

@@ -31,7 +31,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.ChallengeDetailsActivity;
 import com.mk.playAndLearn.activity.ChallengersActivity;
+import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.presenter.ChallengesFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
@@ -39,7 +41,6 @@ import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
@@ -67,9 +68,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     View view;
     ChallengesFragmentPresenter presenter;
 
-    String currentSubject, currentUnit, currentLesson;
-    long currentTerm;
-
     ProgressBar progressBar;
 
     ChallengesAdapter completedChallengeRecyclerAdapter, uncompletedChallengeRecyclerAdapter;
@@ -89,7 +87,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deleteCache(getActivity());
 
         presenter = new ChallengesFragmentPresenter(this, getActivity());
 
@@ -132,7 +129,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showSpinnerDialog();
+                startActivity(new Intent(getActivity(), ChallengeDetailsActivity.class));
             }
         });
 
@@ -144,160 +141,6 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
-
-    public void showSpinnerDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());//TODO : check this
-        android.view.View view = layoutInflaterAndroid.inflate(R.layout.challenges_dialog, null);
-
-        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setCancelable(false)
-                .setPositiveButton("إلغاء", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .setNegativeButton("بدء", null)
-                .create();
-
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        Spinner subjectsSpinner = view.findViewById(R.id.subjectsSpinnerInDialog);
-        final Spinner unitOrderSpinner = view.findViewById(R.id.unitSpinnerInDialog);
-        final Spinner lessonOrderSpinner = view.findViewById(R.id.lessonSpinnerInDialog);
-        final Spinner termSpinner = view.findViewById(R.id.termSpinner);
-        dialogTitle.setText("بدء التحدى");
-
-
-        ArrayAdapter<CharSequence> termAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.term_array, android.R.layout.simple_spinner_item);
-        termAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        termSpinner.setSelection(1);
-        termSpinner.setEnabled(false);
-        termSpinner.setClickable(false);
-        termSpinner.setAdapter(termAdapter);
-
-        termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentTerm = convertTermToLong(adapterView.getItemAtPosition(i).toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.preparatory_subjects_array_for_upload, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        subjectsSpinner.setAdapter(subjectsAdapter);
-
-        subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentSubject = adapterView.getItemAtPosition(i).toString();
-                switch (currentSubject) {
-                    case "لغة انجليزية":
-                        unitOrderSpinner.setEnabled(true);
-                        unitOrderSpinner.setClickable(true);
-                        lessonOrderSpinner.setEnabled(false);
-                        lessonOrderSpinner.setClickable(false);
-                        lessonOrderSpinner.setSelection(0);
-                        unitOrderSpinner.setSelection(0);
-                        break;
-                    case "لغة عربية: نحو":
-                        lessonOrderSpinner.setEnabled(true);
-                        lessonOrderSpinner.setClickable(true);
-                        unitOrderSpinner.setEnabled(false);
-                        unitOrderSpinner.setClickable(false);
-                        unitOrderSpinner.setSelection(0);
-                        lessonOrderSpinner.setSelection(0);
-                        break;
-                    default:
-                        unitOrderSpinner.setEnabled(true);
-                        unitOrderSpinner.setClickable(true);
-                        lessonOrderSpinner.setEnabled(true);
-                        lessonOrderSpinner.setClickable(true);
-                        unitOrderSpinner.setSelection(0);
-                        lessonOrderSpinner.setSelection(0);
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        ArrayAdapter<CharSequence> unitOrderAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.units_array, android.R.layout.simple_spinner_item);
-        unitOrderAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        unitOrderSpinner.setAdapter(unitOrderAdapter);
-
-        unitOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentUnit = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        ArrayAdapter<CharSequence> lessonsOrderAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.lessons_array, android.R.layout.simple_spinner_item);
-        lessonsOrderAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        lessonOrderSpinner.setAdapter(lessonsOrderAdapter);
-
-        lessonOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentLesson = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(final DialogInterface dialogInterface) {
-
-                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                        if (currentTerm == -1) {
-                            Toast.makeText(getActivity(), "قم باختيار الفصل الدراسى", Toast.LENGTH_SHORT).show();
-                        } else if (currentSubject.equals("اختر المادة")) {
-                            Toast.makeText(getActivity(), "قم باختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
-                        } else if (currentUnit.equals("الوحدة") && unitOrderSpinner.isEnabled()) {
-                            Toast.makeText(getActivity(), "قم باختيار الوحدة ", Toast.LENGTH_SHORT).show();
-                        } else if (currentLesson.equals("الدرس") && lessonOrderSpinner.isEnabled()) {
-                            Toast.makeText(getActivity(), "قم باختيار الدرس", Toast.LENGTH_SHORT).show();
-                        } else {
-                            navigate();
-                        }
-
-                        /**/ //TODO : edit after the event
-                    }
-                });
-            }
-        });
-
-        alertDialogBuilderUserInput.show();
-
     }
 
     @Override
@@ -335,41 +178,11 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void onResume() {
         super.onResume();
-        deleteCache(getActivity());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    long convertTermToLong(String term) {
-        switch (term) {
-            case "الفصل الدراسى الأول":
-                return 1;
-            case "الفصل الدراسى الثانى":
-                return 2;
-            default:
-                return -1;
-        }
-    }
-
-    @Override
-    public void navigate() {
-        Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(getActivity()));
-        if (currentSubject.equals("كل المواد")) {
-            Toast.makeText(getActivity(), "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
-        } else if (dailyChallengesNumber - getSavedTodayChallengesNo(getActivity()) < 1) {
-            Toast.makeText(getActivity(), "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
-        } else {
-            Log.v("termLogging", "term in challengeStart is : " + currentTerm);
-            Intent i = new Intent(getActivity(), ChallengersActivity.class);
-            i.putExtra("subject", currentSubject);
-            i.putExtra("term", currentTerm);
-            i.putExtra("unit", currentUnit);
-            i.putExtra("lesson", currentLesson);
-            startActivity(i);
-        }
     }
 
     @Override

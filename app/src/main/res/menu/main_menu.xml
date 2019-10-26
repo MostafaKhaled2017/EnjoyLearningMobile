@@ -39,8 +39,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/contactUs"
+        android:title="تواصل معنا"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/chatBot"
         android:title="روبوت الدردشة"
+        android:visible="false"
         app:showAsAction="never" />
     <!-- <item
          android:id="@+id/editAccoutData"
@@ -51,13 +57,8 @@
         android:title="نصائح المذاكرة"
         app:showAsAction="never" />
     <item
-        android:id="@+id/contactUs"
-        android:title="تواصل معنا"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/signOut"
-        android:title="تسجيل الخروج"
+        android:id="@+id/settings"
+        android:title="الإعدادات"
         app:showAsAction="never" />
 
     <item
@@ -66,5 +67,10 @@
         android:title="إدارة التطبيق"
         android:visible="false"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/signOut"
+        android:title="تسجيل الخروج"
+        app:showAsAction="never" />
+
 
 </menu>

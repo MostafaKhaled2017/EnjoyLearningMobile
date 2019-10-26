@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.ChallengeDetailsActivity;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.presenter.LessonsFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
@@ -26,7 +28,7 @@ import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 
 /**
@@ -65,7 +67,6 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deleteCache(getActivity());
         presenter = new LessonsFragmentPresenter(this, getActivity());
     }
 
@@ -79,8 +80,19 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
 
         spinner = myView.findViewById(R.id.subjectsSpinnerInLessonsFragment);
 
-        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.preparatory_subjects_array, R.layout.simple_spinner_item);
+        Log.v("gradeLogging", "saved grade is : " + getSavedGrade(getActivity()));
+
+        ArrayAdapter<CharSequence> subjectsAdapter;
+
+        if(getSavedGrade(getActivity()).equals("الصف الأول الإعدادى")) {
+            subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.first_preparatory_subjects_array, R.layout.simple_spinner_item);
+        } else {
+            subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.preparatory_subjects_array, R.layout.simple_spinner_item);
+        }
+
+
         subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(subjectsAdapter);
 
@@ -165,7 +177,6 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
     @Override
     public void onResume() {
         super.onResume();
-        deleteCache(getActivity());
     }
 
     @Override

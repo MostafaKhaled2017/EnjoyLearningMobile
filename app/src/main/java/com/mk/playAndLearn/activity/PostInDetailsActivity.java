@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.mk.playAndLearn.activity.MainActivity.deleteCache;
 
 
 public class PostInDetailsActivity extends AppCompatActivity implements PostsInDetailsActivityPresenter.View {
@@ -72,8 +71,6 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-
-        deleteCache(this);
 
         presenter = new PostsInDetailsActivityPresenter(this, this);
 
@@ -115,7 +112,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
 //        Drawable willBeWhite = myFabSrc.getConstantState().newDrawable();
 //        //set the color filter, you can use also Mode.SRC_ATOP
 //        willBeWhite.mutate().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-//        //set it to your fab button initialized before
+//        //set it to your fab googleBtnIv initialized before
 //        fab.setImageDrawable(willBeWhite);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,7 +182,6 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
     @Override
     protected void onResume() {
         super.onResume();
-        deleteCache(this);
     }
 
     @Override

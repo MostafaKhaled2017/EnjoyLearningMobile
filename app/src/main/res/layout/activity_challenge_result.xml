@@ -1,130 +1,189 @@
-<?xml version="1.0" encoding="utf-8"?><!-- TODO : enhance the design -->
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/challengeStartMainView"
     android:layout_width="match_parent"
-    android:layoutDirection="ltr"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:background="@color/white"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/appBar"
-        layout="@layout/appbar" />
 
-    <ProgressBar
-        android:id="@+id/horizontalProgressbarInChallengeStartActivity"
-        style="?android:attr/progressBarStyleHorizontal"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:layout_below="@id/appBar"
-        android:layout_marginTop="-25dp"
-        android:indeterminate="true"
-        android:max="100"
-        android:visibility="invisible" />
+        android:layout_height="@dimen/_65sdp"
+        android:background="@color/colorPrimary">
 
-    <!-- TODO : ensure that the data appears here is correct-->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/againstTextViewInChallengeResult"
-        android:layout_below="@id/appBar"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
-        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/firstPlayerImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center"
-            android:src="@color/gray" />
+            <TextView
+                android:id="@+id/tahadi"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/cairo"
+                android:gravity="center"
+                android:text="نتيجة التحدي"
+                android:textColor="#FFFF"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                tools:fontFamily="@font/cairo" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/firstPlayerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="غير معروف"
-            android:textSize="18sp"
-            android:textStyle="bold" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/firstPlayerScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="0 XP"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        </RelativeLayout>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/againstTextViewInChallengeResult"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="ضد"
-        android:textColor="@color/writingColor"
-        android:textSize="35sp" />
 
-    <TextView
-        android:id="@+id/resultChallengeTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="النتيجة : "
-        android:textSize="20sp"
-        android:visibility="invisible" />
+    </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
-        android:id="@+id/secondPlayerView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/challengeState"
-        android:layout_below="@id/againstTextViewInChallengeResult"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
-        android:orientation="vertical">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/secondPlayerImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center"
-            android:src="@color/gray" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/secondPlayerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="غير معروف"
-            android:textColor="@color/writingColor"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/secondPlayerScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="0 XP"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
 
     <TextView
         android:id="@+id/challengeStateInResultActivity"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="5dp"
-        android:padding="7dp"
-        android:background="@color/gray"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:layout_below="@+id/toolbar"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/cairo_semibold"
+        android:gravity="center"
+        android:text="مبروك لقد  ربحت التحدي"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_14sdp" />
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/_35sdp"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/linearone"
+        android:padding="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/pictureone"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/firstPlayerImage"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/woman"
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_border_width="4dp" />
+
+            <TextView
+                android:id="@+id/firstPlayerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/cairo_semibold"
+                android:text="تسنيم  عماد"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                tools:fontFamily="@font/cairo_semibold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="7"
+                android:id="@+id/firstPlayerScore"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/colorPrimary" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/picturetwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/pictureone"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:orientation="vertical">
+
+            <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/againstIv"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/icons" />
+
+            <TextView
+                android:id="@+id/againstTextViewInChallengeResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/cairo_semibold"
+                android:text="VS"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_15sdp" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/challengeResultTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="5dp"
+            android:padding="7dp"
+            android:background="@color/gray"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15sdp"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/picturetwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/secondPlayerImage"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/man"
+                app:civ_border_color="@color/blueDark"
+                app:civ_border_width="4dp" />
+
+            <TextView
+                android:id="@+id/secondPlayerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/cairo_semibold"
+                android:text="مصطفى  خالد"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp" />
+
+            <TextView
+                android:id="@+id/secondPlayerScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="3"
+                android:textColor="@color/blueDark"
+                android:textSize="@dimen/_14sdp" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

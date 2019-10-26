@@ -160,7 +160,6 @@ public class LessonsFragmentPresenter {
                                             }
                                         } else {
                                             Toast.makeText(context, "برجاء المحاولة فى وقت لاحق", Toast.LENGTH_SHORT).show();
-                                            Log.v("lessonUpload", "exception is : " + task.getException().toString());
                                         }
                                     }
                                 };

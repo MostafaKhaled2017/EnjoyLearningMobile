@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layoutDirection="rtl"
+    android:background="@color/white"
+    tools:context=".SettingActivity.SetttingActivity">
+
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginBottom="8dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" >
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/addcourse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo"
+                android:gravity="center"
+                android:text="الاعدادات "
+                android:textColor="#FFFF"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/_40sdp"
+        android:id="@+id/editProfileView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        >
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:srcCompat="@drawable/person"
+            android:layout_alignParentStart="true"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="تعديل  حسابي "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            android:layout_toEndOf="@+id/imageView7"
+            />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginBottom="8dp"
+            app:srcCompat="@drawable/settnav"
+            tools:ignore="VectorDrawableCompat"
+            android:layout_alignParentEnd="true"
+
+            />
+
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/viewone"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/gray"
+        />
+
+
+
+
+
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/languageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        >
+
+        <ImageView
+            android:id="@+id/useimagetwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/uselise"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/use"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="اللغة"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            android:layout_toEndOf="@+id/useimagetwo"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:id="@+id/useimage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginBottom="8dp"
+            app:srcCompat="@drawable/settnav"
+            android:layout_alignParentEnd="true"
+            tools:ignore="VectorDrawableCompat" />
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/viewtwo"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/gray"
+        />
+
+
+
+
+
+
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/contactUsView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        >
+
+        <ImageView
+            android:id="@+id/callus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:srcCompat="@drawable/call"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/callustext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="اتصل بنا "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            android:layout_toEndOf="@+id/callus"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:id="@+id/settcallus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginBottom="8dp"
+
+            android:layout_alignParentEnd="true"
+            app:srcCompat="@drawable/settnav"
+            tools:ignore="VectorDrawableCompat" />
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/viewthree"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/gray"
+        />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/rateUsView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        >
+
+        <ImageView
+            android:id="@+id/rateus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/rate"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/rateustext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="قيمنا "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            android:layout_toEndOf="@+id/rateus"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:id="@+id/settrateus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginBottom="8dp"
+            app:srcCompat="@drawable/settnav"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            tools:ignore="VectorDrawableCompat" />
+
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/viewfour"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/gray"
+        />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>

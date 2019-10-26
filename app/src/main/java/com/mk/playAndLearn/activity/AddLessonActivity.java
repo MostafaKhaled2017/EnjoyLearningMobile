@@ -53,14 +53,12 @@ public class AddLessonActivity extends AppCompatActivity {
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner, termSpinner, gradesSpinner;
     String correctAnswer = "";
     EditText lessonTitleET, lessonContentEt;
-    TextView unitOrderTv;
     Lesson lesson;
     String currentSubject = "", currentUserName, selectedUnit, selectedLesson, selectedTerm, selectedGrade;
     Map<String, Object> map;
     boolean oldLesson = false;
     String oldLessonId = "";
     WriteBatch batch;
-    RelativeLayout unitOrderLayout;
     public SharedPreferences pref; // 0 - for private mode
 
 
@@ -74,14 +72,12 @@ public class AddLessonActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("إضافة درس");
 
         batch = fireStore.batch();
 
@@ -92,8 +88,6 @@ public class AddLessonActivity extends AppCompatActivity {
         unitOrderSpinner = findViewById(R.id.unitOrderSpinner);
         lessonOrderSpinner = findViewById(R.id.lessonOrderSpinner);
         termSpinner = findViewById(R.id.termSpinner);
-        unitOrderTv = findViewById(R.id.unitOrderTextView);
-        unitOrderLayout = findViewById(R.id.unitOrderLayout);
         lessonTitleET = findViewById(R.id.lessonTitleEditText);
         lessonContentEt = findViewById(R.id.lessonContentEditText);
 
@@ -322,7 +316,7 @@ public class AddLessonActivity extends AppCompatActivity {
             Toast.makeText(this, "برجاء تحديد الفصل الدراسى", Toast.LENGTH_SHORT).show();
         } else if (currentSubject.equals("اختر المادة")) {
             Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا الدرس", Toast.LENGTH_SHORT).show();
-        } else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE && !currentSubject.equals("لغة عربية: نحو")) {
+        } else if (selectedUnit.equals("الوحدة") && !currentSubject.equals("لغة عربية: نحو")) {
             Toast.makeText(this, "برجاء تحديد الوحدة الحالية", Toast.LENGTH_SHORT).show();
         } else if (lessonOrderSpinner.getVisibility() == View.VISIBLE
                 && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس")) && !currentSubject.equals("لغة انجليزية")) {
@@ -353,6 +347,7 @@ public class AddLessonActivity extends AppCompatActivity {
                 map.put("grade", selectedGrade);
                 map.put("unitNumber", selectedUnit);//Added
                 map.put("lessonNumber", selectedLesson);//Added
+                map.put("order", selectedUnit + selectedLesson);
                 map.put("reviewed", false);
                 map.put("schoolType", schoolType);
                 map.put("subject", currentSubject);

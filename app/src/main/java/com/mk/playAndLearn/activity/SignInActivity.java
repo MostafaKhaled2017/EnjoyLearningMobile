@@ -25,7 +25,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,12 +38,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 
@@ -56,7 +50,7 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 public class SignInActivity extends AppCompatActivity {
     String userName = "", userImage = "", userEmail = "";
     GoogleApiClient mGoogleApiClient;
-    Button button;
+    ImageView googleBtnIv;
     GoogleSignInOptions gso;
     CallbackManager mCallbackManager;
     private GoogleSignInClient mGoogleSignInClient;
@@ -78,18 +72,14 @@ public class SignInActivity extends AppCompatActivity {
 
         pref = getSharedPreferences("MyPref", 0);
         progressBar = findViewById(R.id.progressbar);
-        button = findViewById(R.id.googleBtn);
+        googleBtnIv = findViewById(R.id.googleBtn);
         mAuth = FirebaseAuth.getInstance();
 
         emailEt = findViewById(R.id.etEmailSignIn);
         passwordEt = findViewById(R.id.etPasswordSignIn);
         forgotPasswordTv = findViewById(R.id.tvForgotPassword);
-        backgroundIv = findViewById(R.id.backgroundIv);
 
         initializeGoogleLoginVariables();
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sign_background);
-        Blurry.with(this).from(bitmap).into(backgroundIv);
 
         forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +109,7 @@ public class SignInActivity extends AppCompatActivity {
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        googleBtnIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signInWithGoogle();

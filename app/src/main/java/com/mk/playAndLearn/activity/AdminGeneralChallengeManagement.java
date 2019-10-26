@@ -106,7 +106,7 @@ public class AdminGeneralChallengeManagement extends AppCompatActivity {
         });
 
 
-        //TODO : delete the questions list here or add a button to do that
+        //TODO : delete the questions list here or add a googleBtnIv to do that
 
     }
 

@@ -61,7 +61,6 @@ public class AddQuestionActivity extends AppCompatActivity {
     Spinner subjectsSpinner, unitOrderSpinner, lessonOrderSpinner, termSpinner, gradesSpinner;
     String correctAnswer = "";
     EditText editText1, editText2, editText3, editText4, questionEt;
-    TextView unitOrderTv;
     Question question;
     String currentSubject = "", currentUserName, selectedUnit, selectedLesson, selectedTerm, selectedGrade;
     Map<String, Object> map;
@@ -70,7 +69,6 @@ public class AddQuestionActivity extends AppCompatActivity {
     String oldQuestionId = "";
     WriteBatch batch;
     CheckBox c1, c2, c3, c4;
-    RelativeLayout unitOrderLayout;
     public SharedPreferences pref; // 0 - for private mode
 
 
@@ -84,14 +82,12 @@ public class AddQuestionActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("إضافة سؤال");
 
         batch = fireStore.batch();
 
@@ -102,8 +98,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         unitOrderSpinner = findViewById(R.id.unitOrderSpinner);
         lessonOrderSpinner = findViewById(R.id.lessonOrderSpinner);
         termSpinner = findViewById(R.id.termSpinner);
-        unitOrderTv = findViewById(R.id.unitOrderTextView);
-        unitOrderLayout = findViewById(R.id.unitOrderLayout);
         editText1 = findViewById(R.id.et1);
         editText2 = findViewById(R.id.et2);
         editText3 = findViewById(R.id.et3);
@@ -351,10 +345,10 @@ public class AddQuestionActivity extends AppCompatActivity {
         final String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         String questionText = questionEt.getText().toString().trim();
-        String et1 = editText1.getText().toString();
-        String et2 = editText2.getText().toString();
-        String et3 = editText3.getText().toString();
-        String et4 = editText4.getText().toString();
+        String et1 = editText1.getText().toString().trim();
+        String et2 = editText2.getText().toString().trim();
+        String et3 = editText3.getText().toString().trim();
+        String et4 = editText4.getText().toString().trim();
 
         //setTheCorrectAnswers
         correctAnswer = ""; // make the correct answer string empty
@@ -378,7 +372,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             Toast.makeText(this, "برجاء تحديد الفصل الدراسى", Toast.LENGTH_SHORT).show();
         } else if (currentSubject.equals("اختر المادة")) {
             Toast.makeText(this, "من فضلك اختر المادة التي ينتمى لها هذا السؤال", Toast.LENGTH_SHORT).show();
-        } else if (selectedUnit.equals("الوحدة") && unitOrderLayout.getVisibility() == View.VISIBLE && !currentSubject.equals("لغة عربية: نحو")) {
+        } else if (selectedUnit.equals("الوحدة") && unitOrderSpinner.getVisibility() == View.VISIBLE && !currentSubject.equals("لغة عربية: نحو")) {
             Toast.makeText(this, "برجاء تحديد الوحدة الحالية", Toast.LENGTH_SHORT).show();
         } else if (lessonOrderSpinner.getVisibility() == View.VISIBLE
                 && (selectedLesson.equals("الدرس") || selectedLesson.equals("الفصل") || selectedLesson.equals("ترتيب الدرس"))
@@ -421,6 +415,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 map.put("writerEmail", localCurrentUserEmail);
                 map.put("writerUid", localCurrentUserUid);
                 map.put("dayDate", todayDate);
+                map.put("order", selectedUnit + selectedLesson);
                 map.put("date", dateClass.getDate());
                 map.put("challengeQuestion", false);
 

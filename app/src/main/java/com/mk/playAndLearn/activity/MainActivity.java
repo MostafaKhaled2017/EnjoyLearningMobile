@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
-                   // updateLastOnlineDateAndShowRewardsPage();
+                    // updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
                     getCurrentVersion();
                     initialDataLoaded = true;
@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
                     if (user.getProviderId().equals("google.com")) {
                         Toast.makeText(this, "User is signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
-
                     } else {
                         Toast.makeText(this, "User is not signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
                     }
@@ -310,20 +309,20 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
     private void getCurrentVersion() {
         String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            Log.v("appVersionValidation", "getCurrentVersion called");
-            PackageManager pm = this.getPackageManager();
-            PackageInfo pInfo = null;
+        Log.v("appVersionValidation", "getCurrentVersion called");
+        PackageManager pm = this.getPackageManager();
+        PackageInfo pInfo = null;
 
-            try {
-                pInfo = pm.getPackageInfo(this.getPackageName(), 0);
+        try {
+            pInfo = pm.getPackageInfo(this.getPackageName(), 0);
 
-            } catch (PackageManager.NameNotFoundException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-            currentVersion = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        currentVersion = pInfo.versionName;
 
-            new GetLatestVersion().execute();
+        new GetLatestVersion().execute();
 
     }
 
@@ -407,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                         i.putExtra("consecutiveDays", aLong);
                         i.putExtra("userUid", localCurrentUserUid);
-                         startActivity(i);
+                        startActivity(i);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -513,7 +512,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 Log.v("appVersionValidation", "onPostExcute , currentVersion is : " + currentVersion
                         + " , latestVersion is : " + latestVersion
-                 + " , currentUserEmail : " + currentUserEmail
+                        + " , currentUserEmail : " + currentUserEmail
                         + " , adminEmail : " + adminEmail);
                 if (!currentVersion.equalsIgnoreCase(latestVersion) && !currentUserEmail.equals(adminEmail)) {
                     if (!isFinishing()) {//This would help to prevent Error : BinderProxy@45d459c0 is not valid; is your activity running? error
@@ -555,5 +554,3 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         dialog.show();
     }
 }
-
-

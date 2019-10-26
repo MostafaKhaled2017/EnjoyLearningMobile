@@ -23,17 +23,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,8 +47,8 @@ import java.util.TimeZone;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 
@@ -72,7 +75,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         assert actionBar != null;
         actionBar.setHomeAsUpIndicator(upArrow);
@@ -106,7 +109,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void showSpinnerDialog() {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
-        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_spinner, null);
+        android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
 
         final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
                 .setView(view)
@@ -241,7 +244,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                                     if (task2.isSuccessful()) {
                                         DocumentSnapshot document = task2.getResult();
-                                        if(document.exists()) {
+                                        if (document.exists()) {
                                             addQuestionData(document, complainantEmail, reportId);
                                         }
                                         Log.v("contestLogging", "list size : " + questionsList.size()
@@ -287,21 +290,58 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     }
 
     public void doQuery(View view) {
-        Toast.makeText(this, "Query started", Toast.LENGTH_SHORT).show();
 
-        fireStoreUsers.whereGreaterThan("acceptedQuestions", 0).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(DocumentSnapshot documentSnapshot:task.getResult()){
-                        String uid = documentSnapshot.getId();
-                        fireStoreUsers.document(uid).update("acceptedQuestions", 0);
+        Toast.makeText(AdminAppManagementActivity.this, "جارى حصر الدروس", Toast.LENGTH_SHORT).show();
+        final String[] gradesArray = getResources().getStringArray(R.array.grades_array);
+        for (final String grade : gradesArray) {
+
+            if(grade.equals(gradesArray[0]))
+                continue;
+
+            Log.w("lessonsCountLog", "grade is : " + grade);
+
+            final String[] subjectsArray = getResources().getStringArray(R.array.preparatory_subjects_array_for_upload);
+            for (final String subject : subjectsArray) {
+                if(subject.equals(subjectsArray[0]))
+                    continue;
+                fireStoreLessons.document(grade)
+                        .collection(subject)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        long subjectCounter = 0;
+
+                        int totalNoOfLessons = documentSnapshots.size();
+
+                        Log.w("lessonsCountLog", "Total number of Lessons of subject " + subject + " in grade "
+                                + grade + " is " + totalNoOfLessons);
+
+                        for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
+
+                                String unitNumber = document.getString("unitNumber");
+                                String lessonNumber = document.getString("lessonNumber");
+                                String lessonId = document.getId();
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("order", unitNumber + lessonNumber);
+                                fireStoreLessons.document(grade).collection(subject).document(lessonId).update(map);
+
+                        }
+
+                        Log.w("lessonsCountLog", "\n\n Lessons of subject " + subject + " in grade " + grade + " is \"" + subjectCounter + "\" \n\n");
+
                     }
-                } else {
-                    Toast.makeText(AdminAppManagementActivity.this, "task failed", Toast.LENGTH_SHORT).show();
-                }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(AdminAppManagementActivity.this, "Failed to load the data : " + e.getCause().toString() + " , "
+                                + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
-        });
+
+        }
 
       /*  DatabaseReference localUsersReference = FirebaseDatabase.getInstance().getReference("users");
 
@@ -500,7 +540,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     }
 
     public void leaderBoard(View view) {
-            startActivity(new Intent(this, TestLeaderboardActivity.class));
+        startActivity(new Intent(this, TestLeaderboardActivity.class));
     }
 }
 

@@ -24,7 +24,6 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
 
     ProgressBar progressBar;
     TextView challengeTextTv, noInternetConnection;
-    LinearLayoutCompat startChallengeButtonGroup;
     TextView noInternetConnectionText;
     ProgressBar horizontalProgressBar;
     Button startForArabicBtn, startForLanguagesBtn;
@@ -37,14 +36,12 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("التحدى العام");
 
         presenter = new GeneralChallengesActivityPresenter(this);
 
@@ -52,7 +49,6 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
         horizontalProgressBar = findViewById(R.id.horizontalProgressbar);
         challengeTextTv = findViewById(R.id.challengeTextTv);
         noInternetConnection = findViewById(R.id.noInternetConnectionText);
-        startChallengeButtonGroup = findViewById(R.id.startChallengeButtonGroup);
         startForArabicBtn = findViewById(R.id.startGeneralChallengeForArabicBtn);
         startForLanguagesBtn = findViewById(R.id.startGeneralChallengeForLanguagesBtn);
 
@@ -146,16 +142,14 @@ public class GeneralChallengesActivity extends AppCompatActivity implements Gene
 
     @Override
     public void hideButtonGroup() {
-        if (startChallengeButtonGroup.getVisibility() == View.VISIBLE) {
-            startChallengeButtonGroup.setVisibility(View.INVISIBLE);
-        }
+        startForArabicBtn.setVisibility(View.GONE);
+        startForLanguagesBtn.setVisibility(View.GONE);
     }
 
     @Override
     public void showButtonGroup() {
-        if (startChallengeButtonGroup.getVisibility() != View.VISIBLE) {
-            startChallengeButtonGroup.setVisibility(View.VISIBLE);
-        }
+        startForArabicBtn.setVisibility(View.VISIBLE);
+        startForLanguagesBtn.setVisibility(View.VISIBLE);
     }
 
     @Override

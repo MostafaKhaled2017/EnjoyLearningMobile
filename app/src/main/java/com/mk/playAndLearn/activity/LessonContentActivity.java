@@ -25,7 +25,7 @@ public class LessonContentActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_lesson_content);
+        setContentView(R.layout.activity_lesson_content);
         Toolbar toolbar = findViewById(R.id.toolbarInLesson);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();

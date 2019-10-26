@@ -1,62 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
+    android:background="@color/white"
+    android:layoutDirection="rtl"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/color3">
-
-    <include layout="@layout/no_internet_connection_text"
-        android:id="@+id/noInternetConnectionText"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <LinearLayout
-        android:id="@+id/selectSubjectView"
+    xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:id="@+id/emailsignupTwo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentRight="true">
-
-        <Spinner
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:id="@+id/subjectsSpinnerInLessonsFragment"
-            android:gravity="right"/>
-
-        <TextView
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="المادة : "/>
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="5dp"
-        android:layout_below="@id/selectSubjectView"
-        android:id="@+id/lessonsRecyclerView"
-        android:layout_width="match_parent"
-        android:scrollbars="none"
-        android:layout_height="wrap_content" />
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/el_messiri"
+        android:text="المادة الدراسية"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_14sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"/>
 
     <ProgressBar
         android:id="@+id/lessonsProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:visibility="visible" />
+
+
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/noLessonsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="لا يوجد دروس لهذه المادة"
-        android:textSize="@dimen/nothing_text_size"
+        android:textSize="@dimen/_13sdp"
         android:textColor="@color/writingColor"
-        android:layout_centerInParent="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:visibility="invisible" />
 
-</RelativeLayout>
+    <include layout="@layout/no_internet_connection_text"
+        android:id="@+id/noInternetConnectionText"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="@dimen/_13sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <Spinner
+        android:id="@+id/subjectsSpinnerInLessonsFragment"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:background="@drawable/gradient_spinner"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailsignupTwo"
+        app:layout_constraintVertical_bias="0.027" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lessonsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_160sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:columnCount="2"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subjectsSpinnerInLessonsFragment">
+
+
+    </android.support.v7.widget.RecyclerView>
+</android.support.constraint.ConstraintLayout>
