@@ -1,70 +1,357 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:background="@color/white">
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".SettingActivity.EditAccount">
 
-    <include
-        android:id="@+id/appBar"
-        layout="@layout/appbar" />
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/replyImage"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/man"
+            app:civ_border_color="@color/blue_white"
+            app:civ_border_width="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"  />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/userImage"
-        android:layout_width="95dp"
-        android:layout_height="95dp"
-        android:layout_below="@id/appBar"
-        android:layout_centerHorizontal="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/backgroud_splash"
-        android:layout_marginBottom="20dp"/>
+      <!--  <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="12dp"
+            android:layout_height="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/mostafa"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mansigntwo"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/edit"
+            tools:ignore="VectorDrawableCompat" /> -->
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/userImage"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        android:text="الأسم : "
-        android:textSize="@dimen/generalTextSize" />
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/cairo_semibold"
+            android:gravity="center"
+            android:text="مصطفى  خالد"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/replyImage"
+            app:layout_constraintVertical_bias="0.003" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/grade"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/name"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        android:text="الصف الدراسي : "
-        android:textSize="@dimen/generalTextSize" />
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_75sdp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.589"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar4"
+            app:layout_constraintVertical_bias="0.002"
+            app:srcCompat="@drawable/camera"
+            tools:ignore="VectorDrawableCompat" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/points"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/grade"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        android:text="النقاط : "
-        android:textSize="@dimen/generalTextSize" />
+        <TextView
+            android:id="@+id/points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="المستوى الاول 4677"
+            android:textColor="@color/black"
+            android:fontFamily="@font/el_messiri"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.475"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintVertical_bias="0.0" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/schoolType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/points"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        android:text="نوع المدرسة : "
-        android:textSize="@dimen/generalTextSize" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/challenges"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/schoolType"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        android:text="التحديات : الإنتصارات والهزائم والتعادلات"
-        android:textSize="@dimen/generalTextSize" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="البريد الالكتروني"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.046"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/points"
+            app:layout_constraintVertical_bias="0.024" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="Mostafa_Khaled@gmail.com"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintVertical_bias="0.013" />
+
+
+        <TextView
+            android:id="@+id/Educational_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/_10sdp"
+
+            android:fontFamily="@font/el_messiri"
+            android:text="المرحلة الدراسية"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/email"
+            app:layout_constraintVertical_bias="0.033" />
+
+        <TextView
+            android:id="@+id/grade"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="الصف الاول  الاعدادي"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Educational_level"
+            app:layout_constraintVertical_bias="0.005" />
+
+
+        <TextView
+            android:id="@+id/school_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="نوع المدرسة"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.042"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/grade"
+            app:layout_constraintVertical_bias="0.037" />
+
+        <TextView
+            android:id="@+id/schoolType"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="عربي"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/school_level"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <!--<TextView
+            android:id="@+id/phonenumberedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="رقم  الهاتف"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.047"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/school_levelText"
+            app:layout_constraintVertical_bias="0.044" />
+
+        <EditText
+            android:id="@+id/phonenumbereditText"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="26511325455"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phonenumberedit"
+            app:layout_constraintVertical_bias="0.0" />
+
+-->
+
+
+        <TextView
+            android:id="@+id/governorate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="المحافظة"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/schoolType"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <TextView
+            android:id="@+id/governorateTv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:fontFamily="@font/el_messiri"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="القاهرة"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/governorate"
+            app:layout_constraintVertical_bias="0.0" />
+
+      <!--  <Button
+            android:id="@+id/button2"
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="46dp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/shape_dark"
+            android:fontFamily="@font/cairo_semibold"
+            android:text="حفظ"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.005"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnercity"
+            app:layout_constraintVertical_bias="0.268" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="@dimen/_135sdp"
+            android:layout_height="46dp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/backgroundblue"
+            android:fontFamily="@font/cairo_semibold"
+            android:text="تجاهل"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintStart_toEndOf="@+id/button2"
+            app:layout_constraintTop_toBottomOf="@+id/spinnercity"
+            app:layout_constraintVertical_bias="0.264" /> -->
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

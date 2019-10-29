@@ -30,8 +30,8 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         };
-        timer.start();
 
+        timer.start();
     }
 
     @Override

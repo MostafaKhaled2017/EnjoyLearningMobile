@@ -1,16 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?><!-- TODO : enhance the design -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/challengeStartMainView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:layoutDirection="rtl"
-    tools:context=".activity.ChallengeStartActivity">
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/appBar"
-        layout="@layout/appbar" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tahadi"
+        android:layout_width="156dp"
+        android:layout_height="36dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/cairo"
+        android:gravity="center"
+        android:text="تحدي الان"
+        android:textColor="#FFFF"
+        android:textSize="@dimen/_18sdp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.001"
+        tools:fontFamily="@font/el_messiri" />
+
 
 
     <ProgressBar
@@ -18,99 +46,183 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="33dp"
-        android:layout_below="@id/appBar"
         android:layout_marginTop="-25dp"
         android:indeterminate="true"
         android:max="100"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:visibility="invisible" />
 
-    <!-- TODO : ensure that the data appears here is correct-->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/againstTextView"
-        android:layout_below="@id/appBar"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
-        android:orientation="vertical">
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/view3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.035"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.531">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/firstPlayerImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_100sdp"
             android:layout_gravity="center"
-            android:src="@color/gray" />
+            android:src="@drawable/man"
+            app:civ_border_color="@color/colorPrimary"
+            app:civ_border_width="8dp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/firstPlayerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="غير معروف"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:fontFamily="@font/cairo_semibold"
+            android:text="مصطفى  خالد"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/firstPlayerPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="0 XP"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:fontFamily="@font/cairo_semibold"
+            android:text="مستوى الاول"
+            android:textSize="@dimen/_7sdp" />
+
+
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/againstTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="ضد"
-        android:textColor="@color/writingColor"
-        android:textSize="35sp" />
+
+    <View
+        android:id="@+id/viewtwo"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_5sdp"
+        android:background="@color/grayone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/progressBar"
+
+        />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/lastStartChallengeButton"
-        android:layout_below="@id/againstTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
-        android:orientation="vertical">
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewtwo"
+        app:layout_constraintVertical_bias="0.438">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/secondPlayerImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_100sdp"
             android:layout_gravity="center"
-            android:src="@color/gray" />
+            android:src="@drawable/man"
+            app:civ_border_color="@color/grayone"
+            app:civ_border_width="8dp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/secondPlayerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="غير معروف"
-            android:textColor="@color/writingColor"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:fontFamily="@font/cairo_semibold"
+            android:text="مصطفى  خالد"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/secondPlayerPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="0 XP"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:fontFamily="@font/cairo_semibold"
+            android:text="مستوى الاول"
+            android:textSize="@dimen/_7sdp" />
+
+
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatButton
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_5sdp"
+        android:background="@color/grayone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/progressBar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/custom_progressbar_drawable"
+        android:secondaryProgress="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="8dp"
+
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/energy"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/lastStartChallengeButton"
-        style="@style/rectangleButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="ابدأ" />
-</RelativeLayout>
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/shape_dark"
+        android:fontFamily="@font/el_messiri"
+        android:text="ابدأ التحدى"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.218" />
+
+</android.support.constraint.ConstraintLayout>

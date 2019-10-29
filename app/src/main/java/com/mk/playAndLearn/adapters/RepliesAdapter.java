@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,7 +22,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.RepliesActivity;
 import com.mk.playAndLearn.model.Reply;
 import com.squareup.picasso.Picasso;
 
@@ -36,14 +34,14 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
     ArrayList<Reply> list;
     Context context;
     //used to load the votes number at the first time only
-    boolean visied;
+    boolean visited;
     long votes;
     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     public RepliesAdapter(ArrayList<Reply> list, Context context, boolean visited) {
         this.list = list;
         this.context = context;
-        this.visied = visited;
+        this.visited = visited;
     }
 
     @Override
@@ -72,8 +70,13 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
         if (reply.getUserImage() != null)
             Picasso.with(context).load(reply.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
-        holder.votes.setText(reply.getVotes() + "");
 
+        if (reply.getUpVotedUsers() != null) {
+            holder.upVotesNo.setText(reply.getUpVotedUsers().split(" ").length - 1 + "");
+        }
+        if (reply.getDownVotedUsers() != null) {
+            holder.downVotesNo.setText(reply.getDownVotedUsers().split(" ").length - 1 + "");
+        }
 
         holder.upArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +140,7 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView name, content, date, votes;
+        TextView name, content, date, upVotesNo, downVotesNo;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
 
@@ -146,9 +149,10 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
             name = itemView.findViewById(R.id.replyUserName);
             content = itemView.findViewById(R.id.replyContent);
             date = itemView.findViewById(R.id.replyDate);
-            votes = itemView.findViewById(R.id.numberOfVotes);
-            upArrow = itemView.findViewById(R.id.upArrow);
-            downArrow = itemView.findViewById(R.id.downArrow);
+            upVotesNo = itemView.findViewById(R.id.upVotesNo);
+            downVotesNo = itemView.findViewById(R.id.downVotesNo);
+            upArrow = itemView.findViewById(R.id.like);
+            downArrow = itemView.findViewById(R.id.downVote);
             imageView = itemView.findViewById(R.id.replyImage);
             cardView = itemView.findViewById(R.id.card_view_of_replies);
         }
@@ -176,21 +180,34 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.MyHolder
         String[] downVotedUsersArray = downVotedUsers.split(" ");
         if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
             if (tag.equals("upArrow")) {
+                final String newUpVotedUsers = upVotedUsers + localCurrentUserUid + " ";
+
                 votes++;
                 fireStoreReplies.document(reply.getReplyId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
+
+                fireStoreReplies.document(reply.getReplyId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        holder.upVotesNo.setText(newUpVotedUsers.split(" ").length - 1 + "");
+                        reply.setUpVotedUsers(newUpVotedUsers);
+                        notifyDataSetChanged();
+                    }
+                });
             } else if (tag.equals("downArrow")) {
+                final String newDownVotedUsers = downVotedUsers + localCurrentUserUid + " ";
+
                 votes--;
                 fireStoreReplies.document(reply.getReplyId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
 
+                fireStoreReplies.document(reply.getReplyId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        holder.downVotesNo.setText(newDownVotedUsers.split(" ").length - 1 + "");
+                        reply.setDownVotedUsers(newDownVotedUsers);
+                        notifyDataSetChanged();
+                    }
+                });
             }
-            fireStoreReplies.document(reply.getReplyId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Log.v("Logging", "votes : " + votes);
-                    holder.votes.setText(votes + "");
-                    reply.setVotes(votes);
-                }
-            });
         } else {
             Toast.makeText(context, "لا يمكنك التصويت لنفس الرد أكثر من مرة", Toast.LENGTH_SHORT).show();
         }

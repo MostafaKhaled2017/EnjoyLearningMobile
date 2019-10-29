@@ -9,6 +9,25 @@ public class Comment {
     String commentId;
     String writerUid;
     String id;
+    String upVotedUsers;
+
+    public String getUpVotedUsers() {
+        return upVotedUsers;
+    }
+
+    public void setUpVotedUsers(String upVotedUsers) {
+        this.upVotedUsers = upVotedUsers;
+    }
+
+    public String getDownVotedUsers() {
+        return downVotedUsers;
+    }
+
+    public void setDownVotedUsers(String downVotedUsers) {
+        this.downVotedUsers = downVotedUsers;
+    }
+
+    String downVotedUsers;
 
     public String getId() {
         return id;

@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,7 +52,7 @@ public class QuestionResultActivity extends AppCompatActivity {
     boolean isGeneralChallenge, reported = false;
 
     ImageView player1ImageIv, player2Image;
-    TextView player1NameTv, player1PointsTv, player2Name, player2Points;
+    TextView player1NameTv, player1PointsTv, player2Name, player2Points, textComplaintTv;
 
     Intent i;
 
@@ -72,6 +73,15 @@ public class QuestionResultActivity extends AppCompatActivity {
         player1ImageIv = findViewById(R.id.firstPlayerImage);
         player2Name = findViewById(R.id.secondPlayerName);
         player2Image = findViewById(R.id.secondPlayerImage);
+
+        textComplaintTv = findViewById(R.id.textcomplaint);
+
+        textComplaintTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        });
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -176,25 +186,6 @@ public class QuestionResultActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.question_result_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.reportQuestion:
-                reported = true;
-                showDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     void navigate(){
         i.putExtra("questionList", list);
         i.putExtra("questionNo", questionNo + 1);
@@ -223,18 +214,13 @@ public class QuestionResultActivity extends AppCompatActivity {
         finish();
     }
     void showDialog(){
+        reported = true;
+
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);//TODO : check this
+        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.alertdialog, null);
+
         final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
-                .setTitle("تقديم شكوى")
-                .setMessage("هل أنت متأكد أنك تريد تقديم شكوى فى هذا السؤال؟")
-                .setCancelable(false)
-                .setPositiveButton("لا", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        navigate();
-                    }
-                })
-                .setNegativeButton("نعم", null)
+                .setView(view)
                 .create();
 
         alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -245,8 +231,8 @@ public class QuestionResultActivity extends AppCompatActivity {
                 final DateClass dateClass = new DateClass();
                 dateClass.setDate(today);
 
-                Button button = alertDialogBuilderUserInput.getButton(AlertDialog.BUTTON_NEGATIVE);
-                button.setOnClickListener(new View.OnClickListener() {
+                Button Confirmbutton = view.findViewById(R.id.yes);
+                Confirmbutton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
@@ -274,6 +260,15 @@ public class QuestionResultActivity extends AppCompatActivity {
                         });
                     }
                 });
+            }
+        });
+
+        Button dismissBtn = view.findViewById(R.id.no);
+        dismissBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialogBuilderUserInput.dismiss();
+                navigate();
             }
         });
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">العب .. تعلم</string>
+    <string name="app_name">EduCup</string>
     <string name="what_s_on_your_mind">Enter your query</string>
 
 
@@ -100,6 +100,11 @@
         <item>دراسات اجتماعية</item>
         <item>علوم</item>
         <item>Science</item>
+    </string-array>
+
+    <string-array name="challenges_spinner">
+        <item>تحديات مكتملة</item>
+        <item>تحديات غير مكتملة</item>
     </string-array>
 
     <string-array name="governorates">
@@ -268,6 +273,10 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="h2o">H2O</string>
+    <string name="water">الماء</string>
+    <string name="question">الام يرمزهذا الجزيء الكيميائي؟</string>
+    <string name="note">(السؤال يحتمل اكثر من اجابة)</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -281,6 +290,13 @@
     <string name="title_activity_study_tips">StudyTipsActivity</string>
 
     <string name="studyTips">
+        <string-array name="couresename">
+            <item>اللغة  العربية </item>
+            <item>اللغة الانجليزية </item>
+            <item>الفرنسة  </item>
+            <item>اللغة العربية</item>
+            <item>اللغة الفرنسية </item>
+        </string-array>
          <b>خطوات مذاكرة الدروس :\n\n</b>
 1- في اليوم الذي يتم الشرح فيه بعد العودة من المدرسة قراءة الدرس جيدا بتركيز في 10 دقائق(قراءة فقط) \n
 2- في اليوم التالي مذاكرة الدرس بصورة كاملة. \n

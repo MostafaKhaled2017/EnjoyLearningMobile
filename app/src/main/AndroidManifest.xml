@@ -24,7 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-        <activity android:name="com.mk.playAndLearn.activity.EditProfileActivity"></activity>
+        <activity android:name="com.mk.playAndLearn.activity.ChallengenowTwo" />
+        <activity android:name="com.mk.playAndLearn.activity.ChallengeNow" />
+        <activity android:name="com.mk.playAndLearn.activity.EditProfileActivity" />
         <activity android:name="com.mk.playAndLearn.activity.SettingsActivity" />
         <activity android:name="com.mk.playAndLearn.activity.SignUp2Activity" />
         <activity android:name="com.mk.playAndLearn.activity.ProfileActivity" />
@@ -72,7 +74,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.WelcomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN"

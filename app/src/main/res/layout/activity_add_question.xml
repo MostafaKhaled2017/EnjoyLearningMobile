@@ -67,23 +67,29 @@
             app:layout_constraintVertical_bias="0.052" />
 
 
+
         <Spinner
+            android:layout_width="@dimen/_300sdp"
+            android:layout_height="?attr/dropdownListPreferredItemHeight"
+            android:layout_margin="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.AppCompat.Spinner"
+            android:background="@drawable/spinner_bg"
+            android:dropDownWidth="300dp"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:popupBackground="@android:color/white"
+            android:popupElevation="3dp"
+            android:stateListAnimator="@drawable/spinner_sla"
             android:id="@+id/subjectsSpinner"
-            android:layout_width="0dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/gradient_spinner"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/addcourse"
-            app:layout_constraintVertical_bias="0.052" />
+            app:layout_constraintVertical_bias="0.052"
+            />
 
 
         <Spinner

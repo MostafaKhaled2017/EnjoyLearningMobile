@@ -12,20 +12,27 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -69,7 +76,8 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallenges
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
-public class MainActivity extends AppCompatActivity implements LessonsFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, ChallengesFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements LessonsFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
+        ChallengesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
     MainViewPagerAdapter adapter;
     private ViewPager mViewPager;
     TabLayout tabLayout;
@@ -128,12 +136,26 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        setContentView(R.layout.nav_drawer);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayShowTitleEnabled(false);
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        drawer.closeDrawer(Gravity.START);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+ /*       Spinner spinner = findViewById(R.id.spinnercourse);
+        ArrayAdapter<CharSequence> adapterArray = ArrayAdapter.createFromResource(this,
+                R.array.preparatory_subjects_array, android.R.layout.simple_spinner_item);
+        adapterArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapterArray);*/
 
         localAuth = FirebaseAuth.getInstance();
 
@@ -142,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
         serviceIntent = new Intent(this, NotificationsService.class);
 
-        mViewPager = findViewById(R.id.viewpager);
+        mViewPager = findViewById(R.id.viewpagerInMainActivity);
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
         tabLayout = findViewById(R.id.tablayout);
         mViewPager.setAdapter(adapter);
@@ -155,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
-                    // updateLastOnlineDateAndShowRewardsPage();
+                     updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
                     getCurrentVersion();
                     initialDataLoaded = true;
@@ -201,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
 
 
-            /*try {
+          /*  try {
                 for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
                     if (user.getProviderId().equals("google.com")) {
                         Toast.makeText(this, "User is signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
@@ -214,15 +236,18 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }*/
     }
 
-    @Override
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
-    }
+    }*/
 
+
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
         switch (item.getItemId()) {
             case R.id.addQuestion:
                 startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
@@ -276,9 +301,17 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+
     }
 
     @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+
+  /*  @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem appManagementItem = menu.findItem(R.id.appManagement);
         final MenuItem chatBotItem = menu.findItem(R.id.chatBot);
@@ -298,14 +331,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 }
             }
         });
-        return true;
-    }
+        return true; TODO : Re add this
+    }*/
 
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     private void getCurrentVersion() {
         String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -327,31 +355,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     }
 
     //TODO : remove this method with all of its uses and find a better way to achieve the same thing
-    public static void deleteCache(Context context) {
-        /*try {
-            File dir = context.getCacheDir();
-            deleteDir(dir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-            return dir.delete();
-        } else if (dir != null && dir.isFile()) {
-            return dir.delete();
-        } else {
-            return false;
-        }
-    }
 
     public void updateLastOnlineDateAndShowRewardsPage() {
         localAuth = FirebaseAuth.getInstance();
@@ -450,23 +453,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         stopService(serviceIntent);
     }
 
-    //The user state becomes online when it opens the app and it changes to offline when the app stop from the background
-    //TODO : think about making the user offline when it exit the app from the back arrow by uncommenting the code in onBackPressed
-    public void checkIfUserConnected() {
-       /* FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String localCurrentUserUid = currentUser.getUid();
-        DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
-        String key = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online").getKey();
-        if(key != null) {//TODO : check this
-            currentUserPresenceReference.setValue(true);
-            currentUserPresenceReference.onDisconnect().setValue(false);
-        }*/
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        checkIfUserConnected();
 
     }
 

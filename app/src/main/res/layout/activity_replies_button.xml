@@ -5,45 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
+    android:layoutDirection="rtl"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color1">
+        <include layout="@layout/toolbar"/>
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="الردود"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_in_toolbar" />
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <ScrollView android:layout_width="wrap_content"
+    <ScrollView android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
         android:overScrollMode="never"
-        android:layout_below="@id/appBar"
+        android:layout_below="@id/toolbar"
         xmlns:android="http://schemas.android.com/apk/res/android" >
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/repliesRecyclerView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:overScrollMode="never" />
 
@@ -78,10 +58,9 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
-        app:backgroundTint="@color/color1"
         app:srcCompat="@android:drawable/ic_input_add"
         app:tint="@color/white" />
 

@@ -45,7 +45,7 @@ public class HomeFragmentPresenter {
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.ENGLISH);
 
     SharedPreferences pref;
-    String currentUserName ;
+    String currentUserName;
     String grade;
     int limit = 5;
     Query firstQuery;
@@ -92,7 +92,7 @@ public class HomeFragmentPresenter {
         asyncTask.execute();
     }
 
-    public int getPostsListSize(){
+    public int getPostsListSize() {
         return postsList.size();
     }
 
@@ -117,7 +117,7 @@ public class HomeFragmentPresenter {
         map.put("subject", subject);
         map.put("term", 2);//Todo : make the user control this by entering it
         map.put("upVotedUsers", "users: ");
-        map.put("votes", (long)0);
+        map.put("votes", (long) 0);
         map.put("writerUid", localCurrentUserUid);
         map.put("writerName", currentUserName);
         map.put("image", localCurrentUserImage);
@@ -181,7 +181,7 @@ public class HomeFragmentPresenter {
                         getPostData(document);
                     }
 
-                    ((MainActivity)context).updateLastOnlineDateAndShowRewardsPage();
+                    ((MainActivity) context).updateLastOnlineDateAndShowRewardsPage();
 
                     if (postsList.size() == 0) {
                         view.onNoPostsExists();
@@ -189,7 +189,7 @@ public class HomeFragmentPresenter {
                         view.onDataFound();
                     }
 
-                    if(task.getResult().size() > 0 ) {
+                    if (task.getResult().size() > 0) {
                         lastVisible = task.getResult().getDocuments().get(task.getResult().size() - 1);
                         lastPosition = task.getResult().size() - 1;
                     }
@@ -225,7 +225,7 @@ public class HomeFragmentPresenter {
                                             }
                                             view.notifyAdapter();
 
-                                            if(t.getResult().size() > 0) {
+                                            if (t.getResult().size() > 0) {
                                                 lastVisible = t.getResult().getDocuments().get(t.getResult().size() - 1);
                                                 lastPosition += 5;
                                             }
@@ -244,8 +244,7 @@ public class HomeFragmentPresenter {
                                     Query nextQuery = fireStorePosts.whereEqualTo("grade", grade).orderBy("date", Query.Direction.DESCENDING)
                                             .startAfter(lastVisible).limit(limit);
                                     nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
-                                }
-                                else {
+                                } else {
                                     Query nextQuery = fireStorePosts.whereEqualTo("subject", currentSubject).whereEqualTo("grade", grade)
                                             .orderBy("date", Query.Direction.DESCENDING).startAfter(lastVisible).limit(limit);
                                     nextQuery.get().addOnCompleteListener(secondQueryCompleteListener);
@@ -292,12 +291,15 @@ public class HomeFragmentPresenter {
         String postWriterEmail = postDocument.getString("email");
         String postImage = postDocument.getString("image");
         String grade = postDocument.getString("grade");
+        String subject = postDocument.getString("subject");
         String postId = postDocument.getId();
         long votes = postDocument.getLong("votes");
         String writerUid = postDocument.getString("writerUid");
         boolean posted = postDocument.getBoolean("posted");
+        String upVotedUsers = postDocument.getString("upVotedUsers");
+        String downVotedUsers = postDocument.getString("downVotedUsers");
 
-       // Log.v("postsLogging","content is : " + postContent + " , grade is : " + grade);
+        // Log.v("postsLogging","content is : " + postContent + " , grade is : " + grade);
 
         post.setPosted(posted);
         if (writerUid != null)
@@ -314,8 +316,16 @@ public class HomeFragmentPresenter {
             post.setImage(postImage);
         if (postId != null)
             post.setId(postId);
+        if (subject != null)
+            post.setSubject(subject);
 
         post.setVotes(votes);
+
+        if(upVotedUsers != null)
+            post.setUpVotedUsers(upVotedUsers);
+
+        if(downVotedUsers != null)
+            post.setDownVotedUsers(downVotedUsers);
 
         if (!existsInPostsList(postId)) {
             postsList.add(post);
@@ -323,7 +333,7 @@ public class HomeFragmentPresenter {
         }
     }
 
-void getPostDataFromMap(Map<String, Object> map, String id) {
+    void getPostDataFromMap(Map<String, Object> map, String id) {
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         String postDate;
 

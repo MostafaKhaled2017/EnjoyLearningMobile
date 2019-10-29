@@ -48,8 +48,6 @@ import java.util.Map;
 
 public class PostInDetailsActivity extends AppCompatActivity implements PostsInDetailsActivityPresenter.View {
     String content, name, date, image, postId = "", postWriterUid = "";
-    TextView contentTv, nameTv, dateTv;
-    ImageView imageView;
     PostsInDetailsActivityPresenter presenter;
 
     CommentsAdapter recyclerAdapter;
@@ -65,20 +63,19 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         //TODO : think about editing this drawable but I think it is good
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
+        TextView toolbarTitle = toolbar.findViewById(R.id.title);
+        toolbarTitle.setText("التعليقات");
+
         presenter = new PostsInDetailsActivityPresenter(this, this);
 
-        contentTv = findViewById(R.id.postContentInDetails);
-        nameTv = findViewById(R.id.postUserNameInDetails);
-        dateTv = findViewById(R.id.postDateInDetails);
         noCommentsText = findViewById(R.id.noCommentsText);
-        imageView = findViewById(R.id.postImageInDetails);
 
         noInternetConnectionText = findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {
@@ -97,10 +94,6 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
             postId = intent.getStringExtra("id");
             postWriterUid = intent.getStringExtra("postWriterUid");
 
-            contentTv.setText(content);
-            dateTv.setText(date);
-            nameTv.setText(name);
-            Picasso.with(this).load(image).into(imageView);
         }
 
         recyclerView = findViewById(R.id.commentsRecyclerView);

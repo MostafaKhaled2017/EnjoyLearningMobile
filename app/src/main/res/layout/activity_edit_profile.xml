@@ -85,7 +85,7 @@
             android:layout_width="12dp"
             android:layout_height="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/mostafa"
+            app:layout_constraintEnd_toStartOf="@+id/name"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userImageInBest"
@@ -94,7 +94,7 @@
             tools:ignore="VectorDrawableCompat" />
 
         <TextView
-            android:id="@+id/mostafa"
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -128,7 +128,7 @@
             tools:ignore="VectorDrawableCompat" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -142,7 +142,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.475"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mostafa"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             app:layout_constraintVertical_bias="0.0" />
 
 
@@ -162,11 +162,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.046"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11"
+            app:layout_constraintTop_toBottomOf="@+id/points"
             app:layout_constraintVertical_bias="0.024" />
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/email"
             android:layout_width="0dp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="@dimen/_16sdp"
@@ -204,11 +204,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.045"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText"
+            app:layout_constraintTop_toBottomOf="@+id/email"
             app:layout_constraintVertical_bias="0.033" />
 
         <EditText
-            android:id="@+id/Educational_levelText"
+            android:id="@+id/grade"
             android:layout_width="0dp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="@dimen/_16sdp"
@@ -246,11 +246,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.042"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Educational_levelText"
+            app:layout_constraintTop_toBottomOf="@+id/grade"
             app:layout_constraintVertical_bias="0.037" />
 
         <EditText
-            android:id="@+id/school_levelText"
+            android:id="@+id/schoolType"
             android:layout_width="0dp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="@dimen/_16sdp"
@@ -301,7 +301,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.047"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/school_levelText"
+            app:layout_constraintTop_toBottomOf="@+id/schoolType"
             app:layout_constraintVertical_bias="0.044" />
 
         <EditText

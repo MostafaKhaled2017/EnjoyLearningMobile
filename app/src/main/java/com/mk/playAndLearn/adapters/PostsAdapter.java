@@ -1,18 +1,17 @@
 package com.mk.playAndLearn.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,15 +22,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.model.Post;
-import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
-import com.mk.playAndLearn.utils.OnLoadMoreListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -47,7 +43,7 @@ public class PostsAdapter extends RecyclerView.Adapter {
     HomeFragment homeFragment;
     Context context;
     String localCurrentUserUid;
-    long votes;
+    long upvotes, downVotes;
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
@@ -108,7 +104,15 @@ public class PostsAdapter extends RecyclerView.Adapter {
                 }
             }
 
-            ((MyHolder) holder).votes.setText(post.getVotes() + "");
+            if (post.getSubject() != null) {
+                ((MyHolder) holder).subject.setText(post.getSubject());
+            }
+            if (post.getUpVotedUsers() != null) {
+                ((MyHolder) holder).upvotedNo.setText(post.getUpVotedUsers().split(" ").length - 1 + "");
+            }
+            if (post.getDownVotedUsers() != null) {
+                ((MyHolder) holder).downVotedNo.setText(post.getDownVotedUsers().split(" ").length - 1 + "");
+            }
 
             if (post.getWriter() != null && !post.getWriter().equals(""))
                 ((MyHolder) holder).name.setText(post.getWriter().trim());
@@ -217,7 +221,7 @@ public class PostsAdapter extends RecyclerView.Adapter {
                             Toast.makeText(context, "تم حذف المنشور بنجاح", Toast.LENGTH_SHORT).show();
                             list.remove(position);
                             notifyDataSetChanged();
-                           // homeFragment.loadData();
+                            // homeFragment.loadData();
 
                             if (admin && !email.equals(adminEmail)) {
                                 composeEmail("تم حذف منشورك", "تم حذف منشورك " + "\"" + content + "\"", email);
@@ -321,28 +325,42 @@ public class PostsAdapter extends RecyclerView.Adapter {
         Log.v("postVotingLogging", "datasnapshot is : " + dataSnapshot);
         String upVotedUsers = dataSnapshot.getString("upVotedUsers");
         String downVotedUsers = dataSnapshot.getString("downVotedUsers");
-        votes = dataSnapshot.getLong("votes");
+        long votes = dataSnapshot.getLong("votes");
         if (upVotedUsers != null && downVotedUsers != null) {
             String[] upVotedUsersArray = upVotedUsers.split(" ");
             String[] downVotedUsersArray = downVotedUsers.split(" ");
+
             if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
                 if (tag.equals("upArrow")) {
+                    final String newUpVotedUsers = upVotedUsers + localCurrentUserUid + " ";
+
                     votes++;
                     fireStorePosts.document(post.getId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
+
+                    fireStorePosts.document(post.getId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            holder.upvotedNo.setText(newUpVotedUsers.split(" ").length - 1 + "");
+                            post.setUpVotedUsers(newUpVotedUsers);
+                            notifyDataSetChanged();
+                        }
+                    });
                 } else if (tag.equals("downArrow")) {
+                    final String newDownVotedUsers = downVotedUsers + localCurrentUserUid + " ";
+
                     votes--;
                     fireStorePosts.document(post.getId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
 
+                    fireStorePosts.document(post.getId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            holder.downVotedNo.setText(newDownVotedUsers.split(" ").length - 1 + "");
+                            post.setDownVotedUsers(newDownVotedUsers);
+                            notifyDataSetChanged();
+                        }
+                    });
                 }
-                fireStorePosts.document(post.getId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.v("Logging", "votes : " + votes);
-                        holder.votes.setText(votes + "");
-                        post.setVotes(votes);
-                        notifyDataSetChanged();
-                    }
-                });
+
             } else {
                 Toast.makeText(context, "لا يمكنك التصويت لنفس السؤال أكثر من مرة", Toast.LENGTH_SHORT).show();
             }
@@ -352,21 +370,24 @@ public class PostsAdapter extends RecyclerView.Adapter {
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView content, date, name, votes;
+        TextView content, date, name, upvotedNo, downVotedNo;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
+        Button subject;
 
 
         MyHolder(View itemView) {
             super(itemView);
-            content = itemView.findViewById(R.id.postContentInDetails);
-            date = itemView.findViewById(R.id.postDateInDetails);
-            name = itemView.findViewById(R.id.postUserNameInDetails);
-            votes = itemView.findViewById(R.id.numberOfVotes);
-            imageView = itemView.findViewById(R.id.postImageInDetails);
-            upArrow = itemView.findViewById(R.id.upArrow);
-            downArrow = itemView.findViewById(R.id.downArrow);
-            cardView = itemView.findViewById(R.id.card_view_of_posts);
+            content = itemView.findViewById(R.id.replyContent);
+            date = itemView.findViewById(R.id.replyDate);
+            name = itemView.findViewById(R.id.replyUserName);
+            upvotedNo = itemView.findViewById(R.id.upVotesNo);
+            downVotedNo = itemView.findViewById(R.id.downVotesNo);
+            subject = itemView.findViewById(R.id.subject);
+            imageView = itemView.findViewById(R.id.replyImage);
+            upArrow = itemView.findViewById(R.id.like);
+            downArrow = itemView.findViewById(R.id.downVote);
+            cardView = itemView.findViewById(R.id.cardView);
         }
     }
 

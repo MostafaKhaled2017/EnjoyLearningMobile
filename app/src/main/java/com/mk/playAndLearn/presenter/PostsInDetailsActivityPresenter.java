@@ -110,6 +110,8 @@ public class PostsInDetailsActivityPresenter {
                             String content = commentDocument.getString("content");
                             String userImage = commentDocument.getString("userImage");
                             String date = format.format(commentDocument.get("date"));
+                            String upVotedUsers = commentDocument.getString("upVotedUsers");
+                            String downVotesUsers = commentDocument.getString("downVotedUsers");
                             String writerUid = commentDocument.getString("writerUid");
                             long votes = commentDocument.getLong("votes");
                             boolean posted = commentDocument.getBoolean("posted");
@@ -124,6 +126,8 @@ public class PostsInDetailsActivityPresenter {
                             comment.setContent(content);
                             comment.setUserImage(userImage);
                             comment.setDate(date);
+                            comment.setUpVotedUsers(upVotedUsers);
+                            comment.setDownVotedUsers(downVotesUsers);
                             comment.setId(commentId);
                             if (!existsInCommentsList(commentId)) {
                                 commentsList.add(0, comment);

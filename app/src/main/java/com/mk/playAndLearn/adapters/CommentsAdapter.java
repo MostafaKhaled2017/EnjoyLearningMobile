@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,13 +20,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.PostInDetailsActivity;
 import com.mk.playAndLearn.activity.RepliesActivity;
 import com.mk.playAndLearn.model.Comment;
 import com.squareup.picasso.Picasso;
@@ -42,14 +37,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
     ArrayList<Comment> list;
     Context context;
     //used to load the votes number at the first time only
-    boolean visied;
+    boolean visited;
     long votes;
     String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     public CommentsAdapter(ArrayList<Comment> list, Context context, boolean visited) {
         this.list = list;
         this.context = context;
-        this.visied = visited;
+        this.visited = visited;
     }
 
     @Override
@@ -78,9 +73,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         if (comment.getUserImage() != null)
             Picasso.with(context).load(comment.getUserImage()).placeholder(R.drawable.picasso_placeholder).into(holder.imageView);
 
-        holder.votes.setText(comment.getVotes() + "");
 
-
+        if (comment.getUpVotedUsers() != null) {
+            ((MyHolder) holder).upVotesNo.setText(comment.getUpVotedUsers().split(" ").length - 1 + "");
+        }
+        if (comment.getDownVotedUsers() != null) {
+            ((MyHolder) holder).downVotesNo.setText(comment.getDownVotedUsers().split(" ").length - 1 + "");
+        }
 
         ((MyHolder) holder).replies.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,19 +154,20 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView name, content, date, votes, replies;
+        TextView name, content, date, votes, replies, upVotesNo, downVotesNo;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
 
         MyHolder(View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.commentUserName);
-            content = itemView.findViewById(R.id.commentContent);
-            date = itemView.findViewById(R.id.commentDate);
-            votes = itemView.findViewById(R.id.numberOfVotes);
-            upArrow = itemView.findViewById(R.id.upArrow);
-            downArrow = itemView.findViewById(R.id.downArrow);
-            imageView = itemView.findViewById(R.id.commentImage);
+            name = itemView.findViewById(R.id.replyUserName);
+            content = itemView.findViewById(R.id.replyContent);
+            date = itemView.findViewById(R.id.replyDate);
+            upVotesNo = itemView.findViewById(R.id.upVotesNo);
+            downVotesNo = itemView.findViewById(R.id.downVotesNo);
+            upArrow = itemView.findViewById(R.id.like);
+            downArrow = itemView.findViewById(R.id.downVote);
+            imageView = itemView.findViewById(R.id.replyImage);
             cardView = itemView.findViewById(R.id.card_view_of_comments);
             replies = itemView.findViewById(R.id.repliesTv);
         }
@@ -195,21 +195,34 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyHold
         String[] downVotedUsersArray = downVotedUsers.split(" ");
         if (!isVoted(upVotedUsersArray, downVotedUsersArray)) {
             if (tag.equals("upArrow")) {
-                votes++;
-                fireStoreComments.document(comment.getCommentId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
-            } else if (tag.equals("downArrow")) {
-                votes--;
-                fireStoreComments.document(comment.getCommentId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
+                final String newUpVotedUsers = upVotedUsers + localCurrentUserUid + " ";
 
+                votes++;
+                fireStoreComments.document(comment.getId()).update("upVotedUsers", upVotedUsers + localCurrentUserUid + " ");
+
+                fireStoreComments.document(comment.getId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        holder.upVotesNo.setText(newUpVotedUsers.split(" ").length - 1 + "");
+                        comment.setUpVotedUsers(newUpVotedUsers);
+                        notifyDataSetChanged();
+                    }
+                });
+            } else if (tag.equals("downArrow")) {
+                final String newDownVotedUsers = downVotedUsers + localCurrentUserUid + " ";
+
+                votes--;
+                fireStoreComments.document(comment.getId()).update("downVotedUsers", downVotedUsers + localCurrentUserUid + " ");
+
+                fireStoreComments.document(comment.getId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        holder.downVotesNo.setText(newDownVotedUsers.split(" ").length - 1 + "");
+                        comment.setDownVotedUsers(newDownVotedUsers);
+                        notifyDataSetChanged();
+                    }
+                });
             }
-            fireStoreComments.document(comment.getCommentId()).update("votes", votes).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Log.v("Logging", "votes : " + votes);
-                    holder.votes.setText(votes + "");
-                    comment.setVotes(votes);
-                }
-            });
         } else {
             Toast.makeText(context, "لا يمكنك التصويت لنفس التعليق أكثر من مرة", Toast.LENGTH_SHORT).show();
         }

@@ -38,15 +38,12 @@ public class ChallengeStartActivity extends AppCompatActivity implements Challen
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         assert actionBar != null;
         actionBar.setHomeAsUpIndicator(upArrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("ابدأ التحدي");
 
 
         player1NameTv = findViewById(R.id.firstPlayerName);

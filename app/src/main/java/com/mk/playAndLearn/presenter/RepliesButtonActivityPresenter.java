@@ -99,6 +99,8 @@ public class RepliesButtonActivityPresenter {
                             String content = replyDocument.getString("content");
                             String userImage = replyDocument.getString("userImage");
                             String date = format.format(replyDocument.get("date"));
+                            String upVotedUsers = replyDocument.getString("upVotedUsers");
+                            String downVotedUsers = replyDocument.getString("downVotedUsers");
                             String writerUid = replyDocument.getString("writerUid");
                             long votes = replyDocument.getLong("votes");
                             boolean posted = replyDocument.getBoolean("posted");
@@ -113,6 +115,8 @@ public class RepliesButtonActivityPresenter {
                             reply.setContent(content);
                             reply.setUserImage(userImage);
                             reply.setDate(date);
+                            reply.setUpVotedUsers(upVotedUsers);
+                            reply.setDownVotedUsers(downVotedUsers);
                             if (!existsInRepliesList(replyId)) {
                                 repliesList.add(0, reply);
                                 view.notifyAdapter();

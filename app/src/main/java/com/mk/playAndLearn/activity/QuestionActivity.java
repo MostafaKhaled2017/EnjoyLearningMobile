@@ -2,6 +2,7 @@ package com.mk.playAndLearn.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.LinearGradient;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -46,7 +48,7 @@ public class QuestionActivity extends AppCompatActivity {
     String playerAnswersBooleansList = "", playerAnswersList = "", correctAnswersList = "";
     TextView tvQuestion;
     RadioGroup rg1;
-    RelativeLayout checkBoxGroup;
+    LinearLayout checkBoxGroup;
     Button nextButton;
     String selection, correctAnswer;
     RadioButton r1, r2, r3, r4;
@@ -72,7 +74,7 @@ public class QuestionActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;

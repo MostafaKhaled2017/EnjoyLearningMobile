@@ -38,4 +38,14 @@
         <item>فرنسي</item>
         <item>عربي </item>
     </string-array>
+
+    <string-array name="couresename">
+        <item>اللغة  العربية </item>
+        <item>اللغة الانجليزية </item>
+        <item>الفرنسة  </item>
+        <item>اللغة العربية</item>
+        <item>اللغة الفرنسية </item>
+    </string-array>
+
+
 </resources>

@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 
 public class RepliesActivity extends AppCompatActivity implements RepliesButtonActivityPresenter.View {
-    String content, name, date, image, commentId = "", commentWriterUid = "";
+    String content, commentId = "", commentWriterUid = "";
     RepliesButtonActivityPresenter presenter;
 
     RepliesAdapter recyclerAdapter;
@@ -51,12 +51,15 @@ public class RepliesActivity extends AppCompatActivity implements RepliesButtonA
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         //TODO : think about editing this drawable but I think it is good
-        final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+
+        TextView toolbarTitle = toolbar.findViewById(R.id.title);
+        toolbarTitle.setText("الردود");
         
         presenter = new RepliesButtonActivityPresenter(RepliesActivity.this, this);
         
@@ -74,7 +77,6 @@ public class RepliesActivity extends AppCompatActivity implements RepliesButtonA
         if (intent.getExtras() != null) {
             commentId = intent.getStringExtra("id");
             commentWriterUid = intent.getStringExtra("commentWriterUid");
-
         }
 
         recyclerView = findViewById(R.id.repliesRecyclerView);

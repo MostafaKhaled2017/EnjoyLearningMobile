@@ -211,8 +211,8 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     void setSubjectsSpinner(int array, String tag) {
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                array, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+                array, R.layout.spinner_item_selected);
+        subjectsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
         subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

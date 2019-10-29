@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <android.support.v7.widget.CardView
+    android:padding="5dp"
+    app:cardCornerRadius="@dimen/_20sdp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+    android:layoutDirection="rtl"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        >
+
+
+
+        <RelativeLayout
+            android:padding="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/addcomplaint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/el_messiri"
+                android:text="تقديم  شكوى  "
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_alignParentTop="true"
+
+                />
+
+
+            <TextView
+                android:id="@+id/areyousure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/el_messiri"
+                android:text="هل  انت متاكد انك تريد تقديم شكوى فى  هذا السؤال؟ "
+                android:textSize="@dimen/_11sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/addcomplaint"
+
+                />
+
+            <Button
+                android:id="@+id/yes"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:background="@drawable/shape_dark"
+                android:fontFamily="@font/el_messiri"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="نعم"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp"
+                android:layout_below="@+id/areyousure"
+             />
+            <Button
+                android:id="@+id/yeswhite"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:background="@drawable/backimage"
+                android:fontFamily="@font/el_messiri"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="نعم"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                android:layout_below="@+id/areyousure"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                />
+            <Button
+                android:id="@+id/no"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:background="@drawable/backimage"
+                android:fontFamily="@font/el_messiri"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="لا"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                android:layout_below="@+id/areyousure"
+                android:layout_toEndOf="@+id/yes"
+                />
+
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+

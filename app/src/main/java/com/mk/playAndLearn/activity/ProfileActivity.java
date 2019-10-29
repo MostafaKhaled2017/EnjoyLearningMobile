@@ -1,11 +1,7 @@
 package com.mk.playAndLearn.activity;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,19 +9,17 @@ import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.ProfileActivityPresenter;
 import com.squareup.picasso.Picasso;
 
-import java.util.Objects;
-
 public class ProfileActivity extends AppCompatActivity implements ProfileActivityPresenter.View {
 
     ProfileActivityPresenter presenter;
-    TextView nameTv, gradeTv, pointsTv, schoolTypeTv;
+    TextView nameTv, gradeTv, pointsTv, schoolTypeTv, emailTv, governorateTv;
     ImageView userImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        /*Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         final Drawable upArrow = getResources().getDrawable(R.drawable.back_arrow);
@@ -35,7 +29,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("الصفحة الشخصية");
+        toolbarTitle.setText("الصفحة الشخصية");*/
 
         presenter = new ProfileActivityPresenter(this,this);
 
@@ -45,7 +39,9 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
         gradeTv = findViewById(R.id.grade);
         pointsTv = findViewById(R.id.points);
         schoolTypeTv = findViewById(R.id.schoolType);
-        userImage = findViewById(R.id.userImage);
+        userImage = findViewById(R.id.replyImage);
+        emailTv = findViewById(R.id.email);
+        governorateTv = findViewById(R.id.governorateTv);
 
 
        /* PieChart pieChart = findViewById(R.id.piechart);
@@ -71,11 +67,13 @@ public class ProfileActivity extends AppCompatActivity implements ProfileActivit
     }
 
     @Override
-    public void setData(String userName, String grade, long points, String schoolType, String imageUrl) {
-        nameTv.append(userName);
-        gradeTv.append(grade);
-        pointsTv.append(points + "");
-        schoolTypeTv.append(schoolType);
+    public void setData(String userName, String grade, long points, String schoolType, String imageUrl, String email, String governorate) {
+        nameTv.setText(userName);
+        gradeTv.setText(grade);
+        pointsTv.setText(points + "");
+        schoolTypeTv.setText(schoolType);
+        emailTv.setText(email);
+        governorateTv.setText(governorate);
 
         Picasso.with(this).load(imageUrl).placeholder(R.drawable.picasso_placeholder).into(userImage);
 

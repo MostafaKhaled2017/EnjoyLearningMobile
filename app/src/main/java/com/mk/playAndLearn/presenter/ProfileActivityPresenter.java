@@ -33,8 +33,10 @@ public class ProfileActivityPresenter {
                         long points = documentSnapshot.getLong("points");
                         String schoolType = documentSnapshot.getString("userSchoolType");
                         String imageUrl = documentSnapshot.getString("userImage");
+                        String email = documentSnapshot.getString("userEmail");
+                        String governorate = documentSnapshot.getString("governorate");
 
-                        view.setData(userName, grade, points, schoolType, imageUrl);
+                        view.setData(userName, grade, points, schoolType, imageUrl, email, governorate);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -46,6 +48,6 @@ public class ProfileActivityPresenter {
     }
 
     public interface View {
-        void setData(String userName, String grade, long points, String schoolType, String imageUrl);
+        void setData(String userName, String grade, long points, String schoolType, String imageUrl, String email, String governorate);
     }
 }

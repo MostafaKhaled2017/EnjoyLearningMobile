@@ -3,6 +3,42 @@ package com.mk.playAndLearn.model;
 public class Post {
     private String writerName;
     private boolean posted;
+    String subject;
+    String upVotedUsers;
+
+    public String getUpVotedUsers() {
+        return upVotedUsers;
+    }
+
+    public void setUpVotedUsers(String upVotedUsers) {
+        this.upVotedUsers = upVotedUsers;
+    }
+
+    public String getDownVotedUsers() {
+        return downVotedUsers;
+    }
+
+    public void setDownVotedUsers(String downVotedUsers) {
+        this.downVotedUsers = downVotedUsers;
+    }
+
+    String downVotedUsers;
+
+    public String getWriterName() {
+        return writerName;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
     public long getVotes() {
         return votes;

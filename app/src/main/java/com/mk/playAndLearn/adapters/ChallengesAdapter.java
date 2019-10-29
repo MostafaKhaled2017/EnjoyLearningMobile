@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -257,7 +258,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
     class MyHolder extends RecyclerView.ViewHolder {
         TextView challengerName, state, date, subject, score;
         ImageView imageView;
-        RelativeLayout challengeView;
+        CardView challengeView;
 
         MyHolder(View itemView) {
             super(itemView);
