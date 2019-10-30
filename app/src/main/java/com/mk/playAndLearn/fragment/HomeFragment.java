@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +37,6 @@ import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 import java.util.ArrayList;
 
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -53,7 +56,7 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     private OnFragmentInteractionListener mListener;
 
-    HomeFragmentPresenter presenter;
+    public HomeFragmentPresenter presenter;
 
     PostsAdapter recyclerAdapter;
     TextView noPostsText, noInternetConnectionText;
@@ -96,12 +99,13 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
                 localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
                     @Override
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        if(firebaseAuth.getCurrentUser() != null && !currentSubject.equals(internalCurrentSubject)){
+                        if (firebaseAuth.getCurrentUser() != null && !currentSubject.equals(internalCurrentSubject)) {
                             loadData();
                             internalCurrentSubject = currentSubject;
                         }
                     }
                 });
+
             }
 
             @Override
@@ -118,13 +122,13 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
             }
         });
 
-        FloatingActionButton fab = myView.findViewById(R.id.fab);
+       /* FloatingActionButton fab = myView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showSpinnerDialog();
             }
-        });
+        });*/
 
         return myView;
 
@@ -132,75 +136,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     public void loadData() {
         presenter.startAsynkTask(currentSubject);
-    }
-
-    public void showSpinnerDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());//TODO : check this
-        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
-
-        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setCancelable(false)
-                .create();
-
-        final EditText inputComment = view.findViewById(R.id.dialog_value);
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
-        dialogTitle.setText("إضافة منشور");
-        inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
-
-        ImageView closeIcon = view.findViewById(R.id.closeIcon);
-        closeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialogBuilderUserInput.dismiss();
-            }
-        });
-
-        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.preparatory_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(subjectsAdapter);
-
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentSubject = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(final DialogInterface dialogInterface) {
-
-                Button button = view.findViewById(R.id.addPostBtn);
-                button.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        String commentText = inputComment.getText().toString().trim();
-                        if (TextUtils.isEmpty(commentText)) {
-                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
-                        } else if (currentSubject.equals("اختر المادة")) {
-                            Toast.makeText(getActivity(), "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
-                        } else {
-                            presenter.addPost(commentText, currentSubject);
-                            dialogInterface.dismiss();
-                        }
-                    }
-                });
-            }
-        });
-
-        alertDialogBuilderUserInput.show();
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

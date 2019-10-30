@@ -22,6 +22,33 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddChallenge"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:layout_constraintLeft_toRightOf="@id/navigation"
+        app:layout_constraintRight_toLeftOf="@id/navigation"
+        app:layout_constraintTop_toBottomOf="@id/navigation"
+        app:layout_constraintTop_toTopOf="@id/navigation"
+        app:srcCompat="@drawable/add"
+        android:layout_margin="16dp"
+        app:elevation="@dimen/_10sdp"
+        app:layout_insetEdge="bottom"  />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddPost"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:layout_constraintLeft_toRightOf="@id/navigation"
+        app:layout_constraintRight_toLeftOf="@id/navigation"
+        app:layout_constraintTop_toBottomOf="@id/navigation"
+        app:layout_constraintTop_toTopOf="@id/navigation"
+        app:srcCompat="@drawable/add"
+        android:layout_margin="16dp"
+        app:elevation="@dimen/_10sdp"
+        app:layout_insetEdge="bottom"  />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -33,11 +60,9 @@
         app:layout_constraintTop_toBottomOf="@id/navigation"
         app:layout_constraintTop_toTopOf="@id/navigation"
         app:srcCompat="@drawable/add"
-
         android:layout_margin="16dp"
         app:elevation="@dimen/_10sdp"
         app:layout_insetEdge="bottom"  />
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
@@ -51,7 +76,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_alignParentBottom="true"
         app:layout_constraintRight_toRightOf="parent"
-
         app:menu="@menu/navigation">
 
 

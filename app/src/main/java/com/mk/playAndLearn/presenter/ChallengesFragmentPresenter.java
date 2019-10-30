@@ -44,7 +44,6 @@ public class ChallengesFragmentPresenter {
     View view;
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
     int player1childrenCount = 0, player2childrenCount = 0, currentPlayer;
-    ChildEventListener player1Listener, player2Listener;
     boolean initialDataLoaded = false;
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
     String localCurrentUserUid;

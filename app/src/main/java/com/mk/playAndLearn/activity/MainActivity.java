@@ -22,11 +22,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.ads.MobileAds;
@@ -71,11 +80,13 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 public class MainActivity extends AppCompatActivity implements LessonsFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
         ChallengesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
     MainViewPagerAdapter adapter;
+    BottomNavigationView navigation;
 
     int tabPosition = 1;
-    boolean initialDataLoaded = false;
+    boolean initialDataLoaded = false, isFABOpen;
     boolean transactionCalled = false;
     ArrayList list;
+    String currentSubject;
 
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
@@ -83,7 +94,12 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     String urlOfAppFromPlayStore = "https://play.google.com/store/apps/details?id=com.mk.playAndLearn";
     String currentVersion, latestVersion, localCurrentUserUid;
     Dialog dialog;
-    FloatingActionButton fab;
+    FloatingActionButton mainFab, fabAddPost, fabAddChallenge;
+
+    HomeFragment homeFragment = new HomeFragment();
+    ProfileFragment profileFragment = new ProfileFragment();
+    ChallengesFragment challengesFragment = new ChallengesFragment();
+    LessonsFragment lessonsFragment = new LessonsFragment();
 
     Intent serviceIntent;
 
@@ -132,16 +148,37 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fab = findViewById(R.id.floatingActionButton);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabAddPost = findViewById(R.id.fabAddPost);
+        fabAddChallenge = findViewById(R.id.fabAddChallenge);
+        
+        fabAddChallenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
             }
         });
+        
+        fabAddPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSpinnerDialog();
+            }
+        });
+
+        mainFab = findViewById(R.id.floatingActionButton);
+        mainFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isFABOpen){
+                    showFABMenu();
+                }else{
+                    closeFABMenu();
+                }
+            }
+        });
 
         //getting bottom navigation view and attaching the listener
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
@@ -199,6 +236,101 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             } catch (Exception e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }*/
+    }
+
+    public void showSpinnerDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);//TODO : check this
+        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
+
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this)
+                .setView(view)
+                .setCancelable(false)
+                .create();
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
+        dialogTitle.setText("إضافة منشور");
+        inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
+
+        ImageView closeIcon = view.findViewById(R.id.closeIcon);
+        closeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialogBuilderUserInput.dismiss();
+            }
+        });
+
+        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(MainActivity.this,
+                R.array.preparatory_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
+        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(subjectsAdapter);
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+
+                Button button = view.findViewById(R.id.addPostBtn);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String commentText = inputComment.getText().toString().trim();
+                        if (TextUtils.isEmpty(commentText)) {
+                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
+                        } else if (currentSubject.equals("اختر المادة")) {
+                            Toast.makeText(MainActivity.this, "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (homeFragment != null) {
+                               homeFragment.presenter.addPost(commentText, currentSubject);
+                            } else {
+                                Toast.makeText(MainActivity.this, "فشلت إضافة المنشور برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                            }
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilderUserInput.show();
+
+    }
+
+    private void showFABMenu(){
+        isFABOpen=true;
+        fabAddPost.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        fabAddChallenge.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
+    }
+
+    private void closeFABMenu(){
+        isFABOpen=false;
+        fabAddChallenge.animate().translationY(0);
+        fabAddPost.animate().translationY(0);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!isFABOpen){
+            super.onBackPressed();
+        }else{
+            closeFABMenu();
+        }
+        navigation.setSelectedItemId(R.id.navigation_home);
     }
 
     @Override
@@ -285,16 +417,16 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragment = new HomeFragment();
+                    fragment = homeFragment;
                     break;
                 case R.id.navigation_profile:
-                    fragment = new ProfileFragment();
+                    fragment = profileFragment;
                     break;
                 case R.id.navigation_Challenges:
-                    fragment = new ChallengesFragment();
+                    fragment = challengesFragment;
                     break;
                 case R.id.navigation_Lessons:
-                    fragment = new LessonsFragment();
+                    fragment = lessonsFragment;
                     break;
             }
 

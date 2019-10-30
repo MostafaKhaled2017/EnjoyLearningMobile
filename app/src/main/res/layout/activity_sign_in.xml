@@ -30,6 +30,7 @@
             android:layout_marginTop="2dp"
             android:indeterminate="true"
             android:max="100"
+            android:visibility="invisible"
             android:elevation="10dp"
             android:progress="100"
             />

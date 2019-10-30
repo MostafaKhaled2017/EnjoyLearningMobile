@@ -33,6 +33,7 @@
                 android:layout_marginTop="2dp"
                 android:indeterminate="true"
                 android:max="100"
+                android:visibility="invisible"
                 android:elevation="10dp"
                 android:progress="100"
                 />
@@ -118,43 +119,6 @@
             app:layout_constraintTop_toBottomOf="@+id/school"
             app:layout_constraintVertical_bias="0.0" />
 
-
-        <TextView
-            android:id="@+id/phonenumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/el_messiri"
-            android:text="رقم الهاتف"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.047"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/schoolTypeSpinner"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <EditText
-            android:id="@+id/phoneNo"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:inputType="number"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.062"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phonenumber"
-            app:layout_constraintVertical_bias="0.0" />
-
         <TextView
             android:id="@+id/city"
             android:layout_width="wrap_content"
@@ -171,7 +135,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.048"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNo"
+            app:layout_constraintTop_toBottomOf="@+id/schoolTypeSpinner"
             app:layout_constraintVertical_bias="0.004" />
 
 
@@ -191,6 +155,43 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/city"
             app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/phonenumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/el_messiri"
+            android:text="رقم الهاتف (اختيارى)"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.047"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/governorateName"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <EditText
+            android:id="@+id/phoneNo"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/linearborder"
+            android:ems="10"
+            android:inputType="number"
+            android:text=""
+            android:focusedByDefault="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.062"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phonenumber"
+            app:layout_constraintVertical_bias="0.0" />
+
 
         <TextView
             android:id="@+id/emailfriends"
@@ -208,7 +209,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.097"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/governorateName"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNo"
             app:layout_constraintVertical_bias="0.0" />
 
         <EditText

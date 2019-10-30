@@ -40,7 +40,7 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
     CheckBox acceptTerms;
     Button registerBtn;
     EditText phoneNumberEt, invitingFriendEt;
-    String userSchoolType, currentGovernorate, grade, phoneNumber, invitingFriend;
+    String userSchoolType, currentGovernorate, grade;
     String name, email, password, rePassword, gender, userType;
     long points;
     ProgressBar progressBar;
@@ -110,10 +110,7 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
                 String invitingFriend = invitingFriendEt.getText().toString().trim();
                 boolean acceptTermsChecked = acceptTerms.isChecked();
 
-                if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() < 11) {
-                    enableBtn();
-                    phoneNumberEt.setError("برجاء إدخال رقم الهاتف بشكل صحيح ليتم التواصل معك لتسليم الجوائز فى حالة الفوز");
-                } else if (grade.equals("اختر الصف الدراسى")) {
+                if (grade.equals("اختر الصف الدراسى")) {
                     enableBtn();
                     Toast.makeText(SignUp2Activity.this, "برجاء إدخال الصف الدراسى", Toast.LENGTH_SHORT).show();
                 } else if (currentGovernorate.equals("المحافظة")) {
