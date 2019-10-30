@@ -1,23 +1,15 @@
 package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,7 +19,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.mk.playAndLearn.model.Challenge;
-import com.mk.playAndLearn.utils.DateClass;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -37,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
@@ -45,10 +35,8 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Integers.drawChallengePoints;
 import static com.mk.playAndLearn.utils.Integers.wonChallengePoints;
-import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedPoints;
 
 public class ChallengesFragmentPresenter {
@@ -349,6 +337,13 @@ public class ChallengesFragmentPresenter {
 
                     setSavedPoints(context, newPoints);
 
+                    Long currentCompetitionPoints = snapshot.getLong("competitionPoints");
+                    Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                    if(currentCompetitionPoints == null)
+                        currentCompetitionPoints = Long.valueOf(0);
+                    long newCompetitionPoints = currentCompetitionPoints + (long) drawChallengePoints;
+                    transaction.update(player1Reference, "competitionPoints", newCompetitionPoints);
+
                     if (totalChallengesNo != 0) {
                         transaction.update(player1Reference, "noOfDraws", newNoOfDraws);
                     } else {
@@ -367,6 +362,13 @@ public class ChallengesFragmentPresenter {
                     transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
 
                     setSavedPoints(context, newPoints);
+
+                    Long currentCompetitionPoints = snapshot.getLong("competitionPoints");
+                    Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                    if(currentCompetitionPoints == null)
+                        currentCompetitionPoints = Long.valueOf(0);
+                    long newCompetitionPoints = currentCompetitionPoints + (long) wonChallengePoints;
+                    transaction.update(player1Reference, "competitionPoints", newCompetitionPoints);
 
                     if (totalChallengesNo != 0) {
                         transaction.update(player1Reference, "noOfWins", newNoOfWins);

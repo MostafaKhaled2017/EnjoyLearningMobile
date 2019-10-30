@@ -1,7 +1,6 @@
 package com.mk.playAndLearn.activity;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,31 +8,25 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.fragment.app.Fragment;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.support.v4.view.ViewPager;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 
 import com.google.android.gms.ads.MobileAds;
@@ -42,7 +35,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -53,13 +45,13 @@ import com.mk.playAndLearn.adapters.MainViewPagerAdapter;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LessonsFragment;
+import com.mk.playAndLearn.fragment.ProfileFragment;
 import com.mk.playAndLearn.service.NotificationsService;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,13 +69,12 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
 public class MainActivity extends AppCompatActivity implements LessonsFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
-        ChallengesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
+        ChallengesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
     MainViewPagerAdapter adapter;
-    private ViewPager mViewPager;
-    TabLayout tabLayout;
 
     int tabPosition = 1;
     boolean initialDataLoaded = false;
+    boolean transactionCalled = false;
     ArrayList list;
 
     public SharedPreferences pref; // 0 - for private mode
@@ -92,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     String urlOfAppFromPlayStore = "https://play.google.com/store/apps/details?id=com.mk.playAndLearn";
     String currentVersion, latestVersion, localCurrentUserUid;
     Dialog dialog;
+    FloatingActionButton fab;
 
     Intent serviceIntent;
 
@@ -137,9 +129,24 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_drawer);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        fab = findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
+            }
+        });
+
+        //getting bottom navigation view and attaching the listener
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(this);
+
+        if (savedInstanceState == null) {
+            navigation.setSelectedItemId(R.id.navigation_home); // change to whichever id should be default
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -164,63 +171,21 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
         serviceIntent = new Intent(this, NotificationsService.class);
 
-        mViewPager = findViewById(R.id.viewpagerInMainActivity);
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
-        tabLayout = findViewById(R.id.tablayout);
-        mViewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(mViewPager);
 
         MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
-
 
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && !initialDataLoaded) {
-                     updateLastOnlineDateAndShowRewardsPage();
+                    updateLastOnlineDateAndShowRewardsPage();
                     startNotificationService();
                     getCurrentVersion();
                     initialDataLoaded = true;
                 }
             }
         });
-
-        mViewPager.setCurrentItem(1);//TODO : think about edit the page transformer
-
-        TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabOne.setText("الدروس");
-        tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.learn, 0, 0);
-        tabLayout.getTabAt(0).setCustomView(tabOne);
-
-        //TODO : make a custom tab style for small screens
-        //TODO : edit this to الصفحة الرئيسية and ask my friends is it better to remove text and let images only or it is better to keep text
-        //TODO : think about changing home page name to المنشورات and take my friends opinion
-        TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabTwo.setText("الرئيسية");
-        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.home, 0, 0);
-        tabLayout.getTabAt(1).setCustomView(tabTwo);
-
-        TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThree.setText("التحديات");
-        tabThree.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.challenges, 0, 0);
-        tabLayout.getTabAt(2).setCustomView(tabThree);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                tabPosition = tab.getPosition();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
 
 
           /*  try {
@@ -236,7 +201,13 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }*/
     }
 
-/*    @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        transactionCalled = false;
+    }
+
+    /*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
@@ -247,63 +218,104 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        switch (item.getItemId()) {
-            case R.id.addQuestion:
-                startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
-                return true;
-            case R.id.addLesson:
-                startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
-                return true;
-            case R.id.profile:
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                return true;
-            case R.id.contactUs:
-                startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
-                return true;
-            case R.id.leaderboard:
-                startActivity(new Intent(MainActivity.this, LeaderBoardActivity.class));
-                return true;
+
+        int menuGroupId = item.getGroupId();
+
+        if (menuGroupId == R.id.main_menu_group) {
+            // Handle navigation view item clicks here.
+            switch (item.getItemId()) {
+                case R.id.addQuestion:
+                    startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
+                    return true;
+                case R.id.addLesson:
+                    startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
+                    return true;
+                case R.id.profile:
+                    startActivity(new Intent(MainActivity.this, ProfileFragment.class));
+                    return true;
+                case R.id.contactUs:
+                    startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
+                    return true;
+                case R.id.leaderboard:
+                    startActivity(new Intent(MainActivity.this, LeaderBoardActivity.class));
+                    return true;
             /*case R.id.myAccount:
                 //showHelp();
                 return true;*/
-            case R.id.appManagement:
-                startActivity(new Intent(this, AdminAppManagementActivity.class));
-                return true;
-            case R.id.studyTips:
-                startActivity(new Intent(this, StudyTipsActivity.class));
-                return true;
+                case R.id.appManagement:
+                    startActivity(new Intent(this, AdminAppManagementActivity.class));
+                    return true;
+                case R.id.studyTips:
+                    startActivity(new Intent(this, StudyTipsActivity.class));
+                    return true;
 
-            case R.id.generalChallenges:
-                startActivity(new Intent(this, GeneralChallengesActivity.class));
-                return true;
+                case R.id.generalChallenges:
+                    startActivity(new Intent(this, GeneralChallengesActivity.class));
+                    return true;
 
-            case R.id.bestStudentsInGeneralChallenge:
-                startActivity(new Intent(this, BestStudentsInGeneralChallengeActivity.class));
-                return true;
+                case R.id.bestStudentsInGeneralChallenge:
+                    startActivity(new Intent(this, BestStudentsInGeneralChallengeActivity.class));
+                    return true;
 
-            case R.id.chatBot:
-                startActivity(new Intent(this, ChatbotActivity.class));
-                return true;
+                case R.id.bestStudentsInCompetition:
+                    startActivity(new Intent(this, BestStudentsInCompetitionActivity.class));
+                    return true;
+
+                case R.id.chatBot:
+                    startActivity(new Intent(this, ChatbotActivity.class));
+                    return true;
             /*case R.id.editAccoutData:{
                 Intent i=new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse("https://myaccount.google.com/privacy"));
                 startActivity(i);
                 return true;}*/
-            case R.id.signOut:
-                stopNotificationService();
-                setSharedPreference(this, null, null, null, null, null, null, null, -1, -1, null, null);
-                Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                case R.id.signOut:
+                    stopNotificationService();
+                    setSharedPreference(this, null, null, null, null, null, null, null, -1, -1, null, null);
+                    Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    finish();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        } else if (menuGroupId == R.id.navigation_menu_group) {
+            Fragment fragment = new Fragment();
+
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    fragment = new HomeFragment();
+                    break;
+                case R.id.navigation_profile:
+                    fragment = new ProfileFragment();
+                    break;
+                case R.id.navigation_Challenges:
+                    fragment = new ChallengesFragment();
+                    break;
+                case R.id.navigation_Lessons:
+                    fragment = new LessonsFragment();
+                    break;
+            }
+
+            return loadFragment(fragment);
         }
 
-
+        return false;
     }
+
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -373,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
         final String todayDate = format.format(today);
         final String yesterdayDate = format.format(yesterday);
-        final String oldSavedDate = getSavedDate(this);
+       final String oldSavedDate = getSavedDate(this);
 
         Log.v("dateLogging", "todayDate : " + todayDate
                 + " , yesterdayDate : " + yesterdayDate
@@ -405,11 +417,15 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 }).addOnSuccessListener(new OnSuccessListener<Long>() {
                     @Override
                     public void onSuccess(Long aLong) {
-                        setSavedTodayChallengesNo(MainActivity.this, 0);
-                        Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
-                        i.putExtra("consecutiveDays", aLong);
-                        i.putExtra("userUid", localCurrentUserUid);
-                        startActivity(i);
+                        Log.v("transactionLogging", "transaction 1 called");
+                        if(!transactionCalled) {
+                            setSavedTodayChallengesNo(MainActivity.this, 0);
+                            Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
+                            i.putExtra("consecutiveDays", aLong);
+                            i.putExtra("userUid", localCurrentUserUid);
+                            startActivity(i);
+                            transactionCalled = true;
+                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -427,11 +443,15 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        if(!transactionCalled){
                         Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                         setSavedTodayChallengesNo(MainActivity.this, 0);
                         i.putExtra("consecutiveDays", (long) 1);
                         i.putExtra("userUid", localCurrentUserUid);
                         startActivity(i);
+                        transactionCalled = true;
+                    }
+                        Log.v("transactionLogging", "transaction 2 called");
                     }
                 });
             }
@@ -457,17 +477,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     protected void onStart() {
         super.onStart();
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (tabPosition != 1) {
-            mViewPager.setCurrentItem(1);
-        } else {
-            this.finishAffinity();
-           /* DatabaseReference currentUserPresenceReference = FirebaseDatabase.getInstance().getReference("users").child(localCurrentUserUid).child("online");
-            currentUserPresenceReference.setValue(false);*/
-        }
     }
 
     private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {

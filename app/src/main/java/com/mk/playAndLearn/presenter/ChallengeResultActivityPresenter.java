@@ -2,8 +2,8 @@ package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,9 +14,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -231,6 +228,13 @@ public class ChallengeResultActivityPresenter {
                         if (snapshotForPlayer2.getLong("noOfDraws") != null)
                             noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
 
+                        Long currentCompetitionPoints = snapshotForPlayer2.getLong("competitionPoints");
+                        Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                        if(currentCompetitionPoints == null)
+                            currentCompetitionPoints = Long.valueOf(0);
+                        long newCompetitionPoints = currentCompetitionPoints + (long) drawChallengePoints;
+                        transaction.update(player2Reference, "competitionPoints", newCompetitionPoints);
+
                         newPoints = snapshotForPlayer2.getLong("points") + (long) drawChallengePoints;
                         newNoOfDraws = noOfDraws + (long) 1;
                         transaction.update(player2Reference, "points", newPoints);
@@ -257,6 +261,13 @@ public class ChallengeResultActivityPresenter {
                         transaction.update(player2Reference, "points", newPoints);
                         transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
                         transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        Long currentCompetitionPoints = snapshotForPlayer2.getLong("competitionPoints");
+                        Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                        if(currentCompetitionPoints == null)
+                            currentCompetitionPoints = Long.valueOf(0);
+                        long newCompetitionPoints = currentCompetitionPoints + (long) wonChallengePoints;
+                        transaction.update(player2Reference, "competitionPoints", newCompetitionPoints);
 
                         setSavedPoints(context, newPoints);
 

@@ -1,10 +1,9 @@
 package com.mk.playAndLearn.utils;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
+import androidx.multidex.MultiDex;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MyFirebaseApp  extends android.app.Application {
 

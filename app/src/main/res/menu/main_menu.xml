@@ -4,73 +4,81 @@
     <!--<item android:id="@+id/myQuestions"
         android:title="أسئلتي"
         app:showAsAction="never" />-->
-    <item
-        android:id="@+id/addQuestion"
-        android:title="إضافة سؤال"
-        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/addLesson"
-        android:title="إضافة درس"
-        app:showAsAction="never" />
+    <group android:id="@+id/main_menu_group">
+        <item
+            android:id="@+id/addQuestion"
+            android:title="إضافة سؤال"
+            app:showAsAction="never" />
 
-    <!-- TODO : add this item if possible -->
-    <!-- <item
-         android:id="@+id/myAccount"
-         android:icon="@drawable/account"
-         android:title="حسابي"
-         app:showAsAction="ifRoom" />-->
-    <item
-        android:id="@+id/leaderboard"
-        android:title="قائمة المتصدرين"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/profile"
-        android:title="الصفحة الشخصية"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/generalChallenges"
-        android:title="التحدى العام"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/addLesson"
+            android:title="إضافة درس"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/bestStudentsInGeneralChallenge"
-        android:title="أوائل التحدى العام"
-        app:showAsAction="never" />
+        <!-- TODO : add this item if possible -->
+        <!-- <item
+             android:id="@+id/myAccount"
+             android:icon="@drawable/account"
+             android:title="حسابي"
+             app:showAsAction="ifRoom" />-->
+        <item
+            android:id="@+id/leaderboard"
+            android:title="قائمة المتصدرين"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/profile"
+            android:title="الصفحة الشخصية"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/generalChallenges"
+            android:title="التحدى العام"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/contactUs"
-        android:title="تواصل معنا"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/bestStudentsInGeneralChallenge"
+            android:title="أوائل التحدى العام"
+            android:visible="false"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/chatBot"
-        android:title="روبوت الدردشة"
-        android:visible="false"
-        app:showAsAction="never" />
-    <!-- <item
-         android:id="@+id/editAccoutData"
-         android:title="تعديل بيانات الحساب"
-         app:showAsAction="never" />-->
-    <item
-        android:id="@+id/studyTips"
-        android:title="نصائح المذاكرة"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/settings"
-        android:title="الإعدادات"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/bestStudentsInCompetition"
+            android:title="أوائل المسابقة الأسبوعية"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/appManagement"
-        android:icon="@drawable/app_management"
-        android:title="إدارة التطبيق"
-        android:visible="false"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/signOut"
-        android:title="تسجيل الخروج"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/contactUs"
+            android:title="تواصل معنا"
+            app:showAsAction="never" />
 
+        <item
+            android:id="@+id/chatBot"
+            android:title="روبوت الدردشة"
+            android:visible="false"
+            app:showAsAction="never" />
+        <!-- <item
+             android:id="@+id/editAccoutData"
+             android:title="تعديل بيانات الحساب"
+             app:showAsAction="never" />-->
+        <item
+            android:id="@+id/studyTips"
+            android:title="نصائح المذاكرة"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/settings"
+            android:title="الإعدادات"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/appManagement"
+            android:icon="@drawable/app_management"
+            android:title="إدارة التطبيق"
+            android:visible="false"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/signOut"
+            android:title="تسجيل الخروج"
+            app:showAsAction="never" />
+    </group>
 
 </menu>

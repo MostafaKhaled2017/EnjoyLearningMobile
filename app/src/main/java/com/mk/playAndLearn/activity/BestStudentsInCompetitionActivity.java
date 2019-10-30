@@ -2,10 +2,10 @@ package com.mk.playAndLearn.activity;
 
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
-import com.mk.playAndLearn.presenter.BestStudentsInGeneralChallengeActivityPresenter;
+import com.mk.playAndLearn.presenter.BestStudentsInCompetitionPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
 
-public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity implements BestStudentsInGeneralChallengeActivityPresenter.View {
+public class BestStudentsInCompetitionActivity extends AppCompatActivity implements BestStudentsInCompetitionPresenter.View {
 
     StudentsAdapter recyclerAdapter;
 
@@ -31,7 +31,7 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
     SwipeRefreshLayout swipeRefreshLayout;
     TextView noStudentsTv;
 
-    BestStudentsInGeneralChallengeActivityPresenter presenter;
+    BestStudentsInCompetitionPresenter presenter;
 
     private final String TAG = "BestStudentsFragment";
 
@@ -49,11 +49,10 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
-
         TextView toolbarTitle = toolbar.findViewById(R.id.title);
-        toolbarTitle.setText("أوائل التحدى العام");
+        toolbarTitle.setText("أوائل المسابقة الأسبوعية");
 
-        presenter = new BestStudentsInGeneralChallengeActivityPresenter(this);
+        presenter = new BestStudentsInCompetitionPresenter(this);
 
         recyclerView = findViewById(R.id.bestStudentsInGeneralChallengeRecyclerView);
         progressBar = findViewById(R.id.bestStudentsInGeneralChallengeProgressBar);
@@ -110,8 +109,8 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
 
     @Override
     public void hideProgressBar() {
-        if (progressBar.getVisibility() != android.view.View.GONE)
-            progressBar.setVisibility(android.view.View.GONE);
+        if (progressBar.getVisibility() != View.GONE)
+            progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -132,8 +131,8 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
 
     @Override
     public void handleNoInternetConnection() {
-        progressBar.setVisibility(android.view.View.GONE);
-        noInternetConnectionText.setVisibility(android.view.View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+        noInternetConnectionText.setVisibility(View.VISIBLE);
         hideSwipeRefreshLayout();
     }
 

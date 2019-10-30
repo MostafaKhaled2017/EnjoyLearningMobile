@@ -1,15 +1,14 @@
 package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.view.View;
+import androidx.annotation.NonNull;
+
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.mk.playAndLearn.activity.ChallengeResultActivity;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
@@ -35,11 +34,11 @@ public class ProfileActivityPresenter {
                         String imageUrl = documentSnapshot.getString("userImage");
                         String email = documentSnapshot.getString("userEmail");
                         String governorate = documentSnapshot.getString("governorate");
+                        String studentId = documentSnapshot.getId();
 
-                        view.setData(userName, grade, points, schoolType, imageUrl, email, governorate);
+                        view.setData(userName, grade, points, schoolType, imageUrl, email, studentId);
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(context, "لم نستطع تحميل بياناتك برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
@@ -48,6 +47,6 @@ public class ProfileActivityPresenter {
     }
 
     public interface View {
-        void setData(String userName, String grade, long points, String schoolType, String imageUrl, String email, String governorate);
+        void setData(String userName, String grade, long points, String schoolType, String imageUrl, String email, String studentId);
     }
 }

@@ -1,56 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/color3"
-    tools:context="com.mk.playAndLearn.fragment.HomeFragment">
+    android:background="@color/white"
+    android:padding="@dimen/_10sdp">
 
-    <include layout="@layout/no_internet_connection_text"
-        android:id="@+id/noInternetConnectionText"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <LinearLayout
-        android:id="@+id/selectSubjectView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentRight="true">
+  <include layout="@layout/no_internet_connection_text"
+      android:id="@+id/noInternetConnectionText"
+      android:layout_centerInParent="true"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
 
-        <Spinner
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:id="@+id/subjectsSpinnerInHomeFragment"
-            android:gravity="right"/>
 
-        <TextView
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="المادة : "/>
-    </LinearLayout>
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/fab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentStart="true"
+      android:layout_margin="5dp"
+      app:srcCompat="@android:drawable/ic_input_add"
+      app:tint="@color/white" />
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="5dp"
-        android:layout_below="@id/selectSubjectView"
-        android:id="@+id/postsRecyclerView"
+
+  <!--  <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:scrollbars="none"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:popupTheme="@style/AppTheme.PopupOverlay" >
 
-    <ProgressBar
-        android:id="@+id/postsProgressBar"
+       <RelativeLayout
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/mansigntwo"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_70sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:src="@drawable/man"
+                app:civ_border_color="@color/blue_white"
+                app:civ_border_width="5dp"
+                />
+            <TextView
+                android:layout_below="@+id/mansigntwo"
+                android:id="@+id/mostafa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_semibold"
+                android:text="مصطفى  خالد"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp"
+                />
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar> -->
+
+
+
+    <TextView
+        android:id="@+id/emailsignupTwo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible" />
-    <android.support.v7.widget.AppCompatTextView
+        android:layout_marginStart="@dimen/_12sdp"
+        android:fontFamily="@font/el_messiri"
+        app:layout_anchorGravity="bottom"
+        android:text="المادة الدراسية"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_14sdp"
+        />
+
+    <Spinner
+        android:id="@+id/subjectsSpinnerInHomeFragment"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/emailsignupTwo"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        app:layout_anchorGravity="bottom"
+        android:background="@drawable/gradient_spinner"
+        />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/noLessonsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,15 +100,30 @@
         android:layout_centerInParent="true"
         android:visibility="invisible" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/subjectsSpinnerInHomeFragment"
+        android:id="@+id/postsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        app:layout_anchor="@id/subjectsSpinnerInHomeFragment"
+        app:layout_anchorGravity="bottom"
+        app:cardCornerRadius="@dimen/_20sdp"
+        android:padding="@dimen/_10sdp"
+        android:background="@color/white">
+
+
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <ProgressBar
+        android:id="@+id/postsProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        app:backgroundTint="@color/color1"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@color/white" />
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
 
 </RelativeLayout>

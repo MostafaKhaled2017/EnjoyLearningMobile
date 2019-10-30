@@ -1,16 +1,14 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -62,6 +60,14 @@ public class DailyRewardsActivity extends AppCompatActivity {
             public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 DocumentSnapshot snapshot = transaction.get(currentUserReference);
                 long newPoints = snapshot.getLong("points") + dailyAddedPoints;
+
+                Long currentCompetitionPoints = snapshot.getLong("competitionPoints");
+                Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                if(currentCompetitionPoints == null)
+                    currentCompetitionPoints = Long.valueOf(0);
+                long newCompetitionPoints = currentCompetitionPoints + dailyAddedPoints;
+                transaction.update(currentUserReference, "competitionPoints", newCompetitionPoints);
+
                 transaction.update(currentUserReference, "points", newPoints);
                 return newPoints;
             }

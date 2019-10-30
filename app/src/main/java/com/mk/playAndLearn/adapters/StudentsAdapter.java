@@ -1,13 +1,12 @@
 package com.mk.playAndLearn.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +23,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
 import com.mk.playAndLearn.activity.ChallengersActivity;
-import com.mk.playAndLearn.fragment.LastChallengersFragment;
 import com.mk.playAndLearn.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import static com.mk.playAndLearn.utils.Firebase.fireStorePosts;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
 public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHolder> {

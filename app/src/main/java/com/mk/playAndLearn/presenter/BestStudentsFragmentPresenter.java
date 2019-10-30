@@ -3,8 +3,8 @@ package com.mk.playAndLearn.presenter;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;

@@ -2,12 +2,12 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -42,12 +42,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 
-import jp.wasabeef.blurry.Blurry;
-
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends FragmentActivity {
     String userName = "", userImage = "", userEmail = "";
     GoogleApiClient mGoogleApiClient;
     ImageView googleBtnIv;

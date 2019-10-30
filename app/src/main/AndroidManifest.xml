@@ -29,7 +29,6 @@
         <activity android:name="com.mk.playAndLearn.activity.EditProfileActivity" />
         <activity android:name="com.mk.playAndLearn.activity.SettingsActivity" />
         <activity android:name="com.mk.playAndLearn.activity.SignUp2Activity" />
-        <activity android:name="com.mk.playAndLearn.activity.ProfileActivity" />
         <activity
             android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
             android:label="@string/title_activity_study_tips"

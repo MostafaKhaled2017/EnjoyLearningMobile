@@ -19,21 +19,21 @@ import java.util.ArrayList;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
 
-public class BestStudentsInGeneralChallengeActivityPresenter {
+public class BestStudentsInCompetitionPresenter {
     private User user;
     private View view;
     private ArrayList<User> bestStudentsList = new ArrayList();
     ValueEventListener usersListener;
 
-    public BestStudentsInGeneralChallengeActivityPresenter(View view) {
+    public BestStudentsInCompetitionPresenter(View view) {
         //this.user = new User();
         this.view = view;
     }
 
     private void getBestStudents() {
-        fireStoreUsers.orderBy("lastGeneralChallengeScore", Query.Direction.DESCENDING)
+        fireStoreUsers.orderBy("competitionPoints", Query.Direction.DESCENDING)
                 .endAt(1)
-                //.limit(25) TODO :think about re-adding this.
+                .limit(25)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -49,8 +49,8 @@ public class BestStudentsInGeneralChallengeActivityPresenter {
                             boolean admin = false;
                             int generalChallengePoints = -1000;
                             String name =  documentSnapshot.getString("userName");
-                            if(documentSnapshot.getLong("lastGeneralChallengeScore") != null)
-                                generalChallengePoints = Integer.parseInt(documentSnapshot.getLong("lastGeneralChallengeScore").toString());
+                            if(documentSnapshot.getLong("competitionPoints") != null)
+                                generalChallengePoints = Integer.parseInt(documentSnapshot.getLong("competitionPoints").toString());
                             String imageUrl =  documentSnapshot.getString("userImage");
                             String userType =  documentSnapshot.getString("userType");
                             if (documentSnapshot.getBoolean("adminStudent") != null)

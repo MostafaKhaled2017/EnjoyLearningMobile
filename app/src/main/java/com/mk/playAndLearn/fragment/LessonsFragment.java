@@ -3,10 +3,10 @@ package com.mk.playAndLearn.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +20,10 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.ChallengeDetailsActivity;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.presenter.LessonsFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;

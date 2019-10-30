@@ -2,8 +2,10 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -31,7 +33,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.SignUpActivityPresenter;
 
-public class SignUp2Activity extends AppCompatActivity implements SignUpActivityPresenter.View {
+public class SignUp2Activity extends FragmentActivity implements SignUpActivityPresenter.View {
 
     Spinner schoolTypeSpinner, userGradeSpinner, governoratesSpinner;
     TextView termsTv;

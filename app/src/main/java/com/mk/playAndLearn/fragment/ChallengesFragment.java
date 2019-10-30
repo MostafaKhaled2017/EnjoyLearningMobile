@@ -1,51 +1,28 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.activity.ChallengeDetailsActivity;
-import com.mk.playAndLearn.activity.ChallengersActivity;
-import com.mk.playAndLearn.activity.MainActivity;
 import com.mk.playAndLearn.adapters.ChallengesAdapter;
 import com.mk.playAndLearn.presenter.ChallengesFragmentPresenter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-
-import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
-import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
-import static com.mk.playAndLearn.utils.Strings.adminEmail;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
 
 
 /**
@@ -125,13 +102,13 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         completedChallengesRecyclerView = view.findViewById(R.id.completedChallengesRecyclerView);
         uncompletedChallengesRecyclerView = view.findViewById(R.id.uncompletedChallengesRecyclerView);
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+     /*   FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), ChallengeDetailsActivity.class));
             }
-        });
+        });*/
 
         return view;
     }

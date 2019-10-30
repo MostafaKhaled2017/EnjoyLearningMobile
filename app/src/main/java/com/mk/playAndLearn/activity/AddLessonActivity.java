@@ -1,27 +1,24 @@
 package com.mk.playAndLearn.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,15 +32,11 @@ import com.mk.playAndLearn.utils.DateClass;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
@@ -114,7 +107,13 @@ public class AddLessonActivity extends AppCompatActivity {
         setGradeSpinner();
         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setSubject spinner in onCreate");
 
-        ButterKnife.bind(this);
+        final Button addLessonBtn = findViewById(R.id.addLessonButton);
+        addLessonBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addLesson(addLessonBtn);
+            }
+        });
 
 
         try {
@@ -304,7 +303,6 @@ public class AddLessonActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick(R.id.addLessonButton)
     public void addLesson(View view) {
         String lessonTitle = lessonTitleET.getText().toString().trim();
         String lessonContent = lessonContentEt.getText().toString().trim();

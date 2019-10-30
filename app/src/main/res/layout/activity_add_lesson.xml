@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
     android:background="@color/white">
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:background="@color/white"
         tools:context=".Addign.AddCourse">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_60sdp"
@@ -210,6 +210,6 @@
             app:layout_constraintTop_toBottomOf="@+id/lessonContentEditText"
             app:layout_constraintVertical_bias="0.116" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

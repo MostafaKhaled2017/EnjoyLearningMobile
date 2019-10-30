@@ -82,7 +82,7 @@
         android:gravity="top"
         android:hint="الدرس" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/skipLessonButton"
         style="@style/buttonStyle"
         android:layout_width="47dp"
@@ -93,7 +93,7 @@
         android:layout_margin="5dp"
         android:text=">" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@id/approvePartBtn"
         style="@style/buttonStyle"
         android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
         android:onClick="save"
         android:text="حفظ" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/approveAllBtn"
         style="@style/buttonStyle"
         android:layout_width="wrap_content"
@@ -117,7 +117,7 @@
         android:onClick="acceptLesson"
         android:text="قبول" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/refuseLessonBtn"
         style="@style/buttonStyle"
         android:layout_width="wrap_content"

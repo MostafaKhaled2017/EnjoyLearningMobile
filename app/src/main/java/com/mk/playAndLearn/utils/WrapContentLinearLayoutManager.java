@@ -1,8 +1,8 @@
 package com.mk.playAndLearn.utils;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 
 public class WrapContentLinearLayoutManager extends LinearLayoutManager{

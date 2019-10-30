@@ -1,13 +1,8 @@
 package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.utils.Firebase;
 
 public class WelcomeActivity extends AppCompatActivity {
     @Override

@@ -1,9 +1,8 @@
 package com.mk.playAndLearn.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -98,6 +97,7 @@ public class SignUpActivityPresenter {
                                     batch.update(currentUserDocument, "phoneNo", phoneNo);
                                     batch.update(currentUserDocument, "governorate", governorate);
                                     batch.update(currentUserDocument, "invitingFriendId", invitingFriendId);
+                                    batch.update(currentUserDocument, "competitionPoints", 0);
 
                                     batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -126,6 +126,7 @@ public class SignUpActivityPresenter {
                                     map.put("lastOnlineDay", todayDate);
                                     map.put("creationDate",  dateClass.getDate());
                                     map.put("points", 0);//3
+                                    map.put("competitionPoints", 0);
                                     map.put("noOfDraws", 0);
                                     map.put("noOfWins", 0);
                                     map.put("noOfLoses", 0);

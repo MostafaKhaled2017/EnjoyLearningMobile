@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
     android:background="@color/white">
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -270,14 +270,14 @@
 
 
         <TextView
-            android:id="@+id/governorate"
+            android:id="@+id/studentId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:fontFamily="@font/el_messiri"
-            android:text="المحافظة"
+            android:text="كود الطالب"
             android:textColor="@color/black"
             android:textSize="@dimen/_13sdp"
             android:layout_marginTop="@dimen/_10sdp"
@@ -290,7 +290,7 @@
 
 
         <TextView
-            android:id="@+id/governorateTv"
+            android:id="@+id/studentIdTv"
             android:layout_width="0dp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="@dimen/_16sdp"
@@ -300,14 +300,14 @@
             android:fontFamily="@font/el_messiri"
             android:gravity="center"
             android:inputType="textPersonName"
-            android:text="القاهرة"
+            android:text="الكود"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/governorate"
+            app:layout_constraintTop_toBottomOf="@+id/studentId"
             app:layout_constraintVertical_bias="0.0" />
 
       <!--  <Button
@@ -352,6 +352,6 @@
             app:layout_constraintVertical_bias="0.264" /> -->
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

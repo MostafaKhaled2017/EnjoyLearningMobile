@@ -8,39 +8,38 @@
     android:layoutDirection="rtl"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
         tools:context=".Regestration.SignUPTwo">
-
         <FrameLayout
+            android:layout_marginTop="-4dp"
             android:id="@+id/progressbarframe2"
-            android:layout_marginTop="-8dp"
             android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:paddingTop="-5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
             >
+
             <ProgressBar
                 android:id="@+id/progressbarOfSignUp2"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:max="100"
+                android:layout_height="8dp"
+                android:layout_marginTop="2dp"
                 android:indeterminate="true"
-                android:visibility="invisible"
-                android:layout_gravity="top"
+                android:max="100"
+                android:elevation="10dp"
+                android:progress="100"
                 />
 
         </FrameLayout>
+
+
 
 
 
@@ -312,7 +311,7 @@
             app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
             /> -->
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
