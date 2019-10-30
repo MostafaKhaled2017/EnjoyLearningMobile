@@ -36,9 +36,10 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
 
     private final String TAG, subject, unit, lesson;
     long term = -2;
+    boolean previousLessonsIncluded;
     String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject, String unit, String lesson, long term) {
+    public StudentsAdapter(ArrayList<User> list, Context context, String TAG, String subject, String unit, String lesson, long term, boolean previousLessonsIncluded) {
         this.list = list;
         this.context = context;
         this.TAG = TAG;
@@ -46,6 +47,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
         this.unit = unit;
         this.lesson = lesson;
         this.term = term;
+        this.previousLessonsIncluded = previousLessonsIncluded;
 
         Log.v("termLogging", "term in adapter constructor is : " + term
         + " , unit is : " + unit);
@@ -80,6 +82,7 @@ public class StudentsAdapter extends RecyclerView.Adapter<StudentsAdapter.MyHold
                     intent.putExtra("unit", unit);
                     intent.putExtra("lesson", lesson);
                     intent.putExtra("term", term);
+                    intent.putExtra("includePreviousLessons", previousLessonsIncluded);
                     context.startActivity(intent);
                     ((ChallengersActivity) context).finish();
                 }

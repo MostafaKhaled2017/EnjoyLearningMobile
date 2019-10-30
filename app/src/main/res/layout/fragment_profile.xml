@@ -301,6 +301,8 @@
             android:gravity="center"
             android:inputType="textPersonName"
             android:text="الكود"
+            android:cursorVisible="false"
+            android:textIsSelectable="true"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintBottom_toBottomOf="parent"

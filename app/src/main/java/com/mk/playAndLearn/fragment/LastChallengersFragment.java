@@ -39,6 +39,8 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
     SwipeRefreshLayout swipeRefreshLayout;
     LastChallengersFragmentPresenter presenter;
 
+    boolean previousLessonsIncluded;
+
     private final String TAG = "LastChallengers";
 
     @Override
@@ -51,6 +53,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
             unit = intent.getStringExtra("unit");
             lesson = intent.getStringExtra("lesson");
             term = intent.getLongExtra("term", -1);
+            previousLessonsIncluded = intent.getBooleanExtra("includePreviousLessons", false);
         }
 
     }
@@ -101,7 +104,7 @@ public class LastChallengersFragment extends Fragment implements LastChallengers
     @Override
     public void startRecyclerAdapter(ArrayList list) {
         Log.v("termLogging", "term in last challengers is : " + term);
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term);
+        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term, previousLessonsIncluded);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

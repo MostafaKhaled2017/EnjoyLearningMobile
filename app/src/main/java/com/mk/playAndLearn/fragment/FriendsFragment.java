@@ -41,6 +41,8 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
     SwipeRefreshLayout swipeRefreshLayout;
     FriendsFragmentPresenter presenter;
 
+    boolean previousLessonsIncluded;
+
     private final String TAG = "FriendsFragment";
 
     @Override
@@ -53,6 +55,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
             unit = intent.getStringExtra("unit");
             lesson = intent.getStringExtra("lesson");
             term = intent.getLongExtra("lesson", -1);
+            previousLessonsIncluded = intent.getBooleanExtra("includePreviousLessons", false);
         }
 
     }
@@ -166,7 +169,7 @@ public class FriendsFragment extends Fragment implements FriendsFragmentPresente
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term);
+        recyclerAdapter = new StudentsAdapter(list, getActivity(), TAG, subject, unit, lesson, term, previousLessonsIncluded);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

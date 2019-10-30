@@ -26,6 +26,8 @@ public class ChallengeStartActivity extends AppCompatActivity implements Challen
 
     Context context;
 
+    boolean previousLessonsIncluded;
+
     ImageView player1ImageIv, player2Image;
     TextView player1NameTv, player1PointsTv, player2Name, player2Points;
     Button startChallengeButton;

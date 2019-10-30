@@ -101,7 +101,7 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityP
 
     @Override
     public void startRecyclerAdapter(ArrayList list) {
-        recyclerAdapter = new StudentsAdapter(list, this, TAG, null, null, null, -1);
+        recyclerAdapter = new StudentsAdapter(list, this, TAG, null, null, null, -1, false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
