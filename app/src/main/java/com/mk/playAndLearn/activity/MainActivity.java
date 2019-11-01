@@ -8,8 +8,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -19,7 +21,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
 
 import android.text.TextUtils;
@@ -94,7 +98,8 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     String urlOfAppFromPlayStore = "https://play.google.com/store/apps/details?id=com.mk.playAndLearn";
     String currentVersion, latestVersion, localCurrentUserUid;
     Dialog dialog;
-    FloatingActionButton mainFab, fabAddPost, fabAddChallenge;
+    FloatingActionButton mainFab;
+    View fabAddPost, fabAddChallenge;
 
     HomeFragment homeFragment = new HomeFragment();
     ProfileFragment profileFragment = new ProfileFragment();
@@ -149,15 +154,15 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         setSupportActionBar(toolbar);
 
         fabAddPost = findViewById(R.id.fabAddPost);
-        fabAddChallenge = findViewById(R.id.fabAddChallenge);
-        
+        fabAddChallenge = findViewById(R.id.fabChallenge);
+
         fabAddChallenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
             }
         });
-        
+
         fabAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,17 +170,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }
         });
 
-        mainFab = findViewById(R.id.floatingActionButton);
-        mainFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!isFABOpen){
-                    showFABMenu();
-                }else{
-                    closeFABMenu();
-                }
-            }
-        });
 
         //getting bottom navigation view and attaching the listener
         navigation = findViewById(R.id.navigation);
@@ -296,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                             Toast.makeText(MainActivity.this, "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
                         } else {
                             if (homeFragment != null) {
-                               homeFragment.presenter.addPost(commentText, currentSubject);
+                                homeFragment.presenter.addPost(commentText, currentSubject);
                             } else {
                                 Toast.makeText(MainActivity.this, "فشلت إضافة المنشور برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
                             }
@@ -311,26 +305,25 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
     }
 
-    private void showFABMenu(){
-        isFABOpen=true;
+    private void showFABMenu() {
+        isFABOpen = true;
         fabAddPost.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
         fabAddChallenge.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
     }
 
-    private void closeFABMenu(){
-        isFABOpen=false;
+    private void closeFABMenu() {
+        isFABOpen = false;
         fabAddChallenge.animate().translationY(0);
         fabAddPost.animate().translationY(0);
     }
 
     @Override
     public void onBackPressed() {
-        if(!isFABOpen){
+        if(navigation.getSelectedItemId() != R.id.navigation_home) {
+            navigation.setSelectedItemId(R.id.navigation_home);
+        } else {
             super.onBackPressed();
-        }else{
-            closeFABMenu();
         }
-        navigation.setSelectedItemId(R.id.navigation_home);
     }
 
     @Override
@@ -517,7 +510,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
         final String todayDate = format.format(today);
         final String yesterdayDate = format.format(yesterday);
-       final String oldSavedDate = getSavedDate(this);
+        final String oldSavedDate = getSavedDate(this);
 
         Log.v("dateLogging", "todayDate : " + todayDate
                 + " , yesterdayDate : " + yesterdayDate
@@ -550,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                     @Override
                     public void onSuccess(Long aLong) {
                         Log.v("transactionLogging", "transaction 1 called");
-                        if(!transactionCalled) {
+                        if (!transactionCalled) {
                             setSavedTodayChallengesNo(MainActivity.this, 0);
                             Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
                             i.putExtra("consecutiveDays", aLong);
@@ -575,14 +568,14 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(!transactionCalled){
-                        Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
-                        setSavedTodayChallengesNo(MainActivity.this, 0);
-                        i.putExtra("consecutiveDays", (long) 1);
-                        i.putExtra("userUid", localCurrentUserUid);
-                        startActivity(i);
-                        transactionCalled = true;
-                    }
+                        if (!transactionCalled) {
+                            Intent i = new Intent(MainActivity.this, DailyRewardsActivity.class);
+                            setSavedTodayChallengesNo(MainActivity.this, 0);
+                            i.putExtra("consecutiveDays", (long) 1);
+                            i.putExtra("userUid", localCurrentUserUid);
+                            startActivity(i);
+                            transactionCalled = true;
+                        }
                         Log.v("transactionLogging", "transaction 2 called");
                     }
                 });

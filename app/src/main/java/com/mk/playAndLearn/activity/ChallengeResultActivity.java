@@ -64,7 +64,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         player1ImageTv = findViewById(R.id.firstPlayerImage);
         player1ScoreTv = findViewById(R.id.firstPlayerScore);
         player2NameTv = findViewById(R.id.secondPlayerName);
-        player2ImageTv = findViewById(R.id.secondPlayerImage);
+   //     player2ImageTv = findViewById(R.id.secondPlayerImage);
         player2ScoreTv = findViewById(R.id.secondPlayerScore);
         challengeResultTv = findViewById(R.id.challengeResultTv);
         challengeStateTv = findViewById(R.id.challengeStateInResultActivity);

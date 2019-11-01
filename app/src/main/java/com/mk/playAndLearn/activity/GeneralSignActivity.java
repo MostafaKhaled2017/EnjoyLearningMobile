@@ -172,6 +172,7 @@ public class GeneralSignActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null && !getSavedGrade(this).equals("غير معروف")) {
             startActivity(new Intent(GeneralSignActivity.this, MainActivity.class));
+            finish();
         } else {
             if (currentUser != null) {
                 FirebaseAuth.getInstance().signOut();

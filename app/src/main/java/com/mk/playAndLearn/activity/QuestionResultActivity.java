@@ -68,7 +68,7 @@ public class QuestionResultActivity extends AppCompatActivity {
         player1NameTv = findViewById(R.id.firstPlayerName);
         player1ImageIv = findViewById(R.id.firstPlayerImage);
         player2Name = findViewById(R.id.secondPlayerName);
-        player2Image = findViewById(R.id.secondPlayerImage);
+     //   player2Image = findViewById(R.id.secondPlayerImage);
 
         textComplaintTv = findViewById(R.id.textcomplaint);
 

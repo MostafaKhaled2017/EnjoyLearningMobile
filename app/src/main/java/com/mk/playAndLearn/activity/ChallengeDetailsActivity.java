@@ -216,7 +216,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             i.putExtra("term", currentTerm);
             i.putExtra("unit", currentUnit);
             i.putExtra("lesson", currentLesson);
-            i.putExtra("includePreviousLessons", includePreviousLessons.isChecked());
+//          i.putExtra("includePreviousLessons", includePreviousLessons.isChecked());
             startActivity(i);
         }
     }
