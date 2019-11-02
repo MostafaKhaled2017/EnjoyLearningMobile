@@ -52,7 +52,7 @@ public class ChallengeStartActivity extends AppCompatActivity implements Challen
         player1ImageIv = findViewById(R.id.firstPlayerImage);
         player1PointsTv = findViewById(R.id.firstPlayerPoints);
         player2Name = findViewById(R.id.secondPlayerName);
-     //   player2Image = findViewById(R.id.secondPlayerImage);
+        player2Image = findViewById(R.id.secondPlayerImage);
         player2Points = findViewById(R.id.secondPlayerPoints);
         startChallengeButton = findViewById(R.id.lastStartChallengeButton);
         horizontalProgressBar = findViewById(R.id.horizontalProgressbarInChallengeStartActivity);

@@ -33,6 +33,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.core:core:1.0.0'
+    implementation 'com.huawei.hms:hms-ads-identifier:3.4.26.303'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.firebase:firebase-storage:11.6.2'
     implementation 'com.google.firebase:firebase-firestore:11.6.2'
