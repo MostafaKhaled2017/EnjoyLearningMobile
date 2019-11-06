@@ -14,39 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".SettingActivity.LicenceuseActivity">
-
-
-
-        <RelativeLayout
-            android:id="@+id/relatieone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_marginBottom="8dp"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
-                />
-
-            <TextView
-                android:id="@+id/addcourse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/cairo"
-                android:gravity="center"
-                android:text="نصائح المذاكرة الصحيحة "
-                android:textColor="#FFFF"
-                android:textSize="@dimen/_16sdp"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                />
-
-
-        </RelativeLayout>
+        <include layout="@layout/toolbar"/>
 
         <com.makeramen.roundedimageview.RoundedImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -56,7 +24,7 @@
             android:layout_marginEnd="@dimen/_20sdp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_150sdp"
-            android:layout_below="@+id/relatieone"
+            android:layout_below="@+id/toolbar"
             android:src="@drawable/studythree"
             app:riv_corner_radius="30dip"
             app:riv_mutate_background="true"

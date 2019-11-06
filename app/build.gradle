@@ -4,11 +4,11 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.mk.playAndLearn"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
-        versionCode 40448
+        versionCode 40549
         multiDexEnabled true
-        versionName "4.4.48"
+        versionName "4.5.49"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -33,7 +33,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.core:core:1.0.0'
-    implementation 'com.huawei.hms:hms-ads-identifier:3.4.26.303'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.firebase:firebase-storage:11.6.2'
     implementation 'com.google.firebase:firebase-firestore:11.6.2'
@@ -45,7 +44,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:11.6.2'
     implementation 'com.intuit.sdp:sdp-android:1.0.4'
     implementation 'com.makeramen:roundedimageview:2.3.0'
-    implementation 'com.google.android.gms:play-services-games:11.6.2'
+   // implementation 'com.google.android.gms:play-services-games:11.6.2'
     implementation 'com.google.firebase:firebase-messaging:11.6.2'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'

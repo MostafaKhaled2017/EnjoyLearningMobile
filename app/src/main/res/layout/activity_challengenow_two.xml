@@ -91,7 +91,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_10sdp"
+                android:textSize="@dimen/_9sdp"
 
 
                 />
@@ -106,6 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_15sdp"
             android:layout_marginStart="@dimen/_15sdp"
+            android:paddingBottom="@dimen/_20sdp"
             android:background="@drawable/linearborder"
             android:orientation="vertical"
             >

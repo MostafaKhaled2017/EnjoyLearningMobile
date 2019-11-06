@@ -51,9 +51,10 @@ public class LeaderBoardViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new BestStudentsFragment();
-            case 1:
                 return new BestQuestionsUploadersFragment();
+            case 1:
+                return new BestStudentsFragment();
+
         }
 
         return null;

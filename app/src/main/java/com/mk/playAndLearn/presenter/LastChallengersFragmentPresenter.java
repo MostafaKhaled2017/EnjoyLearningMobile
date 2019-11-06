@@ -2,7 +2,9 @@ package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
 import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
+
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +22,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class LastChallengersFragmentPresenter {
     View view;
@@ -70,6 +73,7 @@ public class LastChallengersFragmentPresenter {
                 String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 view.startRecyclerAdapter(list);
                 if (task.isSuccessful()) {
+                    Log.v("gradeLog", "task succssful , no of users : " + task.getResult().size());
                     for (DocumentSnapshot document : task.getResult()) {
                         User user = new User();
                         String points = "";
@@ -79,7 +83,7 @@ public class LastChallengersFragmentPresenter {
                         String uid = document.getId();
                         if (document.getLong("points") != null)
                             points = document.getLong("points").toString();
-                        if(document.getBoolean("admin") != null)
+                        if (document.getBoolean("admin") != null)
                             admin = (boolean) document.getBoolean("admin");
                         String imageUrl = (String) document.getString("userImage");
                         String userType = (String) document.getString("userType");
@@ -109,7 +113,7 @@ public class LastChallengersFragmentPresenter {
                             user.setUid(uid);
 
 
-                            if(userSchoolType != null && subjectSchoolType.equals("both")
+                            if (userSchoolType != null && subjectSchoolType.equals("both")
                                     || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
                                     || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
                                 list.add(user);
@@ -119,7 +123,7 @@ public class LastChallengersFragmentPresenter {
 
 
                 } else {
-                    Log.v("TAG", "failed");
+                    Log.v("gradeLog", "task failed , error is : " + task.getException().toString() + " , " + task.getException().getMessage());
                 }
 
                 view.notifyAdapter();
@@ -137,7 +141,9 @@ public class LastChallengersFragmentPresenter {
             }
         };
 
-        fireStoreUsers.orderBy("lastOnlineDay", Query.Direction.DESCENDING)
+        fireStoreUsers
+                .orderBy("lastOnlineDay", Query.Direction.DESCENDING)
+                .whereEqualTo("grade", getSavedGrade(context))
                 .limit(15)
                 .get()
                 .addOnCompleteListener(usersListener);
@@ -145,12 +151,19 @@ public class LastChallengersFragmentPresenter {
 
     public interface View {
         void handleNoInternetConnection();
+
         void hideSwipeRefreshLayout();
+
         void startRecyclerAdapter(ArrayList list);
+
         void notifyAdapter();
+
         void hideProgressBar();
+
         void hideNoInternetConnectionText();
+
         void showNoStudentTv();
+
         void hideNoStudentTv();
     }
 }

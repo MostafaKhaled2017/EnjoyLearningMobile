@@ -252,6 +252,7 @@
         <item>لغات</item>
     </string-array>
     <string-array name="gender_array">
+        <item>اختر النوع</item>
         <item>ذكر</item>
         <item>أنثى</item>
     </string-array>
@@ -288,15 +289,15 @@
     <string name="signUpFailed">فشل الاشتراك فى التطبيق برجاء إعادة المحاولة لاحقا واستخدام كلمة سر قوية</string>
     <string name="sign_up">تسجيل اشتراك</string>
     <string name="title_activity_study_tips">StudyTipsActivity</string>
-
+    <string-array name="couresename">
+        <item>اللغة  العربية </item>
+        <item>اللغة الانجليزية </item>
+        <item>الفرنسة  </item>
+        <item>اللغة العربية</item>
+        <item>اللغة الفرنسية </item>
+    </string-array>
     <string name="studyTips">
-        <string-array name="couresename">
-            <item>اللغة  العربية </item>
-            <item>اللغة الانجليزية </item>
-            <item>الفرنسة  </item>
-            <item>اللغة العربية</item>
-            <item>اللغة الفرنسية </item>
-        </string-array>
+
          <b>خطوات مذاكرة الدروس :\n\n</b>
 1- في اليوم الذي يتم الشرح فيه بعد العودة من المدرسة قراءة الدرس جيدا بتركيز في 10 دقائق(قراءة فقط) \n
 2- في اليوم التالي مذاكرة الدرس بصورة كاملة. \n

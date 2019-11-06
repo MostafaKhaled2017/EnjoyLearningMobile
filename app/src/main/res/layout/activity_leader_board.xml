@@ -4,9 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layoutDirection="rtl"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:layoutDirection="rtl">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -48,6 +46,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:elevation="6dp"
+        android:layoutDirection="ltr"
         app:tabSelectedTextColor="@color/black"
         app:tabIndicatorColor="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize" />

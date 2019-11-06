@@ -81,6 +81,7 @@ public class FriendsFragmentPresenter {
                     boolean admin = false, online = false;
                     String name = (String) document.getString("userName");
                     String email = (String) document.getString("userEmail");
+                    String grade = (String) document.getString("grade");
                     uid = document.getId();
                     if (document.getLong("points") != null)
                         points = document.getLong("points").toString();
@@ -102,7 +103,7 @@ public class FriendsFragmentPresenter {
 
                     if (userType != null && userType.equals("طالب")
                             && !uid.equals(localCurrentUserUid)
-                            && name != null) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
+                            && name != null && grade.equals(grade)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
 
                         user.setAdmin(admin);
                         user.setOnline(online);

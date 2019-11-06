@@ -6,16 +6,13 @@
     card_view:cardBackgroundColor="@color/white"
     card_view:cardCornerRadius="10dp"
     card_view:cardElevation="5dp"
-    android:paddingStart="@dimen/_10sdp"
-    card_view:cardUseCompatPadding="true"
+    android:padding="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_3sdp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
         <RelativeLayout
-            android:padding="@dimen/_5sdp"
-            android:layout_marginStart="@dimen/_10sdp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
 
 
@@ -46,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:text="Mostafa khaled"
                 android:fontFamily="@font/el_messiri"
                 android:textColor="@color/black"
@@ -88,6 +85,7 @@
                 android:textSize="@dimen/_11sdp"
                 android:layout_below="@+id/challengeScore"
                 android:layout_alignParentEnd="true"
+                android:layout_marginBottom="@dimen/_2sdp"
                 />
 
 

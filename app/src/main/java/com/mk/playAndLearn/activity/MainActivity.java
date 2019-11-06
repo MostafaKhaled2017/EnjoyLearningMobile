@@ -218,18 +218,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }
         });
 
-
-          /*  try {
-                for (UserInfo user : mAuth.getCurrentUser().getProviderData()) {
-                    if (user.getProviderId().equals("google.com")) {
-                        Toast.makeText(this, "User is signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "User is not signed in with google , the provider data is : " + mAuth.getCurrentUser().getProviderData(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } catch (Exception e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }*/
     }
 
     public void showSpinnerDialog() {
@@ -319,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
     @Override
     public void onBackPressed() {
-        if(navigation.getSelectedItemId() != R.id.navigation_home) {
+        if (navigation.getSelectedItemId() != R.id.navigation_home) {
             navigation.setSelectedItemId(R.id.navigation_home);
         } else {
             super.onBackPressed();
@@ -354,9 +342,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                     return true;
                 case R.id.addLesson:
                     startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
-                    return true;
-                case R.id.profile:
-                    startActivity(new Intent(MainActivity.this, ProfileFragment.class));
                     return true;
                 case R.id.contactUs:
                     startActivity(new Intent(MainActivity.this, ContactUsActivity.class));

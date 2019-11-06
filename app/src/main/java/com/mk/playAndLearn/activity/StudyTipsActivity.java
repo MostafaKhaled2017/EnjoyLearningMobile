@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
 
@@ -25,6 +26,9 @@ public class StudyTipsActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+
+        TextView title = toolbar.findViewById(R.id.title);
+        title.setText("نصائح المذاكرة");
 
     }
 

@@ -136,6 +136,8 @@ public class SignUpActivity extends FragmentActivity {
                     setPasswordError("كلمة المرور يجب ألا تقل عن 6 حروف أو أرقام");
                 } else if (TextUtils.isEmpty(userType)) {
                    setUserTypeError();
+                } else if (gender.equals("اختر النوع")) {
+                    Toast.makeText(SignUpActivity.this, "برجاء إكمال باقي البيانات المطلوبة", Toast.LENGTH_SHORT).show();
                 } else {
 
                     Intent intent = new Intent(SignUpActivity.this, SignUp2Activity.class);
@@ -169,6 +171,7 @@ public class SignUpActivity extends FragmentActivity {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                         Toast.makeText(SignUpActivity.this, "حدث خطأ برجاء اعادة المحاولة", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
@@ -184,6 +187,7 @@ public class SignUpActivity extends FragmentActivity {
             addEmailAddress(data);
         } else {
             Toast.makeText(this, "فشل إضافة الحساب برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
         }
 
     }
@@ -228,6 +232,7 @@ public class SignUpActivity extends FragmentActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
+                                        hideProgressBar();
                                         Toast.makeText(SignUpActivity.this, "فشل إضافة الحساب برجاء التأكد من الاتصال بالانترنت و إعادة المحاولة", Toast.LENGTH_SHORT).show();
                                         Log.v("signUpException", "exception is : " + e.getMessage());
                                     }
@@ -262,6 +267,8 @@ public class SignUpActivity extends FragmentActivity {
                     gender = "ذكر";
                 } else if (selectedItem.equals("Female") || selectedItem.equals("أنثى")) {
                     gender = "أنثى";
+                } else {
+                    gender = selectedItem.trim();
                 }
             }
 

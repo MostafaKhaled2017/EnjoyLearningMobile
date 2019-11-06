@@ -43,17 +43,20 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
         TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabOne.setText("النقاط");
-        tabLayout.getTabAt(0).setCustomView(tabOne);
+        tabLayout.getTabAt(1).setCustomView(tabOne);
 
         TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabTwo.setText("الأسئلة");
-        tabLayout.getTabAt(1).setCustomView(tabTwo);
+        tabLayout.getTabAt(0).setCustomView(tabTwo);
+
+        //because the taps are reversed to solve scrolling problem
+        mViewPager.setCurrentItem(1);
     }
 
     @Override
     public void onBackPressed() {
-        if(mViewPager.getCurrentItem() != 0) {
-            mViewPager.setCurrentItem(0);
+        if(mViewPager.getCurrentItem() != 1) {
+            mViewPager.setCurrentItem(1);
         } else {
             super.onBackPressed();
         }

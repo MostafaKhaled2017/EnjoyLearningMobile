@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.adapters;
 
 import android.content.Context;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -51,9 +52,10 @@ public class ChallengersViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new LastChallengersFragment();
-            case 1:
                 return new FriendsFragment();
+            case 1:
+                return new LastChallengersFragment();
+
         }
 
         return null;

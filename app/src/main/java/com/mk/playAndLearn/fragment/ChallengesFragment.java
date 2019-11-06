@@ -205,6 +205,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
         hideProgressBar();
         noChallengesTv.setVisibility(android.view.View.GONE);
         noInternetConnectionText.setVisibility(android.view.View.GONE);
+        showMainViews();
     }
 
     @Override

@@ -45,30 +45,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.025" />
 
-        <TextView
-            android:id="@+id/lessonContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text=" اختر المادة الدراسية "
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addcourse"
-            app:layout_constraintVertical_bias="0.052" />
-
-
-
-        <Spinner
+<!--        <Spinner
             android:layout_width="@dimen/_300sdp"
             android:layout_height="?attr/dropdownListPreferredItemHeight"
             android:layout_margin="10dp"
@@ -87,8 +67,24 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/addcourse"
-            app:layout_constraintVertical_bias="0.052" />
+            app:layout_constraintVertical_bias="0.052" /> -->
 
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/gradient_spinner"
+            android:ems="10"
+            android:id="@+id/subjectsSpinner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addcourse"
+            app:layout_constraintVertical_bias="0.052" />
 
         <Spinner
             android:id="@+id/gradeSpinner"
@@ -102,14 +98,11 @@
             android:inputType="textPersonName"
             android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/termSpinner"
             app:layout_constraintHorizontal_bias="0.036"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subjectsSpinner"
-            app:layout_constraintVertical_bias="0.045" />
-
-
-
+            app:layout_constraintVertical_bias="0.018" />
 
 
         <Spinner
@@ -127,9 +120,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/gradeSpinner"
             app:layout_constraintTop_toBottomOf="@+id/subjectsSpinner"
-            app:layout_constraintVertical_bias="0.045" />
-
-
+            app:layout_constraintVertical_bias="0.018"/>
 
 
         <Spinner
@@ -144,11 +135,11 @@
             android:inputType="textPersonName"
             android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/lessonOrderSpinner"
             app:layout_constraintHorizontal_bias="0.004"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gradeSpinner"
-            app:layout_constraintVertical_bias="0.049" />
+            app:layout_constraintVertical_bias="0.027" />
 
 
         <Spinner
@@ -166,26 +157,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/unitOrderSpinner"
             app:layout_constraintTop_toBottomOf="@+id/termSpinner"
-            app:layout_constraintVertical_bias="0.045" />
-
+            app:layout_constraintVertical_bias="0.026" />
 
 
         <EditText
             android:id="@+id/addQuestionEditText"
             android:layout_width="0dp"
             android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_11sdp"
+            android:layout_marginEnd="@dimen/_11sdp"
             android:background="@drawable/linearborder"
-            android:inputType="textPersonName"
             android:hint="اكتب سؤالك هنا"
+            android:inputType="textPersonName"
             android:padding="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.042"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/unitOrderSpinner"
-            app:layout_constraintVertical_bias="0.072" />
+            app:layout_constraintVertical_bias="0.059" />
 
 
         <TextView
@@ -197,7 +187,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:fontFamily="@font/el_messiri"
-            android:text="اكتب  خيارات السؤال هنا"
+            android:text="اكتب  خيارات السؤال هنا وعلم بجوار الإجابة/الإجابات الصحيحة"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -227,19 +217,18 @@
         <CheckBox
 
             android:id="@+id/checkbox1"
+            android:layout_marginStart="8dp"
+
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toEndOf="@+id/et1"
             app:layout_constraintTop_toBottomOf="@+id/addlessonname"
-            app:layout_constraintVertical_bias="0.016" />
-
-
+            app:layout_constraintVertical_bias="0.029" />
 
 
         <CheckBox
@@ -248,16 +237,15 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="8dp"
-
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toEndOf="@+id/et2"
             app:layout_constraintTop_toBottomOf="@+id/checkbox1"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.029" />
 
         <EditText
             android:id="@+id/et2"
@@ -270,8 +258,9 @@
             android:fontFamily="@font/el_messiri"
             android:textSize="@dimen/_11sdp"
             android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.228"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et1"
@@ -284,14 +273,14 @@
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toEndOf="@+id/et3"
             app:layout_constraintTop_toBottomOf="@+id/checkbox2"
-            app:layout_constraintVertical_bias="0.035" />
+            app:layout_constraintVertical_bias="0.067" />
 
         <EditText
             android:id="@+id/et3"
@@ -321,13 +310,14 @@
             android:layout_marginStart="8dp"
 
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toTopOf="@+id/addQuestionBtn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toEndOf="@+id/et3"
-            app:layout_constraintTop_toBottomOf="@+id/checkbox3" />
+            app:layout_constraintTop_toBottomOf="@+id/checkbox3"
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/et4"
@@ -340,12 +330,12 @@
             android:background="@drawable/linearborder"
             android:ems="10"
             android:fontFamily="@font/el_messiri"
-            android:textSize="@dimen/_11sdp"
             android:gravity="center"
             android:hint="الإختيار الرابع "
+            android:textSize="@dimen/_11sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.148"
+            app:layout_constraintHorizontal_bias="0.219"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et3"
             app:layout_constraintVertical_bias="0.0" />

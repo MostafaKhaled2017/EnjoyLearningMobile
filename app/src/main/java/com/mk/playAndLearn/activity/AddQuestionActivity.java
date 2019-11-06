@@ -135,7 +135,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
 
 
-        try {
+   /*     try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
             popup.setAccessible(true);
 
@@ -146,7 +146,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             popupWindow.setHeight(500);
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
-        }
+        }*/
 
         Intent intent = getIntent();
         if (intent.getExtras() != null && intent.getExtras().containsKey("question")) {
@@ -212,7 +212,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     void setSubjectsSpinner(int array, String tag) {
         ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                array, R.layout.spinner_item_selected);
+                array, R.layout.simple_spinner_item);
         subjectsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subjectsSpinner.setAdapter(subjectsAdapter);
 
@@ -468,12 +468,12 @@ public class AddQuestionActivity extends AppCompatActivity {
                         });
 
 
-                       fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    /*   fireStoreQuestions.document(selectedGrade).collection(currentSubject).add(map).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 Toast.makeText(AddQuestionActivity.this, "تم رفع السؤال بنجاح وسيتم مراجعته قبل ظهوره فى التحديات", Toast.LENGTH_SHORT).show();
                             }
-                        });
+                        });*/
                         clearViews();
                     }
                 });

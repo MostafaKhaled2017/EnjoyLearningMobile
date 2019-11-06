@@ -227,7 +227,9 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     @Override
     public void notifyAdapter() {
-        recyclerAdapter.notifyDataSetChanged();
+        if (recyclerAdapter != null) {
+            recyclerAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

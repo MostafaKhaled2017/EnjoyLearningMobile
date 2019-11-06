@@ -9,16 +9,27 @@
 
     <include
         android:id="@+id/noInternetConnectionTextInBestStudents"
-        layout="@layout/no_internet_connection_text" />
+        layout="@layout/no_internet_connection_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
     <!-- TODO : adjust the size of the spinner -->
     <Spinner
         android:id="@+id/typeSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_15sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
         android:background="@drawable/gradient_spinner"
-        android:ems="10" />
+        android:ems="10"
+        android:layout_margin="@dimen/_10sdp"
+        app:layout_constraintVertical_bias="0.027"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -11,7 +11,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
 import com.mk.enjoylearning.R;
 
 public class TestLeaderboardActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -26,13 +25,13 @@ public class TestLeaderboardActivity extends AppCompatActivity implements Google
 
         //TODO : check if google play services is not available
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+    /*    mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Games.API)
                 .addScope(Games.SCOPE_GAMES_LITE)
                 .useDefaultAccount()
-                .build();
+                .build();*/
 
         /*mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addScope(Games.SCOPE_GAMES_LITE)
@@ -43,7 +42,7 @@ public class TestLeaderboardActivity extends AppCompatActivity implements Google
     }
 
     public void submitScore(long score) {
-        if (mGoogleApiClient.isConnected()) {
+     /*   if (mGoogleApiClient.isConnected()) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
             if(account != null) {
                 Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this))
@@ -54,10 +53,10 @@ public class TestLeaderboardActivity extends AppCompatActivity implements Google
                 Toast.makeText(this, "Else called", Toast.LENGTH_SHORT).show();
             }
           /*  Games.Leaderboards.submitScore(mGoogleApiClient, String.valueOf(R.string.leaderboard_id), score);
-            Games.Leaderboards.submitScoreImmediate(mGoogleApiClient, String.valueOf(R.string.leaderboard_id), score);*/
+            Games.Leaderboards.submitScoreImmediate(mGoogleApiClient, String.valueOf(R.string.leaderboard_id), score);
         } else {
             Toast.makeText(this, "unable to submit high score", Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 
     @Override

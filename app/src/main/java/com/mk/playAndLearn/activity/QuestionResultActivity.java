@@ -87,6 +87,9 @@ public class QuestionResultActivity extends AppCompatActivity {
             score = intent.getIntExtra("score", -1);
             isGeneralChallenge = intent.getBooleanExtra("isGeneralChallenge", false);
 
+            secondPlayerName = intent.getStringExtra("player2Name");
+            secondPlayerImage = intent.getStringExtra("player2Image");
+
             if (!isGeneralChallenge) {
                 currentChallenger = intent.getIntExtra("currentChallenger", -1);
                 subject = intent.getStringExtra("subject");
@@ -94,9 +97,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                 playerAnswersList = intent.getStringExtra("currentPlayerAnswers");
                 correctAnswersList = intent.getStringExtra("correctAnswers");
                 if (currentChallenger == 1) {
-                    secondPlayerName = intent.getStringExtra("player2Name");
                     secondPlayerEmail = intent.getStringExtra("player2Email");
-                    secondPlayerImage = intent.getStringExtra("player2Image");
                     secondPlayerUid = intent.getStringExtra("player2Uid");
                     secondPlayerPoints = intent.getIntExtra("player2Points", -1);
                 } else if (currentChallenger == 2) {
@@ -162,10 +163,11 @@ public class QuestionResultActivity extends AppCompatActivity {
                             intent1.putExtra("correctAnswers", correctAnswersList);
                             intent1.putExtra("subject", subject);
 
+                            intent1.putExtra("player2Name", secondPlayerName);
+                            intent1.putExtra("player2Image", secondPlayerImage);
+
                             if (currentChallenger == 1) {
-                                intent1.putExtra("player2Name", secondPlayerName);
                                 intent1.putExtra("player2Email", secondPlayerEmail);
-                                intent1.putExtra("player2Image", secondPlayerImage);
                                 intent1.putExtra("player2Uid", secondPlayerUid);
                                 intent1.putExtra("player2Points", secondPlayerPoints);
                                 intent1.putParcelableArrayListExtra("questionsList", list);
@@ -195,10 +197,11 @@ public class QuestionResultActivity extends AppCompatActivity {
             i.putExtra("correctAnswers", correctAnswersList);
             i.putExtra("currentChallenger", currentChallenger);
 
+            i.putExtra("player2Name", secondPlayerName);
+            i.putExtra("player2Image", secondPlayerImage);
+
             if (currentChallenger == 1) {
-                i.putExtra("player2Name", secondPlayerName);
                 i.putExtra("player2Email", secondPlayerEmail);
-                i.putExtra("player2Image", secondPlayerImage);
                 i.putExtra("player2Uid", secondPlayerUid);
                 i.putExtra("player2Points", secondPlayerPoints);
             } else if (currentChallenger == 2) {

@@ -4,20 +4,25 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.ChallengeStartActivity;
@@ -160,7 +165,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
 
                             dateClass.setDate(today);
 
-                          //  usersReference.child(challenge.getPlayer2Uid()).child("lastChallengeDate").setValue(dateClass.getDate());
+                            //  usersReference.child(challenge.getPlayer2Uid()).child("lastChallengeDate").setValue(dateClass.getDate());
                         }
                     });
 
@@ -176,58 +181,58 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                 @Override
                 public void onClick(View view) {
 
-                        //TODO : adjust this dialog content
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                        dialog.setTitle("تحدى جديد");
-                        dialog.setMessage("هل تريد إعادة تحدى هذا الطالب؟");
-                        dialog.setNegativeButton("نعم", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                final Intent intent = new Intent(context, ChallengeStartActivity.class);
+                    //TODO : adjust this dialog content
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                    dialog.setTitle("تحدى جديد");
+                    dialog.setMessage("هل تريد إعادة تحدى هذا الطالب؟");
+                    dialog.setNegativeButton("نعم", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            final Intent intent = new Intent(context, ChallengeStartActivity.class);
 
-                                intent.putExtra("uid", challenge.getOpponentUid());
-                                intent.putExtra("subject", challenge.getSubject());
+                            intent.putExtra("uid", challenge.getOpponentUid());
+                            intent.putExtra("subject", challenge.getSubject());
 
-                                if (dailyChallengesNumber - getSavedTodayChallengesNo(context) < 1) {
-                                    Toast.makeText(context, "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
-                                } else {
-                                    fireStoreUsers.document(challenge.getOpponentUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            DocumentSnapshot document = task.getResult();
-                                            if (task.isSuccessful()) {
-                                                String secondPlayerPoints = "-1";
+                            if (dailyChallengesNumber - getSavedTodayChallengesNo(context) < 1) {
+                                Toast.makeText(context, "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
+                            } else {
+                                fireStoreUsers.document(challenge.getOpponentUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (task.isSuccessful()) {
+                                            String secondPlayerPoints = "-1";
 
-                                                String secondPlayerName = (String) document.getString("userName");
-                                                String secondPlayerImage = (String) document.getString("userImage");
-                                                String secondPlayerEmail = (String) document.getString("userEmail");
-                                                if (document.getLong("points") != null)
-                                                    secondPlayerPoints = document.getLong("points").toString();
+                                            String secondPlayerName = (String) document.getString("userName");
+                                            String secondPlayerImage = (String) document.getString("userImage");
+                                            String secondPlayerEmail = (String) document.getString("userEmail");
+                                            if (document.getLong("points") != null)
+                                                secondPlayerPoints = document.getLong("points").toString();
 
-                                                intent.putExtra("name", secondPlayerName);
-                                                intent.putExtra("image", secondPlayerImage);
-                                                intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
-                                                intent.putExtra("email", secondPlayerEmail);
-                                                context.startActivity(intent);
-                                            }
+                                            intent.putExtra("name", secondPlayerName);
+                                            intent.putExtra("image", secondPlayerImage);
+                                            intent.putExtra("points", Integer.parseInt(secondPlayerPoints));
+                                            intent.putExtra("email", secondPlayerEmail);
+                                            context.startActivity(intent);
                                         }
-                                    });
+                                    }
+                                });
 
-                                }
                             }
-                        });
-                        dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
+                        }
+                    });
+                    dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
 
 
-                        dialog.create();
+                    dialog.create();
 
-                        dialog.show();
-                    }
+                    dialog.show();
+                }
             });
         }
 

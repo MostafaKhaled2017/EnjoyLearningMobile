@@ -6,8 +6,11 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.ChallengeResultActivityPresenter;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -56,6 +61,8 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = toolbar.findViewById(R.id.title);
+        toolbarTitle.setText("نتيجة التحدى");
 
 
         presenter = new ChallengeResultActivityPresenter(this, this);
@@ -106,7 +113,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
             } else if(currentChallenger == 2){
                 presenter.uploadPlayer2DataAndUpdateUsersData(challengeId, score, playerAnswersList, currentChallenger);
             }
-        } else if(isGeneralChallenge){
+        } else if (isGeneralChallenge) {
             challengeResultTv.setVisibility(View.VISIBLE);
             hideAllViews();
 
@@ -114,7 +121,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         }
     }
 
-    void getDataFromIntent(Intent intent){
+    void getDataFromIntent(Intent intent) {
         score = intent.getIntExtra("score", -1);
         isGeneralChallenge = intent.getBooleanExtra("isGeneralChallenge", false);
         if (!isGeneralChallenge) {
@@ -138,7 +145,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         }
     }
 
-    void setCurrentPlayerData(String localCurrentUserImage){
+    void setCurrentPlayerData(String localCurrentUserImage) {
         player1NameTv.setText(currentUserName);
         Picasso.with(this).load(localCurrentUserImage).into(player1ImageTv);
         player1ScoreTv.setText(score + "");
@@ -175,8 +182,8 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
     }
 
     @Override
-    public void setChallengeTvBGColor(int color) {
-        challengeStateTv.setBackgroundColor(color);
+    public void setChallengeBGColor(int color) {
+        challengeStateTv.setTextColor(color);
     }
 
     @Override

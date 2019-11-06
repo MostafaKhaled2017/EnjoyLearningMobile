@@ -73,7 +73,7 @@
             android:id="@+id/phoneNumber"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
-            android:text="رقم الهاتف : 201552609219+"
+            android:text="رقم الهاتف : 01552609219"
             android:gravity="center"
             android:fontFamily="@font/el_messiri"
             android:textColor="@color/black"

@@ -111,6 +111,8 @@ public class QuestionActivity extends AppCompatActivity {
                     secondPlayerPoints = intent.getIntExtra("player2Points", -1);
                 } else {
                     challengeId = intent.getStringExtra("challengeId");
+                    secondPlayerName = intent.getStringExtra("player2Name");
+                    secondPlayerImage = intent.getStringExtra("player2Image");
                 }
             }
         }
@@ -349,6 +351,8 @@ public class QuestionActivity extends AppCompatActivity {
         i.putParcelableArrayListExtra("questionList", list);
         i.putExtra("isGeneralChallenge", isGeneralChallenge);
 
+        i.putExtra("player2Name", secondPlayerName);
+        i.putExtra("player2Image", secondPlayerImage);
 
         if (!isGeneralChallenge) {
             i.putExtra("isGeneralChallenge", false);
@@ -358,9 +362,7 @@ public class QuestionActivity extends AppCompatActivity {
             i.putExtra("correctAnswers", correctAnswersList);
             i.putExtra("currentChallenger", currentChallenger);
             if (currentChallenger == 1) {
-                i.putExtra("player2Name", secondPlayerName);
                 i.putExtra("player2Email", secondPlayerEmail);
-                i.putExtra("player2Image", secondPlayerImage);
                 i.putExtra("player2Uid", secondPlayerUid);
                 i.putExtra("player2Points", secondPlayerPoints);
             } else if (currentChallenger == 2) {

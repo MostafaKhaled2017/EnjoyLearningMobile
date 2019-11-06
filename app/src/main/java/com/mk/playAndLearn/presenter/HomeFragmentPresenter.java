@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -137,31 +138,34 @@ public class HomeFragmentPresenter {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 //TO ensure that the child exists
+                if(task.isSuccessful()) {
+                    Map<String, Object> updates = new HashMap<>();
 
-                Map<String, Object> updates = new HashMap<>();
+                    updates.put("posted", true);
+                    updates.put("date", dateClass.getDate());
 
-                updates.put("posted", true);
-                updates.put("date", dateClass.getDate());
+                    currentPostRef.update(updates);
 
-                currentPostRef.update(updates);
-
-                format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+                    format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
 
-                for (int i = 0; i < postsList.size(); i++) {
-                    if (postsList.get(i).getId().equals(postId)) {
-                        postsList.get(i).setPosted(true);
-                        postsList.get(i).setDate(format.format(dateClass.getDate()));
-                        view.notifyAdapter();
-                        break;
+                    for (int i = 0; i < postsList.size(); i++) {
+                        if (postsList.get(i).getId().equals(postId)) {
+                            postsList.get(i).setPosted(true);
+                            postsList.get(i).setDate(format.format(dateClass.getDate()));
+                            view.notifyAdapter();
+                            break;
+                        }
                     }
+
+                    Log.v("Logging", "current posts reference is : " + currentPostRef);
+
+                    view.showToast("تم إضافة المنشور بنجاح");
+                    view.notifyAdapter();
+                    view.hideNoPostsText();
+                } else {
+                    Toast.makeText(context, "لم يتم إضافة المنشور برجاء التأكد من الإتصال بالانترنت", Toast.LENGTH_SHORT).show();
                 }
-
-                Log.v("Logging", "current posts reference is : " + currentPostRef);
-
-                view.showToast("تم إضافة المنشور بنجاح");
-                view.notifyAdapter();
-                view.hideNoPostsText();
             }
         });
     }
@@ -343,10 +347,14 @@ public class HomeFragmentPresenter {
         String postWriter = (String) map.get("writerName");
         String postWriterEmail = (String) map.get("email");
         String postImage = (String) map.get("image");
+        String subject = (String) map.get("subject");
         String postId = id;
         long votes = (long) map.get("votes");
         String writerUid = (String) map.get("writerUid");
         boolean posted = (boolean) map.get("posted");
+
+        String upVotedUsers = (String) map.get("upVotedUsers");
+        String downVotedUsers = (String) map.get("downVotedUsers");
 
         post.setPosted(posted);
         if (writerUid != null)
@@ -363,8 +371,16 @@ public class HomeFragmentPresenter {
             post.setImage(postImage);
         if (postId != null)
             post.setId(postId);
+        if (subject != null)
+            post.setSubject(subject);
 
         post.setVotes(votes);
+
+        if(upVotedUsers != null)
+            post.setUpVotedUsers(upVotedUsers);
+
+        if(downVotedUsers != null)
+            post.setDownVotedUsers(downVotedUsers);
 
         if (!existsInPostsList(postId)) {
             postsList.add(0, post); //To be added at the begging

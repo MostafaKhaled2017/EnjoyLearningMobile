@@ -76,7 +76,6 @@ public class ChallengesFragmentPresenter {
             protected void onPostExecute(Object o) {
                 if ((boolean) o) {
                     recreatingLists();
-                    view.showMainViews();
 
                     Log.v("infiniteLoading", "onPostExcute");
 
@@ -122,7 +121,6 @@ public class ChallengesFragmentPresenter {
 
                             view.notifyAdapters(completedChallengesList.size(), uncompletedChallengesList.size(), "getChallengeData2");
                             Log.v("infiniteLoading", "Adapter Notified");
-
                         }
                     };
 

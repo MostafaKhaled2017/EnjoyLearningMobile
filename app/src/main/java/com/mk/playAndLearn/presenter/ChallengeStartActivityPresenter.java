@@ -36,6 +36,9 @@ public class ChallengeStartActivityPresenter {
 
     ArrayList list = new ArrayList<>();
 
+    String opponentNameForChallenger2,opponentImageForChallenger2;
+    int opponentPointsForChallenger2 = -1;
+
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     String subject, challengeId, unit, lesson;
     long term;
@@ -88,14 +91,13 @@ public class ChallengeStartActivityPresenter {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
 
-                        String opponentName = (String) document.getString("userName");
-                        String opponentImage = (String) document.getString("userImage");
-                        int opponentPoints = -1;
+                        opponentNameForChallenger2 = (String) document.getString("userName");
+                        opponentImageForChallenger2 = (String) document.getString("userImage");
 
                         if (document.getLong("points") != null)
-                            opponentPoints = Integer.parseInt(document.getLong("points").toString());
+                            opponentPointsForChallenger2 = Integer.parseInt(document.getLong("points").toString());
 
-                        view.showOpponentData(opponentName, opponentImage, opponentPoints);
+                        view.showOpponentData(opponentNameForChallenger2, opponentImageForChallenger2, opponentPointsForChallenger2);
                     }
                 }
             });
@@ -138,15 +140,16 @@ public class ChallengeStartActivityPresenter {
         i.putExtra("isGeneralChallenge", false);
         i.putParcelableArrayListExtra("questionList", list);
 
-
         if (currentChallenger == 1) {
-            i.putExtra("player2Name", secondPlayerName);
             i.putExtra("player2Email", secondPlayerEmail);
-            i.putExtra("player2Image", secondPlayerImage);
             i.putExtra("player2Points", secondPlayerPoints);
             i.putExtra("player2Uid", secondPlayerUid);
+            i.putExtra("player2Name", secondPlayerName);
+            i.putExtra("player2Image", secondPlayerImage);
         } else {
             i.putExtra("challengeId", challengeId);
+            i.putExtra("player2Name", opponentNameForChallenger2);
+            i.putExtra("player2Image", opponentImageForChallenger2);
         }
 
         if (currentChallenger == 1) {

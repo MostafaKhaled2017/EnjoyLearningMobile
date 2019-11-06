@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#EEEEEC"
     android:layoutDirection="rtl"
-    tools:context=".Regestration.Createaccount">
+   >
 
     <ImageView
         android:id="@+id/imageView6"
@@ -33,7 +33,7 @@
         android:layout_marginEnd="@dimen/_15sdp"
         android:background="@drawable/shape_dark"
         android:fontFamily="@font/cairo_semibold"
-        android:text="انشيء حساب جديد"
+        android:text="تسجيل حساب جديد"
         android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
         app:layout_constraintBottom_toBottomOf="parent"

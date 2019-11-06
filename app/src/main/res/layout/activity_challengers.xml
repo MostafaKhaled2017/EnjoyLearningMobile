@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:elevation="6dp"
+        android:layoutDirection="ltr"
         app:tabSelectedTextColor="@color/black"
         app:tabIndicatorColor="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize" />

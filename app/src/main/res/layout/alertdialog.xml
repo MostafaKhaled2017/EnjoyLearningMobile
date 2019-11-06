@@ -47,57 +47,65 @@
 
                 />
 
-            <Button
-                android:id="@+id/yes"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginStart="@dimen/_35sdp"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:background="@drawable/shape_dark"
-                android:fontFamily="@font/el_messiri"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="نعم"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_14sdp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/areyousure"
-             />
-            <Button
-                android:id="@+id/yeswhite"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:background="@drawable/backimage"
-                android:fontFamily="@font/el_messiri"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="نعم"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_14sdp"
-                android:layout_below="@+id/areyousure"
-                android:visibility="gone"
-                android:layout_centerHorizontal="true"
-                />
-            <Button
-                android:id="@+id/no"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginStart="@dimen/_35sdp"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:background="@drawable/backimage"
-                android:fontFamily="@font/el_messiri"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="لا"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_14sdp"
-                android:layout_below="@+id/areyousure"
-                android:layout_toEndOf="@+id/yes"
-                />
+
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/yes"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_centerHorizontal="true"
+
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:background="@drawable/shape_dark"
+                    android:fontFamily="@font/el_messiri"
+
+                    android:text="نعم"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="bold" />
+                <Button
+                    android:id="@+id/yeswhite"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:background="@drawable/backimage"
+                    android:fontFamily="@font/el_messiri"
+                    android:textStyle="bold"
+                    android:text="نعم"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    android:layout_below="@+id/areyousure"
+                    android:visibility="gone"
+                    android:layout_centerHorizontal="true"
+                    />
+
+                <Button
+                    android:id="@+id/no"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/areyousure"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:layout_toEndOf="@+id/yes"
+                    android:background="@drawable/backimage"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/el_messiri"
+                    android:text="لا"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="bold" />
+
+
+
+            </LinearLayout>
 
 
 

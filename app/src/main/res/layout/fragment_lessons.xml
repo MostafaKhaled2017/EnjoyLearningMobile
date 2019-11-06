@@ -63,34 +63,29 @@
     <Spinner
         android:id="@+id/subjectsSpinnerInLessonsFragment"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_16sdp"
         android:background="@drawable/gradient_spinner"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text=""
+        app:layout_constraintVertical_bias="0.027"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailsignupTwo"
-        app:layout_constraintVertical_bias="0.027" />
+        app:layout_constraintTop_toBottomOf="@+id/emailsignupTwo" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lessonsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_160sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_height="wrap_content"
         android:columnCount="2"
-        android:scrollbars="vertical"
+        android:scrollbars="none"
+        android:paddingBottom="@dimen/_35sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subjectsSpinnerInLessonsFragment">
-
 
     </androidx.recyclerview.widget.RecyclerView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +21,9 @@ import android.widget.TextView;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.ChallengeStartActivityPresenter;
 import com.squareup.picasso.Picasso;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class ChallengeStartActivity extends AppCompatActivity implements ChallengeStartActivityPresenter.View {
     //TODO : make this page loads until all data finished loading by hiding the 4 main views until the data loads

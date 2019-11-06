@@ -90,6 +90,7 @@
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_25sdp"
             android:layout_marginEnd="@dimen/_15sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:background="@drawable/linearborder"
             android:orientation="vertical"
             android:visibility="visible">
@@ -162,7 +163,9 @@
                 android:text="ليس  مما  سبق"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:textSize="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_20sdp"/>
 
 
         </LinearLayout>

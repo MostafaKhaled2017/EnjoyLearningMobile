@@ -158,8 +158,6 @@ public class LessonsFragmentPresenter {
                                             if (t.getResult().size() < limit) {
                                                 isLastItemReached = true;
                                             }
-                                        } else {
-                                            Toast.makeText(context, "برجاء المحاولة فى وقت لاحق", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 };

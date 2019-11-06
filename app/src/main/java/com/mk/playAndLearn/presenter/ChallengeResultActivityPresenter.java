@@ -2,8 +2,10 @@ package com.mk.playAndLearn.presenter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -48,6 +50,7 @@ import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallenges
 public class ChallengeResultActivityPresenter {
     View view;
     Context context;
+    boolean transactionCalled = false;
 
     public ChallengeResultActivityPresenter(View view, Context context) {
         this.view = view;
@@ -57,6 +60,7 @@ public class ChallengeResultActivityPresenter {
     public void showAd() {
         AdManager adManager = AdManager.getInstance();
         InterstitialAd ad = adManager.getAd();
+        Log.v("adLog", "ad is : " + ad);
         if (ad != null && ad.isLoaded()) {
             ad.show();
         }
@@ -91,10 +95,10 @@ public class ChallengeResultActivityPresenter {
                     } else {
                         if (score > opponentScoreInt) {
                             view.setChallengeTvText(wonChallengeText);
-                            view.setChallengeTvBGColor(context.getResources().getColor(R.color.green));
+                            view.setChallengeBGColor(context.getResources().getColor(R.color.green));
                         } else {
                             view.setChallengeTvText(loseChallengeText);
-                            view.setChallengeTvBGColor(context.getResources().getColor(R.color.red));
+                            view.setChallengeBGColor(context.getResources().getColor(R.color.red));
                         }
                     }
                 }
@@ -143,8 +147,7 @@ public class ChallengeResultActivityPresenter {
         map.put("score1Added", false);
         map.put("subject", subject);
         map.put("state", "لم يكتمل"); // TODO : edit this
-        map.put("term", 2);//TODO : make this dynamic
-
+        map.put("term", 1);//TODO : make this dynamic
 
         fireStoreChallenges.document(challengeId).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -206,121 +209,124 @@ public class ChallengeResultActivityPresenter {
             @Nullable
             @Override
             public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                Log.v("transactionCalls", "begging of transaction");
 
-                Log.v("limitingChallenges", "begging of transaction");
+                if (!transactionCalled) {
+                    transactionCalled = true;
+                    long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0;
+                    long newPoints = 0, totalChallengesNo = 0, todayChallengesNo = 0;
 
-                long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0;
-                long newPoints = 0, totalChallengesNo = 0, todayChallengesNo = 0;
+                    if (getCurrentPlayer(player1Uid) == 2) {
+                        Log.v("limitingChallenges", "current player is 2");
+                        DocumentSnapshot snapshotForPlayer2 = transaction.get(player2Reference);
 
-                if (getCurrentPlayer(player1Uid) == 2) {
-                    Log.v("limitingChallenges", "current player is 2");
-                    DocumentSnapshot snapshotForPlayer2 = transaction.get(player2Reference);
-
-                    if (snapshotForPlayer2.getLong("totalChallengesNo") != null) {
-                        totalChallengesNo = snapshotForPlayer2.getLong("totalChallengesNo");
-                    }
-
-                    if (snapshotForPlayer2.getLong("todayChallengesNo") != null) {
-                        todayChallengesNo = snapshotForPlayer2.getLong("todayChallengesNo");
-                    }
-
-                    if (player1Score == player2Score) {
-                        if (snapshotForPlayer2.getLong("noOfDraws") != null)
-                            noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
-
-                        Long currentCompetitionPoints = snapshotForPlayer2.getLong("competitionPoints");
-                        Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
-                        if(currentCompetitionPoints == null)
-                            currentCompetitionPoints = Long.valueOf(0);
-                        long newCompetitionPoints = currentCompetitionPoints + (long) drawChallengePoints;
-                        transaction.update(player2Reference, "competitionPoints", newCompetitionPoints);
-
-                        newPoints = snapshotForPlayer2.getLong("points") + (long) drawChallengePoints;
-                        newNoOfDraws = noOfDraws + (long) 1;
-                        transaction.update(player2Reference, "points", newPoints);
-                        transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
-                        transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
-
-                        setSavedPoints(context, newPoints);
-
-                        Log.v("sfPoints", "new SavedPoints is : " + getSavedPoints(context));
-
-                        if (totalChallengesNo != 0) {
-                            transaction.update(player2Reference, "noOfDraws", newNoOfDraws);
-                        } else {
-                            transaction.update(player2Reference, "noOfDraws", 1);
-                            transaction.update(player2Reference, "noOfWins", 0);
-                            transaction.update(player2Reference, "noOfLoses", 0);
+                        if (snapshotForPlayer2.getLong("totalChallengesNo") != null) {
+                            totalChallengesNo = snapshotForPlayer2.getLong("totalChallengesNo");
                         }
-                    } else if (player2Score > player1Score) {
-                        if (snapshotForPlayer2.getLong("noOfWins") != null)
-                            noOfWins = snapshotForPlayer2.getLong("noOfWins");
 
-                        newPoints = snapshotForPlayer2.getLong("points") + (long) wonChallengePoints;
-                        newNoOfWins = noOfWins + (long) 1;
-                        transaction.update(player2Reference, "points", newPoints);
-                        transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
-                        transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
-
-                        Long currentCompetitionPoints = snapshotForPlayer2.getLong("competitionPoints");
-                        Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
-                        if(currentCompetitionPoints == null)
-                            currentCompetitionPoints = Long.valueOf(0);
-                        long newCompetitionPoints = currentCompetitionPoints + (long) wonChallengePoints;
-                        transaction.update(player2Reference, "competitionPoints", newCompetitionPoints);
-
-                        setSavedPoints(context, newPoints);
-
-                        Log.v("sfPoints", "new SavedPoints is : " + getSavedPoints(context));
-
-                        if (totalChallengesNo != 0) {
-                            transaction.update(player2Reference, "noOfWins", newNoOfWins);
-                        } else {
-                            transaction.update(player2Reference, "noOfDraws", 0);
-                            transaction.update(player2Reference, "noOfWins", 1);
-                            transaction.update(player2Reference, "noOfLoses", 0);
+                        if (snapshotForPlayer2.getLong("todayChallengesNo") != null) {
+                            todayChallengesNo = snapshotForPlayer2.getLong("todayChallengesNo");
                         }
-                    } else {
-                        if (snapshotForPlayer2.getLong("noOfLoses") != null)
-                            noOfLoses = snapshotForPlayer2.getLong("noOfLoses");
 
-                        newNoOfLoses = noOfLoses + (long) 1;
-                        transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
-                        transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+                        if (player1Score == player2Score) {
+                            if (snapshotForPlayer2.getLong("noOfDraws") != null)
+                                noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
 
-                        if (totalChallengesNo != 0) {
-                            transaction.update(player2Reference, "noOfLoses", newNoOfLoses);
+                            Long currentCompetitionPoints = snapshotForPlayer2.getLong("competitionPoints");
+                            Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                            if (currentCompetitionPoints == null)
+                                currentCompetitionPoints = Long.valueOf(0);
+                            long newCompetitionPoints = currentCompetitionPoints + (long) drawChallengePoints;
+                            transaction.update(player2Reference, "competitionPoints", newCompetitionPoints);
+
+                            newPoints = snapshotForPlayer2.getLong("points") + (long) drawChallengePoints;
+                            newNoOfDraws = noOfDraws + (long) 1;
+                            transaction.update(player2Reference, "points", newPoints);
+                            transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
+                            transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                            setSavedPoints(context, newPoints);
+
+                            Log.v("sfPoints", "new SavedPoints is : " + getSavedPoints(context));
+
+                            if (totalChallengesNo != 0) {
+                                transaction.update(player2Reference, "noOfDraws", newNoOfDraws);
+                            } else {
+                                transaction.update(player2Reference, "noOfDraws", 1);
+                                transaction.update(player2Reference, "noOfWins", 0);
+                                transaction.update(player2Reference, "noOfLoses", 0);
+                            }
+                        } else if (player2Score > player1Score) {
+                            if (snapshotForPlayer2.getLong("noOfWins") != null)
+                                noOfWins = snapshotForPlayer2.getLong("noOfWins");
+
+                            newPoints = snapshotForPlayer2.getLong("points") + (long) wonChallengePoints;
+                            newNoOfWins = noOfWins + (long) 1;
+                            transaction.update(player2Reference, "points", newPoints);
+                            transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
+                            transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                            Long currentCompetitionPoints = snapshotForPlayer2.getLong("competitionPoints");
+                            Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
+                            if (currentCompetitionPoints == null)
+                                currentCompetitionPoints = Long.valueOf(0);
+                            long newCompetitionPoints = currentCompetitionPoints + (long) wonChallengePoints;
+                            transaction.update(player2Reference, "competitionPoints", newCompetitionPoints);
+
+                            setSavedPoints(context, newPoints);
+
+                            Log.v("sfPoints", "new SavedPoints is : " + getSavedPoints(context));
+
+                            if (totalChallengesNo != 0) {
+                                transaction.update(player2Reference, "noOfWins", newNoOfWins);
+                            } else {
+                                transaction.update(player2Reference, "noOfDraws", 0);
+                                transaction.update(player2Reference, "noOfWins", 1);
+                                transaction.update(player2Reference, "noOfLoses", 0);
+                            }
                         } else {
-                            transaction.update(player2Reference, "noOfDraws", 0);
-                            transaction.update(player2Reference, "noOfWins", 0);
-                            transaction.update(player2Reference, "noOfLoses", 1);
+                            if (snapshotForPlayer2.getLong("noOfLoses") != null)
+                                noOfLoses = snapshotForPlayer2.getLong("noOfLoses");
+
+                            newNoOfLoses = noOfLoses + (long) 1;
+                            transaction.update(player2Reference, "totalChallengesNo", totalChallengesNo + 1);
+                            transaction.update(player2Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                            if (totalChallengesNo != 0) {
+                                transaction.update(player2Reference, "noOfLoses", newNoOfLoses);
+                            } else {
+                                transaction.update(player2Reference, "noOfDraws", 0);
+                                transaction.update(player2Reference, "noOfWins", 0);
+                                transaction.update(player2Reference, "noOfLoses", 1);
+                            }
                         }
+
+                        return todayChallengesNo + 1;
+                    } else if (getCurrentPlayer(player1Uid) == 1) {
+                        DocumentSnapshot snapshotForPlayer1 = transaction.get(player1Reference);
+
+                        if (snapshotForPlayer1.getLong("todayChallengesNo") != null) {
+                            todayChallengesNo = snapshotForPlayer1.getLong("todayChallengesNo");
+                        }
+                        transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
+                        transaction.update(player1Reference, "todayChallengesNo", todayChallengesNo + 1);
+
+                        Log.v("limitingChallenges", "current player is 1"
+                                + " , new todayChallengesNo is " + todayChallengesNo + 1);
+                        return todayChallengesNo + 1;
                     }
+                    Log.v("limitingChallenges", "value is : " + todayChallengesNo + 1);
 
                     return todayChallengesNo + 1;
-                } else if (getCurrentPlayer(player1Uid) == 1) {
-                    DocumentSnapshot snapshotForPlayer1 = transaction.get(player1Reference);
 
-                    if (snapshotForPlayer1.getLong("todayChallengesNo") != null) {
-                        todayChallengesNo = snapshotForPlayer1.getLong("todayChallengesNo");
-                    }
-                    transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
-                    transaction.update(player1Reference, "todayChallengesNo", todayChallengesNo + 1);
-
-                    Log.v("limitingChallenges", "current player is 1"
-                            + " , new todayChallengesNo is " + todayChallengesNo + 1);
-                    return todayChallengesNo + 1;
+                } else {
+                    return Long.valueOf(-1);
                 }
-                Log.v("limitingChallenges", "value is : " + todayChallengesNo + 1);
-
-                return todayChallengesNo + 1;
 
             }
         }).addOnSuccessListener(new OnSuccessListener<Long>() {
             @Override
             public void onSuccess(Long aLong) {
-                Log.v("limitingChallenges", "aLong is : " + aLong);
-
                 long remainedDailyChallenges = dailyChallengesNumber - aLong;
                 if (remainedDailyChallenges > 3) {
                     Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحديات فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
@@ -402,9 +408,8 @@ public class ChallengeResultActivityPresenter {
 
         void setChallengeTvText(String text);
 
-        void setChallengeTvBGColor(int color);
+        void setChallengeBGColor(int color);
 
         void setChallengeResultTvText(String text);
-
     }
 }

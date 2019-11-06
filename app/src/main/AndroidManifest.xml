@@ -24,11 +24,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-        <activity android:name="com.mk.playAndLearn.activity.ChallengenowTwo" />
-        <activity android:name="com.mk.playAndLearn.activity.ChallengeNow" />
-        <activity android:name="com.mk.playAndLearn.activity.EditProfileActivity" />
-        <activity android:name="com.mk.playAndLearn.activity.SettingsActivity" />
-        <activity android:name="com.mk.playAndLearn.activity.SignUp2Activity" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.ChallengenowTwo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.ChallengeNow"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.BestStudentsInCompetitionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.EditProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mk.playAndLearn.activity.SignUp2Activity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
             android:label="@string/title_activity_study_tips"
@@ -73,6 +87,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.WelcomeActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>

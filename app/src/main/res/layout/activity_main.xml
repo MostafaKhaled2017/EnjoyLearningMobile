@@ -14,45 +14,13 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scrollbars="vertical"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/multiple_actions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:fab_addButtonColorNormal="@color/colorPrimary"
-        fab:fab_addButtonColorPressed="@color/colorPrimary"
-        fab:fab_addButtonPlusIconColor="@color/colorPrimary"
-        fab:fab_labelStyle="@style/menu_labels_style"
-        app:layout_constraintBottom_toTopOf="@id/navigation"
-        app:layout_constraintLeft_toRightOf="@id/navigation"
-        app:layout_constraintRight_toLeftOf="@id/navigation"
-        app:srcCompat="@drawable/add"
-        app:layout_insetEdge="bottom" >
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabChallenge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white"
-            fab:fab_title="بدء تحدى جديد"
-            fab:fab_colorPressed="@color/colorPrimary"/>
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddPost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white"
-            fab:fab_title="إضافة منشور"
-            fab:fab_colorPressed="@color/colorPrimary"/>
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintVertical_bias="0.267" />
 
  <!--   <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -85,7 +53,37 @@
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_addButtonColorNormal="@color/colorPrimary"
+        fab:fab_addButtonColorPressed="@color/colorPrimary"
+        fab:fab_addButtonPlusIconColor="@color/colorPrimary"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:srcCompat="@drawable/add"
+        app:layout_insetEdge="bottom" >
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabChallenge"
+            app:fab_icon="@drawable/elect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_title="بدء تحدى جديد"
+            fab:fab_colorPressed="@color/colorPrimary"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/white"
+            app:fab_icon="@drawable/add"
+            fab:fab_title="إضافة منشور"
+            fab:fab_colorPressed="@color/colorPrimary"/>
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

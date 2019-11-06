@@ -24,6 +24,7 @@
             android:layout_below="@id/dailyRewardTv"
             android:src="@drawable/trophie"
             android:layout_width="250dp"
+            android:layout_centerHorizontal="true"
             android:layout_height="250dp"
             android:id="@+id/trophyImage"/>
 
