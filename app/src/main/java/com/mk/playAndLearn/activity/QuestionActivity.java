@@ -165,7 +165,7 @@ public class QuestionActivity extends AppCompatActivity {
             countDownInterval = 3000;//3 seconds
             totalSeconds = millisInFuture / 1000;
         } else {
-            millisInFuture = 11000;
+            millisInFuture = 21000;
             countDownInterval = 100;
             totalSeconds = millisInFuture / 1000;
         }
