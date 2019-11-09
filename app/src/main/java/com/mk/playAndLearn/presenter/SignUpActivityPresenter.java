@@ -123,6 +123,8 @@ public class SignUpActivityPresenter {
                                 batch.update(currentUserDocument, "governorate", governorate);
                                 batch.update(currentUserDocument, "invitingFriendId", invitingFriendId);
                                 batch.update(currentUserDocument, "competitionPoints", 0);
+                                batch.update(currentUserDocument, "inviteesNo", 0);
+                                batch.update(currentUserDocument, "ambassador", false);
 
                                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -140,6 +142,7 @@ public class SignUpActivityPresenter {
                             map.put("acceptedQuestions", 0);//2
                             map.put("userName", name.trim());
                             map.put("admin", false);
+                            map.put("ambassador", false);
                             map.put("userEmail", email.trim());
                             map.put("userId", currentUserUid);
                             map.put("userImage", imageUrl);
@@ -152,6 +155,7 @@ public class SignUpActivityPresenter {
                             map.put("creationDate", dateClass.getDate());
                             map.put("points", 0);//3
                             map.put("competitionPoints", 0);
+                            map.put("inviteesNo", 0);
                             map.put("noOfDraws", 0);
                             map.put("noOfWins", 0);
                             map.put("noOfLoses", 0);

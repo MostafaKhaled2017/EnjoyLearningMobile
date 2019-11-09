@@ -206,6 +206,7 @@ public class LessonsFragmentPresenter {
 
         format.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         String lessonDate;
+        long term = -1;
 
         lesson = new Lesson();
         String lessonContent = lessonDocument.getString("content");
@@ -215,6 +216,11 @@ public class LessonsFragmentPresenter {
         String lessonWriterEmail = lessonDocument.getString("writerEmail");
         String lessonId = lessonDocument.getId();
         String writerUid = lessonDocument.getString("writerUid");
+        String subject = lessonDocument.getString("subject");
+        String grade = lessonDocument.getString("grade");
+        term = lessonDocument.getLong("term");
+        String unitNo = lessonDocument.getString("unitNumber");
+        String lessonNo = lessonDocument.getString("lessonNumber");
 
         if (writerUid != null)
             lesson.setWriterUid(writerUid);
@@ -231,6 +237,18 @@ public class LessonsFragmentPresenter {
         if (lessonId != null)
             lesson.setId(lessonId);
 
+        if (subject != null)
+            lesson.setSubject(subject);
+        if (grade != null)
+            lesson.setGrade(grade);
+        if (term != -1)
+            lesson.setTerm(term);
+        if (unitNo != null)
+            lesson.setUnitNo(unitNo);
+        if (lessonNo != null)
+            lesson.setLessonNo(lessonNo);
+
+        lesson.setLessonId(lesson.getId());
 
         if (!existsInLessonsList(lessonId)) {
             lessonsList.add(lesson);

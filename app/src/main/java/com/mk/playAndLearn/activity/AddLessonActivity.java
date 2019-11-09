@@ -161,6 +161,8 @@ public class AddLessonActivity extends AppCompatActivity {
             spinnerPosition = myAdap.getPosition(lessonNumber);
             lessonOrderSpinner.setSelection(spinnerPosition);
 
+            Log.v("lessonsLog", "term : " + term + " , subject : " + subject);
+
             oldLesson = true;
             oldLessonId = lesson.getLessonId();
         }
@@ -376,6 +378,8 @@ public class AddLessonActivity extends AppCompatActivity {
             } else if (oldLesson) {
                 DocumentReference currentLessonReference = fireStoreLessons.document(lesson.getGrade()).collection(lesson.getSubject()).document(oldLessonId);
 
+                batch = fireStore.batch();
+
                 batch.update(currentLessonReference, "title", lessonTitle.trim());
                 batch.update(currentLessonReference, "content", lessonContent.trim());
                 batch.update(currentLessonReference, "schoolType", schoolType);
@@ -384,12 +388,18 @@ public class AddLessonActivity extends AppCompatActivity {
                 batch.update(currentLessonReference, "unitNumber", selectedUnit);
                 batch.update(currentLessonReference, "lessonNumber", selectedLesson);
                 batch.update(currentLessonReference, "term", convertTermToLong(selectedTerm));
+                batch.update(currentLessonReference,"order", selectedUnit + selectedLesson);
 
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(AddLessonActivity.this, "تم تحديث الدرس بنجاح", Toast.LENGTH_SHORT).show();
-                        finish();
+                        if(task.isSuccessful()) {
+                            Toast.makeText(AddLessonActivity.this, "تم تحديث الدرس بنجاح", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(AddLessonActivity.this, "لم يتم تحديث الدرس", Toast.LENGTH_SHORT).show();
+                            Log.v("editLessonLog", task.getException().getMessage() + " , " + task.getException().getCause().toString());
+                        }
                     }
                 });
             }
