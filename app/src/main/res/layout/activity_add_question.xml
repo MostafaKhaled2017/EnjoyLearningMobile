@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
+    android:scrollbars="none"
     android:background="@color/white">
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/cairo"
             android:gravity="center"
-            android:text="إضافة سؤال "
+            android:text="@string/addQuestion"
             android:textColor="#FFFF"
             android:textSize="@dimen/_18sdp"
             android:textStyle="bold"
@@ -70,126 +71,174 @@
             app:layout_constraintVertical_bias="0.052" /> -->
 
 
-        <Spinner
-            android:layout_width="0dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/gradient_spinner"
-            android:ems="10"
-            android:id="@+id/subjectsSpinner"
+            <Spinner
+                android:id="@+id/subjectsSpinner"
+                android:layout_width="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_height="@dimen/_50sdp"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/addcourse"
+                app:layout_constraintVertical_bias="0.085"
+                android:layout_marginStart="@dimen/_11sdp"
+                android:layout_marginEnd="@dimen/_11sdp"
+                android:background="@drawable/gradient_spinner"
+                />
+
+
+
+
+
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/relativespinner"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addcourse"
-            app:layout_constraintVertical_bias="0.052" />
-
-        <Spinner
-            android:id="@+id/gradeSpinner"
-            android:layout_width="@dimen/_135sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/gradient_spinner"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/termSpinner"
-            app:layout_constraintHorizontal_bias="0.036"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subjectsSpinner"
-            app:layout_constraintVertical_bias="0.018" />
+            app:layout_constraintVertical_bias="0.05"
+            android:layout_marginStart="@dimen/_11sdp"
+            android:layout_marginEnd="@dimen/_11sdp">
+
+            <Spinner
+                android:id="@+id/gradeSpinner"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:layout_width="@dimen/_149sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:background="@drawable/gradient_spinner"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:ems="10"
+                android:paddingStart="@dimen/_10sdp"
+                android:inputType="textPersonName"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                />
 
 
-        <Spinner
-            android:id="@+id/termSpinner"
-            android:layout_width="@dimen/_135sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:background="@drawable/gradient_spinner"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/gradeSpinner"
-            app:layout_constraintTop_toBottomOf="@+id/subjectsSpinner"
-            app:layout_constraintVertical_bias="0.018"/>
+            <Spinner
+                android:id="@+id/termSpinner"
+                android:layout_width="@dimen/_151sdp"
+                android:layout_height="@dimen/_50sdp"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:paddingStart="@dimen/_10sdp"
+
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_toEndOf="@+id/gradeSpinner"
+
+                android:background="@drawable/gradient_spinner"
+
+                />
+            <Spinner
+                android:id="@+id/unitOrderSpinner"
+                android:layout_width="@dimen/_149sdp"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:layout_height="@dimen/_50sdp"
+
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_marginTop="@dimen/_5sdp"
+
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/gradeSpinner"
+
+                android:background="@drawable/gradient_spinner"
 
 
-        <Spinner
-            android:id="@+id/unitOrderSpinner"
-            android:layout_width="@dimen/_135sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:background="@drawable/gradient_spinner"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/lessonOrderSpinner"
-            app:layout_constraintHorizontal_bias="0.004"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gradeSpinner"
-            app:layout_constraintVertical_bias="0.027" />
+                />
 
 
-        <Spinner
-            android:id="@+id/lessonOrderSpinner"
-            android:layout_width="@dimen/_135sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:background="@drawable/gradient_spinner"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/unitOrderSpinner"
-            app:layout_constraintTop_toBottomOf="@+id/termSpinner"
-            app:layout_constraintVertical_bias="0.026" />
+
+
+
+
+
+            <Spinner
+                android:id="@+id/lessonOrderSpinner"
+
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_width="@dimen/_151sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/gradient_spinner"
+                android:layout_toEndOf="@+id/unitOrderSpinner"
+                android:layout_below="@+id/termSpinner"
+
+
+
+                />
+
+
+
+
+
+
+
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+
 
 
         <EditText
             android:id="@+id/addQuestionEditText"
             android:layout_width="0dp"
             android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_11sdp"
-            android:layout_marginEnd="@dimen/_11sdp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
             android:background="@drawable/linearborder"
-            android:hint="اكتب سؤالك هنا"
+            android:hint="@string/editTextHint"
+            android:paddingStart="@dimen/_10sdp"
             android:inputType="textPersonName"
             android:padding="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/unitOrderSpinner"
+            app:layout_constraintTop_toBottomOf="@+id/relativespinner"
             app:layout_constraintVertical_bias="0.059" />
 
 
         <TextView
             android:id="@+id/addlessonname"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
             android:fontFamily="@font/el_messiri"
-            android:text="اكتب  خيارات السؤال هنا وعلم بجوار الإجابة/الإجابات الصحيحة"
+            android:text="@string/choicesHint"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.053"
@@ -202,15 +251,15 @@
             android:id="@+id/et1"
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/linearborder"
             android:ems="10"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:hint="الاختيار الأول"
             android:fontFamily="@font/el_messiri"
-            android:textSize="@dimen/_11sdp"
             android:gravity="center"
+            android:hint="@string/firstChoicehint"
+            android:textSize="@dimen/_11sdp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.242"
+            app:layout_constraintHorizontal_bias="0.232"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/addlessonname" />
 
@@ -252,7 +301,7 @@
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginTop="@dimen/_15sdp"
-            android:hint="الاختيار الثاني"
+            android:hint="@string/secondChoiceHint"
             android:background="@drawable/linearborder"
             android:ems="10"
             android:fontFamily="@font/el_messiri"
@@ -293,7 +342,7 @@
             android:fontFamily="@font/el_messiri"
             android:textSize="@dimen/_11sdp"
             android:gravity="center"
-            android:hint="الإختيار الثالث "
+            android:hint="@string/thirdChoiceHint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.228"
@@ -331,7 +380,7 @@
             android:ems="10"
             android:fontFamily="@font/el_messiri"
             android:gravity="center"
-            android:hint="الإختيار الرابع "
+            android:hint="@string/fourthChoiceHint"
             android:textSize="@dimen/_11sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -351,7 +400,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:background="@drawable/shape_dark"
             android:fontFamily="@font/cairo_semibold"
-            android:text="اضف السؤال"
+            android:text="@string/addQuestionText"
             android:textColor="@color/white"
             android:textSize="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"

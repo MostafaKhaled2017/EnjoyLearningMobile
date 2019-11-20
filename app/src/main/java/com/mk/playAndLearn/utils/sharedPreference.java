@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class sharedPreference {
     public static void setSharedPreference(Context context, String name, String grade, String schoolType, String userType
-            , String email, String imageUrl, String lastOnlineDay, long todayChallengesNo, long points, String phoneNo, String governorate){
+            , String email, String imageUrl, String lastOnlineDay, long todayChallengesNo, long points, String phoneNo, String governorate, String userId){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -16,6 +16,7 @@ public class sharedPreference {
         editor.putString("userEmail", email);
         editor.putString("userImage", imageUrl);
         editor.putString("lastOnlineDay", lastOnlineDay);
+        editor.putString("userId", userId);
         editor.putLong("todayChallengesNo", todayChallengesNo);
         editor.putLong("points", points);
         editor.putString("phoneNo", phoneNo);
@@ -26,6 +27,21 @@ public class sharedPreference {
     public static String getSavedName(Context context){
         SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
         return pref.getString("currentUserName", "غير معروف");
+    }
+
+    public static String getSavedSchoolType(Context context){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        return pref.getString("userSchoolType", "غير معروف");
+    }
+
+    public static String getSavedEmail(Context context){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        return pref.getString("userEmail", "غير معروف");
+    }
+
+    public static String getSavedId(Context context){
+        SharedPreferences pref = context.getSharedPreferences("MyPref", 0);
+        return pref.getString("userId", "غير معروف");
     }
 
     public static String getSavedImage(Context context){

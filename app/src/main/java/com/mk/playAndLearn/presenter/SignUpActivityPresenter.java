@@ -129,13 +129,13 @@ public class SignUpActivityPresenter {
                                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0, points, phoneNo, governorate);
+                                        setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0, points, phoneNo, governorate, currentUserUid);
                                         view.navigate();
                                     }
                                 });
                             }
                         } else if (!documentSnapshot.exists()) {
-                            String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            final String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                             Map<String, Object> map = new HashMap<>();
                             map.put("refusedQuestions", 0);//1
@@ -170,7 +170,7 @@ public class SignUpActivityPresenter {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0, 0, phoneNo, governorate);
+                                        setSharedPreference(context, name, grade, userSchoolType, userType, email, imageUrl, todayDate, 0, 0, phoneNo, governorate, currentUserUid);
                                         view.navigate();
                                     } else {
                                         Toast.makeText(context, "لم يتم إنشاء الحساب الجديد برجاء المحاولة فى وقت لاحق", Toast.LENGTH_SHORT).show();

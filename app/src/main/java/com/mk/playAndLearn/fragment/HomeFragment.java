@@ -2,6 +2,7 @@ package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -30,8 +31,10 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.SignUp2Activity;
 import com.mk.playAndLearn.adapters.PostsAdapter;
 import com.mk.playAndLearn.presenter.HomeFragmentPresenter;
+import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
@@ -63,8 +66,10 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
     RecyclerView recyclerView;
     Spinner spinner;
+    boolean dataLoaded = false;
 
     String currentSubject = "", internalCurrentSubject = "";
+    int selectedItem =  -1;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -73,7 +78,10 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new HomeFragmentPresenter(this, getActivity());
+
+        if(presenter == null) {
+            presenter = new HomeFragmentPresenter(this, getActivity());
+        }
     }
 
     @Override
@@ -86,14 +94,45 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
 
         spinner = myView.findViewById(R.id.subjectsSpinnerInHomeFragment);
 
-        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.preparatory_subjects_array_with_all_subjects_item, R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(subjectsAdapter);
+
+
+        String[] subjects = this.getResources().getStringArray( R.array.preparatory_subjects_array_with_all_subjects_item);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(getActivity(),R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItem) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        spinner.setAdapter(customAdapter);
+
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                selectedItem = i;
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 FirebaseAuth localAuth = FirebaseAuth.getInstance();
                 localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {

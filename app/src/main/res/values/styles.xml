@@ -24,6 +24,7 @@
 
     <style name="MyNavigationViewItemStyle" parent="AppTheme">
         <item name="listPreferredItemPaddingLeft">10dp</item>
+
     </style>
 
     <style name="NoActionBar" parent="@android:style/Theme.Holo.Light">

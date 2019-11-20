@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,6 @@ public class ProfileFragment extends Fragment implements ProfileActivityPresente
         super.onCreate(savedInstanceState);
 
         presenter = new ProfileActivityPresenter(this,getActivity());
-
-        presenter.getUserData();
 
        /* PieChart pieChart = findViewById(R.id.piechart);
 
@@ -54,7 +53,7 @@ public class ProfileFragment extends Fragment implements ProfileActivityPresente
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        nameTv = view.findViewById(R.id.name);
+        nameTv = view.findViewById(R.id.nameInProfile);
         gradeTv = view.findViewById(R.id.grade);
         pointsTv = view.findViewById(R.id.points);
         schoolTypeTv = view.findViewById(R.id.schoolType);
@@ -62,17 +61,23 @@ public class ProfileFragment extends Fragment implements ProfileActivityPresente
         emailTv = view.findViewById(R.id.email);
         studentIdTv = view.findViewById(R.id.studentIdTv);
 
+        presenter.getUserData();
+
         return view;
     }
 
     @Override
     public void setData(String userName, String grade, long points, String schoolType, String imageUrl, String email, String studentId) {
+        Log.v("sharedPrefLog", "name is : " + userName + " , grade is : " + grade);
+
         nameTv.setText(userName);
         gradeTv.setText(grade);
         pointsTv.setText(points + "");
         schoolTypeTv.setText(schoolType);
         emailTv.setText(email);
-        studentIdTv.setText(studentId);
+
+        if(studentId != null)
+            studentIdTv.setText(studentId);
 
         Picasso.with(getActivity()).load(imageUrl).placeholder(R.drawable.picasso_placeholder).into(userImage);
 

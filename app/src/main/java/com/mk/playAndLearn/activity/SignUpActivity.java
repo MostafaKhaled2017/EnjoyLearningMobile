@@ -2,6 +2,7 @@ package com.mk.playAndLearn.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,6 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -41,6 +44,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 
@@ -65,6 +69,7 @@ public class SignUpActivity extends FragmentActivity {
     GoogleSignInOptions gso;
 
     ImageView backgroundIv;
+    int  selectedItem  = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +91,7 @@ public class SignUpActivity extends FragmentActivity {
         initializeGoogleLoginVariables();
 
         //set spinners
-        setUserGenderSpinner();
+        setUserGenderSpinner( R.array.gender_array);
 
         View decorView = getWindow().getDecorView();
 // Hide the status bar.
@@ -253,15 +258,44 @@ public class SignUpActivity extends FragmentActivity {
         }
     }
 
-    public void setUserGenderSpinner() {
-        ArrayAdapter<CharSequence> genderTypeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.gender_array, android.R.layout.simple_spinner_item);
-        genderTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderSpinner.setAdapter(genderTypeAdapter);
+    public void setUserGenderSpinner(int array) {
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(SignUpActivity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItem) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        genderSpinner.setAdapter(customAdapter);
+
 
         genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                selectedItem = i;
                 String selectedItem = adapterView.getItemAtPosition(i).toString();
                 if (selectedItem.equals("Male") || selectedItem.equals("ذكر")) {
                     gender = "ذكر";

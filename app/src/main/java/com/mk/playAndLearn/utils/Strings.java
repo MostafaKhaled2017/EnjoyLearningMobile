@@ -11,4 +11,5 @@ public class Strings {
     public static String loseChallengeText = "خسرت";
     public static String drawChallengeText = "تعادلت";
     public static String adminEmail = "mostafakhaled835@gmail.com";
+    public static String adminEmail2 = "educup.egypt@gmail.com";
 }

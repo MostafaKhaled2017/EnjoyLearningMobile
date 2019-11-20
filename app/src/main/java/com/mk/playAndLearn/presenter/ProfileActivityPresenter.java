@@ -11,6 +11,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedEmail;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedId;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedPoints;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedSchoolType;
 
 public class ProfileActivityPresenter {
     View view;
@@ -22,28 +29,15 @@ public class ProfileActivityPresenter {
     }
 
     public void getUserData() {
-        String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        fireStoreUsers.document(localCurrentUserUid).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String userName = documentSnapshot.getString("userName");
-                        String grade = documentSnapshot.getString("grade");
-                        long points = documentSnapshot.getLong("points");
-                        String schoolType = documentSnapshot.getString("userSchoolType");
-                        String imageUrl = documentSnapshot.getString("userImage");
-                        String email = documentSnapshot.getString("userEmail");
-                        String governorate = documentSnapshot.getString("governorate");
-                        String studentId = documentSnapshot.getId();
+        String userName = getSavedName(context);
+        String grade =getSavedGrade(context);
+        long points = getSavedPoints(context);
+        String schoolType = getSavedSchoolType(context);
+        String imageUrl =getSavedImage(context);
+        String email = getSavedEmail(context);
+        String studentId = getSavedId(context);
 
-                        view.setData(userName, grade, points, schoolType, imageUrl, email, studentId);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, "لم نستطع تحميل بياناتك برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        view.setData(userName, grade, points, schoolType, imageUrl, email, studentId);
     }
 
     public interface View {

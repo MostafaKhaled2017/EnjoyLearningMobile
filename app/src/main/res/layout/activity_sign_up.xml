@@ -262,7 +262,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="@dimen/_3sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:fontFamily="@font/el_messiri"
             android:text="النوع"
             android:textColor="@color/black"
@@ -279,18 +279,21 @@
         <Spinner
             android:id="@+id/genderSpinner"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/_50sdp"
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/gradient_spinner"
             android:ems="10"
             android:inputType="textPersonName"
             android:text=""
+            android:background="@drawable/gradient_spinner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginselect"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+
             app:layout_constraintVertical_bias="0.0" />
 
         <Button

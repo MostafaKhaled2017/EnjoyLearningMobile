@@ -150,6 +150,7 @@ public class SignInActivity extends FragmentActivity {
                                                     String lastOnlineDay = document.getString("lastOnlineDay");
                                                     String phoneNo = document.getString("phoneNo");
                                                     String governorate = document.getString("governorate");
+                                                    String userId = document.getId();
 
                                                     if (document.getLong("todayChallengesNo") != null)
                                                         todayChallengesNo = document.getLong("todayChallengesNo");
@@ -160,7 +161,7 @@ public class SignInActivity extends FragmentActivity {
                                                     Log.v("todayChallengesNo", "todayChallengesNo in sign in activity : " + todayChallengesNo);
 
                                                     setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email
-                                                            , image, lastOnlineDay, todayChallengesNo, points, phoneNo, governorate);
+                                                            , image, lastOnlineDay, todayChallengesNo, points, phoneNo, governorate, userId);
                                                     navigate();
                                                 } else {
                                                     Toast.makeText(SignInActivity.this, "يوجد مشكلة فى هذا الحساب برجاء التواصل مع إدارة التطبيق", Toast.LENGTH_SHORT).show();
@@ -269,6 +270,7 @@ public class SignInActivity extends FragmentActivity {
                                                     String lastOnlineDay = documentSnapshot.getString("lastOnlineDay");
                                                     String phoneNo = documentSnapshot.getString("phoneNo");
                                                     String governorate = documentSnapshot.getString("governorate");
+                                                    String userId = documentSnapshot.getId();
                                                     if (documentSnapshot.getLong("todayChallengesNo") != null)
                                                         todayChallengesNo = documentSnapshot.getLong("todayChallengesNo");
                                                     if (documentSnapshot.getLong("points") != null)
@@ -276,7 +278,7 @@ public class SignInActivity extends FragmentActivity {
 
                                                     Log.v("todayChallengesNo", "todayChallengesNo in sign in activity : " + todayChallengesNo);
 
-                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo, points, phoneNo, governorate);
+                                                    setSharedPreference(SignInActivity.this, name, grade, schoolType, type, email, image, lastOnlineDay, todayChallengesNo, points, phoneNo, governorate, userId);
                                                     navigate();
                                                 }
                                             }

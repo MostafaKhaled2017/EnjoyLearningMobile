@@ -31,6 +31,7 @@ import com.mk.playAndLearn.model.Lesson;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
+import static com.mk.playAndLearn.utils.Strings.adminEmail2;
 
 public class LessonsAdapter extends RecyclerView.Adapter {
 
@@ -95,9 +96,9 @@ public class LessonsAdapter extends RecyclerView.Adapter {
                     String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
                     //TODO : change this way
-                    if (lesson.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail)) {
+                    if (lesson.getWriterUid().equals(localCurrentUserUid) || localCurrentUserEmail.equals(adminEmail) || localCurrentUserEmail.equals(adminEmail2)) {
                         boolean admin = false;
-                        if (localCurrentUserEmail.equals(adminEmail))
+                        if (localCurrentUserEmail.equals(adminEmail) || localCurrentUserEmail.equals(adminEmail2))
                             admin = true;
 
                         showActionsDialog(lesson); //TODO :  search why I need to add one

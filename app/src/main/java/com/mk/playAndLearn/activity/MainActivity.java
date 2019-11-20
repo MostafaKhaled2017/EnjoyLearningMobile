@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -16,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -25,13 +27,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -60,6 +66,7 @@ import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LessonsFragment;
 import com.mk.playAndLearn.fragment.ProfileFragment;
 import com.mk.playAndLearn.service.NotificationsService;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -76,21 +83,25 @@ import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedDate;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallengesNo;
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
 
 
 public class MainActivity extends AppCompatActivity implements LessonsFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
-        ChallengesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
+        ChallengesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
+        BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     MainViewPagerAdapter adapter;
     BottomNavigationView navigation;
 
-    int tabPosition = 1;
     boolean initialDataLoaded = false, isFABOpen;
     boolean transactionCalled = false;
     ArrayList list;
     String currentSubject;
+    int selectedItem  =  -1;
+
 
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
@@ -98,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     String urlOfAppFromPlayStore = "https://play.google.com/store/apps/details?id=com.mk.playAndLearn";
     String currentVersion, latestVersion, localCurrentUserUid;
     Dialog dialog;
-    FloatingActionButton mainFab;
-    View fabAddPost, fabAddChallenge;
 
     HomeFragment homeFragment = new HomeFragment();
     ProfileFragment profileFragment = new ProfileFragment();
@@ -153,23 +162,13 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fabAddPost = findViewById(R.id.fabAddPost);
-        fabAddChallenge = findViewById(R.id.fabChallenge);
-
-        fabAddChallenge.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
+                showPopupMenu(view);
             }
         });
-
-        fabAddPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showSpinnerDialog();
-            }
-        });
-
 
         //getting bottom navigation view and attaching the listener
         navigation = findViewById(R.id.navigation);
@@ -186,6 +185,17 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         toggle.syncState();
 
         drawer.closeDrawer(Gravity.START);
+
+        TextView currentUserNameTv = findViewById(R.id.currentUserName);
+        currentUserNameTv.setText(getSavedName(this));
+
+        ImageView currentUserImage = findViewById(R.id.currentUserImage);
+        Picasso.with(this).load(getSavedImage(this)).into(currentUserImage);
+
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.navlist);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -220,89 +230,11 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
     }
 
-    public void showSpinnerDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);//TODO : check this
-        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
-
-        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this)
-                .setView(view)
-                .setCancelable(false)
-                .create();
-
-        final EditText inputComment = view.findViewById(R.id.dialog_value);
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
-        dialogTitle.setText("إضافة منشور");
-        inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
-
-        ImageView closeIcon = view.findViewById(R.id.closeIcon);
-        closeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialogBuilderUserInput.dismiss();
-            }
-        });
-
-        final ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(MainActivity.this,
-                R.array.preparatory_subjects_array_with_general_subjects_item, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(subjectsAdapter);
-
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentSubject = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(final DialogInterface dialogInterface) {
-
-                Button button = view.findViewById(R.id.addPostBtn);
-                button.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        String commentText = inputComment.getText().toString().trim();
-                        if (TextUtils.isEmpty(commentText)) {
-                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
-                        } else if (currentSubject.equals("اختر المادة")) {
-                            Toast.makeText(MainActivity.this, "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (homeFragment != null) {
-                                homeFragment.presenter.addPost(commentText, currentSubject);
-                            } else {
-                                Toast.makeText(MainActivity.this, "فشلت إضافة المنشور برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
-                            }
-                            dialogInterface.dismiss();
-                        }
-                    }
-                });
-            }
-        });
-
-        alertDialogBuilderUserInput.show();
-
-    }
-
-    private void showFABMenu() {
-        isFABOpen = true;
-        fabAddPost.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
-        fabAddChallenge.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
-    }
-
-    private void closeFABMenu() {
-        isFABOpen = false;
-        fabAddChallenge.animate().translationY(0);
-        fabAddPost.animate().translationY(0);
+    private void showPopupMenu(View v) {
+        PopupMenu popup = new PopupMenu(MainActivity.this, v);
+        popup.setOnMenuItemClickListener(MainActivity.this);
+        popup.inflate(R.menu.fab_menu);
+        popup.show();
     }
 
     @Override
@@ -381,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 return true;}*/
                 case R.id.signOut:
                     stopNotificationService();
-                    setSharedPreference(this, null, null, null, null, null, null, null, -1, -1, null, null);
+                    setSharedPreference(this, null, null, null, null, null, null, null, -1, -1, null, null, null);
                     Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
@@ -391,44 +323,175 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                     return super.onOptionsItemSelected(item);
             }
         } else if (menuGroupId == R.id.navigation_menu_group) {
-            Fragment fragment = new Fragment();
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragment = homeFragment;
-                    break;
+                    loadFragment(homeFragment, "homeFragment");
+                    return true;
                 case R.id.navigation_profile:
-                    fragment = profileFragment;
-                    break;
+                    loadFragment(profileFragment, "profileFragment");
+                    return true;
                 case R.id.navigation_Challenges:
-                    fragment = challengesFragment;
-                    break;
+                    loadFragment(challengesFragment, "challengesFragment");
+                    return true;
                 case R.id.navigation_Lessons:
-                    fragment = lessonsFragment;
-                    break;
+                    loadFragment(lessonsFragment, "lessonsFragment");
+                    return true;
             }
 
-            return loadFragment(fragment);
         }
 
         return false;
     }
 
-    private boolean loadFragment(Fragment fragment) {
-        //switching fragment
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
+
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.newChallenge:
+                startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
+                return true;
+            case R.id.newPost:
+                showSpinnerDialog();
+                return true;
         }
         return false;
+    }
+
+    private void loadFragment(Fragment newFragment, String tag) {
+        Log.v("fragmentLog", "method called , tag is : " + tag);
+        FragmentManager mFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        Fragment curFrag = mFragmentManager.getPrimaryNavigationFragment();
+        Log.v("fragmentLog", "curFrag : " + curFrag);
+
+        if (curFrag != null) {
+            fragmentTransaction.hide(curFrag);
+        }
+
+        Fragment fragment = mFragmentManager.findFragmentByTag(tag);
+//        Log.v("fragmentLog", "fragment is : " + fragment);
+        if (fragment == null) {
+            fragmentTransaction.add(R.id.fragment_container, newFragment, tag);
+        } else {
+            fragmentTransaction.show(fragment);
+        }
+
+        fragmentTransaction.setPrimaryNavigationFragment(newFragment);
+        fragmentTransaction.setReorderingAllowed(true);
+        fragmentTransaction.commitNowAllowingStateLoss();
     }
 
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public void showSpinnerDialog() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);//TODO : check this
+        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
+
+        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this)
+                .setView(view)
+                .setCancelable(false)
+                .create();
+
+        final EditText inputComment = view.findViewById(R.id.dialog_value);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
+        dialogTitle.setText("إضافة منشور");
+        inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
+
+        ImageView closeIcon = view.findViewById(R.id.closeIcon);
+        closeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialogBuilderUserInput.dismiss();
+            }
+        });
+
+
+
+
+
+        ArrayAdapter<String> subjectsAdapter=new ArrayAdapter<String>(MainActivity.this,R.layout.testactiv,R.array.preparatory_subjects_array_with_general_subjects_item){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItem) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        spinner.setAdapter(subjectsAdapter);
+
+
+
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                selectedItem =  i;
+                currentSubject = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+
+                Button button = view.findViewById(R.id.addPostBtn);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String commentText = inputComment.getText().toString().trim();
+                        if (TextUtils.isEmpty(commentText)) {
+                            inputComment.setError("لا يمكنك ترك هذا الحقل فارغا");
+                        } else if (currentSubject.equals("اختر المادة")) {
+                            Toast.makeText(MainActivity.this, "قم باختيار المادة التى ينتمى لها هذا المنشور", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (homeFragment != null) {
+                                homeFragment.presenter.addPost(commentText, currentSubject);
+                            } else {
+                                Toast.makeText(MainActivity.this, "فشلت إضافة المنشور برجاء المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                            }
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilderUserInput.show();
 
     }
 
@@ -586,7 +649,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {

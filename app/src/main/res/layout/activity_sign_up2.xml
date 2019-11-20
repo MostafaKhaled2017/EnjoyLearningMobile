@@ -78,10 +78,14 @@
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/gradient_spinner"
             android:ems="10"
             android:inputType="textPersonName"
             android:text=""
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+
+            android:background="@drawable/gradient_spinner"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -116,7 +120,10 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_16sdp"
             android:layout_marginBottom="@dimen/_10sdp"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
             android:background="@drawable/gradient_spinner"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -152,7 +159,10 @@
             android:layout_marginEnd="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
             android:background="@drawable/gradient_spinner"
+
             android:ems="10"
             android:inputType="textPersonName"
             android:text=""

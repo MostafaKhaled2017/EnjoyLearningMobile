@@ -387,7 +387,7 @@ public class PostsAdapter extends RecyclerView.Adapter {
             imageView = itemView.findViewById(R.id.replyImage);
             upArrow = itemView.findViewById(R.id.like);
             downArrow = itemView.findViewById(R.id.downVote);
-            cardView = itemView.findViewById(R.id.cardView);
+            cardView = itemView.findViewById(R.id.cardview);
         }
     }
 

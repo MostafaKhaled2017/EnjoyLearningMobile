@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/E:/AndroidStudioAndSDK/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_panorama_fish_eye_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/E:/AndroidStudioAndSDK/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_format_align_right_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -34,8 +34,8 @@
                         <option name="values">
                           <map>
                             <entry key="autoMirrored" value="true" />
-                            <entry key="color" value="707070" />
-                            <entry key="outputName" value="radiounchesk" />
+                            <entry key="color" value="138af2" />
+                            <entry key="outputName" value="navlist" />
                             <entry key="sourceFile" value="C:\Users\Mostafa" />
                           </map>
                         </option>

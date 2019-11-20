@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color3">
+    android:layoutDirection="rtl"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:background="@color/white"
+   >
 
   <include layout="@layout/no_internet_connection_text"
       android:id="@+id/noInternetConnectionText"
@@ -37,7 +40,9 @@
         android:layout_gravity="bottom"
         android:layout_marginStart="@dimen/_12sdp"
         android:layout_marginEnd="@dimen/_12sdp"
-        app:layout_anchorGravity="bottom"
+        style="@style/Widget.AppCompat.TextView.SpinnerItem"
+        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+        android:ems="10"
         android:background="@drawable/gradient_spinner"
         />
   </RelativeLayout>
@@ -53,12 +58,13 @@
         android:visibility="invisible" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/_10sdp"
         android:layout_below="@id/subjectView"
         android:id="@+id/postsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:cardCornerRadius="@dimen/_20sdp">
+        android:scrollbars="vertical"
+       >
 
 
 

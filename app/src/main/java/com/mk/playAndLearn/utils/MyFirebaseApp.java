@@ -3,15 +3,19 @@ package com.mk.playAndLearn.utils;
 import android.content.Context;
 import androidx.multidex.MultiDex;
 
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 public class MyFirebaseApp  extends android.app.Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        //FirebaseDatabase.getInstance().getReference("currentTerm").keepSynced(true);
+     /*   FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(false)
+                .build();
+        db.setFirestoreSettings(settings);*/
     }
 
     @Override

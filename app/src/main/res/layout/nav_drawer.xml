@@ -10,6 +10,7 @@
     tools:openDrawer="start">
 
     <include
+        android:layout_marginTop="@dimen/_10sdp"
         layout="@layout/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

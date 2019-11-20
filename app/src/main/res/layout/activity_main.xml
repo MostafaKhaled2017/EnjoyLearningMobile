@@ -3,18 +3,88 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
+    android:layoutDirection="rtl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"/>
+    android:layout_height="match_parent"
+    >
+
+    <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/currentUserImage"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/man"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_alignParentStart="true"
+
+                />
+
+
+            <TextView
+                android:id="@+id/hello"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="مرحبا "
+                android:fontFamily="@font/el_messiri"
+                android:textSize="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_toEndOf="@+id/currentUserImage"/>
+
+
+            <TextView
+                android:id="@+id/currentUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:text="Mostafa khaled"
+                android:fontFamily="@font/el_messiri"
+                android:textColor="@color/twitter"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:layout_below="@+id/hello"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_toEndOf="@+id/currentUserImage"/>
+
+
+        </RelativeLayout>
+
+
+
+    </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="none"
+        android:layout_marginTop="@dimen/_15sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +92,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintVertical_bias="0.267" />
 
- <!--   <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="@dimen/_200sdp"
         android:layout_height="wrap_content"
@@ -33,8 +103,9 @@
         app:layout_constraintTop_toTopOf="@id/navigation"
         app:srcCompat="@drawable/add"
         android:layout_margin="16dp"
+        android:foregroundGravity="center"
         app:elevation="@dimen/_10sdp"
-        app:layout_insetEdge="bottom"  /> -->
+        app:layout_insetEdge="bottom"  />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
@@ -53,37 +124,5 @@
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/multiple_actions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:fab_addButtonColorNormal="@color/colorPrimary"
-        fab:fab_addButtonColorPressed="@color/colorPrimary"
-        fab:fab_addButtonPlusIconColor="@color/colorPrimary"
-        fab:fab_labelStyle="@style/menu_labels_style"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/navigation"
-        app:srcCompat="@drawable/add"
-        app:layout_insetEdge="bottom" >
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabChallenge"
-            app:fab_icon="@drawable/elect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white"
-            fab:fab_title="بدء تحدى جديد"
-            fab:fab_colorPressed="@color/colorPrimary"/>
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddPost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white"
-            app:fab_icon="@drawable/add"
-            fab:fab_title="إضافة منشور"
-            fab:fab_colorPressed="@color/colorPrimary"/>
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

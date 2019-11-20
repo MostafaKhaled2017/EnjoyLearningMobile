@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,6 +33,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.SignUpActivityPresenter;
+import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 
 public class SignUp2Activity extends FragmentActivity implements SignUpActivityPresenter.View {
 
@@ -48,6 +50,11 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
     private GoogleSignInClient mGoogleSignInClient;
     GoogleApiClient mGoogleApiClient;
     GoogleSignInOptions gso;
+    int  selectedItemtype =-1;
+    int  selectedItemcity =-1;
+
+    int  selectedItemlevel =-1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,9 +104,9 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
         termsTv.setMovementMethod(LinkMovementMethod.getInstance());
         termsTv.setHighlightColor(Color.TRANSPARENT);
 
-        setUserSchoolTypeSpinner();
-        setGovernoratesSpinner();
-        setUserGradeSpinner();
+        setUserSchoolTypeSpinner(R.array.user_school_types_array);
+        setGovernoratesSpinner( R.array.governorates);
+        setUserGradeSpinner( R.array.sign_up_grades_array);
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,15 +153,47 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
-    public void setUserSchoolTypeSpinner() {
-        ArrayAdapter<CharSequence> userSchoolTypesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.user_school_types_array, android.R.layout.simple_spinner_item);
-        userSchoolTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        schoolTypeSpinner.setAdapter(userSchoolTypesAdapter);
+    public void setUserSchoolTypeSpinner(int  array) {
+
+
+
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(SignUp2Activity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemtype) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        schoolTypeSpinner.setAdapter(customAdapter);
 
         schoolTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                selectedItemtype =  i;
                 userSchoolType = adapterView.getItemAtPosition(i).toString();
             }
 
@@ -167,15 +206,45 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
 
     }
 
-    public void setGovernoratesSpinner() {
-        ArrayAdapter<CharSequence> governoratesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.governorates, android.R.layout.simple_spinner_item);
-        governoratesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        governoratesSpinner.setAdapter(governoratesAdapter);
+    public void setGovernoratesSpinner(int  array) {
+
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(SignUp2Activity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemcity) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        governoratesSpinner.setAdapter(customAdapter);
+
 
         governoratesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
+
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedItemcity = i;
                 currentGovernorate = adapterView.getItemAtPosition(i).toString();
             }
 
@@ -186,15 +255,43 @@ public class SignUp2Activity extends FragmentActivity implements SignUpActivityP
         });
     }
 
-    public void setUserGradeSpinner() {
-        ArrayAdapter<CharSequence> userGradeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.sign_up_grades_array, android.R.layout.simple_spinner_item);
-        userGradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userGradeSpinner.setAdapter(userGradeAdapter);
+    public void setUserGradeSpinner(int  array) {
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(SignUp2Activity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemlevel) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        userGradeSpinner.setAdapter(customAdapter);
+
 
         userGradeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedItemlevel  = i;
                 grade = adapterView.getItemAtPosition(i).toString();
             }
 

@@ -1,6 +1,7 @@
 package com.mk.playAndLearn.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.SignUp2Activity;
 import com.mk.playAndLearn.adapters.LessonsAdapter;
 import com.mk.playAndLearn.presenter.LessonsFragmentPresenter;
+import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
@@ -55,6 +58,7 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
 
     RecyclerView recyclerView;
     Spinner spinner;
+    int  selectedItem =  -1;
 
     String currentSubject = "", internalCurrentSubject = "";
 
@@ -65,7 +69,9 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new LessonsFragmentPresenter(this, getActivity());
+        if(presenter == null) {
+            presenter = new LessonsFragmentPresenter(this, getActivity());
+        }
     }
 
     @Override
@@ -80,19 +86,47 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
 
         Log.v("gradeLogging", "saved grade is : " + getSavedGrade(getActivity()));
 
-        ArrayAdapter<CharSequence> subjectsAdapter;
-
+int  array;
         if(getSavedGrade(getActivity()).equals("الصف الأول الإعدادى")) {
-            subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.first_preparatory_subjects_array, R.layout.simple_spinner_item);
+
+              array =      R.array.first_preparatory_subjects_array;
         } else {
-            subjectsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.preparatory_subjects_array, R.layout.simple_spinner_item);
+                  array =  R.array.preparatory_subjects_array;
         }
 
 
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(subjectsAdapter);
+
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(getActivity(),R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItem) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+
+       spinner.setAdapter(customAdapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -102,20 +136,22 @@ public class LessonsFragment extends Fragment implements LessonsFragmentPresente
                 localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
                     @Override
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        if(firebaseAuth.getCurrentUser() != null && !currentSubject.equals(internalCurrentSubject)){
+                        if (firebaseAuth.getCurrentUser() != null && !currentSubject.equals(internalCurrentSubject)) {
                             loadData();
                             internalCurrentSubject = currentSubject;
                         }
-                    }
-                });
+                    };
 
+                });
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
+
+
         });
+
 
         noInternetConnectionText = myView.findViewById(R.id.noInternetConnectionText);
         noInternetConnectionText.setOnClickListener(new View.OnClickListener() {

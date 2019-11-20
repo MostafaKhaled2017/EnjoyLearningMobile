@@ -2,6 +2,7 @@ package com.mk.playAndLearn.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,12 +14,15 @@ import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,6 +57,16 @@ public class AddLessonActivity extends AppCompatActivity {
     String oldLessonId = "";
     WriteBatch batch;
     public SharedPreferences pref; // 0 - for private mode
+    int selectedItemgrade = -1;
+    int selectedItemtirm = -1;
+    int selectedItemunite = -1;
+    int selectedItemglesson = -1;
+    int selectedItemlecture = -1;
+
+
+
+
+
 
 
     //TODO : fix the problems of signing in if exists
@@ -101,10 +115,10 @@ public class AddLessonActivity extends AppCompatActivity {
         }
 
         //setSpinners
-        setUnitOrderSpinner();
-        setLessonOrderSpinner(R.array.lessons_array);
-        setTermSpinner();
-        setGradeSpinner();
+      setUnitOrderSpinner( R.array.units_array);
+       setLessonOrderSpinner(R.array.lessons_array);
+      setTermSpinner( R.array.term_array);
+       setGradeSpinner( R.array.grades_array);
         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setSubject spinner in onCreate");
 
         final Button addLessonBtn = findViewById(R.id.addLessonButton);
@@ -136,23 +150,31 @@ public class AddLessonActivity extends AppCompatActivity {
             lessonContentEt.setText(lesson.getContent());
 
 
-            String grade = lesson.getGrade(); //the value you want the position for
-            ArrayAdapter myAdap = (ArrayAdapter) gradesSpinner.getAdapter(); //cast to an ArrayAdapter
-            int spinnerPosition = myAdap.getPosition(grade);
-            gradesSpinner.setSelection(spinnerPosition);
+           String grade = lesson.getGrade(); //the value you want the position for
+           ArrayAdapter myAdap = (ArrayAdapter) gradesSpinner.getAdapter(); //cast to an ArrayAdapter
+           int spinnerPosition = myAdap.getPosition(grade);
+           gradesSpinner.setSelection(spinnerPosition);
+
+
+
+
+
+
+
+
 
             String term = convertTermToString(lesson.getTerm()); //the value you want the position for
-            myAdap = (ArrayAdapter) termSpinner.getAdapter(); //cast to an ArrayAdapter
-            spinnerPosition = myAdap.getPosition(term);
+             myAdap = (ArrayAdapter) termSpinner.getAdapter(); //cast to an ArrayAdapter
+             spinnerPosition = myAdap.getPosition(term);
             termSpinner.setSelection(spinnerPosition);
 
             String subject = lesson.getSubject(); //the value you want the position for
-            myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
+             myAdap = (ArrayAdapter) subjectsSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(subject);
             subjectsSpinner.setSelection(spinnerPosition);
 
             String unitNumber = lesson.getUnitNo(); //the value you want the position for
-            myAdap = (ArrayAdapter) unitOrderSpinner.getAdapter(); //cast to an ArrayAdapter
+             myAdap = (ArrayAdapter) unitOrderSpinner.getAdapter(); //cast to an ArrayAdapter
             spinnerPosition = myAdap.getPosition(unitNumber);
             unitOrderSpinner.setSelection(spinnerPosition);
 
@@ -167,6 +189,21 @@ public class AddLessonActivity extends AppCompatActivity {
             oldLessonId = lesson.getLessonId();
         }
 
+        lessonContentEt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (v.getId() == R.id.lessonContentEditText) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                        case MotionEvent.ACTION_UP:
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -176,14 +213,44 @@ public class AddLessonActivity extends AppCompatActivity {
     }
 
     void setSubjectsSpinner(int array, String tag) {
-        ArrayAdapter<CharSequence> subjectsAdapter = ArrayAdapter.createFromResource(this,
-                array, android.R.layout.simple_spinner_item);
-        subjectsAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        subjectsSpinner.setAdapter(subjectsAdapter);
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(AddLessonActivity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemlecture) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        subjectsSpinner.setAdapter(customAdapter);
+
+
 
         subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedItemlecture  = i;
+
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 if (!oldLesson) {
                     setLessonOrderSpinner(R.array.lessons_array);
@@ -200,7 +267,7 @@ public class AddLessonActivity extends AppCompatActivity {
                             lessonOrderSpinner.setClickable(true);
                             unitOrderSpinner.setEnabled(false);
                             unitOrderSpinner.setClickable(false);
-                            setUnitOrderSpinner();
+                            setUnitOrderSpinner( R.array.units_array);
                             setLessonOrderSpinner(R.array.lessons_array);
                             break;
                         default:
@@ -208,7 +275,7 @@ public class AddLessonActivity extends AppCompatActivity {
                             unitOrderSpinner.setClickable(true);
                             lessonOrderSpinner.setEnabled(true);
                             lessonOrderSpinner.setClickable(true);
-                            setUnitOrderSpinner();
+                            setUnitOrderSpinner( R.array.units_array);
                             setLessonOrderSpinner(R.array.lessons_array);
                             break;
                     }
@@ -222,16 +289,48 @@ public class AddLessonActivity extends AppCompatActivity {
         });
     }
 
-    void setUnitOrderSpinner() {
-        ArrayAdapter<CharSequence> unitOrderAdapter = ArrayAdapter.createFromResource(this,
-                R.array.units_array, android.R.layout.simple_spinner_item);
-        unitOrderAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        unitOrderSpinner.setAdapter(unitOrderAdapter);
+    void setUnitOrderSpinner(  int  array) {
+
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(AddLessonActivity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemunite) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+
+        unitOrderSpinner.setAdapter(customAdapter);
 
         unitOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedItemunite = i;
                 selectedUnit = adapterView.getItemAtPosition(i).toString();
+                if(selectedUnit.equals("الوحدة")){
+                    selectedUnit = "";
+                }
             }
 
             @Override
@@ -242,15 +341,47 @@ public class AddLessonActivity extends AppCompatActivity {
     }
 
     void setLessonOrderSpinner(int array) {
-        ArrayAdapter<CharSequence> lessonsOrderAdapter = ArrayAdapter.createFromResource(this,
-                array, android.R.layout.simple_spinner_item);
-        lessonsOrderAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        lessonOrderSpinner.setAdapter(lessonsOrderAdapter);
+
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(AddLessonActivity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemglesson) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+
+        lessonOrderSpinner.setAdapter(customAdapter);
 
         lessonOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedItemglesson  =  i;
                 selectedLesson = adapterView.getItemAtPosition(i).toString();
+                if(selectedLesson.equals("الدرس")){
+                    selectedLesson = "";
+                }
             }
 
             @Override
@@ -260,16 +391,46 @@ public class AddLessonActivity extends AppCompatActivity {
         });
     }
 
-    void setTermSpinner() {
-        ArrayAdapter<CharSequence> termAdapter = ArrayAdapter.createFromResource(this,
-                R.array.term_array, android.R.layout.simple_spinner_item);
-        termAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        termSpinner.setAdapter(termAdapter);
+    void setTermSpinner(int array) {
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(AddLessonActivity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemtirm) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        termSpinner.setAdapter(customAdapter);
+
+
+
 
         termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedTerm = adapterView.getItemAtPosition(i).toString();
+                selectedItemtirm  = i;
+              selectedTerm = adapterView.getItemAtPosition(i).toString();
             }
 
             @Override
@@ -279,15 +440,46 @@ public class AddLessonActivity extends AppCompatActivity {
         });
     }
 
-    void setGradeSpinner() {
-        ArrayAdapter<CharSequence> gradesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.grades_array, android.R.layout.simple_spinner_item);
-        gradesAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        gradesSpinner.setAdapter(gradesAdapter);
+    void setGradeSpinner( int array) {
+
+        String[] subjects = this.getResources().getStringArray(array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(AddLessonActivity.this,R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItemgrade) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        gradesSpinner.setAdapter(customAdapter);
+
+
+
 
         gradesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                selectedItemgrade = i;
                 selectedGrade = adapterView.getItemAtPosition(i).toString();
                 if (!oldLesson) {
                     if (selectedGrade.contains("الإعدادى")) {

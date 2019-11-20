@@ -1,5 +1,6 @@
 package com.mk.playAndLearn.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +18,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
+import com.mk.playAndLearn.activity.SignUp2Activity;
 import com.mk.playAndLearn.adapters.StudentsAdapter;
 import com.mk.playAndLearn.presenter.BestStudentsFragmentPresenter;
+import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 import com.mk.playAndLearn.utils.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ public class BestStudentsFragment extends Fragment implements BestStudentsFragme
     String currentOption;
 
     BestStudentsFragmentPresenter presenter;
+    int  selectedItem  =  -1;
 
     //TODO : put the code that brings the data in a method and when the page refreshes run the method again and the mehod should ensure that lists are clear at its begging
     //TODO : see what happens when the data changed rapidly and if there is a problem handle it by make data fixed and change it by refreshing
@@ -57,14 +61,41 @@ public class BestStudentsFragment extends Fragment implements BestStudentsFragme
         spinner = view.findViewById(R.id.typeSpinner);
         noStudentsTv = view.findViewById(R.id.noStudentsTextInBestStudents);
 
-        final ArrayAdapter<CharSequence> typesAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.leaderboard_options_array, R.layout.simple_spinner_item);
-        typesAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(typesAdapter);
+        String[] subjects = this.getResources().getStringArray( R.array.leaderboard_options_array);
+
+        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(getActivity(),R.layout.testactiv,subjects){
+
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+                v = super.getDropDownView(position, null, parent);
+                // If this is the selected item position
+                if (position == selectedItem) {
+                    v.setBackgroundColor(getResources().getColor(R.color.blue_white));
+
+                    TextView tv = (TextView) v.findViewById(R.id.textView);
+
+                    // Set the text color of spinner item
+                    tv.setTextColor(Color.WHITE);
+
+
+                } else {
+                    // for other views
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return v;
+            }
+        };
+        spinner.setAdapter(customAdapter);
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedItem  = i;
                 currentOption = adapterView.getItemAtPosition(i).toString();
                 presenter.startAsynkTask(currentOption);
             }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<group android:id="@+id/fab_menu">
+    <item
+        android:id="@+id/newChallenge"
+        android:title="بدء تحدى جديد"/>
+    <item
+        android:id="@+id/newPost"
+        android:title="إضافة منشور جديد"/>
+</group>
+</menu>
