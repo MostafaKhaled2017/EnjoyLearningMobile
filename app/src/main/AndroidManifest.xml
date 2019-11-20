@@ -93,7 +93,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.AdminReportedQuestionActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.mk.playAndLearn.activity.AddLessonActivity"
             android:screenOrientation="portrait">

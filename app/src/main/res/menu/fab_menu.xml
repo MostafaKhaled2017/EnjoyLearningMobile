@@ -7,5 +7,9 @@
     <item
         android:id="@+id/newPost"
         android:title="إضافة منشور جديد"/>
+    <item
+        android:id="@+id/appManagement"
+        android:title="إدارة التطبيق"
+        android:visible="false"/>
 </group>
 </menu>

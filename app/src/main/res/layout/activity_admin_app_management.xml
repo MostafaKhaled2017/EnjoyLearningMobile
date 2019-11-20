@@ -23,6 +23,8 @@
             android:layout_below="@id/appBar"
             android:onClick="suggestedQuestionsButton"
             android:padding="10dp"
+            android:enabled="false"
+            android:clickable="false"
             android:text="الاسئلة المقترحة" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -47,6 +49,8 @@
             android:layout_marginTop="40dp"
             android:onClick="challengesAndUsersMonitoring"
             android:padding="10dp"
+            android:enabled="false"
+            android:clickable="false"
             android:text="عدد تحديات اليوم" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -59,11 +63,14 @@
             android:layout_marginTop="40dp"
             android:onClick="generalChallengeManagement"
             android:padding="10dp"
+            android:enabled="false"
+            android:clickable="false"
             android:text="إدارة التحدى العام" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/doQuery"
             style="@style/buttonStyle"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/generalChallengeManagement"
@@ -71,11 +78,14 @@
             android:layout_marginTop="40dp"
             android:onClick="doQuery"
             android:padding="10dp"
+            android:clickable="false"
             android:text="القيام باستعلام في قاعدة البيانات" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/adjustGeneralChallengeQuestions"
             style="@style/buttonStyle"
+            android:enabled="false"
+            android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/doQuery"
@@ -88,6 +98,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/deleteOldChallenges"
             style="@style/buttonStyle"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/adjustGeneralChallengeQuestions"
@@ -100,6 +111,8 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/leaderboard"
             style="@style/buttonStyle"
+            android:enabled="false"
+            android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/adjustGeneralChallengeQuestions"
@@ -120,6 +133,8 @@
             android:onClick="countUsers"
             android:visibility="gone"
             android:padding="10dp"
+            android:clickable="false"
+            android:enabled="false"
             android:text="عدد المستخدمين"/>
 
     </RelativeLayout>

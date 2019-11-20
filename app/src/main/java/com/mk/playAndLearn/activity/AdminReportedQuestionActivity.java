@@ -36,7 +36,7 @@ import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 public class AdminReportedQuestionActivity extends AppCompatActivity {
     ArrayList list = new ArrayList();
     Question question;
-    TextView tvQuestion, subjectTv, writerTv, answerTv, writerTypeTv;
+    TextView tvQuestion, gradeTv, orderTv, answerTv, subjectTv;
     RadioGroup rg1;
     Button skipQuestionButton;
     String correctAnswer, selection;
@@ -70,15 +70,15 @@ public class AdminReportedQuestionActivity extends AppCompatActivity {
         rg1 = findViewById(R.id.radioGroup);
         skipQuestionButton = findViewById(R.id.skipQuestionButton);
         answerTv = findViewById(R.id.answerTv);
-        writerTypeTv = findViewById(R.id.gradeTvInQuestions);
+        subjectTv = findViewById(R.id.subjectTv);
         tvQuestion = findViewById(R.id.questionText);
         r1 = findViewById(R.id.radio1);
         r2 = findViewById(R.id.radio2);
         r3 = findViewById(R.id.radio3);
         r4 = findViewById(R.id.radio4);
         timerProgressBar = findViewById(R.id.timerProgressbar);
-        subjectTv = findViewById(R.id.subjectTv);
-        writerTv = findViewById(R.id.writerNameTv);
+        gradeTv = findViewById(R.id.gradeTv);
+        orderTv = findViewById(R.id.writerNameTv);
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -102,16 +102,22 @@ public class AdminReportedQuestionActivity extends AppCompatActivity {
             r2.setText(answers.get(1));
             r3.setText(answers.get(2));
             r4.setText(answers.get(3));
+            if(question.getGrade() != null){
+                gradeTv.append(question.getGrade());
+            } else{
+                gradeTv.append("غير مكتوبة");
+            }
+                orderTv.append("الوحدة " + question.getUnitNumber() + " , " + "الدرس " + question.getLessonNumber());
+
             if (question.getSubject() != null) {
                 subjectTv.append(question.getSubject());
-                Toast.makeText(this, "المادة : " + question.getSubject(), Toast.LENGTH_SHORT).show();
             } else {
                 subjectTv.append("غير مكتوبة");
             }
-            if (question.getSubject() != null) {
-                writerTv.append(question.getWriterName());
+            if (question.getCorrectAnswer() != null) {
+                answerTv.append(question.getCorrectAnswer());
             } else {
-                writerTv.append("غير مكتوبة");
+                answerTv.append("غير مكتوبة");
             }
         } else {
             Toast.makeText(this, "لا يوجد أسئلة أخري", Toast.LENGTH_SHORT).show();

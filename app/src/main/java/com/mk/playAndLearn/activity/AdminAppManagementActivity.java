@@ -289,7 +289,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
     public void doQuery(View view) {
 
-        Toast.makeText(AdminAppManagementActivity.this, "جارى حصر الدروس", Toast.LENGTH_SHORT).show();
+     /*   Toast.makeText(AdminAppManagementActivity.this, "جارى حصر الدروس", Toast.LENGTH_SHORT).show();
         final String[] gradesArray = getResources().getStringArray(R.array.grades_array);
         for (final String grade : gradesArray) {
 
@@ -339,7 +339,7 @@ public class AdminAppManagementActivity extends AppCompatActivity {
 
             }
 
-        }
+        }*/
 
       /*  DatabaseReference localUsersReference = FirebaseDatabase.getInstance().getReference("users");
 

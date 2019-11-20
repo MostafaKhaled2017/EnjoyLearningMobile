@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +67,7 @@ import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LessonsFragment;
 import com.mk.playAndLearn.fragment.ProfileFragment;
 import com.mk.playAndLearn.service.NotificationsService;
+import com.mk.playAndLearn.utils.Firebase;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -82,6 +84,7 @@ import java.util.TimeZone;
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
+import static com.mk.playAndLearn.utils.Strings.adminEmail2;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
@@ -231,9 +234,15 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     }
 
     private void showPopupMenu(View v) {
+
         PopupMenu popup = new PopupMenu(MainActivity.this, v);
         popup.setOnMenuItemClickListener(MainActivity.this);
         popup.inflate(R.menu.fab_menu);
+
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if(currentUserEmail.equals(adminEmail) || currentUserEmail.equals(adminEmail2))
+            popup.getMenu().findItem(R.id.appManagement).setVisible(true);
+
         popup.show();
     }
 
@@ -344,8 +353,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         return false;
     }
 
-
-
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -354,6 +361,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 return true;
             case R.id.newPost:
                 showSpinnerDialog();
+                return true;
+            case R.id.appManagement:
+                startActivity(new Intent(this, AdminAppManagementActivity.class));
                 return true;
         }
         return false;
@@ -444,10 +454,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }
         };
         spinner.setAdapter(subjectsAdapter);
-
-
-
-
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
