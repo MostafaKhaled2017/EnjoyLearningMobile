@@ -28,13 +28,13 @@ public class LessonContentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lesson_content);
         Toolbar toolbar = findViewById(R.id.toolbarInLesson);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+      /*  ActionBar actionBar = getSupportActionBar();
         final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);*/
         TextView title = findViewById(R.id.toolbar_title_in_lesson);
 
         tvContent = findViewById(R.id.lessonContent);
@@ -56,5 +56,10 @@ public class LessonContentActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
+    }
+
+    public void finishch(View view) {
+
+        finish();
     }
 }

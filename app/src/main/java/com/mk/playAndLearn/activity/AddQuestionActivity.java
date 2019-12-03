@@ -86,12 +86,12 @@ public class AddQuestionActivity extends AppCompatActivity  {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
-        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
-        assert actionBar != null;
+       // final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
+     //   upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+     //   getSupportActionBar().setHomeAsUpIndicator(upArrow);
+    /*    assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);*/
 
         batch = fireStore.batch();
 
@@ -143,6 +143,21 @@ public class AddQuestionActivity extends AppCompatActivity  {
             }
         });
 
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(lessonOrderSpinner);
+
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(300);
+
+            Log.v("spinnerHeight", "try");
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+            Log.v("spinnerHeight", "catch , exception is : " + e);
+        }
 
    /*     try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
@@ -756,5 +771,9 @@ public class AddQuestionActivity extends AppCompatActivity  {
         } else {
             return "both";
         }
+    }
+
+    public void finishq(View view) {
+        finish();
     }
 }

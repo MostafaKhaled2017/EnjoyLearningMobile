@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
+    android:orientation="vertical"
     android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginBottom="8dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
@@ -19,238 +20,276 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/addcourse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/el_messiri"
-        android:gravity="center"
-        android:text="تجهيز التحدي "
-        android:textColor="#FFFF"
-        android:textSize="@dimen/_18sdp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintTop_toTopOf="parent" >
 
 
-    <TextView
-        android:id="@+id/choosetirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:fontFamily="@font/el_messiri"
-        android:text=" اختر المادة الدراسية "
-        android:textColor="@color/black"
-        android:textSize="@dimen/_14sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.044"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/termSpinnerInChallengeDetails"
-        app:layout_constraintVertical_bias="0.042" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
 
-    <Spinner
-        android:id="@+id/subjectsSpinnerInChallengeDetails"
+
+            <TextView
+                android:id="@+id/addcourse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/el_messiri"
+                android:gravity="center"
+                android:text="تجهيز التحدي "
+                android:textColor="#FFFF"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/backf"
+
+                android:onClick="finishch"
+
+
+                />
+
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        style="@style/Widget.AppCompat.TextView.SpinnerItem"
-        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-        android:ems="10"
-        android:background="@drawable/gradient_spinner"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_30sdp"
+        >
+        <TextView
+            android:id="@+id/lessonContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:fontFamily="@font/el_messiri"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            android:text=" اختر الفصل الدراسي "
 
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choosetirm"
-        app:layout_constraintVertical_bias="0.067" />
-
-
-    <TextView
-        android:id="@+id/lessonContent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:fontFamily="@font/el_messiri"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_14sdp"
-        android:text=" اختر الفصل الدراسي "
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addcourse"
-        app:layout_constraintVertical_bias="0.123" />
+            />
 
 
-    <Spinner
-        android:id="@+id/termSpinnerInChallengeDetails"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        style="@style/Widget.AppCompat.TextView.SpinnerItem"
-        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-        android:ems="10"
-        android:background="@drawable/gradient_spinner"
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lessonContent"
-        app:layout_constraintVertical_bias="0.025" />
+        <Spinner
+            android:id="@+id/termSpinnerInChallengeDetails"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:scrollbars="none"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:ems="10"
+            android:background="@drawable/gradient_spinner"
+            android:inputType="textPersonName"
+            android:text=""
+            />
+        <TextView
+            android:id="@+id/choosetirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/el_messiri"
+            android:text=" اختر المادة الدراسية "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            />
 
 
-    <TextView
-        android:id="@+id/chooseunite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:fontFamily="@font/el_messiri"
-        android:text=" اخترالوحدة "
-        android:textColor="@color/black"
-        android:textSize="@dimen/_14sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjectsSpinnerInChallengeDetails"
-        app:layout_constraintVertical_bias="0.052" />
+        <Spinner
+            android:id="@+id/subjectsSpinnerInChallengeDetails"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            style="@style/Widget.AppCompat.TextView.SpinnerItem"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:ems="10"
+            android:background="@drawable/gradient_spinner"
+            android:scrollbars="none"
+            android:inputType="textPersonName"
+            android:text=""
+            />
 
 
-    <Spinner
-        android:id="@+id/unitSpinnerInChallengeDetails"
-        android:layout_width="@dimen/_135sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginStart="@dimen/_4sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_4sdp"
-        style="@style/Widget.AppCompat.TextView.SpinnerItem"
-        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-        android:ems="10"
-        android:background="@drawable/gradient_spinner"
-
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.047"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chooseunite"
-        app:layout_constraintVertical_bias="0.047" />
 
 
-    <TextView
-        android:id="@+id/chooselesson"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginEnd="84dp"
-        android:fontFamily="@font/el_messiri"
-        android:text=" اختر الدرس "
-        android:textColor="@color/black"
-        android:textSize="@dimen/_14sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.908"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjectsSpinnerInChallengeDetails"
-        app:layout_constraintVertical_bias="0.052" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            >
 
 
-    <Spinner
-        android:id="@+id/lessonSpinnerInChallengeDetails"
-        android:layout_width="@dimen/_135sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
-        style="@style/Widget.AppCompat.TextView.SpinnerItem"
-        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-        android:ems="10"
-        android:background="@drawable/gradient_spinner"
 
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.943"
-        app:layout_constraintStart_toStartOf="@id/unitSpinnerInChallengeDetails"
-        app:layout_constraintTop_toBottomOf="@+id/chooselesson"
-        app:layout_constraintVertical_bias="0.045" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:orientation="vertical"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/chooseunite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:fontFamily="@font/el_messiri"
+                    android:text=" اخترالوحدة "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    />
 
 
-  <!--  <CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/startBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/unitSpinnerInChallengeDetails"
-        app:layout_constraintVertical_bias="0.555" />
+                <Spinner
+                    android:id="@+id/unitSpinnerInChallengeDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:scrollbars="none"
+                    style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                    android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                    android:ems="10"
+                    android:background="@drawable/gradient_spinner"
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="@font/el_messiri"
-        android:text="هل تريد تضمين أسئلة من الدروس السابقة"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_11sdp"
-        app:layout_constraintBottom_toTopOf="@+id/startBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/checkBox"
-        app:layout_constraintTop_toBottomOf="@+id/unitSpinnerInChallengeDetails"
-        app:layout_constraintVertical_bias="0.558"
+                    android:inputType="textPersonName"
+                    android:text=""
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="wrap_content"
+                />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:orientation="vertical"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/chooselesson"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
 
 
-        /> -->
+                    android:fontFamily="@font/el_messiri"
+                    android:text=" اختر الدرس "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    />
 
-    <Button
-        android:id="@+id/startBtn"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/shape_dark"
-        android:fontFamily="@font/cairo_semibold"
-        android:text="التالي"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Spinner
+                    android:id="@+id/lessonSpinnerInChallengeDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:scrollbars="none"
+                    style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                    android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                    android:ems="10"
+                    android:background="@drawable/gradient_spinner"
+
+                    android:inputType="textPersonName"
+                    android:text=""
+                    />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+
+
+
+
+
+
+        <!--  <CheckBox
+              android:id="@+id/checkBox"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="20dp"
+              android:layout_marginTop="8dp"
+              android:layout_marginEnd="8dp"
+              android:layout_marginBottom="8dp"
+              app:layout_constraintBottom_toTopOf="@+id/startBtn"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintHorizontal_bias="0.0"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/unitSpinnerInChallengeDetails"
+              app:layout_constraintVertical_bias="0.555" />
+
+          <TextView
+              android:id="@+id/textView3"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="10dp"
+              android:layout_marginEnd="8dp"
+              android:fontFamily="@font/el_messiri"
+              android:text="هل تريد تضمين أسئلة من الدروس السابقة"
+              android:textColor="@color/black"
+              android:textSize="@dimen/_11sdp"
+              app:layout_constraintBottom_toTopOf="@+id/startBtn"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintHorizontal_bias="0.0"
+              app:layout_constraintStart_toEndOf="@+id/checkBox"
+              app:layout_constraintTop_toBottomOf="@+id/unitSpinnerInChallengeDetails"
+              app:layout_constraintVertical_bias="0.558"
+
+
+              /> -->
+
+        <Button
+            android:id="@+id/startBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@drawable/shape_dark"
+            android:fontFamily="@font/cairo_semibold"
+            android:text="التالي"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            />
+
+
+        <ImageView
+            android:visibility="invisible"
+            android:id="@+id/adds"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:src="@drawable/adss"
+            android:scaleType="fitXY"
+
+            />
+    </LinearLayout>
+
+</LinearLayout>

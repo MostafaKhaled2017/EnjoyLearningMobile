@@ -32,6 +32,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+
+
+    <style name="App_SpinnerStyle" >
+        <item name="android:fadeScrollbars">false</item>
+    </style>
     <style name="editTextStyle">
         <item name="android:layout_margin">5dp</item>
         <item name="android:background">@drawable/new_et</item>

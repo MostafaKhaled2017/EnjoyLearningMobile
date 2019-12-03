@@ -17,18 +17,19 @@
         android:name="com.mk.playAndLearn.utils.MyFirebaseApp"
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-        <activity android:name="com.mk.playAndLearn.spinnercustom.SpinnerTest">
-
-
-
-        </activity>
+        <activity
+            android:name="com.mk.playAndLearn.activity.OnBoardingActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.mk.playAndLearn.spinnercustom.SpinnerTest"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.mk.playAndLearn.activity.ChallengenowTwo"
             android:screenOrientation="portrait" />
@@ -40,21 +41,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.EditProfileActivity"
-            android:screenOrientation="portrait" >
-
-
-        </activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.mk.playAndLearn.activity.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.SignUp2Activity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" >
-
-
-
-        </activity>
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name="com.mk.playAndLearn.activity.StudyTipsActivity"
             android:label="@string/title_activity_study_tips"
@@ -93,14 +87,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.AdminReportedQuestionActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.AddLessonActivity"
-            android:screenOrientation="portrait">
-
-
-
-        </activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.mk.playAndLearn.activity.WelcomeActivity"
             android:launchMode="singleTask"
@@ -115,21 +105,16 @@
                     android:name="android.intent.category.LAUNCHER"
                     android:screenOrientation="portrait" />
             </intent-filter>
-
         </activity>
         <activity
             android:name="com.mk.playAndLearn.activity.SignInActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mk.playAndLearn.activity.ChallengeDetailsActivity"
-            android:screenOrientation="portrait" >
-
-        </activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.mk.playAndLearn.activity.SignUpActivity"
-            android:screenOrientation="portrait" >
-
-        </activity>
+            android:screenOrientation="portrait"/>
         <!--
      Facebook login
         <meta-data
@@ -157,10 +142,7 @@
         </activity>
         <activity
             android:name="com.mk.playAndLearn.activity.AddQuestionActivity"
-            android:screenOrientation="portrait" >
-
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.mk.playAndLearn.activity.LessonContentActivity"
             android:screenOrientation="portrait" />
@@ -173,7 +155,7 @@
         <activity
             android:name="com.mk.playAndLearn.activity.QuestionActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.mk.playAndLearn.activity.QuestionResultActivity"
             android:screenOrientation="portrait" />
@@ -230,8 +212,6 @@
         <activity
             android:name="com.mk.playAndLearn.activity.ChatbotActivity"
             android:screenOrientation="portrait" />
-
-
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -30,6 +32,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -88,6 +91,7 @@ import static com.mk.playAndLearn.utils.Strings.adminEmail2;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
+import static com.mk.playAndLearn.utils.sharedPreference.readSharedSetting;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedDate;
 import static com.mk.playAndLearn.utils.sharedPreference.setSavedTodayChallengesNo;
 import static com.mk.playAndLearn.utils.sharedPreference.setSharedPreference;
@@ -104,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     ArrayList list;
     String currentSubject;
     int selectedItem  =  -1;
+    NavigationView navigationView;
 
+    public static final String PREF_USER_FIRST_TIME = "user_first_time";
 
     public SharedPreferences pref; // 0 - for private mode
     SharedPreferences.Editor editor;
@@ -158,6 +164,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     //TODO : in an update make a user profile page that contains his activity(challenges) and his posts in a view pager
     //TODO : push new attributes contains 2 users UIDs with each challenge and make a loop to get only 5 random question from the database
     //TODO : think about learn a specific design pattern and set the code to it step by step
+
+    private int _selectedItemID = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,17 +186,28 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
+
         if (savedInstanceState == null) {
             navigation.setSelectedItemId(R.id.navigation_home); // change to whichever id should be default
         }
 
+        //show on boarding for new users
+        boolean isUserFirstTime = Boolean.valueOf(readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
+        Intent introIntent = new Intent(MainActivity.this, OnBoardingActivity.class);
+        introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
+        if (isUserFirstTime)
+            startActivity(introIntent);
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        drawer.closeDrawer(Gravity.START);
+        drawer.closeDrawer(GravityCompat.START);
 
         TextView currentUserNameTv = findViewById(R.id.currentUserName);
         currentUserNameTv.setText(getSavedName(this));
@@ -199,10 +219,11 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.navlist);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
- /*       Spinner spinner = findViewById(R.id.spinnercourse);
+
+ /*     Spinner spionner = findViewById(R.id.spinnercourse);
         ArrayAdapter<CharSequence> adapterArray = ArrayAdapter.createFromResource(this,
                 R.array.preparatory_subjects_array, android.R.layout.simple_spinner_item);
         adapterArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -259,6 +280,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     protected void onResume() {
         super.onResume();
         transactionCalled = false;
+        for (int i = 0; i < navigationView.getMenu().size(); i++) {
+            navigationView.getMenu().getItem(i).setChecked(false);
+        }
     }
 
     /*    @Override
@@ -269,51 +293,71 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     }*/
 
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
         int menuGroupId = item.getGroupId();
 
+
+
         if (menuGroupId == R.id.main_menu_group) {
             // Handle navigation view item clicks here.
             switch (item.getItemId()) {
+
+
                 case R.id.addQuestion:
                     startActivity(new Intent(MainActivity.this, AddQuestionActivity.class));
-                    return true;
+
+
+                                        return true;
+
                 case R.id.addLesson:
                     startActivity(new Intent(MainActivity.this, AddLessonActivity.class));
+
+
+
                     return true;
                 case R.id.contactUs:
                     startActivity(new Intent(MainActivity.this, ContactUsActivity.class));
+
                     return true;
                 case R.id.leaderboard:
                     startActivity(new Intent(MainActivity.this, LeaderBoardActivity.class));
+
                     return true;
             /*case R.id.myAccount:
                 //showHelp();
                 return true;*/
-                case R.id.appManagement:
-                    startActivity(new Intent(this, AdminAppManagementActivity.class));
-                    return true;
                 case R.id.studyTips:
                     startActivity(new Intent(this, StudyTipsActivity.class));
+
                     return true;
 
                 case R.id.generalChallenges:
                     startActivity(new Intent(this, GeneralChallengesActivity.class));
+
                     return true;
 
                 case R.id.bestStudentsInGeneralChallenge:
                     startActivity(new Intent(this, BestStudentsInGeneralChallengeActivity.class));
+
                     return true;
 
                 case R.id.bestStudentsInCompetition:
                     startActivity(new Intent(this, BestStudentsInCompetitionActivity.class));
+
                     return true;
 
                 case R.id.chatBot:
                     startActivity(new Intent(this, ChatbotActivity.class));
+
+                    return true;
+
+                    case R.id.settings:
+                    startActivity(new Intent(this, SettingsActivity.class));
+
                     return true;
             /*case R.id.editAccoutData:{
                 Intent i=new Intent(Intent.ACTION_VIEW);
@@ -326,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                     Intent i = new Intent(MainActivity.this, GeneralSignActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
+
                     finish();
                     return true;
                 default:
@@ -413,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
         Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
         dialogTitle.setText("إضافة منشور");
-        inputComment.setHint("اكتب سؤالك هنا لتعرف إجابته");
+        inputComment.setHint("اكتب سؤالك هنا");
 
         ImageView closeIcon = view.findViewById(R.id.closeIcon);
         closeIcon.setOnClickListener(new View.OnClickListener() {

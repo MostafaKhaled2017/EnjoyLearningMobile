@@ -229,6 +229,8 @@ public class ChallengeResultActivityPresenter {
                         }
 
                         if (player1Score == player2Score) {
+                            view.setPointsResultTv("+" + drawChallengePoints + "XP");
+
                             if (snapshotForPlayer2.getLong("noOfDraws") != null)
                                 noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
 
@@ -256,7 +258,10 @@ public class ChallengeResultActivityPresenter {
                                 transaction.update(player2Reference, "noOfWins", 0);
                                 transaction.update(player2Reference, "noOfLoses", 0);
                             }
+
                         } else if (player2Score > player1Score) {
+                            view.setPointsResultTv("+" + wonChallengePoints + "XP");
+
                             if (snapshotForPlayer2.getLong("noOfWins") != null)
                                 noOfWins = snapshotForPlayer2.getLong("noOfWins");
 
@@ -284,7 +289,10 @@ public class ChallengeResultActivityPresenter {
                                 transaction.update(player2Reference, "noOfWins", 1);
                                 transaction.update(player2Reference, "noOfLoses", 0);
                             }
+
                         } else {
+                            view.setPointsResultTv("+0XP");
+
                             if (snapshotForPlayer2.getLong("noOfLoses") != null)
                                 noOfLoses = snapshotForPlayer2.getLong("noOfLoses");
 
@@ -411,5 +419,7 @@ public class ChallengeResultActivityPresenter {
         void setChallengeBGColor(int color);
 
         void setChallengeResultTvText(String text);
+
+        void setPointsResultTv(String text);
     }
 }

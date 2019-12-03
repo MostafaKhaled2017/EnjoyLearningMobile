@@ -161,6 +161,7 @@
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/dislike" />
 
@@ -179,10 +180,13 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/repliesTv"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/replyContent"
                 android:layout_marginTop="7dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:layout_below="@id/replyContent"
                 android:layout_toEndOf="@id/dislikeView"
                 android:paddingRight="15dp"
                 android:text="الردود"

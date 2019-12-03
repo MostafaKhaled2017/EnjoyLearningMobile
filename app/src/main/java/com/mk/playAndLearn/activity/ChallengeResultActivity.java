@@ -44,7 +44,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
 
     ImageView player1ImageTv, player2ImageTv, againstIv;
     TextView player1NameTv, player1ScoreTv, player2NameTv, player2ScoreTv;
-    TextView challengeResultTv, challengeStateTv, againstTv;
+    TextView challengeResultTv, challengeStateTv, againstTv, pointsResultTv;
 
     ChallengeResultActivityPresenter presenter;
 
@@ -55,14 +55,14 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
+       /*final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         TextView toolbarTitle = toolbar.findViewById(R.id.title);
-        toolbarTitle.setText("نتيجة التحدى");
+        toolbarTitle.setText("نتيجة التحدى");*/
 
 
         presenter = new ChallengeResultActivityPresenter(this, this);
@@ -77,6 +77,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
         challengeStateTv = findViewById(R.id.challengeStateInResultActivity);
         againstTv = findViewById(R.id.againstTextViewInChallengeResult);
         againstIv = findViewById(R.id.againstIv);
+        pointsResultTv = findViewById(R.id.pointsResultTv);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         currentUserName = pref.getString("currentUserName", "غير معروف");
@@ -189,5 +190,15 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
     @Override
     public void setChallengeResultTvText(String text) {
         challengeResultTv.setText(text);
+    }
+
+    @Override
+    public void setPointsResultTv(String text) {
+        pointsResultTv.setText(text);
+    }
+
+    public void finishch(View view) {
+
+        finish();
     }
 }

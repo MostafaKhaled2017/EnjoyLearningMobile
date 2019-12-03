@@ -8,13 +8,14 @@
     android:layoutDirection="rtl"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingBottom="@dimen/_80sdp"
+        android:orientation="vertical"
         tools:context=".Regestration.SignUPTwo">
         <FrameLayout
             android:layout_marginTop="-4dp"
@@ -45,299 +46,250 @@
 
 
 
-        <TextView
-            android:id="@+id/emailsignupTwo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text="المرحلة  الدراسية"
-            android:focusedByDefault="true"
-            android:focusableInTouchMode="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.04"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressbarframe2"
-            app:layout_constraintVertical_bias="0.0"
-
-
-            />
-
-
-        <Spinner
-            android:id="@+id/userGradeSpinner"
-            android:layout_width="0dp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-
-            android:background="@drawable/gradient_spinner"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailsignupTwo"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/school"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text="نوع المدرسة "
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.026"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userGradeSpinner"
-            app:layout_constraintVertical_bias="0.002" />
-
-        <Spinner
-            android:id="@+id/schoolTypeSpinner"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-            android:background="@drawable/gradient_spinner"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/_50sdp"
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/school"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/city"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/el_messiri"
-            android:text="اسم المحافظة"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.048"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/schoolTypeSpinner"
-            app:layout_constraintVertical_bias="0.004" />
+            >
 
 
-        <Spinner
-            android:id="@+id/governorateName"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-            android:background="@drawable/gradient_spinner"
-
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/city"
-            app:layout_constraintVertical_bias="0.0" />
-        <TextView
-            android:id="@+id/phonenumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text="رقم الهاتف (اختيارى)"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.047"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/governorateName"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <EditText
-            android:id="@+id/phoneNo"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:inputType="number"
-            android:text=""
-            android:textAlignment="viewStart"
-            android:paddingStart="@dimen/_4sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.062"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phonenumber"
-            app:layout_constraintVertical_bias="0.0" />
 
 
-        <TextView
-            android:id="@+id/emailfriends"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text="كود الصديق الذي دعاك(اختيارى)"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.097"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNo"
-            app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/emailsignupTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:fontFamily="@font/el_messiri"
+                android:text="المرحلة  الدراسية"
+                android:focusedByDefault="true"
+                android:focusableInTouchMode="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
 
-        <EditText
-            android:id="@+id/invitingFriend"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:textAlignment="viewStart"
-            android:paddingStart="@dimen/_4sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.062"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailfriends"
-            app:layout_constraintVertical_bias="0.0" />
 
-        <CheckBox
-            android:id="@+id/acceptTerms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/el_messiri"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.055"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/invitingFriend"
-            app:layout_constraintVertical_bias="0.103"
 
-            />
+                />
 
-        <TextView
-            android:id="@+id/termsTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/el_messiri"
-            android:text="أوافق على شروط الاستخدام"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.095"
-            app:layout_constraintStart_toEndOf="@+id/acceptTerms"
-            app:layout_constraintTop_toBottomOf="@+id/invitingFriend"
-            app:layout_constraintVertical_bias="0.0" />
 
-        <Button
-            android:id="@+id/signUpBtn"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:background="@drawable/shape_dark"
-            android:fontFamily="@font/el_messiri"
-            android:text="تسجيل حسابي"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/acceptTerms"
-            app:layout_constraintVertical_bias="0.13" />
+            <Spinner
+                android:id="@+id/userGradeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
 
-       <!-- <TextView
-            android:id="@+id/haveaccoutn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/el_messiri"
-            android:text="هل  لديك  حساب مسبقا"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:textSize="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.136"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
-            app:layout_constraintVertical_bias="0.0" />
-        <TextView
-            android:id="@+id/loginnow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/el_messiri"
-            android:text="  تسجيل الدخول"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/_10sdp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/haveaccoutn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/haveaccoutn"
-            app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
-            /> -->
+                android:background="@drawable/gradient_spinner"
+                />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/school"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:fontFamily="@font/el_messiri"
+                android:text="نوع المدرسة "
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                />
 
+            <Spinner
+                android:id="@+id/schoolTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:background="@drawable/gradient_spinner"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/school"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:fontFamily="@font/el_messiri"
+                android:text="اسم المحافظة"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                />
+
+
+            <Spinner
+                android:id="@+id/governorateName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:background="@drawable/gradient_spinner"
+
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                />
+            <TextView
+                android:id="@+id/phonenumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:fontFamily="@font/el_messiri"
+                android:text="رقم الهاتف (اختيارى)"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                />
+
+            <EditText
+                android:id="@+id/phoneNo"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/linearborder"
+                android:ems="10"
+                android:inputType="number"
+                android:text=""
+                android:textAlignment="viewStart"
+                android:paddingStart="@dimen/_4sdp"
+                />
+
+
+            <TextView
+                android:id="@+id/emailfriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:fontFamily="@font/el_messiri"
+                android:text="كود الصديق الذي دعاك(اختيارى)"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                />
+
+            <EditText
+                android:id="@+id/invitingFriend"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:textAlignment="viewStart"
+                android:paddingStart="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/linearborder"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                android:text=""
+                />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                >
+                <CheckBox
+                    android:id="@+id/acceptTerms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/el_messiri"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/termsTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/acceptTerms"
+                    android:fontFamily="@font/el_messiri"
+                    android:text="أوافق على شروط الاستخدام"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    />
+
+            </RelativeLayout>
+            <Button
+                android:id="@+id/signUpBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/shape_dark"
+                android:fontFamily="@font/el_messiri"
+                android:text="تسجيل حسابي"
+                android:layout_marginBottom="@dimen/_25sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                />
+
+            <!-- <TextView
+                 android:id="@+id/haveaccoutn"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:fontFamily="@font/el_messiri"
+                 android:text="هل  لديك  حساب مسبقا"
+                 android:textColor="@color/black"
+                 android:layout_marginTop="@dimen/_10sdp"
+                 android:textSize="@dimen/_10sdp"
+                 app:layout_constraintBottom_toBottomOf="parent"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintHorizontal_bias="0.136"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
+                 app:layout_constraintVertical_bias="0.0" />
+             <TextView
+                 android:id="@+id/loginnow"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:fontFamily="@font/el_messiri"
+                 android:text="  تسجيل الدخول"
+                 android:textColor="@color/colorPrimary"
+                 android:textSize="@dimen/_10sdp"
+                 app:layout_constraintBaseline_toBaselineOf="@+id/haveaccoutn"
+                 app:layout_constraintBottom_toBottomOf="parent"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintStart_toStartOf="@id/haveaccoutn"
+                 app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
+                 /> -->
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 

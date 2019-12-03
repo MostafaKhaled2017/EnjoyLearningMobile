@@ -187,6 +187,7 @@
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/dislike" />
 
@@ -203,6 +204,20 @@
                     />
 
             </RelativeLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/commentsTv"
+            android:layout_marginTop="7dp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/replyContent"
+            android:layout_toEndOf="@id/dislikeView"
+            android:paddingRight="15dp"
+            android:text="التعليقات"
+            android:textColor="#0000ff"
+            android:textSize="13sp" />
     </RelativeLayout>
 
 

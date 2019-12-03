@@ -58,7 +58,7 @@
         android:visibility="invisible" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_15sdp"
         android:layout_below="@id/subjectView"
         android:id="@+id/postsRecyclerView"
         android:layout_width="match_parent"

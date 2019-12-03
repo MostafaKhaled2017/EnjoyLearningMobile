@@ -79,15 +79,17 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lessonsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:columnCount="2"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_marginEnd="@dimen/_6sdp"
         android:scrollbars="none"
-        android:paddingBottom="@dimen/_35sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjectsSpinnerInLessonsFragment">
+        app:layout_constraintTop_toBottomOf="@+id/subjectsSpinnerInLessonsFragment"
+        app:layout_constraintBottom_toBottomOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
 </androidx.constraintlayout.widget.ConstraintLayout>

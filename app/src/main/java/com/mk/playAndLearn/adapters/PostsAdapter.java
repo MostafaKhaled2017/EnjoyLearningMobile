@@ -133,7 +133,6 @@ public class PostsAdapter extends RecyclerView.Adapter {
             holder.warningIcon.setVisibility(View.GONE);
         }*/
 
-
             ((MyHolder) holder).upArrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -161,7 +160,7 @@ public class PostsAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MyHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
+            ((MyHolder) holder).commentsTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, PostInDetailsActivity.class);
@@ -370,7 +369,7 @@ public class PostsAdapter extends RecyclerView.Adapter {
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView content, date, name, upvotedNo, downVotedNo;
+        TextView content, date, name, upvotedNo, downVotedNo,commentsTv;
         ImageView imageView, upArrow, downArrow;
         CardView cardView;
         Button subject;
@@ -383,6 +382,7 @@ public class PostsAdapter extends RecyclerView.Adapter {
             name = itemView.findViewById(R.id.replyUserName);
             upvotedNo = itemView.findViewById(R.id.upVotesNo);
             downVotedNo = itemView.findViewById(R.id.downVotesNo);
+            commentsTv = itemView.findViewById(R.id.commentsTv);
             subject = itemView.findViewById(R.id.subject);
             imageView = itemView.findViewById(R.id.replyImage);
             upArrow = itemView.findViewById(R.id.like);

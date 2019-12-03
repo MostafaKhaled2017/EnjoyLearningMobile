@@ -8,11 +8,12 @@
     android:layoutDirection="rtl"
     android:background="@color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:background="@color/white"
         tools:context=".Regestration.SignUp">
 
@@ -24,8 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+
             >
 
             <ProgressBar
@@ -43,280 +43,237 @@
 
         </FrameLayout>
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="@dimen/_2sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text="اسم المستخدم"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.054"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressbarframe"
-            app:layout_constraintVertical_bias="0.008" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/_40sdp"
+            >
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:fontFamily="@font/el_messiri"
+                android:text="اسم المستخدم"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                />
 
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:textAlignment="viewStart"
-            android:paddingStart="@dimen/_4sdp"
-            android:inputType="textPersonName"
-            android:text=""
-            android:focusedByDefault="true"
-            android:focusableInTouchMode="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintVertical_bias="0.02" />
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:background="@drawable/linearborder"
+                android:ems="10"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textAlignment="viewStart"
+                android:paddingStart="@dimen/_4sdp"
+                android:inputType="textPersonName"
+                android:text=""
+                android:focusedByDefault="true"
+                android:focusableInTouchMode="true"
+                />
 
-        <TextView
-            android:id="@+id/emailtext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/el_messiri"
-            android:text="البريد الالكتروني"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etName"
-            app:layout_constraintVertical_bias="0.015" />
-
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="@dimen/_220sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:textAlignment="viewStart"
-            android:paddingStart="@dimen/_1sdp"
-            android:inputType="none"
-            android:focusable="false"
-            android:cursorVisible="false"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.06"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailtext" />
-
-        <Button
-            android:id="@+id/addEmailButton"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_2sdp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/_2sdp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/shape_dark"
-            android:fontFamily="@font/el_messiri"
-            android:text="إضافة"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_10sdp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.192"
-            app:layout_constraintStart_toEndOf="@+id/etEmail"
-            app:layout_constraintTop_toBottomOf="@+id/emailtext"
-            app:layout_constraintVertical_bias="0.024" />
+            <TextView
+                android:id="@+id/emailtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/el_messiri"
+                android:text="البريد الالكتروني"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                />
 
 
-        <TextView
-            android:id="@+id/passworedsign"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/el_messiri"
-            android:text="كلمة المرور  "
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEmail"
-            app:layout_constraintVertical_bias="0.012" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                >
 
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:textAlignment="viewStart"
-            android:paddingStart="@dimen/_4sdp"
-            android:inputType="textPassword"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/passworedsign"
-            app:layout_constraintVertical_bias="0.041" />
 
-        <TextView
-            android:id="@+id/confirmpasswored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/el_messiri"
-            android:text=" تأكيد  كلمة المرور"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etPassword"
-            app:layout_constraintVertical_bias="0.021" />
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="@dimen/_40sdp"
 
-        <EditText
-            android:id="@+id/etRePassword"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:background="@drawable/linearborder"
-            android:ems="10"
-            android:textAlignment="viewStart"
-            android:paddingStart="@dimen/_4sdp"
-            android:inputType="textPassword"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmpasswored" />
+                    android:background="@drawable/linearborder"
+                    android:ems="10"
+                    android:textAlignment="viewStart"
+                    android:inputType="none"
 
-        <RadioGroup
-            android:id="@+id/userTypeRadioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.12"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etRePassword"
-            app:layout_constraintVertical_bias="0.181">
+                    android:textColor="@color/black"
+                    android:layout_margin="@dimen/_5sdp"
 
-            <RadioButton
-                android:id="@+id/studentRadioButton"
+                    />
+
+                <Button
+                    android:id="@+id/addEmailButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/_40sdp"
+                    android:padding="@dimen/_3sdp"
+                    android:background="@drawable/shape_dark"
+                    android:fontFamily="@font/el_messiri"
+                    android:text="إضافة"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold"
+                    android:layout_margin="@dimen/_5sdp"
+                    />
+            </LinearLayout>
+
+
+
+            <TextView
+                android:id="@+id/passworedsign"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:fontFamily="@font/el_messiri"
-                android:paddingEnd="@dimen/_20sdp"
-                android:text="طالب"
+                android:text="كلمة المرور  "
                 android:textColor="@color/black"
-                android:textSize="@dimen/_14sdp" />
+                android:textSize="@dimen/_14sdp"
+                />
 
-            <RadioButton
-                android:id="@+id/teacherRadioButton"
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:background="@drawable/linearborder"
+                android:ems="10"
+                android:textAlignment="viewStart"
+                android:paddingStart="@dimen/_4sdp"
+                android:inputType="textPassword"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text=""
+                />
+
+            <TextView
+                android:id="@+id/confirmpasswored"
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+
                 android:fontFamily="@font/el_messiri"
-                android:text="معلم"
+                android:text=" تأكيد  كلمة المرور"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_14sdp" />
+                android:textSize="@dimen/_14sdp"
+                />
+
+            <EditText
+                android:id="@+id/etRePassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:background="@drawable/linearborder"
+                android:ems="10"
+                android:textAlignment="viewStart"
+                android:paddingStart="@dimen/_4sdp"
+                android:inputType="textPassword"
+                android:textColor="@color/black"
+                />
+            <RadioGroup
+                android:id="@+id/userTypeRadioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_16sdp"            >
+
+                <RadioButton
+                    android:id="@+id/studentRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:fontFamily="@font/el_messiri"
+                    android:paddingEnd="@dimen/_20sdp"
+                    android:text="طالب"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp" />
+
+                <RadioButton
+                    android:id="@+id/teacherRadioButton"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/el_messiri"
+                    android:text="معلم"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp" />
 
 
-        </RadioGroup>
+            </RadioGroup>
 
 
-        <TextView
-            android:id="@+id/loginselect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:fontFamily="@font/el_messiri"
-            android:text="النوع"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.062"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userTypeRadioGroup"
-            app:layout_constraintVertical_bias="0.021"
+            <TextView
+                android:id="@+id/loginselect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
-            />
+                android:fontFamily="@font/el_messiri"
+                android:text="النوع"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
 
-        <Spinner
-            android:id="@+id/genderSpinner"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            android:background="@drawable/gradient_spinner"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginselect"
-            style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                />
 
-            app:layout_constraintVertical_bias="0.0" />
+            <Spinner
+                android:id="@+id/genderSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
 
-        <Button
-            android:id="@+id/nextBtn"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/shape_dark"
-            android:fontFamily="@font/el_messiri"
-            android:text="التالي"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/genderSpinner"
-            app:layout_constraintVertical_bias="0.0" />
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:background="@drawable/gradient_spinner"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_16sdp" />
+
+            <Button
+                android:id="@+id/nextBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:background="@drawable/shape_dark"
+                android:fontFamily="@font/el_messiri"
+                android:text="التالي"
+                android:layout_marginBottom="@dimen/_25sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </ScrollView>

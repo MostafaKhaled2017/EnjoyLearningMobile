@@ -47,7 +47,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         //TODO : think about editing this drawable but I think it is good
-        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
+       /* final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
@@ -55,7 +55,7 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
         actionBar.setDisplayShowTitleEnabled(false);
 
         TextView toolbarTitle = toolbar.findViewById(R.id.title);
-        toolbarTitle.setText("التعليقات");
+        toolbarTitle.setText("التعليقات");*/
 
         presenter = new PostsInDetailsActivityPresenter(this, this);
 
@@ -227,5 +227,10 @@ public class PostInDetailsActivity extends AppCompatActivity implements PostsInD
     @Override
     public void showToast(String value) {
         Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
+    }
+
+    public void finishch(View view) {
+
+        finish();
     }
 }

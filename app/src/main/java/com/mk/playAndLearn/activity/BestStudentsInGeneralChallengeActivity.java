@@ -42,15 +42,15 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
+        /*final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);*/
 
 
-        TextView toolbarTitle = toolbar.findViewById(R.id.title);
+        TextView toolbarTitle = toolbar.findViewById(R.id.tahadi);
         toolbarTitle.setText("أوائل التحدى العام");
 
         presenter = new BestStudentsInGeneralChallengeActivityPresenter(this);
@@ -142,5 +142,10 @@ public class BestStudentsInGeneralChallengeActivity extends AppCompatActivity im
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    public void finishch(View view) {
+
+        finish();
     }
 }

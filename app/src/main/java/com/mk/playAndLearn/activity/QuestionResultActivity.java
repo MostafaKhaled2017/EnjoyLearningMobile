@@ -44,7 +44,7 @@ public class QuestionResultActivity extends AppCompatActivity {
     int questionNo, score;
     String subject, challengeId;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
-    int secondPlayerPoints, currentChallenger, sleepTime = 1000;
+    int secondPlayerPoints, currentChallenger, sleepTime = 1250;
     boolean isGeneralChallenge, reported = false;
 
     ImageView player1ImageIv, player2Image;
@@ -59,9 +59,9 @@ public class QuestionResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_question_result);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+       /* ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);*/
 
         resultText = findViewById(R.id.resultText);
 
@@ -112,6 +112,11 @@ public class QuestionResultActivity extends AppCompatActivity {
 
             }
         }
+
+        Question question = (Question) list.get(questionNo);
+        String correctAnswer = question.getCorrectAnswer();
+
+      //  resultText.setText( "الإجابة : " + correctAnswer);
 
         if (correct){
             resultText.setText("إجابة صحيحة");
@@ -272,5 +277,12 @@ public class QuestionResultActivity extends AppCompatActivity {
         });
 
         alertDialogBuilderUserInput.show();
+    }
+
+
+
+    public void finishch(View view) {
+
+        finish();
     }
 }

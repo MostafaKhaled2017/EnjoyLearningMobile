@@ -22,6 +22,8 @@ import com.google.android.gms.ads.AdView;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 
+import java.lang.reflect.Field;
+
 import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
@@ -69,6 +71,41 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
         lessonOrderSpinner = findViewById(R.id.lessonSpinnerInChallengeDetails);
         termSpinner = findViewById(R.id.termSpinnerInChallengeDetails);
         startBtn = findViewById(R.id.startBtn);
+
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(unitOrderSpinner);
+
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
+
+            Log.v("spinnerHeight", "try");
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+            Log.v("spinnerHeight", "catch , exception is : " + e);
+        }
+
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(lessonOrderSpinner);
+
+            // Set popupWindow height to 850px
+            popupWindow.setHeight(850);
+
+            Log.v("spinnerHeight", "try");
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+            Log.v("spinnerHeight", "catch , exception is : " + e);
+        }
+
 
         setTermSpinner(R.array.term_array);
         setSubjectsSpinner();
@@ -364,6 +401,14 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+
+
+    public void finishch(View view) {
+
+        finish();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

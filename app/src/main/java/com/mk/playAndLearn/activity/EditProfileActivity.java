@@ -91,4 +91,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
+    public void finishch(View view) {
+
+        finish();
+    }
 }

@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class SearchActivityPresenter {
     View view;
@@ -129,6 +130,7 @@ public class SearchActivityPresenter {
         };
 
         fireStoreUsers.whereEqualTo("userName", userName)
+                .whereEqualTo("grade", getSavedGrade(context))
                 .orderBy("points", Query.Direction.DESCENDING)
                 .limit(20)
                 .get()

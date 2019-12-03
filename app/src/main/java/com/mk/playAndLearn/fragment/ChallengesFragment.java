@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
@@ -243,6 +243,7 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void showNoChallengesTv() {
         noChallengesTv.setVisibility(View.VISIBLE);
+        Toast.makeText(getActivity(), "قم بالضغط علي أيكونة (+) الموجودة فى منتصف القائمة أسفل الشاشة لتبدأ تحدى جديد", Toast.LENGTH_LONG).show();
     }
 
     @Override

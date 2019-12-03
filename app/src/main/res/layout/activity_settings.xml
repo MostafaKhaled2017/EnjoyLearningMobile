@@ -14,7 +14,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_60sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginBottom="8dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
@@ -41,13 +41,28 @@
                 android:gravity="center"
                 android:text="الاعدادات "
                 android:textColor="#FFFF"
-                android:textSize="@dimen/_18sdp"
+                android:textSize="@dimen/_15sdp"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 />
 
+            <ImageView
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/backf"
+
+                android:onClick="finishch"
+
+
+                />
+
         </RelativeLayout>
+
+
+
 
 
 

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.mk.enjoylearning.R;
@@ -20,7 +21,7 @@ public class StudyTipsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
+       /* final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
@@ -28,7 +29,7 @@ public class StudyTipsActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
 
         TextView title = toolbar.findViewById(R.id.title);
-        title.setText("نصائح المذاكرة");
+        title.setText("نصائح المذاكرة");*/
 
     }
 
@@ -39,4 +40,7 @@ public class StudyTipsActivity extends AppCompatActivity {
         return true;
     }
 
+    public void finishch(View view) {
+        finish();
+    }
 }

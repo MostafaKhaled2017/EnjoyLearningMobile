@@ -41,16 +41,17 @@ public class BestStudentsInCompetitionActivity extends AppCompatActivity impleme
         setContentView(R.layout.activity_best_students);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+      /*  ActionBar actionBar = getSupportActionBar();
         final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);*/
 
-        TextView toolbarTitle = toolbar.findViewById(R.id.title);
+        TextView toolbarTitle = toolbar.findViewById(R.id.tahadi);
         toolbarTitle.setText("أوائل المسابقة الأسبوعية");
+
 
         presenter = new BestStudentsInCompetitionPresenter(this);
 
@@ -141,5 +142,9 @@ public class BestStudentsInCompetitionActivity extends AppCompatActivity impleme
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    public void finishch(View view) {
+        finish();
     }
 }

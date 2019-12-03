@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 
 public class FriendsFragmentPresenter {
     View view;
@@ -117,7 +118,7 @@ public class FriendsFragmentPresenter {
                         if (userSchoolType != null && subjectSchoolType.equals("both")
                                 || (subjectSchoolType.equals("languages") && userSchoolType.equals("لغات"))
                                 || (subjectSchoolType.equals("arabic") && userSchoolType.equals("عربى"))) {
-                            if(!existsInList(user, list)) {
+                            if(!existsInList(user, list) && grade.equals(getSavedGrade(context))) {
                                 list.add(user);
                             }
                         }
@@ -128,6 +129,9 @@ public class FriendsFragmentPresenter {
                         view.hideProgressBar();
                         view.hideSwipeRefreshLayout();
                         view.hideNoInternetConnectionText();
+                        if(list.size() == 0){
+                            view.showNoFriendsTv();
+                        }
                     }
                 } else {
                     Log.v("TAG", "failed");

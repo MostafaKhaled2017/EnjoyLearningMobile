@@ -1,10 +1,10 @@
 package com.mk.playAndLearn.utils;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeakerLabel;
+/*import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeakerLabel;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechAlternative;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechTimestamp;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.Transcript;
-import com.ibm.watson.developer_cloud.util.GsonSingleton;
+import com.ibm.watson.developer_cloud.util.GsonSingleton;*/
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class SpeakerLabelsDiarization {
-    public static class RecoToken {
+   /* public static class RecoToken {
         private Double startTime;
         private Double endTime;
         private Integer speaker;
@@ -148,5 +148,5 @@ public class SpeakerLabelsDiarization {
     }
 
 
-    private static CountDownLatch lock = new CountDownLatch(1);
+    private static CountDownLatch lock = new CountDownLatch(1);*/
 }

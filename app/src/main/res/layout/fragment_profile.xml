@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     android:background="@color/white"
     android:layoutDirection="rtl">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -258,6 +259,7 @@
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:background="@drawable/linearborder"
             android:cursorVisible="false"
             android:ems="10"

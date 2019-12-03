@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <androidx.cardview.widget.CardView
-    android:id="@+id/challengeView"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardBackgroundColor="@color/white"
-    card_view:cardCornerRadius="10dp"
-    card_view:cardElevation="5dp"
-    android:padding="@dimen/_2sdp"
-    android:layout_marginBottom="@dimen/_3sdp"
+    android:layoutDirection="rtl"
+    android:layout_gravity="center_horizontal"
+    card_view:cardElevation="10dp"
+    android:layout_margin="@dimen/_10sdp"
+
+card_view:cardCornerRadius="@dimen/_10sdp"
+    android:id="@+id/textView8"
+
+    >
+
+
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:padding="@dimen/_5sdp"
+    android:background="@color/white"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:id="@+id/challengeView"
+
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
 
 
 
@@ -22,7 +36,6 @@
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:src="@drawable/man"
-                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_alignParentStart="true"
 
                 />
@@ -37,7 +50,6 @@
                 android:background="@drawable/default_selected"
                 android:visibility="gone"
                 />
-
 
             <TextView
                 android:id="@+id/challengerName"
@@ -79,12 +91,12 @@
                 android:gravity="center"
                 android:layout_height="@dimen/_30sdp"
                 android:background="@drawable/shape_dark"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:fontFamily="@font/cairo_semibold"
                 android:text="المادة"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_11sdp"
-                android:layout_below="@+id/challengeScore"
+                android:layout_below="@+id/challengerName"
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="@dimen/_2sdp"
                 />
@@ -111,9 +123,9 @@
                 android:layout_marginStart="@dimen/_10sdp"
                 android:fontFamily="@font/el_messiri"
                 android:textSize="@dimen/_10sdp"
-                android:layout_below="@+id/question"
                 android:layout_toEndOf="@+id/challengeImage"
                 />
         </RelativeLayout>
 
-    </androidx.cardview.widget.CardView>
+
+</androidx.cardview.widget.CardView>
