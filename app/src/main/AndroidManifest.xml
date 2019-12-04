@@ -173,7 +173,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ad_mob_used_id" />
+            android:value="@string/ad_mob_id" />
 
         <activity
             android:name="com.mk.playAndLearn.activity.AdminAppManagementActivity"

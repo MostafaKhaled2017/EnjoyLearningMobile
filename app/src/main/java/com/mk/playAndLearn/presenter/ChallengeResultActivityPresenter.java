@@ -336,7 +336,10 @@ public class ChallengeResultActivityPresenter {
             @Override
             public void onSuccess(Long aLong) {
                 long remainedDailyChallenges = dailyChallengesNumber - aLong;
-                if (remainedDailyChallenges > 3) {
+                if(remainedDailyChallenges > 10){
+                    Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحدى فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
+                }
+                else if (remainedDailyChallenges > 2) {
                     Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحديات فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
                 } else if (remainedDailyChallenges == 2) {
                     Toast.makeText(context, "يمكنك لعب " + " تحديان فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();

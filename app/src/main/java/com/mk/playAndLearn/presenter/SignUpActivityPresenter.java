@@ -27,6 +27,7 @@ import com.mk.playAndLearn.utils.DateClass;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -56,8 +57,42 @@ public class SignUpActivityPresenter {
             , final String writtenPhoneNumber, final String governorate, final String invitingFriendId) {
         view.showProgressBar();
 
+
+        FirebaseUser user = auth.getCurrentUser();
+
+        List<? extends UserInfo> providerData = user.getProviderData();
+        boolean finished = false;
+        for (UserInfo userInfo : providerData) {
+
+            String providerId = userInfo.getProviderId();
+            Log.d("TAG", "providerId = " + userInfo.getProviderId());
+
+            if (providerId.equals("password")) {
+                finished = true;
+                user.unlink(providerId)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.v("unLinkLog", "task successful : " + task.isSuccessful()
+                                        + " , exception is : " + task.getException());
+                                createEmail(name, email, password, gender, userType, points, grade, userSchoolType, writtenPhoneNumber, governorate, invitingFriendId);
+
+                            }
+                        });
+            }
+        }
+
+        if(!finished){
+            createEmail(name, email, password, gender, userType, points, grade, userSchoolType, writtenPhoneNumber, governorate, invitingFriendId);
+        }
+
+    }
+
+    void createEmail(final String name, final String email, final String password
+            , final String gender, final String userType, final long points, final String grade, final String userSchoolType
+            , final String writtenPhoneNumber, final String governorate, final String invitingFriendId){
         final String imageUrl = auth.getCurrentUser().getPhotoUrl().toString();
-        AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+        final AuthCredential credential = EmailAuthProvider.getCredential(email, password);
 
         auth.getCurrentUser().linkWithCredential(credential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -184,6 +219,7 @@ public class SignUpActivityPresenter {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(context, "فشل إنشاء الحساب برجاء إعادة المحاولة لاحقا", Toast.LENGTH_SHORT).show();
+                        Log.v("signUpLog", "error is : " + e.getMessage());
                         view.hideProgressBar();
                         view.enableBtn();
                         // Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
@@ -199,6 +235,7 @@ public class SignUpActivityPresenter {
                 view.hideProgressBar();
                 view.enableBtn();
                 Log.v("signUpLinking", "exception is : " + e.getMessage());
+
             }
         });
     }

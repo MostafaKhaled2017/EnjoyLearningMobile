@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.mk.enjoylearning.R;
-import com.mk.playAndLearn.spinnercustom.CustomAdapter;
 
 import java.lang.reflect.Field;
 
@@ -58,13 +60,12 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge_details);
 
-  //      includePreviousLessons = findViewById(R.id.checkBox);
+        //      includePreviousLessons = findViewById(R.id.checkBox);
 
         subjectsSpinner = findViewById(R.id.subjectsSpinnerInChallengeDetails);
         unitOrderSpinner = findViewById(R.id.unitSpinnerInChallengeDetails);
@@ -129,16 +130,37 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             }
         });
 
+        AdView adView = new AdView(this);
+        adView.setAdSize(AdSize.BANNER);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+
+        mAdView = findViewById(R.id.adds);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("B65A7976E9008CADC60414029149C78E")
+                .build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                Log.v("adsLog", "addLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.v("adsLog", "error code is : " + errorCode);
+            }
+        });
+
     }
 
-    
-    void setTermSpinner(int  array){
 
+    void setTermSpinner(int array) {
 
 
         String[] subjects = this.getResources().getStringArray(array);
 
-        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(ChallengeDetailsActivity.this,R.layout.testactiv,subjects){
+        ArrayAdapter<String> customAdapter = new ArrayAdapter<String>(ChallengeDetailsActivity.this, R.layout.testactiv, subjects) {
 
 
             @Override
@@ -173,7 +195,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
         termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedItemtirm =  i;
+                selectedItemtirm = i;
                 currentTerm = convertTermToLong(adapterView.getItemAtPosition(i).toString());
             }
 
@@ -183,24 +205,21 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             }
         });
     }
-    
-    void setSubjectsSpinner(){
-        int array ;
 
+    void setSubjectsSpinner() {
+        int array;
 
         Log.v("gradeLogging", "saved grade is : " + getSavedGrade(this));
 
-        if(getSavedGrade(this).equals("الصف الأول الإعدادى")) {
-           array = R.array.first_preparatory_subjects_array;
+        if (getSavedGrade(this).equals("الصف الأول الإعدادى")) {
+            array = R.array.first_preparatory_subjects_array;
         } else {
-                array=     R.array.preparatory_subjects_array;
+            array = R.array.preparatory_subjects_array;
         }
-
 
         String[] subjects = this.getResources().getStringArray(array);
 
-        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(ChallengeDetailsActivity.this,R.layout.testactiv,subjects){
-
+        ArrayAdapter<String> customAdapter = new ArrayAdapter<String>(ChallengeDetailsActivity.this, R.layout.testactiv, subjects) {
 
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
@@ -234,7 +253,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
 
-                selectedItemlecture  = i;
+                selectedItemlecture = i;
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 switch (currentSubject) {
                     case "لغة انجليزية":
@@ -270,13 +289,13 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             }
         });
     }
-    
-    void setUnitOrderSpinner(){
+
+    void setUnitOrderSpinner() {
 
 
-        String[] subjects = this.getResources().getStringArray( R.array.units_array);
+        String[] subjects = this.getResources().getStringArray(R.array.units_array);
 
-        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(ChallengeDetailsActivity.this,R.layout.testactiv,subjects){
+        ArrayAdapter<String> customAdapter = new ArrayAdapter<String>(ChallengeDetailsActivity.this, R.layout.testactiv, subjects) {
 
 
             @Override
@@ -308,7 +327,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
         unitOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedItemunite  = i;
+                selectedItemunite = i;
                 currentUnit = adapterView.getItemAtPosition(i).toString();
             }
 
@@ -319,11 +338,11 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
         });
     }
 
-    void setLessonOrderSpinner(){
+    void setLessonOrderSpinner() {
 
         String[] subjects = this.getResources().getStringArray(R.array.lessons_array);
 
-        ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(ChallengeDetailsActivity.this,R.layout.testactiv,subjects){
+        ArrayAdapter<String> customAdapter = new ArrayAdapter<String>(ChallengeDetailsActivity.this, R.layout.testactiv, subjects) {
 
 
             @Override
@@ -350,12 +369,12 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             }
         };
 
-          lessonOrderSpinner.setAdapter(customAdapter);
+        lessonOrderSpinner.setAdapter(customAdapter);
 
         lessonOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedItemglesson =  i;
+                selectedItemglesson = i;
                 currentLesson = adapterView.getItemAtPosition(i).toString();
             }
 
@@ -365,6 +384,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
     public void navigate() {
         Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(ChallengeDetailsActivity.this));
         if (currentSubject.equals("كل المواد")) {
@@ -394,14 +414,13 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
                 return -1;
         }
     }
-    
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
 
 
     public void finishch(View view) {

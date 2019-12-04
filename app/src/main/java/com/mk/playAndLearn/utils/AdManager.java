@@ -27,9 +27,9 @@ public class AdManager {
         Log.v("adLog", "creating Ad");
 
         mInterstitialAd = new InterstitialAd(context);
-        mInterstitialAd.setAdUnitId(context.getString(R.string.ad_mob_live_id));
+        mInterstitialAd.setAdUnitId(context.getString(R.string.interstitial_ad_unit_id));
         mInterstitialAd.loadAd(new AdRequest.Builder()
-                .addTestDevice("106C57971641BAE74B5A237183F61E44")
+                .addTestDevice("B65A7976E9008CADC60414029149C78E")
                 .build());
 
         mInterstitialAd.setAdListener(new AdListener(){

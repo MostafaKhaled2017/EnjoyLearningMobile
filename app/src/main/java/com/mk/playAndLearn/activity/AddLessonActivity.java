@@ -498,13 +498,13 @@ public class AddLessonActivity extends AppCompatActivity {
 
                 selectedItemgrade = i;
                 selectedGrade = adapterView.getItemAtPosition(i).toString();
-                if (!oldLesson) {
+              /*  if (!oldLesson) {
                     if (selectedGrade.contains("الإعدادى")) {
                         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner1");
                     } else if (selectedGrade.contains("الثانوى")) {
                         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner2");
                     }
-                }
+                }*/
             }
 
             @Override

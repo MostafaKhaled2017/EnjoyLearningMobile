@@ -77,6 +77,7 @@ public class FriendsFragmentPresenter {
                 String uid = "";
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
                     User user = new User();
                     String points = "";
                     boolean admin = false, online = false;
@@ -133,6 +134,7 @@ public class FriendsFragmentPresenter {
                             view.showNoFriendsTv();
                         }
                     }
+                }
                 } else {
                     Log.v("TAG", "failed");
                     view.hideProgressBar();

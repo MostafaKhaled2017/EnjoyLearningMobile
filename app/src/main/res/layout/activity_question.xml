@@ -132,7 +132,6 @@
                 android:text="@string/h2o"
                 android:textAlignment="textStart"
                 android:drawablePadding="@dimen/_10sdp"
-
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12sdp"
 

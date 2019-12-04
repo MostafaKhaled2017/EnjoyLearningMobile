@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
+import static com.mk.playAndLearn.utils.Integers.challengeQuestionsNo;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
@@ -217,7 +218,7 @@ public class ChallengeStartActivityPresenter {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
 
-                    if (failedRetries == 5){
+                    if (failedRetries == 15){
                         view.hideProgressBar();
                         Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
                     }else if(documentSnapshots.size() == 0){
@@ -248,7 +249,7 @@ public class ChallengeStartActivityPresenter {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
                     Log.v("qEx", "succeeded");
-                    if (failedRetries == 5){
+                    if (failedRetries == 15){
                         view.hideProgressBar();
                         Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
                 }else if(documentSnapshots.size() == 0){
@@ -280,7 +281,7 @@ public class ChallengeStartActivityPresenter {
                 @Override
                 public void onSuccess(QuerySnapshot documentSnapshots) {
                     Log.v("qEx","succeeded");
-                    if (failedRetries == 5){
+                    if (failedRetries == 15){
                         view.hideProgressBar();
                         Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
                     }else if(documentSnapshots.size() == 0){
@@ -303,7 +304,7 @@ public class ChallengeStartActivityPresenter {
         for (DocumentSnapshot document : documentSnapshots.getDocuments()) {
             Log.v("startingChallenge", "Question Added");
             addQuestionData(document);
-            if (list.size() < 5) {
+            if (list.size() < challengeQuestionsNo) {
                 loadQuestionsForChallenger1();
                 Log.v("startingChallenge", "List Size : " + list.size());
             } else {
@@ -334,7 +335,7 @@ public class ChallengeStartActivityPresenter {
         question.setReviewed(reviewed);
         question.setQuestionId(document.getId());
 
-        if (list.size() < 5 && !existsInList(questionText))
+        if (list.size() < challengeQuestionsNo && !existsInList(questionText))
             list.add(question);
     }
 

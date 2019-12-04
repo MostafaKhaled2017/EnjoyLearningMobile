@@ -95,7 +95,6 @@ public class HomeFragment extends Fragment implements HomeFragmentPresenter.View
         spinner = myView.findViewById(R.id.subjectsSpinnerInHomeFragment);
 
 
-
         String[] subjects = this.getResources().getStringArray( R.array.preparatory_subjects_array_with_all_subjects_item);
 
         ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(getActivity(),R.layout.testactiv,subjects){

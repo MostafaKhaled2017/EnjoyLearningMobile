@@ -477,9 +477,6 @@ public class AddQuestionActivity extends AppCompatActivity  {
 
     void setGradeSpinner() {
 
-
-
-
         String[] countryNames = this.getResources().getStringArray(R.array.grades_array);
 
             ArrayAdapter<String> customAdapter=new ArrayAdapter<String>(AddQuestionActivity.this,R.layout.testactiv,countryNames){
@@ -519,13 +516,13 @@ public class AddQuestionActivity extends AppCompatActivity  {
 
                 selectedItemgrade  =  i;
           selectedGrade = adapterView.getItemAtPosition(i).toString();
-              if (!oldQuestion) {
+             /* if (!oldQuestion) {
                     if (selectedGrade.contains("الإعدادى")) {
                         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner1");
                     } else if (selectedGrade.contains("الثانوى")) {
                         setSubjectsSpinner(R.array.preparatory_subjects_array_for_upload, "setGradeSpinner2");
                     }
-                }
+                }*/
             }
 
             @Override
@@ -624,7 +621,7 @@ public class AddQuestionActivity extends AppCompatActivity  {
 
                 //TODO : add icon to the dialog
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle("تنبيه هام");
+               // alertDialog.setTitle("تنبيه هام");
                 alertDialog.setMessage("برجاء مراجعة السؤال جيدا قبل رفعه والتأكد من عدم وجود أي أخطاء إملائية به");
                 alertDialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
                     @Override

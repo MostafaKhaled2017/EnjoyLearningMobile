@@ -8,11 +8,11 @@
     <string name="facebook_app_id">260719771249980</string>
     <string name="fb_login_protocol_scheme">fb260719771249980</string>
 
-    <string name="ad_mob_live_id">ca-app-pub-1283544791526621~9315704399</string>
-    <string name="ad_mob_test_id">ca-app-pub-1283544791526621/5955878039</string>
+    <string name="ad_mob_id">ca-app-pub-1283544791526621/5955878039</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-1283544791526621/5955878039</string>
+    <string name="banner_ad_unit_id">ca-app-pub-1283544791526621/6179069779</string>
 
-    <!-- either live or debug -->
-    <string name="ad_mob_used_id">ca-app-pub-1283544791526621~9315704399</string>
+
 
 
     <!--  <string-array name="secondary_subjects_array_for_upload">

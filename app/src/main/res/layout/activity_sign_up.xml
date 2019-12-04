@@ -114,7 +114,8 @@
                     android:ems="10"
                     android:textAlignment="viewStart"
                     android:inputType="none"
-
+                    android:clickable="false"
+                    android:enabled="false"
                     android:textColor="@color/black"
                     android:layout_margin="@dimen/_5sdp"
 

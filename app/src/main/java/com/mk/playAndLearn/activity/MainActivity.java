@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -32,13 +31,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +65,6 @@ import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LessonsFragment;
 import com.mk.playAndLearn.fragment.ProfileFragment;
 import com.mk.playAndLearn.service.NotificationsService;
-import com.mk.playAndLearn.utils.Firebase;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -238,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), this);
 
-        MobileAds.initialize(this, getString(R.string.ad_mob_live_id));
+        MobileAds.initialize(this, getString(R.string.ad_mob_id));
 
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
@@ -405,7 +399,8 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
                 return true;
             case R.id.newPost:
-                showSpinnerDialog();
+              //  showSpinnerDialog();
+                Toast.makeText(MainActivity.this, "لا يمكنك إضافة منشورات الان", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.appManagement:
                 startActivity(new Intent(this, AdminAppManagementActivity.class));
@@ -418,6 +413,8 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         Log.v("fragmentLog", "method called , tag is : " + tag);
         FragmentManager mFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        mFragmentManager.popBackStackImmediate();
 
         Fragment curFrag = mFragmentManager.getPrimaryNavigationFragment();
         Log.v("fragmentLog", "curFrag : " + curFrag);
@@ -446,8 +443,8 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     }
 
     public void showSpinnerDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);//TODO : check this
-        final android.view.View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);
+        final View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
 
         final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this)
                 .setView(view)
@@ -456,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
         final EditText inputComment = view.findViewById(R.id.dialog_value);
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        Spinner spinner = view.findViewById(R.id.subjectsSpinnerInDialog);
+        Spinner spinner = view.findViewById(R.id.dialogSubjectsSpinner);
         dialogTitle.setText("إضافة منشور");
         inputComment.setHint("اكتب سؤالك هنا");
 
@@ -467,10 +464,6 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 alertDialogBuilderUserInput.dismiss();
             }
         });
-
-
-
-
 
         ArrayAdapter<String> subjectsAdapter=new ArrayAdapter<String>(MainActivity.this,R.layout.testactiv,R.array.preparatory_subjects_array_with_general_subjects_item){
 

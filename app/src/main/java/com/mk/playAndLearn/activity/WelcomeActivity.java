@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.Locale;
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -39,6 +41,7 @@ public class WelcomeActivity extends AppCompatActivity {
         };
 
         timer.start();
+
     }
 
     @Override

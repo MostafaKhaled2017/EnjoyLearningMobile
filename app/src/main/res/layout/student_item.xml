@@ -62,7 +62,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_toEndOf="@+id/userNameInBest"
-                android:src="@drawable/startcircle"
+                card_view:srcCompat="@drawable/startcircle"
                 android:layout_marginStart="@dimen/_5sdp"
                 />
 

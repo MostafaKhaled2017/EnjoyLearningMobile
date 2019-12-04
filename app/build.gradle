@@ -6,9 +6,9 @@ android {
         applicationId "com.mk.playAndLearn"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 40552
+        versionCode 40652
         multiDexEnabled true
-        versionName "4.5.52"
+        versionName "4.6.52"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:11.6.2'
     implementation 'com.google.android.gms:play-services-analytics:11.6.2'
     implementation 'com.google.firebase:firebase-ads:11.6.2'
+   // implementation 'com.google.android.gms:play-services-ads:11.6.2'
     implementation 'com.google.firebase:firebase-core:11.6.2'
     implementation 'com.intuit.sdp:sdp-android:1.0.4'
     implementation 'com.makeramen:roundedimageview:2.3.0'
