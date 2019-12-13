@@ -8,6 +8,16 @@
     android:background="@color/white"
    >
 
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bannerAd"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_gravity="center_horizontal"
+        ads:layout_constraintTop_toTopOf="parent"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id">
+    </com.google.android.gms.ads.AdView>
 
     <androidx.appcompat.widget.Toolbar
 
@@ -25,7 +35,7 @@
         android:scrollbars="vertical"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/bannerAd">
 
 
         <RelativeLayout
@@ -86,16 +96,11 @@
         android:id="@+id/fragment_container"
 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_70sdp"
-
-
-        android:paddingBottom="@dimen/_45sdp"
+        android:layout_height="0dp"
 
 
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintStart_toEndOf="parent"
-
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarrar" />

@@ -13,6 +13,8 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -245,6 +247,12 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 }
             }
         });
+
+        AdView mAdView = findViewById(R.id.bannerAd);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("B65A7976E9008CADC60414029149C78E")
+                .build();
+        mAdView.loadAd(adRequest);
 
     }
 

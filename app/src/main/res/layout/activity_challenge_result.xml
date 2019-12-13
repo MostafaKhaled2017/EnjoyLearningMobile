@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:fontFamily="@font/cairo_semibold"
         android:gravity="center"
         android:text="نتيجة التحدى"
@@ -173,6 +173,7 @@
             android:visibility="gone"/>
 
         <LinearLayout
+            android:id="@+id/secondUserView"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/picturetwo"
             android:layout_width="wrap_content"
@@ -180,7 +181,8 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/secondPlayerImage"
                 android:layout_width="@dimen/_70sdp"
                 android:layout_height="@dimen/_80sdp"
@@ -208,6 +210,17 @@
 
         </LinearLayout>
 
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adds"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
+            android:layout_gravity="center_horizontal"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id"
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 

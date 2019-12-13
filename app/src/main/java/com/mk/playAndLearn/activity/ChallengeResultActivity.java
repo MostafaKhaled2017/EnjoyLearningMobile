@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.presenter.ChallengeResultActivityPresenter;
@@ -30,6 +32,7 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
     //TODO : think about removing challenge result activity but think well before determine what to do in this
     //TODO : handle loosing internet connection before uploading data for example show a dialog when try to go out.
 
+    private AdView mAdView;
     String subject, challengeId, currentUserName;
     String secondPlayerName, secondPlayerEmail, secondPlayerImage, secondPlayerUid;
     int secondPlayerPoints;
@@ -120,6 +123,12 @@ public class ChallengeResultActivity extends AppCompatActivity implements Challe
 
             presenter.uploadGeneralChallengeData(score, questionsList.size());
         }
+
+        mAdView = findViewById(R.id.adds);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("B65A7976E9008CADC60414029149C78E")
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     void getDataFromIntent(Intent intent) {

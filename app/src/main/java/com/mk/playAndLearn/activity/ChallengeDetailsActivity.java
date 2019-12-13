@@ -36,7 +36,6 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private AdView mAdView;
     int selectedItemtirm = -1;
     int selectedItemunite = -1;
     int selectedItemglesson = -1;
@@ -129,25 +128,6 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-
-        mAdView = findViewById(R.id.adds);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("B65A7976E9008CADC60414029149C78E")
-                .build();
-        mAdView.loadAd(adRequest);
-
-        mAdView.setAdListener(new AdListener(){
-            @Override
-            public void onAdLoaded() {
-                Log.v("adsLog", "addLoaded");
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                Log.v("adsLog", "error code is : " + errorCode);
-            }
-        });
-
     }
 
 

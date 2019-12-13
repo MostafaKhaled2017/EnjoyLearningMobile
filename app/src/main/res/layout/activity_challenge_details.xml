@@ -284,19 +284,6 @@
             android:src="@drawable/adss"
             android:scaleType="fitXY" /> -->
 
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/adds"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
-            android:layout_gravity="center_horizontal"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id">
-        </com.google.android.gms.ads.AdView>
     </LinearLayout>
 
 </LinearLayout>
