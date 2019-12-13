@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +49,7 @@ public class QuestionActivity extends AppCompatActivity {
     String selection, correctAnswer;
     RadioButton r1, r2, r3, r4;
     CheckBox c1, c2, c3, c4;
+    TextView r1Txt, r2Txt, r3Txt, r4Txt, c1Txt, c2Txt, c3Txt, c4Txt;
     Intent i;
     int questionNo, score, currentChallenger;
     boolean isGeneralChallenge = true;
@@ -55,6 +61,9 @@ public class QuestionActivity extends AppCompatActivity {
     ProgressBar timerProgressBar;
     FirebaseUser currentUser;
 
+    RadioButton radioButtonone, radiontwo, radiothree, radiofour;
+    RelativeLayout r1View, r2View, r3View, r4View, c1View, c2View, c3View, c4View;
+
     //TODO : change the xml tags to support
     //TODO : handle what happens when internet connection problem occurs in a challenge
     @Override
@@ -65,6 +74,10 @@ public class QuestionActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        radioButtonone = findViewById(R.id.radio1);
+        radiontwo = findViewById(R.id.radio2);
+        radiothree = findViewById(R.id.radio3);
+        radiofour = findViewById(R.id.radio4);
        /* final Drawable upArrow = getResources().getDrawable(R.drawable.backf);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
@@ -84,10 +97,27 @@ public class QuestionActivity extends AppCompatActivity {
         c2 = findViewById(R.id.checkBox2);
         c3 = findViewById(R.id.checkBox3);
         c4 = findViewById(R.id.checkBox4);
+        r1Txt = findViewById(R.id.radio1Text);
+        r2Txt = findViewById(R.id.radio2Text);
+        r3Txt = findViewById(R.id.radio3Text);
+        r4Txt = findViewById(R.id.radio4Text);
+        c1Txt = findViewById(R.id.checkBox1Text);
+        c2Txt = findViewById(R.id.checkBox2Text);
+        c3Txt = findViewById(R.id.checkBox3Text);
+        c4Txt = findViewById(R.id.checkBox4Text);
+        r1View = findViewById(R.id.r1View);
+        r2View = findViewById(R.id.r2View);
+        r3View = findViewById(R.id.r3View);
+        r4View = findViewById(R.id.r4View);
+        c1View = findViewById(R.id.c1View);
+        c2View = findViewById(R.id.c2View);
+        c3View = findViewById(R.id.c3View);
+        c4View = findViewById(R.id.c4View);
         checkBoxGroup = findViewById(R.id.checkBoxGroup);
         timerProgressBar = findViewById(R.id.timerProgressbar);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -120,6 +150,89 @@ public class QuestionActivity extends AppCompatActivity {
         hideRadioGroup();
         hideCheckBoxesGroup();
 
+        r1View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                r1.setChecked(true);
+                r2.setChecked(false);
+                r3.setChecked(false);
+                r4.setChecked(false);
+            }
+        });
+
+        r2View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                r1.setChecked(false);
+                r2.setChecked(true);
+                r3.setChecked(false);
+                r4.setChecked(false);            }
+        });
+
+        r3View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                r1.setChecked(false);
+                r2.setChecked(false);
+                r3.setChecked(true);
+                r4.setChecked(false);
+            }
+        });
+
+        r4View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                r1.setChecked(false);
+                r2.setChecked(false);
+                r3.setChecked(false);
+                r4.setChecked(true);
+            }
+        });
+
+        c1View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(c1.isChecked()){
+                    c1.setChecked(false);
+                } else {
+                    c1.setChecked(true);
+                }
+            }
+        });
+
+        c2View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(c2.isChecked()){
+                    c2.setChecked(false);
+                } else {
+                    c2.setChecked(true);
+                }
+            }
+        });
+
+        c3View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(c3.isChecked()){
+                    c3.setChecked(false);
+                } else {
+                    c3.setChecked(true);
+                }
+            }
+        });
+
+        c4View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(c4.isChecked()){
+                    c4.setChecked(false);
+                } else {
+                    c4.setChecked(true);
+                }
+            }
+        });
+
         Question question = (Question) list.get(questionNo);
         correctAnswer = question.getCorrectAnswer();
 
@@ -133,7 +246,7 @@ public class QuestionActivity extends AppCompatActivity {
         answers.add(question.getAnswer2());
 
         //To shuffle Answers but we have disabled this feature
-       // Collections.shuffle(answers);
+        // Collections.shuffle(answers);
 
         if (question.getAnswer3().length() > 0)
             answers.add(question.getAnswer3());
@@ -144,11 +257,11 @@ public class QuestionActivity extends AppCompatActivity {
         if (correctAnswers.length == 1) {
             showRadioGroup();
             hideCheckBoxesGroup();
-            setAnswersData(r1, r2, r3, r4, answers);
+            setAnswersData(r1Txt, r2Txt, r3Txt, r4Txt, answers);
         } else if (correctAnswers.length > 1) {
             showCheckBoxesGroup();
             hideRadioGroup();
-            setAnswersData(c1, c2, c3, c4, answers);
+            setAnswersData(c1Txt, c2Txt, c3Txt, c4Txt, answers);
         }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +318,28 @@ public class QuestionActivity extends AppCompatActivity {
         checkBoxGroup.setVisibility(View.VISIBLE);
     }
 
-    void setAnswersData(RadioButton v1, RadioButton v2, RadioButton v3, RadioButton v4, ArrayList<String> answers) {
+    void setAnswersData(TextView v1, TextView v2, TextView v3, TextView v4, ArrayList<String> answers) {
+        Log.v("answersLogging", "size is : " + answers.size());
+
+        v1.setText(answers.get(0).trim());
+        v2.setText(answers.get(1).trim());
+        if (answers.size() > 2) {
+            v3.setText(answers.get(2).trim());
+        } else {
+            v3.setVisibility(View.GONE);
+            r3.setVisibility(View.GONE);
+            c3.setVisibility(View.GONE);
+        }
+        if (answers.size() > 3) {
+            v4.setText(answers.get(3).trim());
+        } else {
+            v4.setVisibility(View.GONE);
+            r4.setVisibility(View.GONE);
+            c4.setVisibility(View.GONE);
+        }
+    }
+
+   /* void setAnswersData(TextView v1, TextView v2, TextView v3, TextView v4, ArrayList<String> answers) {
         Log.v("answersLogging","size is : " + answers.size());
 
         v1.setText(answers.get(0).trim());
@@ -220,105 +354,25 @@ public class QuestionActivity extends AppCompatActivity {
         } else {
             v4.setVisibility(View.GONE);
         }
-    }
-
-    void setAnswersData(CheckBox v1, CheckBox v2, CheckBox v3, CheckBox v4, ArrayList<String> answers) {
-        Log.v("answersLogging","size is : " + answers.size());
-
-        v1.setText(answers.get(0).trim());
-        v2.setText(answers.get(1).trim());
-        if (answers.size() > 2) {
-            v3.setText(answers.get(2).trim());
-        } else {
-            v3.setVisibility(View.GONE);
-        }
-        if (answers.size() > 3) {
-            v4.setText(answers.get(3).trim());
-        } else {
-            v4.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        showDialog();
-        return true;
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
-        showDialog();
-    }
 
-    public void showDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        if (isGeneralChallenge) {
-           /* usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
-                    int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
-                    int finalChallengePoints = score * generalChallengeScoreMultiply;
-                    if (lastGeneralChallengePoints == 0) {
-                        usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
-                        usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
-                        usersReference.child(currentUser.getUid()).child("pointsAndGrade").setValue(userPoints + finalChallengePoints + getSavedGrade(QuestionActivity.this));
-                    } else {
-                        Toast.makeText(QuestionActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });*/
-        }
-        if (currentChallenger == 2) {
-            dialog.setMessage("هل أنت متأكد أنك تريد الخروج و عدم إكمال التحدى؟");
-            dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
-                    fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if (!isGeneralChallenge) {
-                                fireStoreChallenges.document(challengeId).update("player2score", score);
-                                fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList);
-                                fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
-                                fireStoreChallenges.document(challengeId).update("state", "اكتمل");//TODO : think about changing this
-                            }
-                        }
-                    });
-                    finish();
-
-
-                }
-            });
-        } else {
-            dialog.setMessage("هل أنت متأكد أنك تريد الخروج و إلغاء هذا التحدى");
-            dialog.setNegativeButton("موافق", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    finish();
-                }
-            });
-        }
-        dialog.create();
-        dialog.show();
     }
 
     public void navigate() {
-        if (rg1.getCheckedRadioButtonId() != -1) {
-            int id = rg1.getCheckedRadioButtonId();
-            View radioButton = rg1.findViewById(id);
-            int radioId = rg1.indexOfChild(radioButton);
-            RadioButton btn = (RadioButton) rg1.getChildAt(radioId);
-            selection = (String) btn.getText();
+        if (r1.isChecked()) {
+            selection = r1Txt.getText().toString();
+        } else if (r2.isChecked()) {
+            selection = r2Txt.getText().toString();
+        } else if (r3.isChecked()) {
+            selection = r3Txt.getText().toString();
+        } else if (r4.isChecked()) {
+            selection = r4Txt.getText().toString();
         }
 
         String[] userAnswers = getUserAnswers(correctAnswers.length).split(",");
-
 
         if (correctAnswers.length == 1) {
             if (selection != null && selection.trim().equals(correctAnswer.trim())) {
@@ -326,6 +380,7 @@ public class QuestionActivity extends AppCompatActivity {
             } else {
                 i.putExtra("answer", false);
             }
+            Log.v("newQuestionLog", "selected : " + selection + " , correct : " + correctAnswer);
         } else if (correctAnswers.length > 1) {
 
             Arrays.sort(userAnswers);
@@ -336,7 +391,10 @@ public class QuestionActivity extends AppCompatActivity {
             } else {
                 i.putExtra("answer", false);
             }
+            Log.v("newQuestionLog", "selected : " + userAnswers + " , correct : " + correctAnswer);
+
         }
+
 
         if (questionNo < list.size()) {//TODO : check this condition
             playerAnswersList += getUserAnswers(correctAnswers.length).trim() + "/";
@@ -378,33 +436,34 @@ public class QuestionActivity extends AppCompatActivity {
 
     private String getUserAnswers(int length) {
         String answers = "";
-        if(length == 1){
+        if (length == 1) {
             if (r1.isChecked()) {
-                answers += addAnswer((String) r1.getText(), answers.length());
+                answers += addAnswer((String) r1Txt.getText(), answers.length());
             }
             if (r2.isChecked()) {
-                answers += addAnswer((String) r2.getText(), answers.length());
+                answers += addAnswer((String) r2Txt.getText(), answers.length());
             }
             if (r3.isChecked()) {
-                answers += addAnswer((String) r3.getText(), answers.length());
+                answers += addAnswer((String) r3Txt.getText(), answers.length());
             }
             if (r4.isChecked()) {
-                answers += addAnswer((String) r4.getText(), answers.length());
+                answers += addAnswer((String) r4Txt.getText(), answers.length());
             }
-        } else if(length > 1) {
+        } else if (length > 1) {
             if (c1.isChecked()) {
-                answers += addAnswer((String) c1.getText(), answers.length());
+                answers += addAnswer((String) c1Txt.getText(), answers.length());
             }
             if (c2.isChecked()) {
-                answers += addAnswer((String) c2.getText(), answers.length());
+                answers += addAnswer((String) c2Txt.getText(), answers.length());
             }
             if (c3.isChecked()) {
-                answers += addAnswer((String) c3.getText(), answers.length());
+                answers += addAnswer((String) c3Txt.getText(), answers.length());
             }
             if (c4.isChecked()) {
-                answers += addAnswer((String) c4.getText(), answers.length());
+                answers += addAnswer((String) c4Txt.getText(), answers.length());
             }
         }
+
         return answers;
     }
 
@@ -420,19 +479,72 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timer.cancel();
+        //timer.cancel();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (!isGeneralChallenge) {
-            timer.cancel();
+          //  timer.cancel();
         }
     }
 
     public void finishch(View view) {
-
         finish();
+    }
+
+
+    public void radioone(View view) {
+
+
+        switch (view.getId()) {
+
+
+            case R.id.radio1:
+                radioButtonone.setChecked(true);
+
+                radiontwo.setChecked(false);
+                radiothree.setChecked(false);
+
+                radiofour.setChecked(false);
+
+                break;
+
+
+            case R.id.radio2:
+                radioButtonone.setChecked(false);
+
+                radiontwo.setChecked(true);
+                radiothree.setChecked(false);
+
+                radiofour.setChecked(false);
+
+                break;
+
+            case R.id.radio3:
+                radioButtonone.setChecked(false);
+
+                radiontwo.setChecked(false);
+                radiothree.setChecked(true);
+
+                radiofour.setChecked(false);
+
+                break;
+
+            case R.id.radio4:
+                radioButtonone.setChecked(false);
+
+                radiontwo.setChecked(false);
+                radiothree.setChecked(false);
+
+                radiofour.setChecked(true);
+
+                break;
+
+
+        }
+
+
     }
 }

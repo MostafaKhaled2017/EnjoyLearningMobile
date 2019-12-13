@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_drawer);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbarrar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
@@ -399,8 +399,8 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
                 return true;
             case R.id.newPost:
-              //  showSpinnerDialog();
-                Toast.makeText(MainActivity.this, "لا يمكنك إضافة منشورات الان", Toast.LENGTH_SHORT).show();
+                showSpinnerDialog();
+               // Toast.makeText(MainActivity.this, "لا يمكنك إضافة منشورات الان", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.appManagement:
                 startActivity(new Intent(this, AdminAppManagementActivity.class));
@@ -443,32 +443,25 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     }
 
     public void showSpinnerDialog() {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);
-        final View view = layoutInflaterAndroid.inflate(R.layout.dialog_with_subject_spinner, null);
 
-        final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this)
-                .setView(view)
-                .setCancelable(false)
-                .create();
+        Spinner spinnerpost;
+        final AlertDialog alertDialog;
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(MainActivity.this);
+        final View view = getLayoutInflater().inflate(R.layout.dialog_with_subject_spinner, null);
+        final  AlertDialog.Builder  alertBuilder  = new AlertDialog.Builder(MainActivity.this);
 
         final EditText inputComment = view.findViewById(R.id.dialog_value);
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        Spinner spinner = view.findViewById(R.id.dialogSubjectsSpinner);
+        spinnerpost = view.findViewById(R.id.dialogSubjectsSpinner);
         dialogTitle.setText("إضافة منشور");
+        String[] items = { "اختر المادة",  "موضوعات عامة",
+                "لغة عربية", "لغة انجليزية", "دراسات اجتماعية", "علوم", "Science" };
+
         inputComment.setHint("اكتب سؤالك هنا");
-
-        ImageView closeIcon = view.findViewById(R.id.closeIcon);
-        closeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialogBuilderUserInput.dismiss();
-            }
-        });
-
-        ArrayAdapter<String> subjectsAdapter=new ArrayAdapter<String>(MainActivity.this,R.layout.testactiv,R.array.preparatory_subjects_array_with_general_subjects_item){
+        ArrayAdapter<String> subjectsAdapter=new ArrayAdapter<String>(MainActivity.this,R.layout.testactiv,items){
 
 
-            @Override
+           @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
 
                 View v = null;
@@ -491,9 +484,19 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 return v;
             }
         };
-        spinner.setAdapter(subjectsAdapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+      /*  final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this)
+                .setView(view)
+                .setCancelable(false)
+                .create();
+*/
+
+        spinnerpost.setAdapter(subjectsAdapter);
+        alertBuilder.setView(view);
+
+
+        spinnerpost.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -507,7 +510,18 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }
         });
 
-        alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
+         alertDialog =  alertBuilder.create();
+
+
+        final ImageView closeIcon = view.findViewById(R.id.closeIcon);
+        closeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
             public void onShow(final DialogInterface dialogInterface) {
@@ -535,7 +549,10 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
             }
         });
 
-        alertDialogBuilderUserInput.show();
+        alertDialog.show();
+
+
+     //   alertDialogBuilderUserInput.show();
 
     }
 
@@ -728,7 +745,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                         + " , latestVersion is : " + latestVersion
                         + " , currentUserEmail : " + currentUserEmail
                         + " , adminEmail : " + adminEmail);
-                if (!currentVersion.equalsIgnoreCase(latestVersion) && !currentUserEmail.equals(adminEmail)) {
+                if (!currentVersion.equalsIgnoreCase(latestVersion) && !currentUserEmail.equals(adminEmail) && !currentUserEmail.equals("")) {
                     if (!isFinishing()) {//This would help to prevent Error : BinderProxy@45d459c0 is not valid; is your activity running? error
                         showUpdateDialog();
                     }

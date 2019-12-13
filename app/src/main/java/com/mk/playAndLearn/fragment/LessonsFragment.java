@@ -133,6 +133,8 @@ int  array;
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                selectedItem = i;
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 FirebaseAuth localAuth = FirebaseAuth.getInstance();
                 localAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {

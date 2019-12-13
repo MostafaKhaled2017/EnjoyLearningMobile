@@ -57,7 +57,6 @@
         <item
             android:id="@+id/bestStudentsInCompetition"
             android:icon="@drawable/hapman"
-
             android:title="أوائل المسابقة الأسبوعية"
             app:showAsAction="never" />
 
@@ -74,9 +73,9 @@
             android:icon="@drawable/chatting"
             app:showAsAction="never" />
         <!-- <item
-             android:id="@+id/editAccoutData"
-             android:title="تعديل بيانات الحساب"
-             app:showAsAction="never" />-->
+        android:id="@+id/editAccoutData"
+        android:title="تعديل بيانات الحساب"
+        app:showAsAction="never" />-->
         <item
             android:id="@+id/studyTips"
             android:icon="@drawable/advice"

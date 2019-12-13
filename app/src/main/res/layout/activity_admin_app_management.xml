@@ -27,6 +27,8 @@
             android:clickable="false"
             android:text="الاسئلة المقترحة" />
 
+
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/suggestedLessonsButton"
             style="@style/buttonStyle"
@@ -136,6 +138,16 @@
             android:clickable="false"
             android:enabled="false"
             android:text="عدد المستخدمين"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/weeklyCompetition"
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/countUsersButton"
+            android:onClick="restartWeeklyCompetition"
+            android:padding="10dp"
+            android:text="تصفير المسابقة الأسبوعية" />
 
     </RelativeLayout>
 </ScrollView>

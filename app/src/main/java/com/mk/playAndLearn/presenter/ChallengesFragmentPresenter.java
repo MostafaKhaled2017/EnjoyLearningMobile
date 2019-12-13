@@ -44,7 +44,7 @@ public class ChallengesFragmentPresenter {
     View view;
     ArrayList<Challenge> completedChallengesList = new ArrayList<>(), uncompletedChallengesList = new ArrayList<>();
     int player1childrenCount = 0, player2childrenCount = 0, currentPlayer;
-    boolean initialDataLoaded = false;
+    boolean initialDataLoaded = false, toastAppears = false;
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
     String localCurrentUserUid;
     Context context;
@@ -116,6 +116,11 @@ public class ChallengesFragmentPresenter {
                             arrangeLists();
                             onInitialDataLoaded();
                             initialDataLoaded = true;
+
+                            if(!toastAppears && completedChallengesList.size() == 0 && uncompletedChallengesList.size() == 0){
+                                toastAppears = true;
+                                view.showHelpingToast();
+                            }
 
                             //TODO : add this
 
@@ -431,6 +436,8 @@ public class ChallengesFragmentPresenter {
         void hideNoChallengesTv();
 
         void showNoChallengesTv();
+
+        void showHelpingToast();
 
         void onNoInternetConnection();
 

@@ -243,6 +243,10 @@ public class ChallengesFragment extends Fragment implements ChallengesFragmentPr
     @Override
     public void showNoChallengesTv() {
         noChallengesTv.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showHelpingToast() {
         Toast.makeText(getActivity(), "قم بالضغط علي أيكونة (+) الموجودة فى منتصف القائمة أسفل الشاشة لتبدأ تحدى جديد", Toast.LENGTH_LONG).show();
     }
 

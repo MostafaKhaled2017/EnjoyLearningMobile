@@ -120,7 +120,7 @@ public class AddQuestionActivity extends AppCompatActivity  {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(unitOrderSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(300);
+            popupWindow.setHeight(800);
 
             Log.v("spinnerHeight", "try");
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
@@ -151,7 +151,7 @@ public class AddQuestionActivity extends AppCompatActivity  {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(lessonOrderSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(300);
+            popupWindow.setHeight(800);
 
             Log.v("spinnerHeight", "try");
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
@@ -278,13 +278,18 @@ public class AddQuestionActivity extends AppCompatActivity  {
         subjectsSpinner.setAdapter(subjectsAdapter);*/
 
         subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                lessonOrderSpinner.setAlpha(1f);
+                unitOrderSpinner.setAlpha(1f);
 
 
                 selectedItemlecture  = i;
                currentSubject = adapterView.getItemAtPosition(i).toString();
                 if (!oldQuestion) {
+
                     setLessonOrderSpinner(R.array.lessons_array);
                     switch (currentSubject) {
                         case "لغة انجليزية":
@@ -292,6 +297,7 @@ public class AddQuestionActivity extends AppCompatActivity  {
                             unitOrderSpinner.setClickable(true);
                             lessonOrderSpinner.setEnabled(false);
                             lessonOrderSpinner.setClickable(false);
+                            lessonOrderSpinner.setAlpha(0.5f);
                             setLessonOrderSpinner(R.array.lessons_array);
                             break;
                         case "لغة عربية: نحو":
@@ -299,6 +305,7 @@ public class AddQuestionActivity extends AppCompatActivity  {
                             lessonOrderSpinner.setClickable(true);
                             unitOrderSpinner.setEnabled(false);
                             unitOrderSpinner.setClickable(false);
+                            unitOrderSpinner.setAlpha(0.5f);
                             setUnitOrderSpinner(R.array.units_array);
                             setLessonOrderSpinner(R.array.lessons_array);
                             break;

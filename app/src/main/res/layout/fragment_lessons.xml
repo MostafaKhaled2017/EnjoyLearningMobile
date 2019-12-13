@@ -79,12 +79,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lessonsRecyclerView"
+
+        android:paddingBottom="@dimen/_5sdp"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:columnCount="2"
         android:layout_marginStart="@dimen/_6sdp"
         android:layout_marginEnd="@dimen/_6sdp"
         android:scrollbars="none"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

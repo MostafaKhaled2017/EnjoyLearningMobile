@@ -67,7 +67,10 @@
         app:layout_constraintTop_toBottomOf="@+id/dialog_title"
         app:layout_constraintVertical_bias="0.08" />
 
-    <androidx.appcompat.widget.AppCompatSpinner
+
+
+
+    <Spinner
         android:id="@+id/dialogSubjectsSpinner"
         android:layout_width="0dp"
         android:layout_marginTop="@dimen/_5sdp"
@@ -111,7 +114,7 @@
         android:background="@drawable/linearborder"
         android:ems="10"
         android:padding="@dimen/_4sdp"
-        android:inputType="textPersonName"
+        android:inputType="textMultiLine"
         android:gravity="top|start"
         android:text=""
         app:layout_constraintBottom_toBottomOf="parent"

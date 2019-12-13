@@ -63,7 +63,7 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="@font/cairo_semibold"
         android:gravity="center"
-        android:text="مبروك لقد  ربحت التحدي"
+        android:text="نتيجة التحدى"
         android:textColor="@color/black"
         android:textSize="@dimen/_14sdp" />
 

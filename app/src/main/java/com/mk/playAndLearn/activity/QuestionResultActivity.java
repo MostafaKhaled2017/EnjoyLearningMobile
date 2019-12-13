@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,8 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.DateClass;
@@ -31,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedImage;
@@ -38,7 +41,7 @@ import static com.mk.playAndLearn.utils.sharedPreference.getSavedName;
 
 public class QuestionResultActivity extends AppCompatActivity {
     TextView resultText;
-    boolean correct;
+    boolean correct, exitDialogOpened = false;
     ArrayList list = new ArrayList();
     String playerAnswersBooleansList = "", playerAnswersList = "", correctAnswersList = "";
     int questionNo, score;
@@ -141,7 +144,7 @@ public class QuestionResultActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
-                        if(!reported) {
+                        if(!reported && !exitDialogOpened) {
                             navigate();
                         }
                     }
@@ -187,6 +190,94 @@ public class QuestionResultActivity extends AppCompatActivity {
             };
             timer.start();
         }
+
+        ImageView backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showExitDialog();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        showExitDialog();
+    }
+
+    public void showExitDialog() {
+        exitDialogOpened = true;
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        if (isGeneralChallenge) {
+           /* usersReference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int lastGeneralChallengePoints = Integer.parseInt(dataSnapshot.child("lastGeneralChallengeScore").getValue().toString());
+                    int userPoints = Integer.parseInt(dataSnapshot.child("points").getValue().toString());
+                    int finalChallengePoints = score * generalChallengeScoreMultiply;
+                    if (lastGeneralChallengePoints == 0) {
+                        usersReference.child(currentUser.getUid()).child("lastGeneralChallengeScore").setValue(finalChallengePoints);
+                        usersReference.child(currentUser.getUid()).child("points").setValue(userPoints + finalChallengePoints);
+                        usersReference.child(currentUser.getUid()).child("pointsAndGrade").setValue(userPoints + finalChallengePoints + getSavedGrade(QuestionActivity.this));
+                    } else {
+                        Toast.makeText(QuestionActivity.this, "لقد قمت بالمشاركة فى هذا التحدى من قبل ولن يتم احتساب نقاطك الحالية", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });*/
+        }
+        if (currentChallenger == 2) {
+            dialog.setMessage("هل أنت متأكد أنك تريد الخروج و عدم إكمال التحدى؟");
+            dialog.setNegativeButton("إلغاء التحدى", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
+                    fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (!isGeneralChallenge) {
+                                fireStoreChallenges.document(challengeId).update("player2score", score);
+                                fireStoreChallenges.document(challengeId).update("player2AnswersBooleans", playerAnswersBooleansList);
+                                fireStoreChallenges.document(challengeId).update("player2Answers", playerAnswersList);
+                                fireStoreChallenges.document(challengeId).update("state", "اكتمل");//TODO : think about changing this
+                            }
+                        }
+                    });
+                    finish();
+
+
+                }
+            });
+
+            dialog.setPositiveButton("تكملة التحدى", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    navigate();
+                }
+            });
+
+        } else {
+            dialog.setMessage("هل أنت متأكد أنك تريد الخروج و إلغاء هذا التحدى؟");
+            dialog.setNegativeButton("إلغاء التحدى", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+            dialog.setPositiveButton("تكملة التحدى", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    navigate();
+                }
+            });
+        }
+        dialog.setCancelable(false);
+        dialog.create();
+        dialog.show();
     }
 
     void navigate(){
@@ -225,6 +316,7 @@ public class QuestionResultActivity extends AppCompatActivity {
 
         final AlertDialog alertDialogBuilderUserInput = new AlertDialog.Builder(this)
                 .setView(view)
+                .setCancelable(false)
                 .create();
 
         alertDialogBuilderUserInput.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -277,12 +369,5 @@ public class QuestionResultActivity extends AppCompatActivity {
         });
 
         alertDialogBuilderUserInput.show();
-    }
-
-
-
-    public void finishch(View view) {
-
-        finish();
     }
 }

@@ -106,7 +106,7 @@ public class AddLessonActivity extends AppCompatActivity {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(unitOrderSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
+            popupWindow.setHeight(800);
 
             Log.v("spinnerHeight", "try");
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
@@ -123,7 +123,7 @@ public class AddLessonActivity extends AppCompatActivity {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(lessonOrderSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
+            popupWindow.setHeight(800);
 
             Log.v("spinnerHeight", "try");
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
@@ -268,6 +268,8 @@ public class AddLessonActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedItemlecture  = i;
 
+                unitOrderSpinner.setAlpha(1f);
+                lessonOrderSpinner.setAlpha(1f);
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 if (!oldLesson) {
                     setLessonOrderSpinner(R.array.lessons_array);
@@ -277,6 +279,7 @@ public class AddLessonActivity extends AppCompatActivity {
                             unitOrderSpinner.setClickable(true);
                             lessonOrderSpinner.setEnabled(false);
                             lessonOrderSpinner.setClickable(false);
+                            lessonOrderSpinner.setAlpha(0.5f);
                             setLessonOrderSpinner(R.array.lessons_array);
                             break;
                         case "لغة عربية: نحو":
@@ -284,6 +287,7 @@ public class AddLessonActivity extends AppCompatActivity {
                             lessonOrderSpinner.setClickable(true);
                             unitOrderSpinner.setEnabled(false);
                             unitOrderSpinner.setClickable(false);
+                            unitOrderSpinner.setAlpha(0.5f);
                             setUnitOrderSpinner( R.array.units_array);
                             setLessonOrderSpinner(R.array.lessons_array);
                             break;

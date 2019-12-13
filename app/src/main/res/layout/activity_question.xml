@@ -3,7 +3,7 @@
 
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,6 +16,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
         android:background="@color/colorPrimary">
@@ -41,19 +42,25 @@
 
 
         </RelativeLayout>
-
-
-
-
-
-
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
+    <ProgressBar
+        android:id="@+id/timerProgressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_below="@id/toolbar"
+        android:layout_marginLeft="-1dp"
+        android:layout_marginTop="-2dp"
+        android:layout_marginRight="-1dp"
+        android:max="100"
+        android:progress="100"
+        android:rotation="180" />
 
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
+        android:paddingBottom="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:layout_below="@+id/timerProgressbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -61,34 +68,37 @@
         android:orientation="vertical">
 
 
-    <LinearLayout
+
+
+
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_500sdp"
+        android:layout_height="wrap_content"
         android:background="@color/white">
 
 
-        <ProgressBar
-            android:id="@+id/timerProgressbar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_below="@id/toolbar"
-            android:layout_marginLeft="-1dp"
-            android:layout_marginTop="-2dp"
-            android:layout_marginRight="-1dp"
-            android:max="100"
-            android:progress="100"
-            android:rotation="180" />
+
 
 
         <RelativeLayout
+
+
+
+
+
+
+
+
+
+
+
             android:id="@+id/linearthree"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
             android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:paddingStart="@dimen/_10sdp"
             android:gravity="center">
@@ -116,84 +126,180 @@
             android:paddingBottom="@dimen/_5sdp"
             android:background="@drawable/linearborder"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
-
-            <CheckBox
-                android:id="@+id/checkBox1"
+            <RelativeLayout
+                android:id="@+id/c1View"
+                android:paddingTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_25sdp"
-                android:layout_marginEnd="@dimen/_18sdp"
-                android:button="@null"
-                android:drawableEnd="@drawable/indicatiorcheck"
-                android:fontFamily="@font/cairo_semibold"
-                android:text="@string/h2o"
-                android:textAlignment="textStart"
-                android:drawablePadding="@dimen/_10sdp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp"
+                android:layout_height="@dimen/_40sdp">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBox1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
 
 
-                />
+                    />
+
+                <TextView
+                    android:id="@+id/checkBox1Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="H2O"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
 
 
-            <CheckBox
-                android:id="@+id/checkBox2"
+            <RelativeLayout
+                android:paddingTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:id="@+id/c2View"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_25sdp"
-                android:layout_marginEnd="@dimen/_18sdp"
-                android:button="@null"
-                android:drawableEnd="@drawable/indicatiorcheck"
-                android:fontFamily="@font/cairo_semibold"
-                android:text="@string/water"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBox2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
 
 
-            <CheckBox
-                android:id="@+id/checkBox3"
+                    />
+
+                <TextView
+                    android:id="@+id/checkBox2Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="@string/water"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_20sdp"
+
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+
+            <RelativeLayout
+                android:paddingTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+
+                android:id="@+id/c3View"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_25sdp"
-                android:layout_marginEnd="@dimen/_18sdp"
-                android:layout_weight="1"
-                android:button="@null"
-                android:checked="false"
-                android:drawableEnd="@drawable/indicatiorcheck"
-                android:fontFamily="@font/cairo_semibold"
-                android:text="كلوريد الصوديوم"
-                android:textAlignment="textStart"
-                android:drawablePadding="@dimen/_10sdp"
+                android:layout_height="wrap_content">
 
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBox3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
 
 
-            <CheckBox
-                android:id="@+id/checkBox4"
+                    />
+
+                <TextView
+                    android:id="@+id/checkBox3Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="كلوريد الصوديوم"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_20sdp"
+
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
+
+
+
+
+            <RelativeLayout
+                android:paddingTop="@dimen/_10sdp"
+                android:id="@+id/c4View"
+                android:layout_marginTop="@dimen/_5sdp"
+
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_25sdp"
-                android:layout_marginEnd="@dimen/_18sdp"
-                android:layout_weight="1"
-                android:button="@null"
-                android:drawableEnd="@drawable/indicatiorcheck"
-                android:fontFamily="@font/cairo_semibold"
-                android:text="ليس  مما  سبق"
-                android:textAlignment="textStart"
-                android:drawablePadding="@dimen/_10sdp"
+                android:layout_height="wrap_content">
 
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_20sdp"/>
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBox4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/checkBox4Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="ليس  مما  سبق"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_20sdp"
+
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
+
+
+
 
 
         </LinearLayout>
@@ -209,102 +315,219 @@
             android:layout_marginEnd="@dimen/_15sdp"
             android:background="@drawable/linearborder"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
 
-            <RadioButton
-                android:id="@+id/radio1"
+
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/r1View"
+                android:paddingTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_3sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_3sdp"
-                android:button="@null"
-                android:drawableEnd="@drawable/radioback"
-                android:fontFamily="@font/cairo_semibold"
-                android:padding="@dimen/_5sdp"
-                android:text="الهيدروجين"
-                android:drawablePadding="@dimen/_10sdp"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/radio1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:onClick="radioone"
 
 
-            <RadioButton
-                android:id="@+id/radio2"
+
+                    />
+
+                <TextView
+                    android:id="@+id/radio1Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="الهيدروجين"
+                    android:layout_toStartOf="@id/radio1"
+
+                    android:layout_centerVertical="true"
+                    android:paddingStart="@dimen/_20sdp"
+
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/r2View"
+                android:layout_marginTop="@dimen/_5sdp"
+
+                android:paddingTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_3sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:layout_marginEnd="@dimen/_3sdp"
-                android:button="@null"
-                android:drawablePadding="@dimen/_10sdp"
+                android:layout_height="wrap_content">
 
-                android:drawableEnd="@drawable/radioback"
-                android:fontFamily="@font/cairo_semibold"
-                android:padding="@dimen/_5sdp"
-                android:text="@string/water"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                <RadioButton
+                    android:id="@+id/radio2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+
+                    android:onClick="radioone"
 
 
-            <RadioButton
-                android:id="@+id/radio4"
+                    />
+
+                <TextView
+                    android:id="@+id/radio2Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="@string/water"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:layout_toStartOf="@id/radio2"
+
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+
+            <RelativeLayout
+                android:layout_marginTop="@dimen/_5sdp"
+
+                android:id="@+id/r3View"
+                android:paddingTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_3sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:layout_marginEnd="@dimen/_3sdp"
-                android:layout_weight="1"
-                android:button="@null"
-                android:drawablePadding="@dimen/_10sdp"
-                android:drawableEnd="@drawable/radioback"
-                android:fontFamily="@font/cairo_semibold"
-                android:padding="@dimen/_5sdp"
-                android:text="ليس  مما  سبق"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:layout_height="wrap_content">
 
-            <RadioButton
-                android:id="@+id/radio3"
+                <RadioButton
+                    android:id="@+id/radio3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:onClick="radioone"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/radio3Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="كلوريد الصوديوم"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:layout_toStartOf="@id/radio3"
+
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_marginTop="@dimen/_5sdp"
+
+                android:id="@+id/r4View"
+                android:paddingTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_3sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:layout_marginEnd="@dimen/_3sdp"
-                android:layout_weight="1"
-                android:button="@null"
-                android:drawablePadding="@dimen/_10sdp"
-                android:padding="@dimen/_5sdp"
-                android:drawableEnd="@drawable/radioback"
-                android:fontFamily="@font/cairo_semibold"
-                android:text="كلوريد الصوديوم"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/radio4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:onClick="radioone"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/radio4Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="ليس  مما  سبق"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:layout_toStartOf="@id/radio4"
+                    android:layout_alignParentStart="true"
+
+                    />
+            </RelativeLayout>
+
 
 
         </RadioGroup>
 
 
-        <Button
-            android:id="@+id/skipQuestionButton"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:layout_marginBottom="50dp"
-            android:layout_below="@+id/radioGroup"
-            android:background="@drawable/shape_dark"
-            android:fontFamily="@font/cairo_semibold"
-            android:text="التالي"
 
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp" />
-    </LinearLayout>
+    </RelativeLayout>
+
+
+
 
     </ScrollView>
-</LinearLayout>
+
+
+    <Button
+        android:id="@+id/skipQuestionButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:background="@drawable/shape_dark"
+        android:fontFamily="@font/cairo_semibold"
+        android:layout_alignParentBottom="true"
+        android:text="التالي"
+
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sdp" />
+</RelativeLayout>

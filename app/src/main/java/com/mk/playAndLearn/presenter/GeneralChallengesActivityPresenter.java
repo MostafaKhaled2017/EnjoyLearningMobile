@@ -4,25 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mk.playAndLearn.activity.GeneralChallengesActivity;
 import com.mk.playAndLearn.activity.QuestionActivity;
 import com.mk.playAndLearn.model.Question;
 import com.mk.playAndLearn.utils.AdManager;
@@ -31,9 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
-import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.generalChallengeDocument;
 import static com.mk.playAndLearn.utils.Strings.adminEmail;
 
@@ -161,7 +148,7 @@ public class GeneralChallengesActivityPresenter {
 
     public void prepareAd() {
         AdManager adManager = AdManager.getInstance();
-        adManager.createAd(context);
+        adManager.createInterstitialAd(context);
     }
 
 

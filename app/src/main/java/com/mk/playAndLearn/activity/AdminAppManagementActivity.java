@@ -4,12 +4,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,6 +34,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.model.Question;
 
@@ -42,11 +47,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComplaintsQuestions;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreGeneralChallenge;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreLessons;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreQuestions;
+import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
 import static com.mk.playAndLearn.utils.Strings.completedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.refusedChallengeText;
 
@@ -103,6 +110,60 @@ public class AdminAppManagementActivity extends AppCompatActivity {
             questionsList.clear();
 
         showSpinnerDialog();
+    }
+
+    public void restartWeeklyCompetition(View view) {
+        final AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setMessage("هل أنت متأكد أنك تريد تصفير المسابقة الاسبوعية؟")
+                .setNegativeButton("نعم", null)
+                .setPositiveButton("لا", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .create();
+
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                Button button = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fireStoreUsers.whereGreaterThan("competitionPoints", 0).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    WriteBatch batch = fireStore.batch();
+                                    for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                                        DocumentReference documentReference = fireStoreUsers.document(documentSnapshot.getId());
+                                        batch.update(documentReference, "competitionPoints", 0);
+                                    }
+                                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(AdminAppManagementActivity.this, "تم اعادة ضبط النقاط بنجاح", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    });
+                                }
+                                else {
+                                    Toast.makeText(AdminAppManagementActivity.this, "فشلت عملية اعادة الضبط", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AdminAppManagementActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+        });
+
+        alertDialog.show();
+
     }
 
     public void showSpinnerDialog() {

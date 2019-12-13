@@ -53,22 +53,18 @@ public class SignUpActivity extends FragmentActivity {
     RadioGroup usersTypeRadioGroup;
     RadioButton studentRB, teacherRB;
     Spinner genderSpinner;
-    CheckBox acceptTerms;
     ProgressBar progressBar;
-    AuthCredential credential;
 
     Button addEmailButton;
 
-    ProgressDialog progressDialog;
     Button nextBtn;
 
-    String userType, gender, imageUrl;
+    String userType, gender;
     long points = 0;
     private GoogleSignInClient mGoogleSignInClient;
     GoogleApiClient mGoogleApiClient;
     GoogleSignInOptions gso;
 
-    ImageView backgroundIv;
     int  selectedItem  = -1;
 
     @Override

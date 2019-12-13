@@ -56,7 +56,7 @@ public class ChallengeStartActivityPresenter {
 
     public void prepareAd() {
         AdManager adManager = AdManager.getInstance();
-        adManager.createAd(context);
+        adManager.createInterstitialAd(context);
     }
 
     public void getCurrentPlayerData() {

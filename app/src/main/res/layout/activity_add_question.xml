@@ -139,8 +139,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_60sdp"
                     android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/_10sdp"
                     >
 
 
@@ -149,37 +150,37 @@
 
                     <Spinner
                         android:id="@+id/gradeSpinner"
-                        style="@style/Widget.AppCompat.TextView.SpinnerItem"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_weight="1"
-                        android:layout_height="@dimen/_50sdp"
-                        android:background="@drawable/gradient_spinner"
-                        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-                        android:ems="10"
-                        android:paddingStart="@dimen/_10sdp"
-                        android:inputType="textPersonName"
-
-                        />
-
-                    <View
-                        android:layout_width="@dimen/_5sdp"
-                        android:layout_height="wrap_content"
-                        />
-
-
-                    <Spinner
-                        android:id="@+id/termSpinner"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_height="match_parent"
                         style="@style/Widget.AppCompat.TextView.SpinnerItem"
                         android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
                         android:ems="10"
                         android:inputType="textPersonName"
                         android:text=""
-                        android:paddingStart="@dimen/_10sdp"
 
-                        android:layout_toEndOf="@+id/gradeSpinner"
+
+                        android:background="@drawable/gradient_spinner"
+
+                        />
+
+                    <View
+                        android:layout_width="@dimen/_5sdp"
+                        android:layout_height="@dimen/_60sdp"
+                        />
+
+
+                    <Spinner
+                        android:id="@+id/termSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        style="@style/Widget.AppCompat.TextView.SpinnerItem"
+                        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text=""
+
 
                         android:background="@drawable/gradient_spinner"
 
@@ -197,40 +198,48 @@
                     android:orientation="horizontal"
                     >
 
+
+
                     <Spinner
                         android:id="@+id/unitOrderSpinner"
                         style="@style/Widget.AppCompat.TextView.SpinnerItem"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="@dimen/_50sdp"
+                        android:layout_below="@+id/gradeSpinner"
+
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_weight="4"
                         android:background="@drawable/gradient_spinner"
                         android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+
                         android:ems="10"
-                        android:paddingStart="@dimen/_10sdp"
                         android:inputType="textPersonName"
+
+                        android:text=""
 
 
                         />
-
                     <View
                         android:layout_width="@dimen/_5sdp"
                         android:layout_height="wrap_content"
                         />
-
                     <Spinner
                         android:id="@+id/lessonOrderSpinner"
 
                         style="@style/Widget.AppCompat.TextView.SpinnerItem"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="@dimen/_50sdp"
-                        android:background="@drawable/gradient_spinner"
                         android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
                         android:ems="10"
-                        android:paddingStart="@dimen/_10sdp"
+
                         android:inputType="textPersonName"
-
-
+                        android:text=""
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/gradient_spinner"
+                        android:layout_toEndOf="@+id/unitOrderSpinner"
+                        android:layout_below="@+id/termSpinner"
 
 
 

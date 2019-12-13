@@ -23,7 +23,7 @@ public class AdManager {
         return singleton;
     }
 
-    public void createAd(Context context) {
+    public void createInterstitialAd(Context context) {
         Log.v("adLog", "creating Ad");
 
         mInterstitialAd = new InterstitialAd(context);
@@ -32,7 +32,7 @@ public class AdManager {
                 .addTestDevice("B65A7976E9008CADC60414029149C78E")
                 .build());
 
-        mInterstitialAd.setAdListener(new AdListener(){
+        mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
@@ -47,7 +47,16 @@ public class AdManager {
             }
 
         });
+    }
 
+    public void createBannerAd(Context context) {
+        Log.v("adLog", "creating Ad");
+
+        mInterstitialAd = new InterstitialAd(context);
+        mInterstitialAd.setAdUnitId(context.getString(R.string.interstitial_ad_unit_id));
+        mInterstitialAd.loadAd(new AdRequest.Builder()
+                .addTestDevice("B65A7976E9008CADC60414029149C78E")
+                .build());
 
     }
 

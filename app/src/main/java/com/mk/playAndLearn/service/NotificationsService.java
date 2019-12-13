@@ -104,11 +104,13 @@ public class NotificationsService extends Service {
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
-                                        currentPlayer = getCurrentPlayer(player1Uid);
-                                        final String player1Name = (String) document.getString("userName");
-                                        if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
-                                            fireStoreChallenges.document(challengeId).update("player2notified", true);
-                                            showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                        if(document.exists()) {
+                                            currentPlayer = getCurrentPlayer(player1Uid);
+                                            final String player1Name = (String) document.getString("userName");
+                                            if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
+                                                fireStoreChallenges.document(challengeId).update("player2notified", true);
+                                                showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                            }
                                         }
                                     }
                                 }

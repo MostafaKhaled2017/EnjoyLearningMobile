@@ -82,7 +82,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(unitOrderSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
+            popupWindow.setHeight(650);
 
             Log.v("spinnerHeight", "try");
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
@@ -99,7 +99,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(lessonOrderSpinner);
 
             // Set popupWindow height to 850px
-            popupWindow.setHeight(850);
+            popupWindow.setHeight(650);
 
             Log.v("spinnerHeight", "try");
         } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
@@ -129,10 +129,6 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-
-        AdView adView = new AdView(this);
-        adView.setAdSize(AdSize.BANNER);
-        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
 
         mAdView = findViewById(R.id.adds);
         AdRequest adRequest = new AdRequest.Builder()
@@ -190,6 +186,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
         termSpinner.setSelection(1);
         termSpinner.setEnabled(false);
         termSpinner.setClickable(false);
+        termSpinner.setAlpha(0.5f);
         termSpinner.setAdapter(customAdapter);
 
         termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -252,7 +249,8 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-
+                lessonOrderSpinner.setAlpha(1f);
+                unitOrderSpinner.setAlpha(1f);
                 selectedItemlecture = i;
                 currentSubject = adapterView.getItemAtPosition(i).toString();
                 switch (currentSubject) {
@@ -261,6 +259,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
                         unitOrderSpinner.setClickable(true);
                         lessonOrderSpinner.setEnabled(false);
                         lessonOrderSpinner.setClickable(false);
+                        lessonOrderSpinner.setAlpha(0.5f);
                         lessonOrderSpinner.setSelection(0);
                         unitOrderSpinner.setSelection(0);
                         break;
@@ -269,6 +268,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
                         lessonOrderSpinner.setClickable(true);
                         unitOrderSpinner.setEnabled(false);
                         unitOrderSpinner.setClickable(false);
+                        unitOrderSpinner.setAlpha(0.5f);
                         unitOrderSpinner.setSelection(0);
                         lessonOrderSpinner.setSelection(0);
                         break;

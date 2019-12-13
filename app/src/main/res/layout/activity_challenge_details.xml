@@ -118,7 +118,7 @@
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_16sdp"
             style="@style/Widget.AppCompat.TextView.SpinnerItem"
-            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:dropDownVerticalOffset="@dimen/_40sdp"
             android:ems="10"
             android:background="@drawable/gradient_spinner"
             android:scrollbars="none"
@@ -295,7 +295,7 @@
             android:layout_marginBottom="@dimen/_20sdp"
             android:layout_gravity="center_horizontal"
             ads:adSize="BANNER"
-            ads:adUnitId="@string/ad_mob_id">
+            ads:adUnitId="@string/banner_ad_unit_id">
         </com.google.android.gms.ads.AdView>
     </LinearLayout>
 

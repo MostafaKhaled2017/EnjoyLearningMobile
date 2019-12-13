@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.google.android.gms.internal.zzagr.runOnUiThread;
 import static com.mk.playAndLearn.utils.Firebase.fireStore;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreUsers;
@@ -209,7 +210,7 @@ public class ChallengeResultActivityPresenter {
             @Nullable
             @Override
             public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                Log.v("transactionCalls", "begging of transaction");
+                Log.v("transactionCalls", "beggingOfTtransaction");
 
                 if (!transactionCalled) {
                     transactionCalled = true;
@@ -229,7 +230,14 @@ public class ChallengeResultActivityPresenter {
                         }
 
                         if (player1Score == player2Score) {
-                            view.setPointsResultTv("+" + drawChallengePoints + "XP");
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    view.setPointsResultTv("+" + drawChallengePoints + "XP");
+                                }
+                            });
+
 
                             if (snapshotForPlayer2.getLong("noOfDraws") != null)
                                 noOfDraws = snapshotForPlayer2.getLong("noOfDraws");
@@ -260,7 +268,14 @@ public class ChallengeResultActivityPresenter {
                             }
 
                         } else if (player2Score > player1Score) {
-                            view.setPointsResultTv("+" + wonChallengePoints + "XP");
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    view.setPointsResultTv("+" + wonChallengePoints + "XP");
+
+                                }
+                            });
 
                             if (snapshotForPlayer2.getLong("noOfWins") != null)
                                 noOfWins = snapshotForPlayer2.getLong("noOfWins");
@@ -291,7 +306,15 @@ public class ChallengeResultActivityPresenter {
                             }
 
                         } else {
-                            view.setPointsResultTv("+0XP");
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    view.setPointsResultTv("+0XP");
+
+                                }
+                            });
 
                             if (snapshotForPlayer2.getLong("noOfLoses") != null)
                                 noOfLoses = snapshotForPlayer2.getLong("noOfLoses");
@@ -336,10 +359,9 @@ public class ChallengeResultActivityPresenter {
             @Override
             public void onSuccess(Long aLong) {
                 long remainedDailyChallenges = dailyChallengesNumber - aLong;
-                if(remainedDailyChallenges > 10){
+                if (remainedDailyChallenges > 10) {
                     Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحدى فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
-                }
-                else if (remainedDailyChallenges > 2) {
+                } else if (remainedDailyChallenges > 2) {
                     Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحديات فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
                 } else if (remainedDailyChallenges == 2) {
                     Toast.makeText(context, "يمكنك لعب " + " تحديان فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
@@ -349,6 +371,10 @@ public class ChallengeResultActivityPresenter {
                     Toast.makeText(context, "لا يمكنك بدء تحديات جديدة هذا اليوم يمكنك العودة غدا للعب تحديات جديدة أو طلب من أصدقائك بدء تحديات ضدك", Toast.LENGTH_LONG).show();
                 }
                 setSavedTodayChallengesNo(context, aLong);
+
+
+                Log.v("transactionCalls", "transactionDone");
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

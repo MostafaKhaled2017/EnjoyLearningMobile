@@ -1,63 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
+
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
+    android:fillViewport="true"
+    android:layout_below="@+id/progressbarframe"
     android:background="@color/white">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white"
-        tools:context=".Regestration.SignUp">
 
 
 
-        <FrameLayout
-            android:layout_marginTop="-4dp"
-            android:id="@+id/progressbarframe"
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_height="match_parent">
 
-            >
 
-            <ProgressBar
-                android:id="@+id/progressbar"
-                style="?android:attr/progressBarStyleHorizontal"
+            <FrameLayout
+                android:layout_marginTop="-4dp"
+
+                android:id="@+id/progressbarframe"
                 android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:layout_marginTop="2dp"
-                android:indeterminate="true"
-                android:max="100"
-                android:visibility="invisible"
-                android:elevation="10dp"
-                android:progress="100"
-                />
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_alignParentTop="true"
 
-        </FrameLayout>
+                >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/_40sdp"
-            >
+                <ProgressBar
+                    android:id="@+id/progressbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="2dp"
+                    android:indeterminate="true"
+                    android:max="100"
+                    android:visibility="invisible"
+                    android:elevation="10dp"
+                    android:progress="100"
+                    />
+
+            </FrameLayout>
+
+
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:fontFamily="@font/el_messiri"
+                android:layout_below="@+id/progressbarframe"
                 android:text="اسم المستخدم"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
@@ -71,10 +73,11 @@
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/linearborder"
                 android:ems="10"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/textView"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:textAlignment="viewStart"
                 android:paddingStart="@dimen/_4sdp"
-                android:inputType="textPersonName"
+                android:inputType="textCapWords"
                 android:text=""
                 android:focusedByDefault="true"
                 android:focusableInTouchMode="true"
@@ -86,9 +89,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:layout_marginBottom="@dimen/_1sdp"
                 android:fontFamily="@font/el_messiri"
+                android:layout_below="@+id/etName"
                 android:text="البريد الالكتروني"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
@@ -96,8 +100,10 @@
 
 
             <LinearLayout
+                android:id="@+id/lineardd"
+                android:layout_below="@+id/emailtext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_50sdp"
                 android:orientation="horizontal"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
@@ -108,8 +114,9 @@
                     android:id="@+id/etEmail"
                     android:layout_width="0dp"
                     android:layout_weight="2"
-                    android:layout_height="@dimen/_40sdp"
+                    android:layout_height="match_parent"
 
+                    android:textSize="@dimen/_12sdp"
                     android:background="@drawable/linearborder"
                     android:ems="10"
                     android:textAlignment="viewStart"
@@ -117,7 +124,7 @@
                     android:clickable="false"
                     android:enabled="false"
                     android:textColor="@color/black"
-                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_3sdp"
 
                     />
 
@@ -125,7 +132,7 @@
                     android:id="@+id/addEmailButton"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="@dimen/_40sdp"
+                    android:layout_height="match_parent"
                     android:padding="@dimen/_3sdp"
                     android:background="@drawable/shape_dark"
                     android:fontFamily="@font/el_messiri"
@@ -133,7 +140,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_10sdp"
                     android:textStyle="bold"
-                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_3sdp"
                     />
             </LinearLayout>
 
@@ -145,17 +152,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_7sdp"
                 android:fontFamily="@font/el_messiri"
                 android:text="كلمة المرور  "
                 android:textColor="@color/black"
+                android:layout_below="@+id/lineardd"
                 android:textSize="@dimen/_14sdp"
                 />
 
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/linearborder"
@@ -163,7 +171,8 @@
                 android:textAlignment="viewStart"
                 android:paddingStart="@dimen/_4sdp"
                 android:inputType="textPassword"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_below="@+id/passworedsign"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text=""
                 />
 
@@ -174,6 +183,7 @@
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:layout_below="@+id/etPassword"
 
                 android:fontFamily="@font/el_messiri"
                 android:text=" تأكيد  كلمة المرور"
@@ -182,11 +192,12 @@
                 />
 
             <EditText
+                android:layout_below="@+id/confirmpasswored"
                 android:id="@+id/etRePassword"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/linearborder"
                 android:ems="10"
@@ -201,8 +212,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_16sdp"            >
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_below="@+id/etRePassword">
 
                 <RadioButton
                     android:id="@+id/studentRadioButton"
@@ -230,6 +242,7 @@
 
 
             <TextView
+                android:layout_below="@+id/userTypeRadioGroup"
                 android:id="@+id/loginselect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -239,7 +252,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
                 android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_7sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
 
                 />
@@ -248,33 +261,35 @@
                 android:id="@+id/genderSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
+                android:layout_below="@+id/loginselect"
 
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:text=""
                 android:background="@drawable/gradient_spinner"
                 android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_marginEnd="@dimen/_16sdp" />
 
-            <Button
-                android:id="@+id/nextBtn"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
-                android:background="@drawable/shape_dark"
-                android:fontFamily="@font/el_messiri"
-                android:text="التالي"
-                android:layout_marginBottom="@dimen/_25sdp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_12sdp"
-                />
+        <Button
+            android:id="@+id/nextBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/shape_dark"
+            android:fontFamily="@font/el_messiri"
+            android:text="التالي"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:layout_alignParentBottom="true"/>
 
 
-        </LinearLayout>
+</RelativeLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
-</ScrollView>
+
+

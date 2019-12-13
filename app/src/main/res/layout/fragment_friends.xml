@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
+    android:paddingBottom="@dimen/_20sdp"
+
     android:background="@color/color3">
 
     <include layout="@layout/no_internet_connection_text"
