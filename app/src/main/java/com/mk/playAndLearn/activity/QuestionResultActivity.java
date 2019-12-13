@@ -233,7 +233,7 @@ public class QuestionResultActivity extends AppCompatActivity {
         }
         if (currentChallenger == 2) {
             dialog.setMessage("هل أنت متأكد أنك تريد الخروج و عدم إكمال التحدى؟");
-            dialog.setNegativeButton("إلغاء التحدى", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton("إنهاء التحدى", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {//TODO : edit this
                     fireStoreChallenges.document(challengeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

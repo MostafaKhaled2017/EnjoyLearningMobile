@@ -334,7 +334,10 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
                 return true;*/
                 case R.id.studyTips:
                     startActivity(new Intent(this, StudyTipsActivity.class));
+                    return true;
 
+                case R.id.rewardedAd:
+                    startActivity(new Intent(this, RewardedAdActivity.class));
                     return true;
 
                 case R.id.generalChallenges:

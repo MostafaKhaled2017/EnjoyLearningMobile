@@ -10,10 +10,28 @@
 
     <group android:id="@+id/main_menu_group"
 
-        android:checkableBehavior="single"
+        android:checkableBehavior="single">
 
 
-        >
+        <!-- TODO : add this item if possible -->
+        <!-- <item
+             android:id="@+id/myAccount"
+             android:icon="@drawable/account"
+             android:title="حسابي"
+             app:showAsAction="ifRoom" />-->
+        <item
+            android:id="@+id/leaderboard"
+            android:title="قائمة المتصدرين"
+            android:icon="@drawable/groups"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/rewardedAd"
+            android:title="اربح نقاط مجانية"
+            android:icon="@drawable/hapman"
+
+            app:showAsAction="never" />
+
         <item
             android:id="@+id/addQuestion"
             android:title="إضافة سؤال"
@@ -27,18 +45,6 @@
 
             app:showAsAction="never" />
 
-        <!-- TODO : add this item if possible -->
-        <!-- <item
-             android:id="@+id/myAccount"
-             android:icon="@drawable/account"
-             android:title="حسابي"
-             app:showAsAction="ifRoom" />-->
-        <item
-            android:id="@+id/leaderboard"
-            android:title="قائمة المتصدرين"
-            android:icon="@drawable/groups"
-
-            app:showAsAction="never" />
         <item
             android:id="@+id/generalChallenges"
             android:title="التحدى العام"

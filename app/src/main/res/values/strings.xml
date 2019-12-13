@@ -11,8 +11,7 @@
     <string name="ad_mob_id">ca-app-pub-1283544791526621/5955878039</string>
     <string name="interstitial_ad_unit_id">ca-app-pub-1283544791526621/5955878039</string>
     <string name="banner_ad_unit_id">ca-app-pub-1283544791526621/6179069779</string>
-
-
+    <string name="rewarded_ad_unit_id">ca-app-pub-1283544791526621/5170547340</string>
 
 
     <!--  <string-array name="secondary_subjects_array_for_upload">
