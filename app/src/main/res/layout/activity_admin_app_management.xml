@@ -72,7 +72,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/doQuery"
             style="@style/buttonStyle"
-            android:enabled="false"
+            android:enabled="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/generalChallengeManagement"
@@ -80,7 +80,7 @@
             android:layout_marginTop="40dp"
             android:onClick="doQuery"
             android:padding="10dp"
-            android:clickable="false"
+            android:clickable="true"
             android:text="القيام باستعلام في قاعدة البيانات" />
 
         <androidx.appcompat.widget.AppCompatButton

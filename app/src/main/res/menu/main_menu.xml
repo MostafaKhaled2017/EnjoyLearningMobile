@@ -29,7 +29,7 @@
             android:id="@+id/rewardedAd"
             android:title="اربح نقاط مجانية"
             android:icon="@drawable/hapman"
-
+            android:visible="false"
             app:showAsAction="never" />
 
         <item

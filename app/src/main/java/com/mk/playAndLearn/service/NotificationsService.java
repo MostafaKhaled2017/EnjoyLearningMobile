@@ -25,6 +25,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.activity.MainActivity;
+import com.mk.playAndLearn.model.Challenge;
+
+import java.util.ArrayList;
 
 import static com.mk.playAndLearn.utils.Firebase.fireStoreChallenges;
 import static com.mk.playAndLearn.utils.Firebase.fireStoreComments;
@@ -43,7 +46,7 @@ public class NotificationsService extends Service {
     String onChildAddedPreviusKey = "", onChildChangedpreviusKey = "";
     //the full number which is coming from the challenges fragment
     String localCurrentUserUid;
-
+    ArrayList<String> notificationIdsList = new ArrayList<>();
     FirebaseAuth localAuth;
 
     //TODO : solve the problem of that when new action occurs when the service isn't working no action happens when the app works again
@@ -107,9 +110,10 @@ public class NotificationsService extends Service {
                                         if(document.exists()) {
                                             currentPlayer = getCurrentPlayer(player1Uid);
                                             final String player1Name = (String) document.getString("userName");
-                                            if (challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
+                                            String documentId = document.getId();
+                                            if (!existsInNotificationsList(documentId) && challengeState.equals(uncompletedChallengeText) && currentPlayer == 2 && !challengeDocument.getId().equals(onChildAddedPreviusKey) && !challengeDocument.getId().equals("questionsList") && challengeDocument.exists()) {
                                                 fireStoreChallenges.document(challengeId).update("player2notified", true);
-                                                showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name);
+                                                showNotification("لديك تحدى جديد", "تم تحديك فى " + subject + " بواسطة " + player1Name, documentId);
                                             }
                                         }
                                     }
@@ -137,11 +141,12 @@ public class NotificationsService extends Service {
                                         DocumentSnapshot document = task.getResult();
                                         currentPlayer = getCurrentPlayer(player1Uid);
                                         final String player2Name = (String) document.getString("userName");
+                                        String documentId = document.getId();
 
-                                        if (currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
+                                        if (!existsInNotificationsList(documentId) && currentPlayer == 1 && (challengeState.equals(completedChallengeText) || challengeState.equals(refusedChallengeText)) && !challengeDocument.getId().equals(onChildChangedpreviusKey) && !challengeDocument.getId().equals("questionsList")) {
                                             showNotification("لديك تحدى مكتمل جديد", "لقد " + state +
                                                             " تحديك ضد " + player2Name
-                                                    /*+ " فى مادة " + subject*/);//TODO : add this
+                                                    /*+ " فى مادة " + subject*/, documentId);//TODO : add this
                                             fireStoreChallenges.document(challengeId).update("player1notified", true);
                                             onChildChangedpreviusKey = challengeDocument.getId();
                                         }
@@ -171,8 +176,9 @@ public class NotificationsService extends Service {
                     String writerName = document.getString("userName");
                     String postWriterUid = document.getString("postWriterUid");
                     String commentWriterUid = document.getString("writerUid");
-                    if (!postWriterUid.equals(commentWriterUid) && document.exists()) {//TODO : think about changing the notification text to a shorter one
-                        showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName);
+                    String documentId = document.getId();
+                    if (!existsInNotificationsList(documentId) && !postWriterUid.equals(commentWriterUid) && document.exists()) {//TODO : think about changing the notification text to a shorter one
+                        showNotification("لديك تعليق جديد", "تم إضافة تعليق جديد لمنشورك بواسطة " + writerName, documentId);
                     }
                     fireStoreComments.document(document.getId()).update("notified", true);
                 }
@@ -187,8 +193,9 @@ public class NotificationsService extends Service {
                     String writerName = document.getString("userName");
                     String commentWriterUID = document.getString("commentWriterUid");
                     String replyWriterUID = document.getString("writerUid");
-                    if (!commentWriterUID.equals(replyWriterUID) && document.exists()) {//TODO : think about changing the notification text to a shorter one
-                        showNotification("لديك رد جديد لتعليقك", "تم إضافة رد جديد لتعليقك بواسطة " + writerName);
+                    String documentId = document.getId();
+                    if (!existsInNotificationsList(documentId) && !commentWriterUID.equals(replyWriterUID) && document.exists()) {//TODO : think about changing the notification text to a shorter one
+                        showNotification("لديك رد جديد لتعليقك", "تم إضافة رد جديد لتعليقك بواسطة " + writerName, documentId);
                     }
                     fireStoreReplies.document(document.getId()).update("notified", true);
                 }
@@ -198,6 +205,14 @@ public class NotificationsService extends Service {
         return START_STICKY;
     }
 
+    boolean existsInNotificationsList(String currentNotificationId) {
+        for (String c : notificationIdsList) {
+            if (c.equals(currentNotificationId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private String currentUserState(DocumentSnapshot dataSnapshot) {
         String challengeState = dataSnapshot.getString("state");
@@ -279,7 +294,9 @@ public class NotificationsService extends Service {
         return null;
     }
 
-    public void showNotification(String title, String content) {
+    public void showNotification(String title, String content, String documentId) {
+        notificationIdsList.add(documentId);
+
         final String NOTIFICATION_CHANNEL_ID = "1";
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library

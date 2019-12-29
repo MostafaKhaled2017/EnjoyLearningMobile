@@ -349,6 +349,20 @@ public class AdminAppManagementActivity extends AppCompatActivity {
     }
 
     public void doQuery(View view) {
+        Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show();
+
+     /*   fireStoreChallenges.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    Log.v("challengesNo", "challenges Number is : " + task.getResult().getDocuments().size());
+                    Toast.makeText(AdminAppManagementActivity.this, "challenges Number is : " + task.getResult().getDocuments().size(), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(AdminAppManagementActivity.this, "task failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });*/
 
      /*   Toast.makeText(AdminAppManagementActivity.this, "جارى حصر الدروس", Toast.LENGTH_SHORT).show();
         final String[] gradesArray = getResources().getStringArray(R.array.grades_array);

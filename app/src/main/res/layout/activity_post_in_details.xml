@@ -54,23 +54,24 @@
     </androidx.appcompat.widget.Toolbar>
 
 
-
-    <ScrollView android:layout_width="match_parent"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:overScrollMode="never"
         android:layout_below="@id/toolbar"
-        xmlns:android="http://schemas.android.com/apk/res/android" >
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/commentsRecyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:overScrollMode="never" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRecyclerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never" />
+
             <ProgressBar
                 android:id="@+id/commentsProgressBar"
                 android:layout_width="wrap_content"
@@ -82,7 +83,7 @@
                 android:id="@+id/noCommentsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
                 android:layout_marginTop="75dp"
                 android:text="لا يوجد تعليقات"
                 android:textColor="@color/writingColor"

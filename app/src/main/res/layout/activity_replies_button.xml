@@ -8,8 +8,49 @@
     android:layoutDirection="rtl"
     android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginBottom="8dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        >
 
-        <include layout="@layout/toolbar"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo"
+                android:gravity="center"
+                android:text=" الردود"
+                android:textColor="#FFFF"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
+
+
+            <ImageView
+                android:id="@+id/backIcon"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/backf"
+
+
+                />
+
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <ScrollView android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,14 +68,16 @@
                 android:layout_height="wrap_content"
                 android:overScrollMode="never" />
 
-            <include
-                layout="@layout/no_internet_connection_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="75dp" />
+
         </RelativeLayout>
     </ScrollView>
+
+    <include
+        layout="@layout/no_internet_connection_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="75dp" />
 
     <ProgressBar
         android:id="@+id/repliesProgressBar"

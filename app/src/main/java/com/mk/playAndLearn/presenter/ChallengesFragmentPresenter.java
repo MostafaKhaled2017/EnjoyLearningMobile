@@ -314,6 +314,7 @@ public class ChallengesFragmentPresenter {
                 snapshot = transaction.get(player1Reference);
                 Log.v("pointsLogginggg", "repeated snapShot is : " + snapshot.getData()); //TODO :ensure that latest updates has been done
 
+                Log.v("transactionLogg", "transactionCalled");
                 long noOfWins = 0, noOfLoses = 0, noOfDraws = 0, newNoOfWins = 0, newNoOfLoses = 0, newNoOfDraws = 0, newPoints = 0, totalChallengesNo = 0;
 
                 if (snapshot.getLong("noOfWins") != null)
