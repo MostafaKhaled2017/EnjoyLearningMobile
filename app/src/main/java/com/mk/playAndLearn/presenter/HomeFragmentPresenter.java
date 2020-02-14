@@ -107,8 +107,7 @@ public class HomeFragmentPresenter {
         String localCurrentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String localCurrentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        Log.v("sharedPreference", " current userName is : " + currentUserName);
-
+        Log.v("sharedPreference", "current userName is : " + currentUserName);
 
         map = new HashMap<>();
         map.put("content", postText.trim());

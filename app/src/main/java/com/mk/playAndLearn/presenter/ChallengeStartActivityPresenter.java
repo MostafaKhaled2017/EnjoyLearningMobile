@@ -180,7 +180,10 @@ public class ChallengeStartActivityPresenter {
                 + " , grade is : " + grade + " , subject is : " + subject);
 
         for (String questionId : questionsIds) {
-            fireStoreQuestions.document(grade).collection(subject).document(questionId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            fireStoreQuestions.document(grade)
+                    .collection(subject)
+                    .document(questionId)
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()) {
@@ -209,7 +212,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 1) //TODO : edit
+                    .whereEqualTo("term", 2) //TODO : edit
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -220,7 +223,7 @@ public class ChallengeStartActivityPresenter {
 
                     if (failedRetries == 15){
                         view.hideProgressBar();
-                        Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "لم يتم رفع أسئلة هذا الدرس بعد أو أنك أدخلت ترتيب لدرس غير موجود فى منهجك برجاء المحاولة لاحقا", Toast.LENGTH_LONG).show();
                     }else if(documentSnapshots.size() == 0){
                         loadQuestionsForChallenger1();
                         failedRetries ++;
@@ -240,7 +243,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 1)  //TODO : edit
+                    .whereEqualTo("term", 2)  //TODO : edit
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -251,7 +254,7 @@ public class ChallengeStartActivityPresenter {
                     Log.v("qEx", "succeeded");
                     if (failedRetries == 15){
                         view.hideProgressBar();
-                        Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "لم يتم رفع أسئلة هذا الدرس بعد أو أنك أدخلت ترتيب لدرس غير موجود فى منهجك برجاء المحاولة لاحقا", Toast.LENGTH_LONG).show();
                 }else if(documentSnapshots.size() == 0){
                         loadQuestionsForChallenger1();
                         failedRetries ++;
@@ -271,7 +274,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 1)  //TODO : edit
+                    .whereEqualTo("term", 2)  //TODO : edit
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
@@ -283,7 +286,7 @@ public class ChallengeStartActivityPresenter {
                     Log.v("qEx","succeeded");
                     if (failedRetries == 15){
                         view.hideProgressBar();
-                        Toast.makeText(context, "لا يمكن تحميل أسئلة لهذا الدرس برجاء التأكد أنه يوجد درس فى منهجك بنفس الترتيب الذي اخترته", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "لم يتم رفع أسئلة هذا الدرس بعد أو أنك أدخلت ترتيب لدرس غير موجود فى منهجك برجاء المحاولة لاحقا", Toast.LENGTH_LONG).show();
                     }else if(documentSnapshots.size() == 0){
                         loadQuestionsForChallenger1();
                         failedRetries ++;

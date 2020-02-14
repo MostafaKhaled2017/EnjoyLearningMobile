@@ -49,7 +49,6 @@
             android:id="@+id/generalChallenges"
             android:title="التحدى العام"
             android:icon="@drawable/challenge"
-
             app:showAsAction="never" />
 
         <item

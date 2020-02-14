@@ -219,7 +219,7 @@
 
     <string-array name="term_array">
         <!-- <item>اختر الفصل الدراسى</item> -->
-        <item>الفصل الدراسى الأول</item>
+       <!-- <item>الفصل الدراسى الأول</item> -->
         <item>الفصل الدراسى الثانى</item>
     </string-array>
 

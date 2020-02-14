@@ -163,7 +163,7 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
             }
         };
 
-        termSpinner.setSelection(1);
+       // termSpinner.setSelection(0);
         termSpinner.setEnabled(false);
         termSpinner.setClickable(false);
         termSpinner.setAlpha(0.5f);

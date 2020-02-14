@@ -184,7 +184,7 @@ public class LessonsFragmentPresenter {
                 .document(grade)//TODO : change this to getSavedGrade(context)
                 .collection(currentSubject)
                 .whereEqualTo("reviewed", true)
-                .whereEqualTo("term", 1) //TODO ADD VIP
+                .whereEqualTo("term", 2) //TODO ADD VIP
                 .whereEqualTo("grade", grade)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .limit(limit);
