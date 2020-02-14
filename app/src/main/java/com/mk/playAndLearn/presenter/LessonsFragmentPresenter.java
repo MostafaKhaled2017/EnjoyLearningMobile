@@ -209,8 +209,8 @@ public class LessonsFragmentPresenter {
         long term = -1;
 
         lesson = new Lesson();
-        String lessonContent = lessonDocument.getString("content");
-        String lessonTitle = lessonDocument.getString("title");
+        String lessonContent = lessonDocument.getString("content").trim();
+        String lessonTitle = lessonDocument.getString("title").trim();
         lessonDate = format.format(lessonDocument.get("date"));
         String lessonWriter = lessonDocument.getString("writerName");
         String lessonWriterEmail = lessonDocument.getString("writerEmail");
