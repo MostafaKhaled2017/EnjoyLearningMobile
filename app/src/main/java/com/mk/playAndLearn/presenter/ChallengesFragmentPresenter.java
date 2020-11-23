@@ -131,9 +131,9 @@ public class ChallengesFragmentPresenter {
 
                     //TODO : find a way better than using limit in the queries
                     //this code gives data where current user is player 1
-                    fireStoreChallenges.whereEqualTo("player1Uid", localCurrentUserUid).orderBy("date", Query.Direction.DESCENDING).limit(15).addSnapshotListener(generalSnapShotListener);
+                    fireStoreChallenges.whereEqualTo("player1Uid", localCurrentUserUid).orderBy("date", Query.Direction.DESCENDING).limit(20).addSnapshotListener(generalSnapShotListener);
                     //this code gives data where current user is player 2
-                    fireStoreChallenges.whereEqualTo("player2Uid", localCurrentUserUid).orderBy("date", Query.Direction.DESCENDING).limit(15).addSnapshotListener(generalSnapShotListener);
+                    fireStoreChallenges.whereEqualTo("player2Uid", localCurrentUserUid).orderBy("date", Query.Direction.DESCENDING).limit(20).addSnapshotListener(generalSnapShotListener);
 
                 } else {
                     view.onNoInternetConnection();
@@ -228,7 +228,7 @@ public class ChallengesFragmentPresenter {
                     addScoreToPlayer1(player1Score, player2Score, challengeId);
                 }
             }
-        } else if (challenge.getState().equals(uncompletedChallengeText)) {
+        } else if (challenge.getState().equals(uncompletedChallengeText) && currentPlayer != 1) {
             Log.v("loggingC3", "value is " + !existsInUncompletedChallengesList(dataSnapshot.getId()));
             if (!existsInUncompletedChallengesList(challengeId)) {
                 Log.v("challengesDebug", "uncompletedListItemAdded");

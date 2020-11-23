@@ -310,7 +310,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_45sdp"
                     android:background="@drawable/linearborder"
-
+                    android:inputType="text"
                     android:fontFamily="@font/el_messiri"
                     android:gravity="center"
                     android:hint="@string/firstChoicehint"
@@ -345,6 +345,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_45sdp"
                     android:layout_weight="1"
+                    android:inputType="text"
                     android:background="@drawable/linearborder"
                     android:fontFamily="@font/el_messiri"
                     android:gravity="center"
@@ -378,7 +379,7 @@
                     android:id="@+id/et3"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_45sdp"
-
+                    android:inputType="text"
                     android:layout_weight="1"
                     android:background="@drawable/linearborder"
                     android:ems="10"
@@ -386,8 +387,8 @@
                     android:gravity="center"
                     android:hint="@string/thirdChoiceHint"
                     android:textSize="@dimen/_11sdp" />
-                <CheckBox
 
+                <CheckBox
                     android:id="@+id/checkbox3"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_40sdp"
@@ -412,7 +413,7 @@
                     android:id="@+id/et4"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_45sdp"
-
+                    android:inputType="text"
                     android:layout_weight="1"
                     android:background="@drawable/linearborder"
                     android:ems="10"
@@ -422,15 +423,10 @@
                     android:textSize="@dimen/_11sdp"
                     />
                 <CheckBox
-
                     android:id="@+id/checkbox4"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_40sdp"
-
                     />
-
-
-
 
             </LinearLayout>
 

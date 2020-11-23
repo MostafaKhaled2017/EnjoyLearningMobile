@@ -358,7 +358,7 @@ public class ChallengeResultActivityPresenter {
         }).addOnSuccessListener(new OnSuccessListener<Long>() {
             @Override
             public void onSuccess(Long aLong) {
-                long remainedDailyChallenges = dailyChallengesNumber - aLong;
+               /* long remainedDailyChallenges = dailyChallengesNumber - aLong;
                 if (remainedDailyChallenges > 10) {
                     Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحدى فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
                 } else if (remainedDailyChallenges > 2) {
@@ -369,7 +369,7 @@ public class ChallengeResultActivityPresenter {
                     Toast.makeText(context, "يمكنك لعب " + " تحدي واحد فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
                 } else if (remainedDailyChallenges < 1) {
                     Toast.makeText(context, "لا يمكنك بدء تحديات جديدة هذا اليوم يمكنك العودة غدا للعب تحديات جديدة أو طلب من أصدقائك بدء تحديات ضدك", Toast.LENGTH_LONG).show();
-                }
+                }*/
                 setSavedTodayChallengesNo(context, aLong);
 
 

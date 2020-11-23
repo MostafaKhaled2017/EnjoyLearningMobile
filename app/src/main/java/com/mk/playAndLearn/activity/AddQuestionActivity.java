@@ -643,10 +643,10 @@ public class AddQuestionActivity extends AppCompatActivity  {
                             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                 DocumentSnapshot snapshot = transaction.get(currentUserReference);
 
-                                long newPoints = snapshot.getLong("points") + 5;
+                               // long newPoints = snapshot.getLong("points") + 5;
                                 long newAcceptedQuestions = snapshot.getLong("acceptedQuestions") + 1;
 
-                                transaction.update(currentUserReference, "points", newPoints);
+                                //transaction.update(currentUserReference, "points", newPoints);
                                 transaction.update(currentUserReference, "acceptedQuestions", newAcceptedQuestions);
                                 transaction.set(fireStoreQuestions.document(selectedGrade).collection(currentSubject).document(), map);
 

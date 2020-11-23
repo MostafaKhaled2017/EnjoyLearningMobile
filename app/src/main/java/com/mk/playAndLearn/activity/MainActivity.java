@@ -631,6 +631,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         final String todayDate = format.format(today);
         final String yesterdayDate = format.format(yesterday);
         final String oldSavedDate = getSavedDate(this);
+      //  final String oldSavedDate = "test";
 
         Log.v("dateLogging", "todayDate : " + todayDate
                 + " , yesterdayDate : " + yesterdayDate
@@ -771,7 +772,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     private void showUpdateDialog() {
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("يوجد تحديث جديد للتطبيق")
-                .setMessage("يجب عليك تحديث التطبيق حتى تستطيع استخدامه")
+                .setMessage("يجب عليك تحديث التطبيق حتى تستطيع استخدامه، إذا لم تجد زر تحديث للبرنامج على متجر جوجل بلاى قم بإلغاء تثبيت البرنامج ثم تحميله مرة أخرى")
                 .setPositiveButton("تحديث", null)
                 .setCancelable(false)
                 .create();

@@ -103,7 +103,7 @@ public class FriendsFragmentPresenter {
 
                     String subjectSchoolType = AddQuestionActivity.getSchoolType(subject);
 
-                    if (userType != null && userType.equals("طالب")
+                    if (userType != null && grade!= null && userType.equals("طالب")
                             && !uid.equals(localCurrentUserUid)
                             && name != null && grade.equals(grade)) {//TODO : think about allowing challenges against teachers and others and ask my friends about thier opinions in that
 

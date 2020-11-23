@@ -33,7 +33,7 @@ public class BestStudentsInCompetitionPresenter {
     private void getBestStudents() {
         fireStoreUsers.orderBy("competitionPoints", Query.Direction.DESCENDING)
                 .endAt(1)
-                .limit(25)
+                .limit(10)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

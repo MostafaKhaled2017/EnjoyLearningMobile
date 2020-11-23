@@ -61,12 +61,12 @@ public class DailyRewardsActivity extends AppCompatActivity {
                 DocumentSnapshot snapshot = transaction.get(currentUserReference);
                 long newPoints = snapshot.getLong("points") + dailyAddedPoints;
 
-                Long currentCompetitionPoints = snapshot.getLong("competitionPoints");
+             /*   Long currentCompetitionPoints = snapshot.getLong("competitionPoints");
                 Log.v("competitionPointsLog", "currentCompetitionPoints is : " + currentCompetitionPoints);
                 if(currentCompetitionPoints == null)
                     currentCompetitionPoints = Long.valueOf(0);
                 long newCompetitionPoints = currentCompetitionPoints + dailyAddedPoints;
-                transaction.update(currentUserReference, "competitionPoints", newCompetitionPoints);
+                transaction.update(currentUserReference, "competitionPoints", newCompetitionPoints);*/
 
                 transaction.update(currentUserReference, "points", newPoints);
                 return newPoints;

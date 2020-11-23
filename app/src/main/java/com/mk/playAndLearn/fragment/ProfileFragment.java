@@ -61,9 +61,14 @@ public class ProfileFragment extends Fragment implements ProfileActivityPresente
         emailTv = view.findViewById(R.id.email);
         studentIdTv = view.findViewById(R.id.studentIdTv);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         presenter.getUserData();
 
-        return view;
     }
 
     @Override

@@ -369,9 +369,11 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
         Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(ChallengeDetailsActivity.this));
         if (currentSubject.equals("كل المواد")) {
             Toast.makeText(ChallengeDetailsActivity.this, "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
-        } else if (dailyChallengesNumber - getSavedTodayChallengesNo(ChallengeDetailsActivity.this) < 1) {
+        }
+       /* else if (dailyChallengesNumber - getSavedTodayChallengesNo(ChallengeDetailsActivity.this) < 1) {
             Toast.makeText(ChallengeDetailsActivity.this, "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
-        } else {
+        }*/
+        else {
             Log.v("termLogging", "term in challengeStart is : " + currentTerm);
             Intent i = new Intent(ChallengeDetailsActivity.this, ChallengersActivity.class);
             i.putExtra("subject", currentSubject);
