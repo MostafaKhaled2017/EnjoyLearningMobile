@@ -62,7 +62,7 @@
         <item
             android:id="@+id/bestStudentsInCompetition"
             android:icon="@drawable/hapman"
-            android:title="أوائل المسابقة الأسبوعية"
+            android:title="أوائل المسابقة"
             app:showAsAction="never" />
 
         <item

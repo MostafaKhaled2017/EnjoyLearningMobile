@@ -115,7 +115,7 @@ public class HomeFragmentPresenter {
         map.put("downVotedUsers", "users: ");
         map.put("grade", grade);
         map.put("subject", subject);
-        map.put("term", 2);//Todo : make the user control this by entering it
+        map.put("term", 1);//Todo : make the user control this by entering it
         map.put("upVotedUsers", "users: ");
         map.put("votes", (long) 0);
         map.put("writerUid", localCurrentUserUid);

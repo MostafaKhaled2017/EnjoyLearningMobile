@@ -187,6 +187,7 @@ public class SignUpActivity extends FragmentActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) { //1 for adding email
             addEmailAddress(data);
         } else {
+            Log.v("sign in exception :", "Result code is : " + resultCode);
             Toast.makeText(this, "فشل إضافة الحساب برجاء إعادة المحاولة", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
         }
