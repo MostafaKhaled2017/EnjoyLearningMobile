@@ -6,9 +6,9 @@ android {
         applicationId "com.mk.playAndLearn"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 40659
+        versionCode 40660
         multiDexEnabled true
-        versionName "4.6.59"
+        versionName "4.6.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
