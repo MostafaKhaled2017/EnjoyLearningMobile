@@ -49,6 +49,7 @@
             android:id="@+id/generalChallenges"
             android:title="التحدى العام"
             android:icon="@drawable/challenge"
+            android:visible="false"
             app:showAsAction="never" />
 
         <item
@@ -63,6 +64,7 @@
             android:id="@+id/bestStudentsInCompetition"
             android:icon="@drawable/hapman"
             android:title="أوائل المسابقة"
+            android:visible="false"
             app:showAsAction="never" />
 
         <item

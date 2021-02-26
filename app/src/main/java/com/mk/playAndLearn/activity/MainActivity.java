@@ -62,6 +62,7 @@ import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.mk.enjoylearning.R;
 import com.mk.playAndLearn.adapters.MainViewPagerAdapter;
+import com.mk.playAndLearn.fragment.BestStudentsFragment;
 import com.mk.playAndLearn.fragment.ChallengesFragment;
 import com.mk.playAndLearn.fragment.HomeFragment;
 import com.mk.playAndLearn.fragment.LessonsFragment;
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     HomeFragment homeFragment = new HomeFragment();
     ProfileFragment profileFragment = new ProfileFragment();
     ChallengesFragment challengesFragment = new ChallengesFragment();
+    BestStudentsFragment leaderBoardFragment = new BestStudentsFragment();
     LessonsFragment lessonsFragment = new LessonsFragment();
 
     Intent serviceIntent;
@@ -174,7 +176,8 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(view);
+                startActivity(new Intent(MainActivity.this, ChallengeDetailsActivity.class));
+                //showPopupMenu(view);
             }
         });
 
@@ -191,9 +194,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         boolean isUserFirstTime = Boolean.valueOf(readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
         Intent introIntent = new Intent(MainActivity.this, OnBoardingActivity.class);
         introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
-        if (isUserFirstTime)
-            startActivity(introIntent);
-
+        if (isUserFirstTime) {
+            //    startActivity(introIntent);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -385,13 +388,15 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    loadFragment(homeFragment, "homeFragment");
+                    //loadFragment(homeFragment, "homeFragment");
+                    loadFragment(challengesFragment, "challengesFragment");
                     return true;
                 case R.id.navigation_profile:
                     loadFragment(profileFragment, "profileFragment");
                     return true;
                 case R.id.navigation_Challenges:
-                    loadFragment(challengesFragment, "challengesFragment");
+                    //loadFragment(challengesFragment, "challengesFragment");
+                    loadFragment(leaderBoardFragment, "leaderBoard");
                     return true;
                 case R.id.navigation_Lessons:
                     loadFragment(lessonsFragment, "lessonsFragment");
