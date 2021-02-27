@@ -23,6 +23,7 @@
             android:id="@+id/leaderboard"
             android:title="قائمة المتصدرين"
             android:icon="@drawable/groups"
+            android:visible="false"
             app:showAsAction="never" />
 
         <item

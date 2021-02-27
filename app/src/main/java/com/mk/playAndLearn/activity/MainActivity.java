@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
     //TODO : think about learn a specific design pattern and set the code to it step by step
 
     private int _selectedItemID = -1;
+    boolean defaultAdded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,8 +187,9 @@ public class MainActivity extends AppCompatActivity implements LessonsFragment.O
         navigation.setOnNavigationItemSelectedListener(this);
 
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null && !defaultAdded) {
             navigation.setSelectedItemId(R.id.navigation_home); // change to whichever id should be default
+            defaultAdded = true;
         }
 
         //show on boarding for new users

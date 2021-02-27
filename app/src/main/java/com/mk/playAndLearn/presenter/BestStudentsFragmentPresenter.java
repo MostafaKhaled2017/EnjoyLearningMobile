@@ -72,8 +72,7 @@ public class BestStudentsFragmentPresenter {
 
     private void getBestStudents(String currentOption) {
         String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        if (currentOption.equals("طوال الوقت")) {
+        if (currentOption.equals("قائمة المتصدرين")) {
             view.startRecyclerAdapter(usersList, TAG);
             fireStoreUsers.orderBy("points", Query.Direction.DESCENDING).limit(20).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
