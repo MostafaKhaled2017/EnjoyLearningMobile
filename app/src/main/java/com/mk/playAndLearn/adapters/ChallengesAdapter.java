@@ -47,7 +47,6 @@ import static com.mk.playAndLearn.utils.Strings.uncompletedChallengeText;
 import static com.mk.playAndLearn.utils.Strings.waitingChallengeText;
 import static com.mk.playAndLearn.utils.Strings.wonChallengeText;
 import static com.mk.playAndLearn.utils.Strings.yourTurnChallengeText;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
 
 public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.MyHolder> {
     ArrayList<Challenge> list;
@@ -193,9 +192,9 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                             intent.putExtra("uid", challenge.getOpponentUid());
                             intent.putExtra("subject", challenge.getSubject());
 
-                            if (dailyChallengesNumber - getSavedTodayChallengesNo(context) < 1) {
+                            /*if (dailyChallengesNumber - getSavedTodayChallengesNo(context) < 1) {
                                 Toast.makeText(context, "لقد أنهيت عدد التحديات المسموح لك اليوم يمكنك العودة غدا للعب تحديات أخرى أو طلب من أحد أصدقائك بدء تحدى جديد ضدك", Toast.LENGTH_LONG).show();
-                            } else {
+                            } else {*/
                                 fireStoreUsers.document(challenge.getOpponentUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -219,7 +218,7 @@ public class ChallengesAdapter extends RecyclerView.Adapter<ChallengesAdapter.My
                                 });
 
                             }
-                        }
+
                     });
                     dialog.setPositiveButton("لا", new DialogInterface.OnClickListener() {
                         @Override

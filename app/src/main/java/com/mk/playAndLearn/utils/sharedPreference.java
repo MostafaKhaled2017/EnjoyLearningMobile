@@ -67,11 +67,14 @@ public class sharedPreference {
         SharedPreferences pref = context.getSharedPreferences(PREFERENCES_FILE, 0);
         return pref.getLong("points", -1);
     }
-
+/*
     public static long getSavedTodayChallengesNo(Context context){
+     TO use it make sure to use SetToday'sChallengesNumbers in all needed parts in Challenge result Activity presenter (As updating number of challenges for player 1)
         SharedPreferences pref = context.getSharedPreferences(PREFERENCES_FILE, 0);
         return pref.getLong("todayChallengesNo", -1);
     }
+
+ */
     public static String getSavedGrade(Context context){
         SharedPreferences pref = context.getSharedPreferences(PREFERENCES_FILE, 0);
         return pref.getString("grade", "غير معروف");

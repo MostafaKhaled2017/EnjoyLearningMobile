@@ -195,7 +195,7 @@ public class ChallengeResultActivityPresenter {
         }
     }
 
-    void addPointsAndUpdateChallengersData(DocumentSnapshot dataSnapshot, int score) {
+    void addPointsAndUpdateChallengersData(DocumentSnapshot dataSnapshot, final int score) {
         final String player1Uid = dataSnapshot.getString("player1Uid");
         final String player2Uid = dataSnapshot.getString("player2Uid");
 
@@ -333,22 +333,27 @@ public class ChallengeResultActivityPresenter {
                         }
 
                         return todayChallengesNo + 1;
-                    } else if (getCurrentPlayer(player1Uid) == 1) {
+                    }
+                    else if (getCurrentPlayer(player1Uid) == 1) {
+
                         DocumentSnapshot snapshotForPlayer1 = transaction.get(player1Reference);
 
                         if (snapshotForPlayer1.getLong("todayChallengesNo") != null) {
                             todayChallengesNo = snapshotForPlayer1.getLong("todayChallengesNo");
                         }
+                        if (snapshotForPlayer1.getLong("points") != null)
+                        {
+                            newPoints = snapshotForPlayer1.getLong("points") + (long) score;
+                        }
                         transaction.update(player1Reference, "totalChallengesNo", totalChallengesNo + 1);
-                        transaction.update(player1Reference, "todayChallengesNo", todayChallengesNo + 1);
+                        transaction.update(player1Reference, "points", newPoints);
 
                         Log.v("limitingChallenges", "current player is 1"
                                 + " , new todayChallengesNo is " + todayChallengesNo + 1);
-                        return todayChallengesNo + 1;
+                        return (long) score;
                     }
-                    Log.v("limitingChallenges", "value is : " + todayChallengesNo + 1);
 
-                    return todayChallengesNo + 1;
+                    return Long.valueOf(-1);
 
                 } else {
                     return Long.valueOf(-1);
@@ -357,7 +362,7 @@ public class ChallengeResultActivityPresenter {
             }
         }).addOnSuccessListener(new OnSuccessListener<Long>() {
             @Override
-            public void onSuccess(Long aLong) {
+            public void onSuccess(final Long aLong) {
                /* long remainedDailyChallenges = dailyChallengesNumber - aLong;
                 if (remainedDailyChallenges > 10) {
                     Toast.makeText(context, "يمكنك لعب " + (dailyChallengesNumber - aLong) + " تحدى فقط اليوم بعد هذا التحدى", Toast.LENGTH_LONG).show();
@@ -370,8 +375,20 @@ public class ChallengeResultActivityPresenter {
                 } else if (remainedDailyChallenges < 1) {
                     Toast.makeText(context, "لا يمكنك بدء تحديات جديدة هذا اليوم يمكنك العودة غدا للعب تحديات جديدة أو طلب من أصدقائك بدء تحديات ضدك", Toast.LENGTH_LONG).show();
                 }*/
-                setSavedTodayChallengesNo(context, aLong);
+                if(getCurrentPlayer(player1Uid) == 2) {
+                    setSavedTodayChallengesNo(context, aLong);
+                } else if(getCurrentPlayer(player1Uid) == 1) {
+                    setSavedPoints(context, aLong);
+                    //TODO : save in shared preferences number of challenges for player 1
 
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            view.setPointsResultTv("+" + aLong + "XP");
+                        }
+                    });
+                }
 
                 Log.v("transactionCalls", "transactionDone");
 

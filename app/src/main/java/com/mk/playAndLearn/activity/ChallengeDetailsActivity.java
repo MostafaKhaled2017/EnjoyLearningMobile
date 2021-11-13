@@ -28,7 +28,6 @@ import java.lang.reflect.Field;
 
 import static com.mk.playAndLearn.utils.Integers.dailyChallengesNumber;
 import static com.mk.playAndLearn.utils.sharedPreference.getSavedGrade;
-import static com.mk.playAndLearn.utils.sharedPreference.getSavedTodayChallengesNo;
 
 
 public class ChallengeDetailsActivity extends AppCompatActivity {
@@ -366,7 +365,6 @@ public class ChallengeDetailsActivity extends AppCompatActivity {
     }
 
     public void navigate() {
-        Log.v("todayChallengesNo", "todayChallengesNo is : " + getSavedTodayChallengesNo(ChallengeDetailsActivity.this));
         if (currentSubject.equals("كل المواد")) {
             Toast.makeText(ChallengeDetailsActivity.this, "برجاء اختيار المادة التى تريدها", Toast.LENGTH_SHORT).show();
         }

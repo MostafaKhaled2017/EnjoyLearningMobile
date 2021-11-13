@@ -212,7 +212,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 2) //TODO : edit
+                    .whereEqualTo("term", 1) //TODO : edit
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -243,7 +243,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 2)  //TODO : edit
+                    .whereEqualTo("term", 1)  //TODO : edit
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
                     .whereGreaterThan(FieldPath.documentId(), randomId)
@@ -274,7 +274,7 @@ public class ChallengeStartActivityPresenter {
                     .collection(subject)
                     .whereEqualTo("reviewed", true)
                     .whereEqualTo("challengeQuestion", false)
-                    .whereEqualTo("term", 2)  //TODO : edit
+                    .whereEqualTo("term", 1)  //TODO : edit
                     .whereEqualTo("unitNumber", unit)
                     .whereEqualTo("lessonNumber", lesson)
                     .whereEqualTo("questionType", "choose")
