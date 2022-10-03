@@ -1,12 +1,13 @@
-This project is an educational mobile application that contains the following elements : 
+This project is an educational mobile application for school students in Egypt. The app contains the following elements : 
 
-* Multiplayer challenges between students where the user can start a challenge against another user, and the winner of these challenge got points and in the app there is a leaderboard for the top students who have the largest number of points in the app and there is also daily leaderboard for the students who got the largest number of points in this day only to encourage students to get the largest number of points every day and so increasing their level in the app.
+* Multiplayer challenges: Educational challenges between students where the user can start a challenge against another user, and the winner of these challenges got points inside the app. The challenge contains several questions from the curriculum of the student.
 
-* The general challenge: it is a challenge that has a specific date and time and in this time any student can join this challenge and compete together.
+* Leaderboard: in the app there is a leaderboard for the top students who have the largest number of points in the app and there is also daily leaderboard for the students who got the largest number of points in this day only to encourage students to get the largest number of points every day and so increasing their level in the app.
 
-* A page for students to add questions to the app and this page helps the students to train on reading their lessons well and extract questions by themselves from the lessons.
+* Learning content Page : A collection of educational content that students can use to study their lessons
 
-* The section of study tips and these tips show the students a new way for them to study rather than the traditional ways they use in studying and help them to implement spaced repetition in their study and there is also general tips and tips to help the students to manage their time well during studying. 
+* The general challenge: it is a challenge that has a specific date and time and any student can join this challenge and compete together.
+
 
 <table>
   <tr>
